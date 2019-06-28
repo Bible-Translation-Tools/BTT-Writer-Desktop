@@ -293,6 +293,19 @@
             this.set(path, value);
             this.closeSettingModal();
             this.saveSettings();
+            if (name === "serversuite") {
+                App.configurator.setUserSetting("dataserver", value.dataserver);
+                App.configurator.setUserSetting("mediaserver", value.mediaserver);
+                this.set('settings', App.configurator.refreshUserSetting());
+                this.saveSettings();
+                // Lgout user.
+                this.fire('iron-signal', {name: 'updateuser', data: {}});
+                App.keyManager.destroyKeys();
+                // Notify user that the app needs to be restarted.
+                // TODO This bypasses Polymer to call the ts-dashboard.showMessage() function.  Is there a better way?
+                var dashboard = document.querySelector('ts-dashboard')
+                dashboard.showMessage("Server Suite Changed", "Please close and restart the application.")
+            }
             App.configurator.applyPrefAppearance();
         },
 
@@ -338,6 +351,7 @@
                 }
             } else {
                 modal.text = setting.value;
+                modal.default = setting.default;
                 mythis.openModal(modal, event);
             }
         },

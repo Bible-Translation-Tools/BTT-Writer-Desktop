@@ -135,19 +135,33 @@
         "visible": true
     },
     {
+        "name": "serversuite",
+        "mainText": "Server Suite (e.g. WACS or DCS)",
+        "value": {"name": "WACS"},
+        "options": [
+            {"name": "WACS", "dataserver": "https://wacs.bibletranslationtools.org", "mediaserver": "https://api.bibletranslationtools.org"},
+            {"name": "DCS",  "dataserver": "https://git.door43.org",                 "mediaserver": "https://api.unfoldingword.org"}
+            ],
+        "group": "advanced",
+        "enabled": true,
+        "visible": true
+    },
+    {
         "name": "dataserver",
         "mainText": "Data Server",
-        "value": "git.door43.org",
-        "group": "upload",
-        "enabled": false,
+        "value": "https://wacs.bibletranslationtools.org",
+        "default": "https://wacs.bibletranslationtools.org",
+        "group": "advanced",
+        "enabled": true,
         "visible": true
     },
     {
         "name": "mediaserver",
         "mainText": "Media Server",
-        "value": "https://api.unfoldingword.org/",
-        "group": "upload",
-        "enabled": false,
+        "value": "https://api.bibletranslationtools.org",
+        "default": "https://api.bibletranslationtools.org",
+        "group": "advanced",
+        "enabled": true,
         "visible": true
     },
     {

@@ -8,7 +8,7 @@ var path = require('path');
 var yaml = require('js-yaml');
 var mkdirp = require('mkdirp');
 
-function DataManager(db, resourceDir, apiURL, sourceDir) {
+function DataManager(db, resourceDir, sourceDir) {
 
     return {
 
@@ -21,6 +21,7 @@ function DataManager(db, resourceDir, apiURL, sourceDir) {
         },
 
         updateSources: function (onProgress) {
+            var apiURL = App.configurator.getUserSetting("mediaserver") + "/v2/ts/catalog.json";
             return db.updateSources(apiURL, onProgress);
         },
 

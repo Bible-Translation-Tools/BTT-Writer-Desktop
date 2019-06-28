@@ -1,0 +1,100 @@
+<link rel="import" href="../../components/paper-menu/paper-menu.html">
+<link rel="import" href="../../components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../components/paper-item/paper-item.html">
+<link rel="import" href="../../components/iron-icons/iron-icons.html">
+<link rel="import" href="../../components/iron-icons/maps-icons.html">
+
+<dom-module id="ts-profile-sidebar">
+
+    <style>
+
+        :host {
+            background: var(--primary-color);
+            color: var(--reverse-text-color);
+            min-width: 50px;
+            align-self: stretch;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        #menuicon {
+            padding: 8px;
+            color: var(--reverse-text-color);
+        }
+
+        paper-item {
+            color: var(--primary-text-color);
+        }
+
+        paper-item:focus:before {
+            background: transparent;
+        }
+
+        paper-item:hover {
+            background: var(--accent-color-light);
+            cursor: pointer;
+        }
+
+        :host::shadow .selectable-content.paper-menu > *:focus:after {
+            background: transparent;
+        }
+
+        paper-menu {
+            --paper-menu-selected-item: {
+                 font-weight: normal;
+             }
+        }
+
+        .smallicon {
+            --iron-icon-height: 18px;
+            --iron-icon-width: 18px;
+            color: var(--secondary-text-color);
+            padding-right: 15px;
+        }
+
+        .hide {
+            display: none;
+        }
+
+    </style>
+
+    <template>
+        <paper-menu-button id="menu" horizontal-offset="10" vertical-offset="10" vertical-align="bottom">
+            <iron-icon id="menuicon" class="dropdown-trigger" icon="more-vert"></iron-icon>
+            <paper-menu class="dropdown-content">
+                <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>Settings</paper-item>
+            </paper-menu>
+        </paper-menu-button>
+    </template>
+
+</dom-module>
+
+<script>
+
+    Polymer({
+
+        is: 'ts-profile-sidebar',
+
+        properties: {
+            route: {
+                type: String,
+                value: '',
+                notify: true
+            }
+        },
+
+        settings: function () {
+            this.$.menu.close();
+            App.configurator.setValue("backto", this.route);
+            this.set('route', 'settings');
+        },
+
+        ready: function() {
+
+        }
+
+    });
+
+</script>

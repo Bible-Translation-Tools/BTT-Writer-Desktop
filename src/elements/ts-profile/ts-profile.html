@@ -7,6 +7,9 @@
 <link rel="import" href="./ts-create-option.html">
 <link rel="import" href="./ts-local-option.html">
 
+<link rel="import" href="../ts-icons/ts-icons.html">
+<link rel="import" href="./ts-profile-sidebar.html">
+
 <dom-module id="ts-profile">
 
     <style>
@@ -16,9 +19,16 @@
             flex-direction: column;
         }
 
+        #main {
+            flex: auto;
+            display: flex;
+            flex-direction: row;
+        }
+
         neon-animated-pages {
             flex: auto;
             display: flex;
+            flex-direction: column;
         }
 
         #header {
@@ -62,12 +72,18 @@
             </div>
         </div>
 
-        <neon-animated-pages selected="{{selected}}" exit-animation="scale-down-animation" entry-animation="scale-up-animation">
-            <ts-options-menu selected="{{selected}}"></ts-options-menu>
-            <ts-login-option selected="{{selected}}" newinfo="{{newinfo}}" on-login="sendlogin"></ts-login-option>
-            <ts-create-option selected="{{selected}}" newinfo="{{newinfo}}" on-create="sendcreate"></ts-create-option>
-            <ts-local-option selected="{{selected}}" newinfo="{{newinfo}}" on-local="sendlocal"></ts-local-option>
-        </neon-animated-pages>
+        <div id="main">
+
+            <ts-profile-sidebar route="{{route}}"></ts-profile-sidebar>
+
+            <neon-animated-pages selected="{{selected}}" exit-animation="scale-down-animation" entry-animation="scale-up-animation">
+                <ts-options-menu selected="{{selected}}"></ts-options-menu>
+                <ts-login-option selected="{{selected}}" newinfo="{{newinfo}}" on-login="sendlogin"></ts-login-option>
+                <ts-create-option selected="{{selected}}" newinfo="{{newinfo}}" on-create="sendcreate"></ts-create-option>
+                <ts-local-option selected="{{selected}}" newinfo="{{newinfo}}" on-local="sendlocal"></ts-local-option>
+            </neon-animated-pages>
+
+        </div>
 
     </template>
 
@@ -84,6 +100,11 @@
         ],
 
         properties: {
+            route: {
+                type: String,
+                value: '',
+                notify: true
+            },
             selected: {
                 type: Number,
                 value: 0

@@ -24,3 +24,6 @@ src/logs/
 
 /unit_tests/migration/temp/
 /src/prince/
+
+*.swp
+package-lock.json

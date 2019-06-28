@@ -143,7 +143,6 @@ process.stdout.write = console.log.bind(console);
         var resourceDir = path.join(libraryDir, 'resource_containers');
         var srcDB = path.join(srcDir, 'index', 'index.sqlite');
         var srcResource = path.join(srcDir, 'index', 'resource_containers');
-        var apiURL = configurator.getValue('apiUrl');
         var indexstat;
 
         try {
@@ -160,7 +159,7 @@ process.stdout.write = console.log.bind(console);
 
         var db = new Db(libraryPath, resourceDir);
 
-        return new DataManager(db, resourceDir, apiURL, srcResource);
+        return new DataManager(db, resourceDir, srcResource);
     })();
 
     setMsg('Initializing modules...');
@@ -237,9 +236,10 @@ process.stdout.write = console.log.bind(console);
         })(),
 
         userManager: (function () {
-            return new UserManager({
-                token: configurator.getValue('gogs-token')
-            });
+            return new UserManager(
+                { token: configurator.getValue('gogs-token') },
+                configurator.getUserSetting("dataserver")
+            );
         })(),
 
         importManager: (function () {

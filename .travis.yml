@@ -6,17 +6,14 @@ os:
 sudo: true
 branches:
   except:
-    - master
+  - master
 env:
   global:
-  - secure: R61XmjAE1j2w1ynoBud6mliJX5Y73u9ncyVaSM9LajclYAEWRWD7n/bvAf8rfI/Al1FeLIedscMsfgdpBc4Lu+USO4NnH2cpjrWXQmU5xTF3sHSKK9a+jzHxa7kZQf+e2uePO39Ty7FypxBJ01Zsuiv6/Hv3PVpufZU60sywg/E=
-  - secure: hiF+Sfpzc4C2Kxg+VgOHQ6ITPJRRwQJ802b6wnZy7Z1Ta9Gl01AgOFGWkf2raq4cQMlWw82UfiL7dEJ/bHwsEo3PoBMVhRG1AjiTY3dpoiKUjlX3MAl4SCZtBjmBN+4QT8HGOruhlKBG3xLNryg1UhjSbThPnw1rI//Be3IWH+o=
-  - secure: TVM/SM0AXEVRKDFoLWhJy3zaCnlcOTxasWuufnnWPS1yyROPMUzel40OlByc4RJs0s7L7EPyFloBjF0hAwFB+KnPFsyrnLqvLto3egWEcfnA1rIjN98bM4y2qIF1TIuV7/DFIk5YJFhlDC8amc6l82yKtkdDb2LD4k0TKx3fySc=
-#cache:
-#  directories:
-#  - node_modules
+  - secure: L8Ha41yyRYLrEKt+6KlrX9mJo64dL7mU6uSqZ3qqpQdmAIbalEWWB1efVnEjKQ6f4XBuo2aZrFhRF+cRypAy/sNvWp1KgR78Zuoml79MV45eiyiOoja5nxNT2/wAyrXcVA9xV110xzMgEKMN7X8vzoQN8eWzKL0LUBw7su/HyT2RKANEpzXdOrJCYSqFnul5WmJ5nIEetco0nLiL2S5Gwi2jPzmJ0YPnt9ffEuf0HjijJybMQgoSOMFN1gBcP0Sc5o2oPp3AHypInOJ1gsFPmEf+Tec6VwrxjhyUGjohjmjOzT8qmyGxmr3ltpjdda6+LPHYReF1jeKiVWQkyxwQ0vyuxmuNgkJqIJ7wGT9BpoSlFJyoi0X3Rq7GISyatWaGe6oKaAUAs7hIGj+2ppnh5mSnxYut5n5KFAe3NtT9B/eTo2+u2pbi/uxoexAMUd2SNH2l83vPo6wQ8BdxptsMOOrHWqjaCINcFBma/WHdPXH1V7AJba3zYEcv/gYXNpILMAOxEDq7yZ+c/uNWZsJ/fA1sDok6jYHIbVpliO0eQEpQRZmOo9cQp7/5125ruBJ0nkelFqiHEJn0f/mdRN19QerQm7op4DS7oSZyj9F8GJtvQEcg1FMyyhAM4KmduLJTcdofjpdut+pv6EllUJbHPisrLJxs7w+scNRqh11egRU=
+  - secure: OZqdD/77otf96+lhwPGQwmGGvpOK03aTI732Vxt1VlgG80sh/uTyAjnWdO2LzbbuaVCN/vgCrdBDi2XRgKGhXuDvffMd5coyncLYroZOfkrIV6262R47pfO5rHhygQH52S+t0+Kv5hneH4sYxxdnkSCo7MPREamlQkC3NINIMi60DoB4Ef6Ms7KxoJ4Mk6lsggeBg1tgxFvBvg3AzNOimWUHxxg0UTVMq1BBPsa44X9qw4aKLZTrAqBZMWl4fHFTW94QvetZlI/sQYklxUFLV1FqG5aOFurEeUpqz3A/D5BWv/0M+OnjQy5MKTkNmgg4Kvoeml7wNVqZiaJBnO2LwidYRdA3v+3WLOT92CESa1nHm0JYEdfIXI+bu65verlDMLx27b+/yBUYduIMU25cJ51ATToQY/Hcnq0SGacaNrMJGe1Bofaiov5CA2hoL63xxQuxRdwKECEk3Go4wHw8/qVCh/xDq8hLAiLk3K867ngSwLCUv7bwyE3Pkr5deiP3WANQKts29tJOQMdyGuCvvSF5tHpPQolVg5H/Lij2pUllkQXfL2oC30LSwSUGOlYXmMD6mWFvUqEhl5UJFkGtvS+XGnVFD/pUQeyoZEU832OD3v6pU+Htvc1F9blrjH97i5k1LmFzjlTlDfVFDT9yGg9yZBqC8jff4TNl/wvu1R0=
+  - ARTIFACTS_PERMISSIONS=public-read
 before_install:
-- ./scripts/skip_travis_commits.sh
+- "./scripts/skip_travis_commits.sh"
 - sudo add-apt-repository --yes ppa:ubuntu-wine/ppa
 - sudo add-apt-repository --yes ppa:arx/release
 - sudo apt-get update -d
@@ -26,91 +23,44 @@ before_install:
 - "./scripts/innosetup/innoinstall.sh"
 - sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
 - iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
-# private keys for app
-- if [ "${TRAVIS_SECURE_ENV_VARS}" != "false" ]; then openssl aes-256-cbc -K $encrypted_54b2df9dba46_key
-  -iv $encrypted_54b2df9dba46_iv -in private.json.enc -out src/config/private.json
-  -d; fi
-# dropbox uploader key
-- if [ "${TRAVIS_SECURE_ENV_VARS}" != "false" ]; then openssl aes-256-cbc -K $encrypted_8efd489acff0_key
-  -iv $encrypted_8efd489acff0_iv -in .dropbox_uploader.enc -out ~/.dropbox_uploader
-  -d; fi
-
-# install git lfs
-#- mkdir -p $HOME/bin
-#- wget https://github.com/github/git-lfs/releases/download/v1.3.1/git-lfs-linux-amd64-1.3.1.tar.gz
-#- tar xvfz git-lfs-linux-amd64-1.3.1.tar.gz
-#- mv git-lfs-1.3.1/git-lfs $HOME/bin/git-lfs
-#- export PATH=$PATH:$HOME/bin/
-#- rm git-lfs-linux-amd64-1.3.1.tar.gz
+- if [ "${TRAVIS_SECURE_ENV_VARS}" != "false" ]; then openssl aes-256-cbc -K $encrypted_ee6029b3102f_key
+  -iv $encrypted_ee6029b3102f_iv -in private.json.enc -out private.json -d; fi
 before_script:
 - git config --global url."https://".insteadOf git://
 - npm install
 - npm install gulp -g
 - npm install bower -g
-#- npm install door43-client -g
 script: npm test
 after_success:
 - test $TRAVIS_TEST_RESULT == 0 && $TRAVIS_PULL_REQUEST == "false"
 - test -z $TRAVIS_TAG && ./scripts/bump.sh
-#- door43-client index -i src/index/index.sqlite -f
 - test -f src/index/index.sqlite
-#- door43-client download -i src/index/index.sqlite -d src/index/resource_containers -f -c
 - test -d src/index/resource_containers
 - bower install
-# ensure bower installed correctly
 - test -d src/components
 - gulp prince
-# ensure prince was installed
 - test -d src/prince
 - gulp build --win
 - gulp build --linux
 - gulp build --osx
 - gulp release
-# upload to dropbox
-- if [ -f ~/.dropbox_uploader ]; then
-    echo 'uploading build to dropbox';
-    ./dropbox_uploader.sh -q upload ./release/ travis-artifacts/$TRAVIS_JOB_NUMBER/;
-  else
-    echo 'missing ~/.dropbox_uploader. Skipping dropbox upload.';
-  fi
 deploy:
-# develop branch
-- provider: surge
-  project: "./release/"
-  domain: develop.ts-desktop.surge.sh
-  skip_cleanup: true
-  on:
-    branch: develop
-    condition: "-d ./release"
-# catch-all
-- provider: surge
-  project: "./release/"
-  domain: sandbox.ts-desktop.surge.sh
-  skip_cleanup: true
-  on:
-    all_branches: true
-    tags: false
-    condition: "-d ./release && $TRAVIS_BRANCH != develop && ! ($TRAVIS_BRANCH =~ ^release-.*$) && $TRAVIS_BRANCH != master"
-# release branch
-- provider: surge
-  project: "./release/"
-  domain: release.ts-desktop.surge.sh
-  skip_cleanup: true
-  on:
-    all_branches: true
-    tags: false
-    condition: "-d ./release && $TRAVIS_BRANCH =~ ^release-.*$"
-# master branch
 - provider: releases
   api_key:
-    secure: brjmL3cyCTr6swNCqka2fkc41j+PO2tqXZhE9QyNoDEXcxR1FOwPoPut/8h4N/pISfkf2FibtsWqThhW1Xz1pVNNMBlHRblJsSecfvXOtn7kneCsAV+QBngbPuA8OKzfhXTUeIQNlIpfG+rwlDg28wOthDI/7ADBOYgGQWeOd7o=
+    secure: jd0GassUuHhUl7YSIwjtkBJXJmTnk3mxQXwEiPirxjaL3ci0hg8clj+f1hBouIdoNzJIAZlAC8DFhrg0usFuMkFi+BGNBgCQHRwfkGOgxUeK4wytRqD3Ncz8srjbLlmG7fGEgLYU3TKnj+DgcGzuNZWqnQgXVu3owemAJpbZG2u3a9JjY/Z15oqAoOCNO6qMc0m6KUrd+G6sDsJLHmb22mPUr8QqFrfcG5nUefdZf4zU4ZUOXaC9/3nc1vy536vIqCcsKZHcrNvomSxQLqF2CLmsS9nMDD+ZGVEAZ15HCGc/aVpdTJKjK4aWw49Dopt1baVYPAuWG0Xyt3KUS/5B+ORf9xOWCHuLOngRbZq8qWsGy6oI+Yy6CZVwOU2Q56lXjbSDWLS4hp+O4fscn5mHnVaUEcmLKn4MlDHxdGLJPUZWLrJ+oblbIDsqGklH77X1YIXvFsCvg31AvWPQWrEtB5S2HafmQeu82VxD+/RQtPDWlEuz08QEJ1WgcHb2kUXxbBfWPNykDnhzsSrPB+iCOHYaugSO0bthiAm/LKIjt2cBb1Yoe+e/92ZqKls+RyZXzi2EDr6gG4e43FxBs4s7DZTvTVwvsDu+8csMFhtJansb0SkXeH9A4rZf1EamdMTrnordVKnYUTLIQKr9VyJ85Hy4Y9v8U+CRpLWvxBj/6ys=
   file:
-    - release/*.exe
-    - release/*.zip
+  - release/*.exe
+  - release/*.zip
   file_glob: true
   skip_cleanup: true
   overwrite: true
   on:
     tags: true
-    repo: unfoldingWord-dev/ts-desktop
+    repo: WycliffeAssociates/ts-desktop
     condition: "-d ./release"
+addons:
+  artifacts:
+    s3_region: "us-west-1"
+    paths:
+    - $(ls ./release/*.exe | tr "\n" ":")
+    - $(ls ./release/*.zip | tr "\n" ":")
