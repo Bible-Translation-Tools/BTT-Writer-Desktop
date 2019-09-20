@@ -73,7 +73,7 @@ process.stdout.write = console.log.bind(console);
     })();
 
     var App = {
-        appName: 'translationStudio',
+        appName: 'BTT Writer',
 
         locale: i18n,
 

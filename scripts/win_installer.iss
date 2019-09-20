@@ -30,18 +30,18 @@
 #endif
 #if Arch == "x86"
   #define GitExecutable "Git-" + GitVersion + "-32-bit.exe"
-  #define BuildPath RootPath + BuildDir + "translationStudio-win32-ia32\*.*"
+  #define BuildPath RootPath + BuildDir + "BTT-Writer-win32-ia32\*.*"
   #define GitInstaller "win32_git_installer.iss"
 #else
   #define GitExecutable "Git-" + GitVersion + "-64-bit.exe"
-  #define BuildPath RootPath + BuildDir + "translationStudio-win32-x64\*.*"
+  #define BuildPath RootPath + BuildDir + "BTT-Writer-win32-x64\*.*"
   #define GitInstaller "win64_git_installer.iss"
 #endif
 
-#define MyAppName "translationStudio"
+#define MyAppName "BTT-Writer"
 #define MyAppPublisher "Unfolding Word"
 #define MyAppURL "https://unfoldingword.org"
-#define MyAppExeName "translationStudio.exe"
+#define MyAppExeName "BTT-Writer.exe"
 #define MyLicenseFile RootPath + "LICENSE"
 
 [Setup]

@@ -1,19 +1,9 @@
-[![Crowdin](https://d322cqt584bo4o.cloudfront.net/translation-studio/localized.png)](https://crowdin.com/project/translation-studio)
-[![Build Status](https://travis-ci.org/unfoldingWord-dev/ts-desktop.svg?branch=develop)](https://travis-ci.org/unfoldingWord-dev/ts-desktop)
+[![Build Status](https://travis-ci.com/WycliffeAssociates/ts-desktop.svg?branch=develop)](https://travis-ci.com/WycliffeAssociates/ts-desktop)
 
-translationStudio Desktop
+BTT-Writer Desktop
 --
 
-A tool to translate the Bible and [Open Bible Stories](http://distantshores.org/openbiblestories) into your own language. You can read more about the purpose of this project at [unfoldingWord](https://unfoldingword.org/apps/#tS).
-
-##Requirements
-The official development requirements are available at
-* [tS Requirements](https://github.com/unfoldingWord-dev/ts-requirements)
-
-Additional documentation specific to the desktop platforms is available in the [wiki](https://github.com/unfoldingWord-dev/ts-desktop/wiki).
-
-##Contributing
-If you would like to contribute to this project please read the [Contributing](https://github.com/unfoldingWord-dev/ts-desktop/wiki/Contributing) article in the wiki.
+A tool to translate the Bible into your own language. 
 
 ##Quick Start
 First make sure you have [NodeJS](https://nodejs.org/) installed (choose the Current, not LTS). Then, in your terminal/command line window:

@@ -172,7 +172,7 @@ process.stdout.write = console.log.bind(console);
     mkdirp.sync(configurator.getValue('targetTranslationsDir'));
 
     var App = {
-        appName: 'translationStudio',
+        appName: 'BTT Writer',
 
         locale: i18n,
 

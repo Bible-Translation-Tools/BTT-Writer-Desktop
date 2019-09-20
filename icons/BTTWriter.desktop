@@ -1,0 +1,11 @@
+[Desktop Entry]
+
+Type=Application
+Version=0.1.0
+Name=BTT Writer
+Comment=Desktop version of BTT Writer
+Path=/home/user/path/to/app/folder
+Exec=/home/user/path/to/BTT-Writer.exec  # This needs to be a dynamic absolute path to the executable file
+Icon=/home/user/path/to/icon/image.png  # This needs to be a dynamic absolute path to the icon image
+Terminal=false
+Categories=Translation;Languages;

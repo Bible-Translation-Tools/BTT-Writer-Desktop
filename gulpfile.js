@@ -1,5 +1,5 @@
 /**
- * translationStudio gulpfile
+ * BTT-Writer gulpfile
  *
  * Copyright 2016
  */
@@ -16,7 +16,7 @@ const gulp = require('gulp'),
     util = require('./src/js/lib/utils');
     princePackager = require('./src/js/prince-packager');
 
-const APP_NAME = 'translationStudio',
+const APP_NAME = 'BTT-Writer',
     JS_FILES = './src/js/**/*.js',
     UNIT_TEST_FILES = './unit_tests/**/*.js',
     BUILD_DIR = 'out/',
@@ -106,28 +106,6 @@ gulp.task('build', ['clean'], function (done) {
         console.log('Done building...');
         done();
     });
-
-    // TODO: figure out how to make the builder do this
-
-    // // Adding app icon for linux64
-    // if(fs.exists('./build/translationStudio/linux64')) {
-    //     fs.stat('./build/translationStudio/linux64', function (err, stats) {
-    //         if (stats.isDirectory()) {
-    //             // Copy desktop entry to the build folder
-    //             var desktopTarget = fs.createWriteStream('./build/translationStudio/linux64/translationStudio.desktop');
-    //             var desktopSource = fs.createReadStream('./icons/translationStudio.desktop');
-    //             desktopSource.pipe(desktopTarget);
-
-    //             // Copy icon.png file to the build folder
-    //             var iconTarget = fs.createWriteStream('./build/translationStudio/linux64/icon.png');
-    //             var iconSource = fs.createReadStream('./icons/icon.png');
-    //             iconSource.pipe(iconTarget);
-    //         }
-    //         else {
-    //             console.log('Error in accessing linux64 build folder:', err);
-    //         }
-    //     });
-    // }
 });
 
 gulp.task('release', function(done) {
@@ -173,7 +151,7 @@ gulp.task('release', function(done) {
      */
     const releaseWin = function(arch, os) {
         // TRICKY: the iss script cannot take the .exe extension on the file name
-        var file = `tS_${p.version}-${p.build}_win_x${arch}`;
+        var file = `BTT-Writer-${p.version}-${p.build}-win-x${arch}`;
         var cmd = `iscc scripts/win_installer.iss /DArch=${arch == '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${p.version} /DBuild=${p.build} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
         return new Promise(function(resolve, reject) {
             exec(cmd, function(err, stdout, stderr) {
@@ -199,7 +177,7 @@ gulp.task('release', function(done) {
         for(var os of platforms) {
             switch (os) {
                 case 'win32':
-                    if (fs.existsSync(BUILD_DIR + 'translationStudio-win32-ia32/')) {
+                    if (fs.existsSync(BUILD_DIR + 'BTT-Writer-win32-ia32/')) {
                         promises.push(downloadGit(gitVersion, '32')
                             .then(releaseWin.bind(undefined, '32', os)));
                     } else {
@@ -211,7 +189,7 @@ gulp.task('release', function(done) {
                     }
                     break;
                 case 'win64':
-                    if (fs.existsSync(BUILD_DIR + 'translationStudio-win32-x64/')) {
+                    if (fs.existsSync(BUILD_DIR + 'BTT-Writer-win32-x64/')) {
                         promises.push(downloadGit(gitVersion, '64')
                             .then(releaseWin.bind(undefined, '64', os)));
                     } else {
@@ -223,9 +201,9 @@ gulp.task('release', function(done) {
                     }
                     break;
                 case 'darwin':
-                    if (fs.existsSync(BUILD_DIR + 'translationStudio-darwin-x64/')) {
+                    if (fs.existsSync(BUILD_DIR + 'BTT-Writer-darwin-x64/')) {
                         promises.push(new Promise(function (os, resolve, reject) {
-                            var dest = `${RELEASE_DIR}tS_${p.version}-${p.build}_osx_x64.zip`;
+                            var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-${p.build}-osx-x64.zip`;
                             try {
                                 var output = fs.createWriteStream(dest);
                                 output.on('close', function () {
@@ -238,7 +216,7 @@ gulp.task('release', function(done) {
                                 var archive = archiver.create('zip');
                                 archive.on('error', reject);
                                 archive.pipe(output);
-                                archive.directory(BUILD_DIR + 'translationStudio-darwin-x64/translationStudio.app/', 'translationStudio.app');
+                                archive.directory(BUILD_DIR + 'BTT-Writer-darwin-x64/BTT-Writer.app/', 'BTT-Writer.app');
                                 archive.finalize();
                             } catch (e) {
                                 console.error(e);
@@ -258,9 +236,9 @@ gulp.task('release', function(done) {
                     }
                     break;
                 case 'linux':
-                    if (fs.existsSync(BUILD_DIR + 'translationStudio-linux-x64/')) {
+                    if (fs.existsSync(BUILD_DIR + 'BTT-Writer-linux-x64/')) {
                         promises.push(new Promise(function (os, resolve, reject) {
-                            var dest = `${RELEASE_DIR}tS_${p.version}-${p.build}_linux_x64.zip`;
+                            var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-${p.build}-linux-x64.zip`;
                             try {
                                 var output = fs.createWriteStream(dest);
                                 output.on('close', function () {
@@ -273,7 +251,7 @@ gulp.task('release', function(done) {
                                 var archive = archiver.create('zip');
                                 archive.on('error', reject);
                                 archive.pipe(output);
-                                archive.directory(BUILD_DIR + 'translationStudio-linux-x64/', 'translationStudio');
+                                archive.directory(BUILD_DIR + 'BTT-Writer-linux-x64/', 'BTT-Writer');
                                 archive.finalize();
                             } catch (e) {
                                 console.error(e);

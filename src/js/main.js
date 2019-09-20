@@ -15,7 +15,7 @@ app.setPath('userData', (function (dataDir) {
             : path.join(process.env.HOME, '.config'));
 
     return path.join(base, dataDir);
-})('translationstudio'));
+})('BTT-Writer'));
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -33,7 +33,7 @@ function createMainSplash() {
         frame: false,
         center: true,
         show: false,
-        title: 'translationStudio'
+        title: 'BTT Writer'
     });
 
     //splashScreen.webContents.openDevTools();
@@ -54,7 +54,7 @@ function createAcademySplash() {
         frame: false,
         center: true,
         show: false,
-        title: 'translationStudio'
+        title: 'BTT Writer'
     });
 
     //splashScreen.webContents.openDevTools();
@@ -75,7 +75,7 @@ function createReloadSplash() {
         frame: false,
         center: true,
         show: false,
-        title: 'translationStudio'
+        title: 'BTT Writer'
     });
 
     //splashScreen.webContents.openDevTools();
@@ -96,7 +96,7 @@ function createMainWindow () {
         minHeight: 580,
         useContentSize: true,
         center: true,
-        title: 'translationStudio',
+        title: 'BTT Writer',
         backgroundColor: '#00796B',
         autoHideMenuBar: true,
         frame: false,

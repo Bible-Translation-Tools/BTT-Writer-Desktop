@@ -24,16 +24,20 @@ before_install:
 - sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
 - iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
 - if [ "${TRAVIS_SECURE_ENV_VARS}" != "false" ]; then openssl aes-256-cbc -K $encrypted_ee6029b3102f_key
-  -iv $encrypted_ee6029b3102f_iv -in private.json.enc -out private.json -d; fi
+  -iv $encrypted_ee6029b3102f_iv -in private.json.enc -out src/config/private.json -d; fi
 before_script:
 - git config --global url."https://".insteadOf git://
 - npm install
+- patch --forward --reject-file=- node_modules/gogs-client/lib/request.js < gogs-client-lib-request.diff || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
 - npm install gulp -g
 - npm install bower -g
 script: npm test
 after_success:
 - test $TRAVIS_TEST_RESULT == 0 && $TRAVIS_PULL_REQUEST == "false"
 - test -z $TRAVIS_TAG && ./scripts/bump.sh
+- wget --no-verbose "https://btt-writer-resources.s3.amazonaws.com/resource_containers.zip"
+- if [ -f resource_containers.zip ]; then rm -r ./src/index; fi
+- unzip resource_containers.zip -d ./src/index/
 - test -f src/index/index.sqlite
 - test -d src/index/resource_containers
 - bower install
@@ -43,7 +47,7 @@ after_success:
 - gulp build --win
 - gulp build --linux
 - gulp build --osx
-- gulp release
+- travis_wait gulp release
 deploy:
 - provider: releases
   api_key:

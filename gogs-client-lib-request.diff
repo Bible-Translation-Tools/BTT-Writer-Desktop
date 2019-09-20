@@ -1,0 +1,23 @@
+--- gogs-client-lib-request.js.orig	2019-07-15 13:42:25.030573200 -0400
++++ gogs-client-lib-request.js	2019-07-15 13:35:45.863814300 -0400
+@@ -66,10 +66,16 @@
+         });
+ 
+         response.on('end', function () {
+-          resolve({
+-            status: response.statusCode,
+-            data: data
+-          });
++            // Delay resolution of the promise briefly
++            // to give the HTTP request time to resolve.
++            // Otherwise future requests will hang on some
++            // systems, including many Linux distros.
++            setTimeout(function() {
++                resolve({
++                    status: response.statusCode,
++                    data: data
++                });
++            }, 1000);
+         });
+       });
+ 

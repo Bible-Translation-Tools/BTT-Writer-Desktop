@@ -957,7 +957,7 @@
               })
               .then(function (fullname) {
                   var server = App.configurator.getUserSetting("dataserver");
-                  var url = server + "/u/" + fullname;
+                  var url = server + "/" + fullname;
 
                   mythis.set('options.title', "Upload Complete");
                   mythis.set('options.body', "Your project has been uploaded to:");
