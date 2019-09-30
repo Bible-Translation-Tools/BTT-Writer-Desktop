@@ -24,11 +24,13 @@ before_install:
 - sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
 - iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
 - if [ "${TRAVIS_SECURE_ENV_VARS}" != "false" ]; then openssl aes-256-cbc -K $encrypted_ee6029b3102f_key
-  -iv $encrypted_ee6029b3102f_iv -in private.json.enc -out src/config/private.json -d; fi
+  -iv $encrypted_ee6029b3102f_iv -in private.json.enc -out src/config/private.json
+  -d; fi
 before_script:
 - git config --global url."https://".insteadOf git://
 - npm install
-- patch --forward --reject-file=- node_modules/gogs-client/lib/request.js < gogs-client-lib-request.diff || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
+- patch --forward --reject-file=- node_modules/gogs-client/lib/request.js < gogs-client-lib-request.diff
+  || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
 - npm install gulp -g
 - npm install bower -g
 script: npm test
@@ -48,7 +50,17 @@ after_success:
 - gulp build --linux
 - gulp build --osx
 - travis_wait gulp release
+
 deploy:
+-  provider: s3
+   access_key_id:
+     secure: "C43AOP9j967DP7Ycg7VbFBukVkUbasUOoDXhAwUNpNiTQ8FFOTi1h0GuHHC/guf+Oxa/TuA2ojDQdgDMNoH8rZHlHZEhROfnlkis04W0jMeLL1e4Ax/cl/iInRV4O6pYo228Pfo6KrOVT1bH9cTOQtBouQ3lBNtecWCtR2JzxhzLp2l79wlXrloGBjalOh7jSJThSZzcS7ltHIEIWTXjWjNAyMFJ0iBUewH1TtZlFBMkLgFQBtzMfdfewrslMy529PLBk17POUCobP1UMWk+C8ceVw40p9GbjJZZYrRfPW1ddb5YRXncaTR8n8UiGRe+Bc+1elfXGo2KkFiubSjm/34B0MJ1eUSOK3QVM2VAfs3bAq6AZwmFzMGIlTK2xARZnV84IHdvJfYOjCIoin3z4laWAQhfSafLjUw9q/qjM35S5DuR697QKlt0TLm+6kXscsk33iBHHxFw4JQBlD9pBZgEG/LlOzTsH8iH4vj2iG1vuWwfT6Oqign/D2of3sjr/9z4OeUyVcDX/y1MH2uAaSWOIPtE2xKqeFYPnvILQW36M5K0TbmwvWo5261deU7j+VRuQEXYuNmeU/jPDeKKgaVt3d4np70eo5oiq8lOsTDPGwV7F70ZwRtWnnBdRmwFjqb7hZbTVPiwMLzfPVkGX5hLJpS0BoF0yK7MFtvnCw0="
+   secret_access_key:
+     secure: rSqy6JJUQvfpKZfMC5DBUFtOHnyrGla15SN7WFPyOpNv+OmWNvmubWpghddMkG+lGrc7n9LPvaOEKzsTwKVAesvTSGTc9iA7dwsJ7ylKh1pvhggUKWXSCFgU7Avx5Tuz/SyAJSLdnCHk2evp5ABVVpqyLRUZM3JXqNfCqpbACDmP8Ipw1TVMD9usip7CvnV0w9bOSoTr1Hj3jELyJUaw+DTnPnvFCsP8azc/EyTrWrknjefzw93uzVduAHsaHUQ9iRGh81kMNQhdcxokYaZGwEc6FoWAkuyNkQlW4xgXHvjBnQ/Du9djPISISnZcCHJj5yQom/5lKWzArcFZTiGVueCqCjaWv+jLYpGrLXOsVUf74iemUvM2cSuDAw0jQarZuOsGjKWjXMOcWIaeOCJVi9C4TAzJTIcgoQJrRk2rU4HOkn0hRXWH6RnjMTaIlXfzxnas2mZYI+MbWoFPvKa06LoPX5aIZ4k9i/eiuRt0rKH9sB4QotajEbd6zGKW2XWx9y2+t7esPRL7nAFq/j6lrpuoPt+t3pVeRE386dhacx/x8U0+wtOFMIiJjQLmTsPoo7rX1zPLfF5Smv+jARExeSPXrn3ZQcJ/vXWKmvri3mjdZPhnicW89Q6JQAPkbfqDTKYDeo3Nl9z4k3aH+t8Y/yZpz44YwBlb8RQIgSaqA4c=
+   bucket: sandbox-ts-desktop
+   acl: public_read
+   on:
+     repo: WycliffeAssociates/ts-desktop
 - provider: releases
   api_key:
     secure: jd0GassUuHhUl7YSIwjtkBJXJmTnk3mxQXwEiPirxjaL3ci0hg8clj+f1hBouIdoNzJIAZlAC8DFhrg0usFuMkFi+BGNBgCQHRwfkGOgxUeK4wytRqD3Ncz8srjbLlmG7fGEgLYU3TKnj+DgcGzuNZWqnQgXVu3owemAJpbZG2u3a9JjY/Z15oqAoOCNO6qMc0m6KUrd+G6sDsJLHmb22mPUr8QqFrfcG5nUefdZf4zU4ZUOXaC9/3nc1vy536vIqCcsKZHcrNvomSxQLqF2CLmsS9nMDD+ZGVEAZ15HCGc/aVpdTJKjK4aWw49Dopt1baVYPAuWG0Xyt3KUS/5B+ORf9xOWCHuLOngRbZq8qWsGy6oI+Yy6CZVwOU2Q56lXjbSDWLS4hp+O4fscn5mHnVaUEcmLKn4MlDHxdGLJPUZWLrJ+oblbIDsqGklH77X1YIXvFsCvg31AvWPQWrEtB5S2HafmQeu82VxD+/RQtPDWlEuz08QEJ1WgcHb2kUXxbBfWPNykDnhzsSrPB+iCOHYaugSO0bthiAm/LKIjt2cBb1Yoe+e/92ZqKls+RyZXzi2EDr6gG4e43FxBs4s7DZTvTVwvsDu+8csMFhtJansb0SkXeH9A4rZf1EamdMTrnordVKnYUTLIQKr9VyJ85Hy4Y9v8U+CRpLWvxBj/6ys=
@@ -62,9 +74,3 @@ deploy:
     tags: true
     repo: WycliffeAssociates/ts-desktop
     condition: "-d ./release"
-addons:
-  artifacts:
-    s3_region: "us-west-1"
-    paths:
-    - $(ls ./release/*.exe | tr "\n" ":")
-    - $(ls ./release/*.zip | tr "\n" ":")
