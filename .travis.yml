@@ -56,7 +56,7 @@ deploy:
    bucket: sandbox-ts-desktop
    region: us-west-1
    local_dir: release
-   upload-dir: /BTT-Writer/${TRAVIS_BUILD_NUMBER}/${TRAVIS_BRANCH}
+   upload-dir: BTT-Writer/${TRAVIS_BUILD_NUMBER}/${TRAVIS_BRANCH}
    acl: public_read
    skip_cleanup: true
    on:
