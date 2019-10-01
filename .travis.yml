@@ -39,7 +39,7 @@ after_success:
 - test -z $TRAVIS_TAG && ./scripts/bump.sh
 - wget --no-verbose "https://btt-writer-resources.s3.amazonaws.com/resource_containers.zip"
 - if [ -f resource_containers.zip ]; then rm -r ./src/index; fi
-- unzip resource_containers.zip -d ./src/index/
+- unzip -qq resource_containers.zip -d ./src/index/
 - test -f src/index/index.sqlite
 - test -d src/index/resource_containers
 - bower install
@@ -60,6 +60,7 @@ deploy:
    region: us-west-1
    local_dir: release
    acl: public_read
+   skip_cleanup: true
    on:
      repo: WycliffeAssociates/ts-desktop
      all_branches: true
