@@ -23,14 +23,11 @@ before_install:
 - "./scripts/innosetup/innoinstall.sh"
 - sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
 - iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
-- if [ "${TRAVIS_SECURE_ENV_VARS}" != "false" ]; then openssl aes-256-cbc -K $encrypted_ee6029b3102f_key
-  -iv $encrypted_ee6029b3102f_iv -in private.json.enc -out src/config/private.json
-  -d; fi
+- if [ "${TRAVIS_SECURE_ENV_VARS}" != "false" ]; then openssl aes-256-cbc -K $encrypted_ee6029b3102f_key -iv $encrypted_ee6029b3102f_iv -in private.json.enc -out src/config/private.json -d; fi
 before_script:
 - git config --global url."https://".insteadOf git://
 - npm install
-- patch --forward --reject-file=- node_modules/gogs-client/lib/request.js < gogs-client-lib-request.diff
-  || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
+- patch --forward --reject-file=- node_modules/gogs-client/lib/request.js < gogs-client-lib-request.diff || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
 - npm install gulp -g
 - npm install bower -g
 script: npm test
@@ -59,6 +56,7 @@ deploy:
    bucket: sandbox-ts-desktop
    region: us-west-1
    local_dir: release
+   upload-dir: BTT-Writer/${TRAVIS_BUILD_NUMBER}/${TRAVIS_BRANCH}
    acl: public_read
    skip_cleanup: true
    on:
