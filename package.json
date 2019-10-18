@@ -1,8 +1,8 @@
 {
   "name": "BTT-Writer",
   "productName": "BTT-Writer",
-  "version": "1.0.0",
-  "build": "1",
+  "version": "1.0.1",
+  "build": "2",
   "description": "A utility for translating the Bible and biblical content into any language. (from tS 11.1.0)",
   "keywords": [],
   "homepage": "https://github.com/unfoldingWord-dev/ts-desktop",
