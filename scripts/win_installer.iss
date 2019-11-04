@@ -39,8 +39,8 @@
 #endif
 
 #define MyAppName "BTT-Writer"
-#define MyAppPublisher "Unfolding Word"
-#define MyAppURL "https://unfoldingword.org"
+#define MyAppPublisher "Wycliffe Associates"
+#define MyAppURL "https://wycliffeassociates.org"
 #define MyAppExeName "BTT-Writer.exe"
 #define MyLicenseFile RootPath + "LICENSE"
 
