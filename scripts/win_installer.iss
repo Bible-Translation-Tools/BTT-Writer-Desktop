@@ -40,7 +40,7 @@
 
 #define MyAppName "BTT-Writer"
 #define MyAppPublisher "Wycliffe Associates"
-#define MyAppURL "https://wycliffeassociates.org"
+#define MyAppURL "https://writer.bibletranslationtools.org"
 #define MyAppExeName "BTT-Writer.exe"
 #define MyLicenseFile RootPath + "LICENSE"
 
