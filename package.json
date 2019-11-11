@@ -1,12 +1,12 @@
 {
   "name": "BTT-Writer",
   "productName": "BTT-Writer",
-  "version": "1.0.1",
-  "build": "2",
+  "version": "1.0.2",
+  "build": "3",
   "description": "A utility for translating the Bible and biblical content into any language. (from tS 11.1.0)",
   "keywords": [],
-  "homepage": "https://github.com/unfoldingWord-dev/ts-desktop",
-  "bugs": "https://github.com/unfoldingWord-dev/ts-desktop/issues",
+  "homepage": "https://github.com/wycliffeassociates/ts-desktop",
+  "bugs": "https://github.com/wycliffeassociates/ts-desktop/issues",
   "author": {
     "name": "Joel Lonbeck",
     "email": "",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:unfoldingWord-dev/ts-desktop.git"
+    "url": "git@github.com:wycliffeassociates/ts-desktop.git"
   },
   "jest": {
     "testPathIgnorePatterns": [
