@@ -412,7 +412,7 @@ var utils = {
         }).map(function (fontobject) {
             var name = false;
             try {
-                name = fontobject.font.familyName;
+                name = fontobject.font.familyName.toString();
             } catch (e) {}
             if (name) {
                 return {path: fontobject.path, name: name};
