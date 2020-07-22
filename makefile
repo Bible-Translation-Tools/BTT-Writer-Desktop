@@ -1,24 +1,33 @@
-.PHONY: build run attach stop
+.PHONY: build rebuild run attach stop
 
 IMAGE_LABEL := bw-local-dev
 VOLUME_LABEL := $(IMAGE_LABEL)-volume
 
 build:
-	docker build . -t bw-local-dev
+	# Builds image
+	docker build --tag bw-local-dev .
+
+rebuild:
+	# Re-builds image from scratch (takes a while!)
+	docker build --no-cache --tag bw-local-dev .
 
 run:
+	# Starts BTT-Writer in a container.  The user directory is in a volume.
 	if [ -z "$$DISPLAY" ]; then echo "ERROR: DISPLAY var not set."; exit 1; fi; \
 	docker run --rm --volume $(VOLUME_LABEL):/root --env DISPLAY="${DISPLAY}" -t $(IMAGE_LABEL)
 
 attach:
-	# Attaches to a running BW container
+	# Attaches to the running BW container
 	CONTAINER_ID=$$(docker ps --filter ancestor=$(IMAGE_LABEL) --format '{{.Names}}'); \
 	if [ -z "$$CONTAINER_ID" ]; then echo "ERROR: No running container found."; exit 1; fi; \
 	docker exec -it $$CONTAINER_ID /bin/bash
 
 stop:
-	# Attaches to a running BW container
+	# Stops the running BW container
 	CONTAINER_ID=$$(docker ps --filter ancestor=$(IMAGE_LABEL) --format '{{.Names}}'); \
 	if [ -z "$$CONTAINER_ID" ]; then echo "ERROR: No running container found."; exit 1; fi; \
 	docker stop $$CONTAINER_ID
 
+clean:
+	# Removes volume
+	docker volume rm $(VOLUME_LABEL)
