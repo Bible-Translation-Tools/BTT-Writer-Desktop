@@ -17,4 +17,6 @@ RUN bower install --allow-root
 
 RUN apt install -y libxtst-dev libxss-dev libgconf2-dev libnss3-dev libasound2-dev
 
+VOLUME /root
+
 CMD npm start
