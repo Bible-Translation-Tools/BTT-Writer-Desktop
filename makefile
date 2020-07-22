@@ -1,4 +1,4 @@
-.PHONY: build rebuild run attach stop
+.PHONY: build rebuild run attach stop clean
 
 IMAGE_LABEL := bw-local-dev
 VOLUME_LABEL := $(IMAGE_LABEL)-volume
