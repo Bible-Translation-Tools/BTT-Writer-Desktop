@@ -1,7 +1,8 @@
-.PHONY: edit build rebuild run attach stop clean
+.PHONY: edit build rebuild run logs logs-follow attach stop clean
 
 IMAGE_LABEL := bw-local-dev
 VOLUME_LABEL := $(IMAGE_LABEL)-volume
+CONTAINER_ID := $(shell docker ps --filter ancestor=$(IMAGE_LABEL) --format '{{.Names}}')
 
 edit:
 	# Edits common files in your favorite editor
@@ -17,34 +18,30 @@ rebuild:
 
 run:
 	# Starts BTT-Writer in a container.  The user directory is in a volume.
-	# Run detached to prevent messing up the tty.
-	# (Use `make stop` to end the program early.)
-	if [ -z "$$DISPLAY" ]; then echo "ERROR: DISPLAY var not set."; exit 1; fi; \
+	# Runs detached to prevent messing up the tty.  (Use `make stop` to end if needed.)
+	test $(DISPLAY) # If blank, then $$DISPLAY is not set
+	test ! $(CONTAINER_ID) # If not blank, then container is already running
 	docker run --detach --rm --volume $(VOLUME_LABEL):/root --env DISPLAY="${DISPLAY}" $(IMAGE_LABEL)
 
 logs:
 	# Displays recent logs from running app
-	CONTAINER_ID=$$(docker ps --filter ancestor=$(IMAGE_LABEL) --format '{{.Names}}'); \
-	if [ -z "$$CONTAINER_ID" ]; then echo "ERROR: No running container found."; exit 1; fi; \
-	docker logs $$CONTAINER_ID
+	test $(CONTAINER_ID) # If blank, then container isn't running
+	docker logs $(CONTAINER_ID)
 
 logs-follow:
 	# Displays and follows recent logs from running app
-	CONTAINER_ID=$$(docker ps --filter ancestor=$(IMAGE_LABEL) --format '{{.Names}}'); \
-	if [ -z "$$CONTAINER_ID" ]; then echo "ERROR: No running container found."; exit 1; fi; \
-	docker logs --follow $$CONTAINER_ID
+	test $(CONTAINER_ID) # If blank, then container isn't running
+	docker logs --follow $(CONTAINER_ID)
 
 attach:
 	# Attaches to the running BW container
-	CONTAINER_ID=$$(docker ps --filter ancestor=$(IMAGE_LABEL) --format '{{.Names}}'); \
-	if [ -z "$$CONTAINER_ID" ]; then echo "ERROR: No running container found."; exit 1; fi; \
-	docker exec --interactive --tty $$CONTAINER_ID /bin/bash
+	test $(CONTAINER_ID) # If blank, then container isn't running
+	docker exec --interactive --tty $(CONTAINER_ID) bash
 
 stop:
 	# Stops the running BW container
-	CONTAINER_ID=$$(docker ps --filter ancestor=$(IMAGE_LABEL) --format '{{.Names}}'); \
-	if [ -z "$$CONTAINER_ID" ]; then echo "ERROR: No running container found."; exit 1; fi; \
-	docker stop $$CONTAINER_ID
+	test $(CONTAINER_ID) # If blank, then container isn't running
+	docker stop $(CONTAINER_ID)
 
 clean:
 	# Removes volume

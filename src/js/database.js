@@ -173,34 +173,34 @@ function DataManager(db, resourceDir, sourceDir) {
                     item.errmsg = errmessage;
                 })
                 .then(function () {
-                    if (resource === "ulb" || resource === "obs") {
+                    // if (resource === "ulb" || resource === "obs") {
                         return mythis.downloadContainer(language, project, "tn")
                             .catch(function () {
                                 return true;
                             });
-                    } else {
-                        return Promise.resolve(true);
-                    }
+                    // } else {
+                    //     return Promise.resolve(true);
+                    // }
                 })
                 .then(function () {
-                    if (resource === "ulb" || resource === "obs") {
+                    // if (resource === "ulb" || resource === "obs") {
                         return mythis.downloadContainer(language, project, "tq")
                             .catch(function () {
                                 return true;
                             });
-                    } else {
-                        return Promise.resolve(true);
-                    }
+                    // } else {
+                    //     return Promise.resolve(true);
+                    // }
                 })
                 .then(function () {
-                    if (resource === "ulb") {
+                    // if (resource === "ulb") {
                         return mythis.downloadContainer(language, project, "udb")
                             .catch(function () {
                                 return true;
                             });
-                    } else {
-                        return Promise.resolve(true);
-                    }
+                    // } else {
+                    //     return Promise.resolve(true);
+                    // }
                 })
                 .then(function () {
                     return item;
@@ -247,25 +247,25 @@ function DataManager(db, resourceDir, sourceDir) {
                     }
                 })
                 .then(function () {
-                    if (resource === "ulb" || resource === "obs") {
+                    // if (resource === "ulb" || resource === "obs") {
                         return mythis.activateContainer(language, project, "tn");
-                    } else {
-                        return Promise.resolve(true);
-                    }
+                    // } else {
+                    //     return Promise.resolve(true);
+                    // }
                 })
                 .then(function () {
-                    if (resource === "ulb" || resource === "obs") {
+                    // if (resource === "ulb" || resource === "obs") {
                         return mythis.activateContainer(language, project, "tq");
-                    } else {
-                        return Promise.resolve(true);
-                    }
+                    // } else {
+                    //     return Promise.resolve(true);
+                    // }
                 })
                 .then(function () {
-                    if (resource === "ulb") {
+                    // if (resource === "ulb") {
                         return mythis.activateContainer(language, project, "udb");
-                    } else {
-                        return Promise.resolve(true);
-                    }
+                    // } else {
+                    //     return Promise.resolve(true);
+                    // }
                 });
         },
 
@@ -373,18 +373,18 @@ function DataManager(db, resourceDir, sourceDir) {
         getSourceUdb: function (source) {
             var container = source.language_id + "_" + source.project_id + "_udb";
 
-            if (source.resource_id === "ulb") {
+            // if (source.resource_id === "ulb") {
                 return this.extractContainer(container);
-            } else {
-                return [];
-            }
+            // } else {
+            //     return [];
+            // }
         },
 
         getSourceNotes: function (source) {
             var mythis = this;
             var container = source.language_id + "_" + source.project_id + "_tn";
 
-            if (source.resource_id === "ulb" || source.resource_id === "obs") {
+            // if (source.resource_id === "ulb" || source.resource_id === "obs") {
                 var frames = this.extractContainer(container);
 
                 frames.forEach(function (item) {
@@ -394,16 +394,16 @@ function DataManager(db, resourceDir, sourceDir) {
                 });
 
                 return frames;
-            } else {
-                return [];
-            }
+            // } else {
+            //     return [];
+            // }
         },
 
         getSourceQuestions: function (source) {
             var mythis = this;
             var container = source.language_id + "_" + source.project_id + "_tq";
 
-            if (source.resource_id === "ulb" || source.resource_id === "obs") {
+            // if (source.resource_id === "ulb" || source.resource_id === "obs") {
                 var frames = this.extractContainer(container);
 
                 frames.forEach(function (item) {
@@ -413,9 +413,9 @@ function DataManager(db, resourceDir, sourceDir) {
                 });
 
                 return frames;
-            } else {
-                return [];
-            }
+            // } else {
+            //     return [];
+            // }
         },
 
         getSourceWords: function (source) {
