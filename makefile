@@ -1,8 +1,9 @@
-.PHONY: edit build rebuild run logs logs-follow attach stop clean
+.PHONY: edit build rebuild run logs logs-follow attach stop test clean release
 
 IMAGE_LABEL := bw-local-dev
 VOLUME_LABEL := $(IMAGE_LABEL)-volume
 CONTAINER_ID := $(shell docker ps --filter ancestor=$(IMAGE_LABEL) --format '{{.Names}}')
+RELEASE_DIR := $(HOME)/btt-writer-release
 
 edit:
 	# Edits common files in your favorite editor
@@ -43,6 +44,15 @@ stop:
 	test $(CONTAINER_ID) # If blank, then container isn't running
 	docker stop $(CONTAINER_ID)
 
+test:
+	# Stops the running BW container
+	test ! $(CONTAINER_ID) # If not blank, then container is already running
+	docker run --interactive --tty --rm $(IMAGE_LABEL) bash -c "gulp test"
+
 clean:
 	# Removes volume
 	docker volume rm $(VOLUME_LABEL)
+
+release:
+	# Creates executables
+	docker run --rm --volume $(RELEASE_DIR):/app/release $(IMAGE_LABEL) bash -c "gulp build --linux && gulp release"

@@ -1,16 +1,16 @@
-FROM node:12
+FROM node:6
 
-RUN apt update
-RUN apt upgrade -y
-RUN apt install -y libxtst-dev libxss-dev libgconf2-dev libnss3-dev libasound2-dev
+RUN apt update \
+ && apt upgrade -y \
+ && apt install -y libxtst-dev libxss-dev libgconf2-dev libnss3-dev libasound2-dev
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install -g bower
-RUN npm install -g gulp
-RUN npm install
+RUN npm install -g bower \
+ && npm install -g gulp \
+ && npm install
 
 COPY . .
 
