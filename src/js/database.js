@@ -173,34 +173,22 @@ function DataManager(db, resourceDir, sourceDir) {
                     item.errmsg = errmessage;
                 })
                 .then(function () {
-                    // if (resource === "ulb" || resource === "obs") {
-                        return mythis.downloadContainer(language, project, "tn")
-                            .catch(function () {
-                                return true;
-                            });
-                    // } else {
-                    //     return Promise.resolve(true);
-                    // }
+                    return mythis.downloadContainer(language, project, "tn")
+                        .catch(function () {
+                            return true;
+                        });
                 })
                 .then(function () {
-                    // if (resource === "ulb" || resource === "obs") {
-                        return mythis.downloadContainer(language, project, "tq")
-                            .catch(function () {
-                                return true;
-                            });
-                    // } else {
-                    //     return Promise.resolve(true);
-                    // }
+                    return mythis.downloadContainer(language, project, "tq")
+                        .catch(function () {
+                            return true;
+                        });
                 })
                 .then(function () {
-                    // if (resource === "ulb") {
-                        return mythis.downloadContainer(language, project, "udb")
-                            .catch(function () {
-                                return true;
-                            });
-                    // } else {
-                    //     return Promise.resolve(true);
-                    // }
+                    return mythis.downloadContainer(language, project, "udb")
+                        .catch(function () {
+                            return true;
+                        });
                 })
                 .then(function () {
                     return item;
@@ -247,25 +235,13 @@ function DataManager(db, resourceDir, sourceDir) {
                     }
                 })
                 .then(function () {
-                    // if (resource === "ulb" || resource === "obs") {
-                        return mythis.activateContainer(language, project, "tn");
-                    // } else {
-                    //     return Promise.resolve(true);
-                    // }
+                    return mythis.activateContainer(language, project, "tn");
                 })
                 .then(function () {
-                    // if (resource === "ulb" || resource === "obs") {
-                        return mythis.activateContainer(language, project, "tq");
-                    // } else {
-                    //     return Promise.resolve(true);
-                    // }
+                    return mythis.activateContainer(language, project, "tq");
                 })
                 .then(function () {
-                    // if (resource === "ulb") {
-                        return mythis.activateContainer(language, project, "udb");
-                    // } else {
-                    //     return Promise.resolve(true);
-                    // }
+                    return mythis.activateContainer(language, project, "udb");
                 });
         },
 
@@ -373,49 +349,37 @@ function DataManager(db, resourceDir, sourceDir) {
         getSourceUdb: function (source) {
             var container = source.language_id + "_" + source.project_id + "_udb";
 
-            // if (source.resource_id === "ulb") {
-                return this.extractContainer(container);
-            // } else {
-            //     return [];
-            // }
+            return this.extractContainer(container);
         },
 
         getSourceNotes: function (source) {
             var mythis = this;
             var container = source.language_id + "_" + source.project_id + "_tn";
 
-            // if (source.resource_id === "ulb" || source.resource_id === "obs") {
-                var frames = this.extractContainer(container);
+            var frames = this.extractContainer(container);
 
-                frames.forEach(function (item) {
-                    if (item.content) {
-                        item.content = mythis.parseHelps(item.content);
-                    }
-                });
+            frames.forEach(function (item) {
+                if (item.content) {
+                    item.content = mythis.parseHelps(item.content);
+                }
+            });
 
-                return frames;
-            // } else {
-            //     return [];
-            // }
+            return frames;
         },
 
         getSourceQuestions: function (source) {
             var mythis = this;
             var container = source.language_id + "_" + source.project_id + "_tq";
 
-            // if (source.resource_id === "ulb" || source.resource_id === "obs") {
-                var frames = this.extractContainer(container);
+            var frames = this.extractContainer(container);
 
-                frames.forEach(function (item) {
-                    if (item.content) {
-                        item.content = mythis.parseHelps(item.content);
-                    }
-                });
+            frames.forEach(function (item) {
+                if (item.content) {
+                    item.content = mythis.parseHelps(item.content);
+                }
+            });
 
-                return frames;
-            // } else {
-            //     return [];
-            // }
+            return frames;
         },
 
         getSourceWords: function (source) {
