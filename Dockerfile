@@ -2,6 +2,7 @@ FROM node:12
 
 RUN apt update
 RUN apt upgrade -y
+RUN apt install -y libxtst-dev libxss-dev libgconf2-dev libnss3-dev libasound2-dev
 
 WORKDIR /app
 
@@ -14,8 +15,6 @@ RUN npm install
 COPY . .
 
 RUN bower install --allow-root
-
-RUN apt install -y libxtst-dev libxss-dev libgconf2-dev libnss3-dev libasound2-dev
 
 VOLUME /root
 
