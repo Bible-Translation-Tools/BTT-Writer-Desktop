@@ -11,7 +11,7 @@ edit:
 
 build:
 	# Builds image
-	docker build --tag . $(IMAGE_LABEL)
+	docker build --tag $(IMAGE_LABEL) .
 
 rebuild:
 	# Re-builds image from scratch (takes a while!)
