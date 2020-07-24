@@ -22,7 +22,10 @@ run:
 	# Runs detached to prevent messing up the tty.  (Use `make stop` to end if needed.)
 	test $(DISPLAY) # If blank, then $$DISPLAY is not set
 	test ! $(CONTAINER_ID) # If not blank, then container is already running
-	docker run --detach --rm --net=host --volume="${HOME}/.Xauthority:/root/.Xauthority:rw" --volume $(VOLUME_LABEL):/root --env DISPLAY="${DISPLAY}" $(IMAGE_LABEL)
+	docker run --detach --rm --net=host \
+	           --volume="${HOME}/.Xauthority:/root/.Xauthority:rw" \
+	           --volume $(VOLUME_LABEL):/root \
+	           --env DISPLAY="${DISPLAY}" $(IMAGE_LABEL)
 
 logs:
 	# Displays recent logs from running app
