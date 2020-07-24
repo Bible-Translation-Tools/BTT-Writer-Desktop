@@ -11,11 +11,11 @@ edit:
 
 build:
 	# Builds image
-	docker build --tag bw-local-dev .
+	docker build --tag . $(IMAGE_LABEL)
 
 rebuild:
 	# Re-builds image from scratch (takes a while!)
-	docker build --no-cache --tag bw-local-dev .
+	docker build --no-cache --tag $(IMAGE_LABEL) .
 
 run:
 	# Starts BTT-Writer in a container.  The user directory is in a volume.
