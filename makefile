@@ -45,7 +45,8 @@ stop:
 	docker stop $(CONTAINER_ID)
 
 test:
-	# Stops the running BW container
+	# Runs tests in the container
+	# TODO: Determine why tests sometimes fail -- timing issue?
 	test ! $(CONTAINER_ID) # If not blank, then container is already running
 	docker run --interactive --tty --rm $(IMAGE_LABEL) bash -c "gulp test"
 
@@ -55,4 +56,5 @@ clean:
 
 release:
 	# Creates executables
+	# TODO: Add support for building Windows, etc. -- see .travis.yml
 	docker run --rm --volume $(RELEASE_DIR):/app/release $(IMAGE_LABEL) bash -c "gulp build --linux && gulp release"
