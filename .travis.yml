@@ -56,7 +56,8 @@ addons:
     paths:
     - release/*.exe
     - release/*.zip
-- provider: releases
+deploy:
+  provider: releases
   api_key:
     secure: jd0GassUuHhUl7YSIwjtkBJXJmTnk3mxQXwEiPirxjaL3ci0hg8clj+f1hBouIdoNzJIAZlAC8DFhrg0usFuMkFi+BGNBgCQHRwfkGOgxUeK4wytRqD3Ncz8srjbLlmG7fGEgLYU3TKnj+DgcGzuNZWqnQgXVu3owemAJpbZG2u3a9JjY/Z15oqAoOCNO6qMc0m6KUrd+G6sDsJLHmb22mPUr8QqFrfcG5nUefdZf4zU4ZUOXaC9/3nc1vy536vIqCcsKZHcrNvomSxQLqF2CLmsS9nMDD+ZGVEAZ15HCGc/aVpdTJKjK4aWw49Dopt1baVYPAuWG0Xyt3KUS/5B+ORf9xOWCHuLOngRbZq8qWsGy6oI+Yy6CZVwOU2Q56lXjbSDWLS4hp+O4fscn5mHnVaUEcmLKn4MlDHxdGLJPUZWLrJ+oblbIDsqGklH77X1YIXvFsCvg31AvWPQWrEtB5S2HafmQeu82VxD+/RQtPDWlEuz08QEJ1WgcHb2kUXxbBfWPNykDnhzsSrPB+iCOHYaugSO0bthiAm/LKIjt2cBb1Yoe+e/92ZqKls+RyZXzi2EDr6gG4e43FxBs4s7DZTvTVwvsDu+8csMFhtJansb0SkXeH9A4rZf1EamdMTrnordVKnYUTLIQKr9VyJ85Hy4Y9v8U+CRpLWvxBj/6ys=
   file:
