@@ -47,21 +47,15 @@ after_success:
 - gulp build --linux
 - gulp build --osx
 - travis_wait gulp release
-deploy:
--  provider: s3
-   access_key_id:
-     secure: "fBte/KYTgGoJZw9cKgwXy0R1K8adtuDsZh1mJPvvpnb5pq9mpKAopWE4xN00ijzv84Yr9/XvYlIAGpZec0XwbP7Af3pkV45s+4rWNph/5cPCg/hwGCbScv2nXGAkFR3z+yTNCqUMwmuuK7tlfrqsz38l90eAd5JIs7Vh13zOZb+0/dmqa8+UwZqHC8bf4K/sCDq85gkcNDx51w+Vjo6ZrviwVOZXxFQ6/CHxjyOAS4F+FaUmfV22mh+SKxz1TJRMcspQW8ssksvaoYJ+FOj6iWu/5QNhD4PHOWTpGI3BrMrATNlD/7g71yQDpJ9bNA6wuv6bA1nLEP96OLBZVsZCMpdqo3+PBQTBE3z08vPhHfdVnpj9Ccrfus+hpV9DyVYvi0LuHkwzg/QVYvGgADsYGnY6jgHHhx/JtiYo+9Ie+G4kLyPYa1j/9VK0UhjP2EKN9iKH3eEVRYhh/TJpgAo3OiUXktmgxKA+V6cmY5l1XDf+lhU0+6u0zM5KyXV/desotnGCWyH0nMcGVAMPdTAD/SXo2fVoat4tL6WWB8dU9oCKWGEiuKuPlDTkwama6rfHrfyN8d7IbhpgfsRjHQT/ozFFfb4iIx5+P84XXdYgTWgohWYaxCIOgT+FhL233Ultw0vRa2TbUucd0/R+CE2S86fKKaeP3tI62lVJlLUaQvE="
-   secret_access_key:
-     secure: "l7UK/MlHYmlFoS8gi2wt2qr6AvXQpKr0kkDK9JZ5p41oPRPPjx04/CbaA2AGYGUXJPmekBUCOhZSupSt44FXr3GWz6ejQJpfdxDb+90GDayx3+rp0Eg3v/miEBJ/ouQCAz5oio1u0CDK9puAhwbYAFqOocBCxVIGu65RewHke6R+YcEnBxUMzwdr3QwFnPHtDfkMjZ1nvG3OwZ7HYcjEGUORAMgSsVFjUas8411LYAPtXn3CTKFcJFOZr5uWYLFJDtmvl5Sdf8V+F4F/tiw5fCWuQbrRMmGAlErlswUXMDb6raYis09/dO/QLSo0XF1p/QShyiZzZVmBAI7oYN+Ctgzv3g27tWy/6WuLVjTbG1jdkux7xXKj/NDYPLsRZA4I0Dtxdk4RN3G3rpYy0QplPgSb67VtEF2v7ESfdsdHxSe58/Wo3PGmPwrg9tTCYsD2B5MmVOQHH5U9JjGC/siZyhWNmTcmlBJnZC5JEpjK8++6iHn8lScv8HwM109cc9CudPnDUvHkJk/7BVi28qEZO6McHBlYfkxw6PMBhwpF2E4Lwjb6fAC0ThoBprDT8HZFObK04XxrOGOxfp7n/wqoHUtIxVEPGXiOu9z8s5vtXW/BjFWX3jfhQAhABLv4I6xnWdQ0ErMFro1R5wxnRLzXwiL6/DPFeIv2FBsDLa9wbMk="
-   bucket: sandbox-ts-desktop
-   region: us-west-1
-   local_dir: release
-   upload-dir: BTT-Writer/${TRAVIS_BUILD_NUMBER}/${TRAVIS_BRANCH}
-   acl: public_read
-   skip_cleanup: true
-   on:
-     repo: WycliffeAssociates/ts-desktop
-     all_branches: true
+addons:
+  artifacts:
+    s3_region: us-east-1
+    working_dir: release
+    target_paths:
+    - "/${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_TAG}"
+    paths:
+    - release/*.exe
+    - release/*.zip
 - provider: releases
   api_key:
     secure: jd0GassUuHhUl7YSIwjtkBJXJmTnk3mxQXwEiPirxjaL3ci0hg8clj+f1hBouIdoNzJIAZlAC8DFhrg0usFuMkFi+BGNBgCQHRwfkGOgxUeK4wytRqD3Ncz8srjbLlmG7fGEgLYU3TKnj+DgcGzuNZWqnQgXVu3owemAJpbZG2u3a9JjY/Z15oqAoOCNO6qMc0m6KUrd+G6sDsJLHmb22mPUr8QqFrfcG5nUefdZf4zU4ZUOXaC9/3nc1vy536vIqCcsKZHcrNvomSxQLqF2CLmsS9nMDD+ZGVEAZ15HCGc/aVpdTJKjK4aWw49Dopt1baVYPAuWG0Xyt3KUS/5B+ORf9xOWCHuLOngRbZq8qWsGy6oI+Yy6CZVwOU2Q56lXjbSDWLS4hp+O4fscn5mHnVaUEcmLKn4MlDHxdGLJPUZWLrJ+oblbIDsqGklH77X1YIXvFsCvg31AvWPQWrEtB5S2HafmQeu82VxD+/RQtPDWlEuz08QEJ1WgcHb2kUXxbBfWPNykDnhzsSrPB+iCOHYaugSO0bthiAm/LKIjt2cBb1Yoe+e/92ZqKls+RyZXzi2EDr6gG4e43FxBs4s7DZTvTVwvsDu+8csMFhtJansb0SkXeH9A4rZf1EamdMTrnordVKnYUTLIQKr9VyJ85Hy4Y9v8U+CRpLWvxBj/6ys=
