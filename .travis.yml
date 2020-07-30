@@ -4,13 +4,8 @@ node_js:
 os:
 - linux
 sudo: true
-branches:
-  except:
-  - master
 env:
   global:
-  - secure: L8Ha41yyRYLrEKt+6KlrX9mJo64dL7mU6uSqZ3qqpQdmAIbalEWWB1efVnEjKQ6f4XBuo2aZrFhRF+cRypAy/sNvWp1KgR78Zuoml79MV45eiyiOoja5nxNT2/wAyrXcVA9xV110xzMgEKMN7X8vzoQN8eWzKL0LUBw7su/HyT2RKANEpzXdOrJCYSqFnul5WmJ5nIEetco0nLiL2S5Gwi2jPzmJ0YPnt9ffEuf0HjijJybMQgoSOMFN1gBcP0Sc5o2oPp3AHypInOJ1gsFPmEf+Tec6VwrxjhyUGjohjmjOzT8qmyGxmr3ltpjdda6+LPHYReF1jeKiVWQkyxwQ0vyuxmuNgkJqIJ7wGT9BpoSlFJyoi0X3Rq7GISyatWaGe6oKaAUAs7hIGj+2ppnh5mSnxYut5n5KFAe3NtT9B/eTo2+u2pbi/uxoexAMUd2SNH2l83vPo6wQ8BdxptsMOOrHWqjaCINcFBma/WHdPXH1V7AJba3zYEcv/gYXNpILMAOxEDq7yZ+c/uNWZsJ/fA1sDok6jYHIbVpliO0eQEpQRZmOo9cQp7/5125ruBJ0nkelFqiHEJn0f/mdRN19QerQm7op4DS7oSZyj9F8GJtvQEcg1FMyyhAM4KmduLJTcdofjpdut+pv6EllUJbHPisrLJxs7w+scNRqh11egRU=
-  - secure: OZqdD/77otf96+lhwPGQwmGGvpOK03aTI732Vxt1VlgG80sh/uTyAjnWdO2LzbbuaVCN/vgCrdBDi2XRgKGhXuDvffMd5coyncLYroZOfkrIV6262R47pfO5rHhygQH52S+t0+Kv5hneH4sYxxdnkSCo7MPREamlQkC3NINIMi60DoB4Ef6Ms7KxoJ4Mk6lsggeBg1tgxFvBvg3AzNOimWUHxxg0UTVMq1BBPsa44X9qw4aKLZTrAqBZMWl4fHFTW94QvetZlI/sQYklxUFLV1FqG5aOFurEeUpqz3A/D5BWv/0M+OnjQy5MKTkNmgg4Kvoeml7wNVqZiaJBnO2LwidYRdA3v+3WLOT92CESa1nHm0JYEdfIXI+bu65verlDMLx27b+/yBUYduIMU25cJ51ATToQY/Hcnq0SGacaNrMJGe1Bofaiov5CA2hoL63xxQuxRdwKECEk3Go4wHw8/qVCh/xDq8hLAiLk3K867ngSwLCUv7bwyE3Pkr5deiP3WANQKts29tJOQMdyGuCvvSF5tHpPQolVg5H/Lij2pUllkQXfL2oC30LSwSUGOlYXmMD6mWFvUqEhl5UJFkGtvS+XGnVFD/pUQeyoZEU832OD3v6pU+Htvc1F9blrjH97i5k1LmFzjlTlDfVFDT9yGg9yZBqC8jff4TNl/wvu1R0=
   - ARTIFACTS_PERMISSIONS=public-read
 before_install:
 - "./scripts/skip_travis_commits.sh"
@@ -57,8 +52,8 @@ addons:
     target_paths:
     - "/${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_TAG}"
     paths:
-    - release/*.exe
-    - release/*.zip
+    - ./*.exe
+    - ./*.zip
 deploy:
   provider: releases
   api_key:
