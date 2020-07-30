@@ -52,8 +52,8 @@ addons:
     target_paths:
     - "/${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_TAG}"
     paths:
-    - ./*.exe
-    - ./*.zip
+    - $(ls *.exe | tr "\n" ":")
+    - $(ls *.zip | tr "\n" ":")
 deploy:
   provider: releases
   api_key:
