@@ -54,7 +54,6 @@ addons:
     paths:
     - $(ls release/*.exe | tr "\n" ":")
     - $(ls release/*.zip | tr "\n" ":")
-    max_size: 2147483648
 deploy:
   provider: releases
   api_key:
