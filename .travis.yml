@@ -45,26 +45,27 @@ after_success:
 - gulp build --linux
 - gulp build --osx
 - travis_wait gulp release
-addons:
-  artifacts:
-    s3_region: us-east-1
-    working_dir: release
-    target_paths:
-    - "/${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_TAG}"
-    paths:
-    - $(ls release/*.exe | tr "\n" ":")
-    - $(ls release/*.zip | tr "\n" ":")
 deploy:
-  provider: releases
-  api_key:
-    secure: pcOzsPYBiowoLLb5ZeGOM4RmJq9rYP+ItH0E31UZtJkRyiXRAEoOV6wOdo3JK348SK4q6pDwKuhxB7I0i6Qc5A9tu9qN+SSH/NVjhXVW4yCkBy4Uls6jjEdJYb8Pd4y0ZG7+qvhq5kwOmvU9eavoitSxSGLbXye5EW36xs/PMbtSESquT3G/joqfkyQfC5fX8YoGCZKp97x8wFdrjz6Z2NO6yh4x99TlhFLXm2GpAQJ3SWactYeJWEDx+5m2t4DFqtENyGX3VSCmS9+OPg5u8aj0Wu26TcACtIhJiaD4hBOjSmNDL7ARnlneaAoIpNhVyPqg5R2wPB6qPI1yw22ezIMgqJc3zPPkBmwldzNWCSzq8TRXn0A+lQmiPcKR8xwgGWlza1KB0UAdKcZtWygy/t6Alz0pDi3PSYLi98AyrUpgrXuUkGeRlldkKwT8zPTL/JJN4mLa74/L+vvMN+6Q3kAwyWD21kRU//+2YqiaAl2XhZUyoR2uLMVDisvD6n1+XYEhNEnOWKoFps6HiJq4iFYoVC0sGkqlnaRrPtiisExEG7lhuG8HtJ6KETB7rIsGm/jnE7wbEJg0/aDX2JbEYispLcFzrKeDrJ201zT1mlIzT6eXYj2cCy3X0jOzeNEVz0fA2YxhXL3UsA3ucR7bOMa7HbIYjgTFuS23I1+orzg=
-  file:
-  - release/*.exe
-  - release/*.zip
-  file_glob: true
-  skip_cleanup: true
-  overwrite: true
-  on:
-    tags: true
-    repo: WycliffeAssociates/ts-desktop
-    condition: "-d ./release"
+-  provider: s3
+   edge: true
+   region: us-east-1
+   local_dir: release
+   upload-dir: ${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_TAG}
+   acl: public_read
+   skip_cleanup: true
+   on:
+     repo: Bible-Translation-Tools/BTT-Writer-Desktop
+     all_branches: true
+-  provider: releases
+   api_key:
+     secure: pcOzsPYBiowoLLb5ZeGOM4RmJq9rYP+ItH0E31UZtJkRyiXRAEoOV6wOdo3JK348SK4q6pDwKuhxB7I0i6Qc5A9tu9qN+SSH/NVjhXVW4yCkBy4Uls6jjEdJYb8Pd4y0ZG7+qvhq5kwOmvU9eavoitSxSGLbXye5EW36xs/PMbtSESquT3G/joqfkyQfC5fX8YoGCZKp97x8wFdrjz6Z2NO6yh4x99TlhFLXm2GpAQJ3SWactYeJWEDx+5m2t4DFqtENyGX3VSCmS9+OPg5u8aj0Wu26TcACtIhJiaD4hBOjSmNDL7ARnlneaAoIpNhVyPqg5R2wPB6qPI1yw22ezIMgqJc3zPPkBmwldzNWCSzq8TRXn0A+lQmiPcKR8xwgGWlza1KB0UAdKcZtWygy/t6Alz0pDi3PSYLi98AyrUpgrXuUkGeRlldkKwT8zPTL/JJN4mLa74/L+vvMN+6Q3kAwyWD21kRU//+2YqiaAl2XhZUyoR2uLMVDisvD6n1+XYEhNEnOWKoFps6HiJq4iFYoVC0sGkqlnaRrPtiisExEG7lhuG8HtJ6KETB7rIsGm/jnE7wbEJg0/aDX2JbEYispLcFzrKeDrJ201zT1mlIzT6eXYj2cCy3X0jOzeNEVz0fA2YxhXL3UsA3ucR7bOMa7HbIYjgTFuS23I1+orzg=
+   file:
+   - release/*.exe
+   - release/*.zip
+   file_glob: true
+   skip_cleanup: true
+   overwrite: true
+   on:
+     tags: true
+     repo: Bible-Translation-Tools/BTT-Writer-Desktop
+     condition: "-d ./release"
