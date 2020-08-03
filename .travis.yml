@@ -50,7 +50,7 @@ deploy:
    edge: true
    region: us-east-1
    local_dir: release
-   upload-dir: ${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_TAG}
+   upload-dir: ${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}/${TRAVIS_BUILD_NUMBER}
    glob: 
    acl: public_read
    skip_cleanup: true
