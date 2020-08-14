@@ -4,13 +4,8 @@ node_js:
 os:
 - linux
 sudo: true
-branches:
-  except:
-  - master
 env:
   global:
-  - secure: L8Ha41yyRYLrEKt+6KlrX9mJo64dL7mU6uSqZ3qqpQdmAIbalEWWB1efVnEjKQ6f4XBuo2aZrFhRF+cRypAy/sNvWp1KgR78Zuoml79MV45eiyiOoja5nxNT2/wAyrXcVA9xV110xzMgEKMN7X8vzoQN8eWzKL0LUBw7su/HyT2RKANEpzXdOrJCYSqFnul5WmJ5nIEetco0nLiL2S5Gwi2jPzmJ0YPnt9ffEuf0HjijJybMQgoSOMFN1gBcP0Sc5o2oPp3AHypInOJ1gsFPmEf+Tec6VwrxjhyUGjohjmjOzT8qmyGxmr3ltpjdda6+LPHYReF1jeKiVWQkyxwQ0vyuxmuNgkJqIJ7wGT9BpoSlFJyoi0X3Rq7GISyatWaGe6oKaAUAs7hIGj+2ppnh5mSnxYut5n5KFAe3NtT9B/eTo2+u2pbi/uxoexAMUd2SNH2l83vPo6wQ8BdxptsMOOrHWqjaCINcFBma/WHdPXH1V7AJba3zYEcv/gYXNpILMAOxEDq7yZ+c/uNWZsJ/fA1sDok6jYHIbVpliO0eQEpQRZmOo9cQp7/5125ruBJ0nkelFqiHEJn0f/mdRN19QerQm7op4DS7oSZyj9F8GJtvQEcg1FMyyhAM4KmduLJTcdofjpdut+pv6EllUJbHPisrLJxs7w+scNRqh11egRU=
-  - secure: OZqdD/77otf96+lhwPGQwmGGvpOK03aTI732Vxt1VlgG80sh/uTyAjnWdO2LzbbuaVCN/vgCrdBDi2XRgKGhXuDvffMd5coyncLYroZOfkrIV6262R47pfO5rHhygQH52S+t0+Kv5hneH4sYxxdnkSCo7MPREamlQkC3NINIMi60DoB4Ef6Ms7KxoJ4Mk6lsggeBg1tgxFvBvg3AzNOimWUHxxg0UTVMq1BBPsa44X9qw4aKLZTrAqBZMWl4fHFTW94QvetZlI/sQYklxUFLV1FqG5aOFurEeUpqz3A/D5BWv/0M+OnjQy5MKTkNmgg4Kvoeml7wNVqZiaJBnO2LwidYRdA3v+3WLOT92CESa1nHm0JYEdfIXI+bu65verlDMLx27b+/yBUYduIMU25cJ51ATToQY/Hcnq0SGacaNrMJGe1Bofaiov5CA2hoL63xxQuxRdwKECEk3Go4wHw8/qVCh/xDq8hLAiLk3K867ngSwLCUv7bwyE3Pkr5deiP3WANQKts29tJOQMdyGuCvvSF5tHpPQolVg5H/Lij2pUllkQXfL2oC30LSwSUGOlYXmMD6mWFvUqEhl5UJFkGtvS+XGnVFD/pUQeyoZEU832OD3v6pU+Htvc1F9blrjH97i5k1LmFzjlTlDfVFDT9yGg9yZBqC8jff4TNl/wvu1R0=
   - ARTIFACTS_PERMISSIONS=public-read
 before_install:
 - "./scripts/skip_travis_commits.sh"
@@ -23,11 +18,14 @@ before_install:
 - "./scripts/innosetup/innoinstall.sh"
 - sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
 - iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
-- if [ "${TRAVIS_SECURE_ENV_VARS}" != "false" ]; then openssl aes-256-cbc -K $encrypted_ee6029b3102f_key -iv $encrypted_ee6029b3102f_iv -in private.json.enc -out src/config/private.json -d; fi
+- if [ "${TRAVIS_SECURE_ENV_VARS}" != "false" ]; then openssl aes-256-cbc -K $encrypted_7e3718570525_key
+  -iv $encrypted_7e3718570525_iv -in private.json.enc -out src/config/private.json
+  -d; fi
 before_script:
 - git config --global url."https://".insteadOf git://
 - npm install
-- patch --forward --reject-file=- node_modules/gogs-client/lib/request.js < gogs-client-lib-request.diff || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
+- patch --forward --reject-file=- node_modules/gogs-client/lib/request.js < gogs-client-lib-request.diff
+  || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
 - npm install gulp -g
 - npm install bower -g
 script: npm test
@@ -49,29 +47,26 @@ after_success:
 - travis_wait gulp release
 deploy:
 -  provider: s3
-   access_key_id:
-     secure: "fBte/KYTgGoJZw9cKgwXy0R1K8adtuDsZh1mJPvvpnb5pq9mpKAopWE4xN00ijzv84Yr9/XvYlIAGpZec0XwbP7Af3pkV45s+4rWNph/5cPCg/hwGCbScv2nXGAkFR3z+yTNCqUMwmuuK7tlfrqsz38l90eAd5JIs7Vh13zOZb+0/dmqa8+UwZqHC8bf4K/sCDq85gkcNDx51w+Vjo6ZrviwVOZXxFQ6/CHxjyOAS4F+FaUmfV22mh+SKxz1TJRMcspQW8ssksvaoYJ+FOj6iWu/5QNhD4PHOWTpGI3BrMrATNlD/7g71yQDpJ9bNA6wuv6bA1nLEP96OLBZVsZCMpdqo3+PBQTBE3z08vPhHfdVnpj9Ccrfus+hpV9DyVYvi0LuHkwzg/QVYvGgADsYGnY6jgHHhx/JtiYo+9Ie+G4kLyPYa1j/9VK0UhjP2EKN9iKH3eEVRYhh/TJpgAo3OiUXktmgxKA+V6cmY5l1XDf+lhU0+6u0zM5KyXV/desotnGCWyH0nMcGVAMPdTAD/SXo2fVoat4tL6WWB8dU9oCKWGEiuKuPlDTkwama6rfHrfyN8d7IbhpgfsRjHQT/ozFFfb4iIx5+P84XXdYgTWgohWYaxCIOgT+FhL233Ultw0vRa2TbUucd0/R+CE2S86fKKaeP3tI62lVJlLUaQvE="
-   secret_access_key:
-     secure: "l7UK/MlHYmlFoS8gi2wt2qr6AvXQpKr0kkDK9JZ5p41oPRPPjx04/CbaA2AGYGUXJPmekBUCOhZSupSt44FXr3GWz6ejQJpfdxDb+90GDayx3+rp0Eg3v/miEBJ/ouQCAz5oio1u0CDK9puAhwbYAFqOocBCxVIGu65RewHke6R+YcEnBxUMzwdr3QwFnPHtDfkMjZ1nvG3OwZ7HYcjEGUORAMgSsVFjUas8411LYAPtXn3CTKFcJFOZr5uWYLFJDtmvl5Sdf8V+F4F/tiw5fCWuQbrRMmGAlErlswUXMDb6raYis09/dO/QLSo0XF1p/QShyiZzZVmBAI7oYN+Ctgzv3g27tWy/6WuLVjTbG1jdkux7xXKj/NDYPLsRZA4I0Dtxdk4RN3G3rpYy0QplPgSb67VtEF2v7ESfdsdHxSe58/Wo3PGmPwrg9tTCYsD2B5MmVOQHH5U9JjGC/siZyhWNmTcmlBJnZC5JEpjK8++6iHn8lScv8HwM109cc9CudPnDUvHkJk/7BVi28qEZO6McHBlYfkxw6PMBhwpF2E4Lwjb6fAC0ThoBprDT8HZFObK04XxrOGOxfp7n/wqoHUtIxVEPGXiOu9z8s5vtXW/BjFWX3jfhQAhABLv4I6xnWdQ0ErMFro1R5wxnRLzXwiL6/DPFeIv2FBsDLa9wbMk="
-   bucket: sandbox-ts-desktop
-   region: us-west-1
+   edge: true
+   region: us-east-1
    local_dir: release
-   upload-dir: BTT-Writer/${TRAVIS_BUILD_NUMBER}/${TRAVIS_BRANCH}
+   upload-dir: ${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}/${TRAVIS_BUILD_NUMBER}
+   glob: 
    acl: public_read
    skip_cleanup: true
    on:
-     repo: WycliffeAssociates/ts-desktop
+     repo: Bible-Translation-Tools/BTT-Writer-Desktop
      all_branches: true
-- provider: releases
-  api_key:
-    secure: jd0GassUuHhUl7YSIwjtkBJXJmTnk3mxQXwEiPirxjaL3ci0hg8clj+f1hBouIdoNzJIAZlAC8DFhrg0usFuMkFi+BGNBgCQHRwfkGOgxUeK4wytRqD3Ncz8srjbLlmG7fGEgLYU3TKnj+DgcGzuNZWqnQgXVu3owemAJpbZG2u3a9JjY/Z15oqAoOCNO6qMc0m6KUrd+G6sDsJLHmb22mPUr8QqFrfcG5nUefdZf4zU4ZUOXaC9/3nc1vy536vIqCcsKZHcrNvomSxQLqF2CLmsS9nMDD+ZGVEAZ15HCGc/aVpdTJKjK4aWw49Dopt1baVYPAuWG0Xyt3KUS/5B+ORf9xOWCHuLOngRbZq8qWsGy6oI+Yy6CZVwOU2Q56lXjbSDWLS4hp+O4fscn5mHnVaUEcmLKn4MlDHxdGLJPUZWLrJ+oblbIDsqGklH77X1YIXvFsCvg31AvWPQWrEtB5S2HafmQeu82VxD+/RQtPDWlEuz08QEJ1WgcHb2kUXxbBfWPNykDnhzsSrPB+iCOHYaugSO0bthiAm/LKIjt2cBb1Yoe+e/92ZqKls+RyZXzi2EDr6gG4e43FxBs4s7DZTvTVwvsDu+8csMFhtJansb0SkXeH9A4rZf1EamdMTrnordVKnYUTLIQKr9VyJ85Hy4Y9v8U+CRpLWvxBj/6ys=
-  file:
-  - release/*.exe
-  - release/*.zip
-  file_glob: true
-  skip_cleanup: true
-  overwrite: true
-  on:
-    tags: true
-    repo: WycliffeAssociates/ts-desktop
-    condition: "-d ./release"
+-  provider: releases
+   api_key:
+     secure: pcOzsPYBiowoLLb5ZeGOM4RmJq9rYP+ItH0E31UZtJkRyiXRAEoOV6wOdo3JK348SK4q6pDwKuhxB7I0i6Qc5A9tu9qN+SSH/NVjhXVW4yCkBy4Uls6jjEdJYb8Pd4y0ZG7+qvhq5kwOmvU9eavoitSxSGLbXye5EW36xs/PMbtSESquT3G/joqfkyQfC5fX8YoGCZKp97x8wFdrjz6Z2NO6yh4x99TlhFLXm2GpAQJ3SWactYeJWEDx+5m2t4DFqtENyGX3VSCmS9+OPg5u8aj0Wu26TcACtIhJiaD4hBOjSmNDL7ARnlneaAoIpNhVyPqg5R2wPB6qPI1yw22ezIMgqJc3zPPkBmwldzNWCSzq8TRXn0A+lQmiPcKR8xwgGWlza1KB0UAdKcZtWygy/t6Alz0pDi3PSYLi98AyrUpgrXuUkGeRlldkKwT8zPTL/JJN4mLa74/L+vvMN+6Q3kAwyWD21kRU//+2YqiaAl2XhZUyoR2uLMVDisvD6n1+XYEhNEnOWKoFps6HiJq4iFYoVC0sGkqlnaRrPtiisExEG7lhuG8HtJ6KETB7rIsGm/jnE7wbEJg0/aDX2JbEYispLcFzrKeDrJ201zT1mlIzT6eXYj2cCy3X0jOzeNEVz0fA2YxhXL3UsA3ucR7bOMa7HbIYjgTFuS23I1+orzg=
+   file:
+   - "*.exe"
+   - "*.zip"
+   file_glob: true
+   skip_cleanup: true
+   overwrite: true
+   on:
+     tags: true
+     repo: Bible-Translation-Tools/BTT-Writer-Desktop
+     condition: "-d ./release"
