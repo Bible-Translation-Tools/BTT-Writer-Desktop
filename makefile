@@ -24,7 +24,7 @@ run:
 	test $(DISPLAY) # If blank, then $$DISPLAY is not set
 	test ! $(CONTAINER_ID) # If not blank, then container is already running
 	docker run --detach --rm --net=host \
-	           --volume="${HOME}/.Xauthority:/root/.Xauthority:rw" \
+	           --volume="${XAUTHORITY}:/root/.Xauthority:rw" \
 	           --volume $(VOLUME_LABEL):/root \
 	           --env DISPLAY="${DISPLAY}" $(IMAGE_LABEL)
 
