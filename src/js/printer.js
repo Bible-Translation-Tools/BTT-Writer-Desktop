@@ -8,7 +8,6 @@ var _ = require('lodash'),
     https = require('https'),
     mkdirp = require('mkdirp'),
     os = require('os'),
-    princePackager = require('../js/prince-packager'),
     Prince = require('prince');
 
 function PrintManager(configurator) {
@@ -70,14 +69,10 @@ function PrintManager(configurator) {
             var licensegroup = '\<div id="license" class="break"\>' + license + '\<\/div\>';
             var bodygroup = '\<div id="textholder" style="direction: ' + direction + '; font-family: ' + font + '; font-size: ' + size + ';"\>' + body + '\<\/div\>';
 
-            var princeInfo = princePackager.info(os.platform());
-
             mkdirp.sync(tempPath);
             fs.writeFileSync(input, mainheader + titlegroup + licensegroup + bodygroup + mainfooter);
 
             return Prince()
-                .binary(path.join(srcDir, 'prince', princeInfo.binary))
-                .prefix(path.join(srcDir, 'prince', princeInfo.prefix))
                 .inputs(input)
                 .output(filePath)
                 .execute()
