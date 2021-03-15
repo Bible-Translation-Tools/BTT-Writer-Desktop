@@ -14,6 +14,7 @@ const gulp = require('gulp'),
     mkdirp = require('mkdirp'),
     fs = require('fs'),
     util = require('./src/js/lib/utils');
+    princePackager = require('./src/js/prince-packager');
 
 const APP_NAME = 'BTT-Writer',
     JS_FILES = './src/js/**/*.js',
@@ -43,6 +44,19 @@ gulp.task('bump', function () {
     return gulp.src(['package.json'])
         .pipe(replace(/("build"\s*:\s*)"\d+"(.*)/, replaceString))
         .pipe(gulp.dest('./'));
+});
+
+/**
+ * This will download and install prince binaries for all os'
+ */
+gulp.task('prince', function(done) {
+    var tempDir = 'src/prince';
+
+    util.chain(princePackager.install.bind(null, tempDir))(['win', 'linux', 'osx'])
+        .then(function() {
+            done();
+        })
+        .catch(done);
 });
 
 // pass parameters like: gulp build --win --osx --linux
