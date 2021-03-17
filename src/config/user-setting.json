@@ -165,6 +165,15 @@
         "visible": true
     },
     {
+        "name": "readerserver",
+        "mainText": "Reader Server",
+        "value": "http://read.bibletranslationtools.org/u",
+        "default": "http://read.bibletranslationtools.org/u",
+        "group": "advanced",
+        "enabled": true,
+        "visible": true
+    },
+    {
         "name": "logginglevel",
         "mainText": "Logging Level",
         "value": "Warnings",
