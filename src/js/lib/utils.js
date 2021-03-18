@@ -389,15 +389,30 @@ var utils = {
     },
 
     getSystemFonts: function () {
-        var fontDir = path.resolve({
-            win32:  '/Windows/fonts',
-            darwin: '/Library/Fonts',
-            linux:  '/usr/share/fonts/truetype'
-        }[process.platform]);
+        var fontDirs = {
+            win32: function () {
+                let list = ['/Windows/Fonts'];
+                let userPath = process.env.LOCALAPPDATA;
+                if (userPath != undefined) list.push(userPath + "/Microsoft/Windows/Fonts");
+                return list;
+            },
+            darwin: () => ['/Library/Fonts'],
+            linux: () => ['/usr/share/fonts/truetype', '/usr/local/share/fonts/truetype', '~/.fonts']
+        }[process.platform]();
 
-        var fontpaths = fs.readdirSync(fontDir).map(function (name) {
-            return path.join(fontDir, name);
-        });
+        let absoluteDirs = fontDirs.map(dir => path.resolve(dir));
+        let fontpaths = [];
+
+        absoluteDirs.forEach(dir => {
+            try {
+                fs.readdirSync(dir).map(function (fontName) {
+                    let fontLocation = path.join(dir, fontName);
+                    fontpaths.push(fontLocation);
+                });
+            } catch (error) {
+                // some directory may not exist, skip to next location
+            }
+        })      
 
         var list = fontpaths.map(function (fontpath) {
             var font = false;
