@@ -398,7 +398,7 @@ var utils = {
                 }
             },
             darwin: () => ['/Library/Fonts'],
-            linux: () => ['/usr/share/fonts/truetype', '/usr/local/share/fonts/truetype', '~/.fonts']
+            linux: () => ['/usr/share/fonts/truetype', '/usr/local/share/fonts/truetype', '~/.fonts', '~/.local/share/fonts']
         }[process.platform]();
 
         let fontDirs = defaultFontDirs.map(dir => path.resolve(dir));
@@ -411,7 +411,7 @@ var utils = {
                     fontpaths.push(fontLocation);
                 });
             }
-        });      
+        });
 
         var list = fontpaths.map(function (fontpath) {
             var font = false;
