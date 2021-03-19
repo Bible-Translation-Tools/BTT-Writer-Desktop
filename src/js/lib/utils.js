@@ -391,10 +391,11 @@ var utils = {
     getSystemFonts: function () {
         var defaultFontDirs = {
             win32: function () {
-                let list = ['/Windows/Fonts'];
-                let userPath = process.env.LOCALAPPDATA;
-                if (userPath != undefined) list.push(userPath + "/Microsoft/Windows/Fonts");
-                return list;
+                if (process.env.LOCALAPPDATA != undefined) {
+                    return ['/Windows/Fonts', process.env.LOCALAPPDATA + '/Microsoft/Windows/Fonts'];
+                } else {
+                    return ['/Windows/Fonts'];
+                }
             },
             darwin: () => ['/Library/Fonts'],
             linux: () => ['/usr/share/fonts/truetype', '/usr/local/share/fonts/truetype', '~/.fonts']
@@ -405,7 +406,7 @@ var utils = {
 
         fontDirs.forEach(dir => {
             if (fs.existsSync(dir)) {
-                fs.readdirSync(dir).map(function (fontName) {
+                fs.readdirSync(dir).forEach(function (fontName) {
                     let fontLocation = path.join(dir, fontName);
                     fontpaths.push(fontLocation);
                 });
