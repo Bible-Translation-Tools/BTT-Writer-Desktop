@@ -11,6 +11,7 @@ var diacritics = require('./diacritics'),
     http = require('http'),
     chmodr = require('chmodr'),
     fontkit = require('fontkit'),
+    os = require('os'),
     _ = require('lodash');
 
 var utils = {
@@ -398,7 +399,11 @@ var utils = {
                 }
             },
             darwin: () => ['/Library/Fonts'],
-            linux: () => ['/usr/share/fonts/truetype', '/usr/local/share/fonts/truetype', '~/.fonts', '~/.local/share/fonts']
+            linux: () => [
+                '/usr/share/fonts/truetype',
+                '/usr/local/share/fonts/truetype',
+                os.homedir() + '/.fonts',
+                os.homedir() + '/.local/share/fonts']
         }[process.platform]();
 
         let fontDirs = defaultFontDirs.map(dir => path.resolve(dir));
