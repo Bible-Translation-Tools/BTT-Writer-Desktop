@@ -11,6 +11,7 @@ var diacritics = require('./diacritics'),
     http = require('http'),
     chmodr = require('chmodr'),
     fontkit = require('fontkit'),
+    os = require('os'),
     _ = require('lodash');
 
 var utils = {
@@ -389,14 +390,32 @@ var utils = {
     },
 
     getSystemFonts: function () {
-        var fontDir = path.resolve({
-            win32:  '/Windows/fonts',
-            darwin: '/Library/Fonts',
-            linux:  '/usr/share/fonts/truetype'
-        }[process.platform]);
+        var defaultFontDirs = {
+            win32: function () {
+                if (process.env.LOCALAPPDATA != undefined) {
+                    return ['/Windows/Fonts', process.env.LOCALAPPDATA + '/Microsoft/Windows/Fonts'];
+                } else {
+                    return ['/Windows/Fonts'];
+                }
+            },
+            darwin: () => ['/Library/Fonts'],
+            linux: () => [
+                '/usr/share/fonts/truetype',
+                '/usr/local/share/fonts/truetype',
+                os.homedir() + '/.fonts',
+                os.homedir() + '/.local/share/fonts']
+        }[process.platform]();
 
-        var fontpaths = fs.readdirSync(fontDir).map(function (name) {
-            return path.join(fontDir, name);
+        let fontDirs = defaultFontDirs.map(dir => path.resolve(dir));
+        let fontpaths = [];
+
+        fontDirs.forEach(dir => {
+            if (fs.existsSync(dir)) {
+                fs.readdirSync(dir).forEach(function (fontName) {
+                    let fontLocation = path.join(dir, fontName);
+                    fontpaths.push(fontLocation);
+                });
+            }
         });
 
         var list = fontpaths.map(function (fontpath) {
