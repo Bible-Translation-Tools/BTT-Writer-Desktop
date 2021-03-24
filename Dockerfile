@@ -21,6 +21,7 @@ RUN npm install -g bower \
 COPY . .
 
 RUN bower install --allow-root
+RUN gulp prince
 
 VOLUME /root
 
