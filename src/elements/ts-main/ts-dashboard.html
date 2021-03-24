@@ -956,7 +956,7 @@
                   return App.gitManager.push(user, paths.projectDir, repo).then(App.utils.ret(repo.full_name));
               })
               .then(function (fullname) {
-                  var server = App.configurator.getUserSetting("dataserver");
+                  var server = App.configurator.getUserSetting("readerserver");
                   var url = server + "/" + fullname;
 
                   mythis.set('options.title', "Upload Complete");

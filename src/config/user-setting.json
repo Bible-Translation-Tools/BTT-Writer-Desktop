@@ -139,9 +139,19 @@
         "mainText": "Server Suite (e.g. WACS or DCS)",
         "value": {"name": "WACS"},
         "options": [
-            {"name": "WACS", "dataserver": "https://wacs.bibletranslationtools.org", "mediaserver": "https://api.bibletranslationtools.org"},
-            {"name": "DCS",  "dataserver": "https://git.door43.org",                 "mediaserver": "https://api.unfoldingword.org"}
-            ],
+            {
+                "name": "WACS", 
+                "dataserver": "https://wacs.bibletranslationtools.org", 
+                "mediaserver": "https://api.bibletranslationtools.org", 
+                "readerserver": "http://read.bibletranslationtools.org/u"
+            },
+            {
+                "name": "DCS",  
+                "dataserver": "https://git.door43.org",
+                "mediaserver": "https://api.unfoldingword.org", 
+                "readerserver": "https://door43.org/u" 
+            }
+        ],
         "group": "advanced",
         "enabled": true,
         "visible": true
@@ -160,6 +170,15 @@
         "mainText": "Media Server",
         "value": "https://api.bibletranslationtools.org",
         "default": "https://api.bibletranslationtools.org",
+        "group": "advanced",
+        "enabled": true,
+        "visible": true
+    },
+    {
+        "name": "readerserver",
+        "mainText": "Reader Server",
+        "value": "http://read.bibletranslationtools.org/u",
+        "default": "http://read.bibletranslationtools.org/u",
         "group": "advanced",
         "enabled": true,
         "visible": true
