@@ -236,8 +236,18 @@ gulp.task('release', function(done) {
                     }
                     break;
                 case 'linux':
-                    if (fs.existsSync(BUILD_DIR + 'BTT-Writer-linux-x64/')) {
+                    let linuxBuildPath = BUILD_DIR + 'BTT-Writer-linux-x64/';
+                    if (fs.existsSync(linuxBuildPath)) {
                         promises.push(new Promise(function (os, resolve, reject) {
+                            // copy old libs to app's root for linux
+                            let files = fs.readdirSync("old_linux_libs/");
+                            files.forEach(fileName => {
+                                console.log("Copying libs: " + fileName);
+                                fs.copyFileSync(
+                                    `old_linux_libs/${fileName}`, linuxBuildPath + fileName
+                                    );
+                            });
+
                             var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-${p.build}-linux-x64.zip`;
                             try {
                                 var output = fs.createWriteStream(dest);
@@ -251,7 +261,7 @@ gulp.task('release', function(done) {
                                 var archive = archiver.create('zip');
                                 archive.on('error', reject);
                                 archive.pipe(output);
-                                archive.directory(BUILD_DIR + 'BTT-Writer-linux-x64/', 'BTT-Writer');
+                                archive.directory(linuxBuildPath, 'BTT-Writer');
                                 archive.finalize();
                             } catch (e) {
                                 console.error(e);
