@@ -63,7 +63,7 @@ function UserManager(auth, server) {
         },
 
         createRepo: function (user, reponame) {
-            return api.listRepos(user).then(function (repos) {
+            return api.searchRepos("_", user.id, 100).then(_.flatten).then(function (repos) {
                 return _.find(repos, {full_name: user.username + '/' + reponame});
             }).then(function (repo) {
                 return repo ? repo : api.createRepo({
