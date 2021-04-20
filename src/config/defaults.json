@@ -25,7 +25,7 @@
     },
     {
         "name": "repo",
-        "value": "ts-desktop",
+        "value": "btt-writer-desktop",
         "meta": {
             "mutable": false,
             "type": "string"
