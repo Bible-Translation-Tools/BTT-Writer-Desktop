@@ -33,7 +33,11 @@ function createMainSplash() {
         frame: false,
         center: true,
         show: false,
-        title: 'BTT Writer'
+        title: 'BTT Writer',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        }
     });
 
     //splashScreen.webContents.openDevTools();
@@ -54,7 +58,11 @@ function createAcademySplash() {
         frame: false,
         center: true,
         show: false,
-        title: 'BTT Writer'
+        title: 'BTT Writer',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        }
     });
 
     //splashScreen.webContents.openDevTools();
@@ -75,7 +83,11 @@ function createReloadSplash() {
         frame: false,
         center: true,
         show: false,
-        title: 'BTT Writer'
+        title: 'BTT Writer',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        }
     });
 
     //splashScreen.webContents.openDevTools();
@@ -100,7 +112,11 @@ function createMainWindow () {
         backgroundColor: '#00796B',
         autoHideMenuBar: true,
         frame: false,
-        show: false
+        show: false,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        }
     });
 
     mainWindow.dataPath = app.getPath('userData');
@@ -135,7 +151,11 @@ function createAcademyWindow () {
         backgroundColor: '#00796B',
         autoHideMenuBar: true,
         show: false,
-        frame: false
+        frame: false,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        }
     });
 
     //academyWindow.webContents.openDevTools();
