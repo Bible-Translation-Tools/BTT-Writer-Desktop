@@ -1013,7 +1013,7 @@
                 var dict = projectmeta.project.id;
                 var current = projectmeta.currentsource;
                 var currentsource = projectmeta.source_translations[current];
-                frames = App.dataManager.getAllWords(currentsource, dict);
+                frames = App.dataManager.getAllWords(currentsource.language_id, dict);
             }
 
             for (var i = 0; i < frames.length; i++) {

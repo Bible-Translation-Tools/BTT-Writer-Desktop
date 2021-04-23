@@ -165,7 +165,7 @@
             }
 
             if (data.type === "allwords") {
-                this.set('allwords', App.dataManager.getAllWords(curentsource, dict));
+                this.set('allwords', App.dataManager.getAllWords(currentsource.language_id, dict));
                 content = "";
             } else {
                 this.set('allwords', clear);
