@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:14.16.0
 
 RUN apt update \
  && apt upgrade -y \
@@ -13,7 +13,6 @@ RUN apt update \
 WORKDIR /app
 
 COPY package*.json ./
-COPY npm-shrinkwrap.json ./
 
 RUN npm install -g bower \
  && npm install -g gulp \
