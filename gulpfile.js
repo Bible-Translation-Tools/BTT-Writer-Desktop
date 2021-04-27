@@ -61,7 +61,7 @@ gulp.task('prince', function(done) {
         .then(function() {
             done();
         })
-        .catch(done);
+        .catch(() => done());
 });
 
 // pass parameters like: gulp build --win --osx --linux
@@ -107,10 +107,12 @@ gulp.task('build', gulp.series('clean', (done) => {
         'out': BUILD_DIR,
         'app-version': p.version,
         'icon': './icons/icon'
-    }, done);
+    }, function() {
+        done();
+    });
 }));
 
-gulp.task('release', function(done) {
+function release(done){
     const p = require('./package');
     const archiver = require('archiver');
     const exec = require('child_process').exec;
@@ -175,8 +177,8 @@ gulp.task('release', function(done) {
         });
     };
 
-    mkdirp('release', function() {
-        for(var os of platforms) {
+    function _release() {
+        for (var os of platforms) {
             switch (os) {
                 case 'win32':
                     if (fs.existsSync(BUILD_DIR + 'BTT-Writer-win32-ia32/')) {
@@ -277,7 +279,15 @@ gulp.task('release', function(done) {
                     console.warn('No release procedure has been defined for ' + os);
             }
         }
-    });
-});
+
+        Promise.all(promises)
+            .then(() => done())
+            .catch(err => console.log('an error occurred', err));
+    }
+
+    mkdirp('release', _release);
+}
+
+gulp.task('release', release);
 
 exports.default = test;
