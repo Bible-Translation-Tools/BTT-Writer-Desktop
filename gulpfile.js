@@ -241,14 +241,6 @@ gulp.task('release', function(done) {
                     let linuxBuildPath = BUILD_DIR + 'BTT-Writer-linux-x64/';
                     if (fs.existsSync(linuxBuildPath)) {
                         promises.push(new Promise(function (os, resolve, reject) {
-                            // copy old libs to app's root for linux
-                            let files = fs.readdirSync("old_linux_libs/");
-                            files.forEach(fileName => {
-                                fs.createReadStream(`old_linux_libs/${fileName}`).pipe(
-                                    fs.createWriteStream(linuxBuildPath + fileName)
-                                );
-                            });
-
                             var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-${p.build}-linux-x64.zip`;
                             try {
                                 var output = fs.createWriteStream(dest);
