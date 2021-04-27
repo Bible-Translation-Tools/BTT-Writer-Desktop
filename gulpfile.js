@@ -22,16 +22,21 @@ const APP_NAME = 'BTT-Writer',
     BUILD_DIR = 'out/',
     RELEASE_DIR = 'release/';
 
-gulp.task('test', function () {
-    return gulp.src(UNIT_TEST_FILES, { read: false })
-        .pipe(mocha({reporter: 'spec', grep: (argv.grep || argv.g)}));
-});
 
-gulp.task('clean', function () {
+function clean(done) {
     rimraf.sync('src/logs');
     rimraf.sync('logs');
     rimraf.sync('ssh');
-});
+    done();
+}
+
+function test() {
+    return gulp.src(UNIT_TEST_FILES, { read: false })
+        .pipe(mocha({ reporter: 'spec', grep: (argv.grep || argv.g) }));
+}
+
+gulp.task('clean', clean);
+gulp.task('test', test);
 
 gulp.task('bump', function () {
     var build = require('./package').build;
@@ -60,7 +65,7 @@ gulp.task('prince', function(done) {
 });
 
 // pass parameters like: gulp build --win --osx --linux
-gulp.task('build', ['clean'], function (done) {
+gulp.task('build', gulp.series('clean', (done) => {
 
     var platforms = [];
 
@@ -102,11 +107,8 @@ gulp.task('build', ['clean'], function (done) {
         'out': BUILD_DIR,
         'app-version': p.version,
         'icon': './icons/icon'
-    }, function () {
-        console.log('Done building...');
-        done();
-    });
-});
+    }, done);
+}));
 
 gulp.task('release', function(done) {
     const p = require('./package');
@@ -286,4 +288,4 @@ gulp.task('release', function(done) {
     });
 });
 
-gulp.task('default', ['test']);
+exports.default = test;
