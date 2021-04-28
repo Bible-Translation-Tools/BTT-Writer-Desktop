@@ -65,7 +65,6 @@ gulp.task('prince', function(done) {
         .catch(() => done());
 });
 
-// pass parameters like: gulp build --win --osx --linux
 function build(done) {
 
     var platforms = [];
@@ -108,11 +107,10 @@ function build(done) {
         'out': BUILD_DIR,
         'app-version': p.version,
         'icon': './icons/icon'
-    }, function() {
-        done();
-    });
+    }).then(() => done());
 }
 
+// pass parameters like: gulp build --win --osx --linux
 gulp.task('build', gulp.series(clean, build));
 
 function release(done){
@@ -283,9 +281,7 @@ function release(done){
             }
         }
 
-        Promise.all(promises)
-            .then(() => done())
-            .catch(err => console.log('an error occurred', err));
+        Promise.all(promises).then(() => done());
     }
 
     mkdirp('release', _release);
