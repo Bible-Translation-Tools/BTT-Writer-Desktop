@@ -30,12 +30,13 @@ function clean(done) {
     done();
 }
 
+gulp.task('clean', clean);
+
 function test() {
     return gulp.src(UNIT_TEST_FILES, { read: false })
         .pipe(mocha({ reporter: 'spec', grep: (argv.grep || argv.g) }));
 }
 
-gulp.task('clean', clean);
 gulp.task('test', test);
 
 gulp.task('bump', function () {
@@ -65,7 +66,7 @@ gulp.task('prince', function(done) {
 });
 
 // pass parameters like: gulp build --win --osx --linux
-gulp.task('build', gulp.series('clean', (done) => {
+function build(done) {
 
     var platforms = [];
 
@@ -110,7 +111,9 @@ gulp.task('build', gulp.series('clean', (done) => {
     }, function() {
         done();
     });
-}));
+}
+
+gulp.task('build', gulp.series(clean, build));
 
 function release(done){
     const p = require('./package');
@@ -134,11 +137,11 @@ function release(done){
      * @param arch 64|32
      * @returns {Promise}
      */
-    const downloadGit = function(version, arch) {
+    const downloadGit = function (version, arch) {
         return new Promise(function (resolve, reject) {
-            var cmd = `./scripts/git/download_git.sh ./vendor ${version} ${arch}`;
-            exec(cmd, function(err, stdout, stderr) {
-                if(err) {
+            var cmd = `"./scripts/git/download_git.sh" "./vendor" ${version} ${arch}`;
+            exec(cmd, function (err, stdout, stderr) {
+                if (err) {
                     reject(err);
                 } else {
                     resolve();
@@ -153,13 +156,13 @@ function release(done){
      * @param os
      * @returns {Promise}
      */
-    const releaseWin = function(arch, os) {
+    const releaseWin = function (arch, os) {
         // TRICKY: the iss script cannot take the .exe extension on the file name
         var file = `BTT-Writer-${p.version}-${p.build}-win-x${arch}`;
-        var cmd = `iscc scripts/win_installer.iss /DArch=${arch == '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${p.version} /DBuild=${p.build} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
-        return new Promise(function(resolve, reject) {
-            exec(cmd, function(err, stdout, stderr) {
-                if(err) {
+        var cmd = `iscc "./scripts/win_installer.iss" /DArch=${arch == '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${p.version} /DBuild=${p.build} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
+        return new Promise(function (resolve, reject) {
+            exec(cmd, function (err, stdout, stderr) {
+                if (err) {
                     console.error(err);
                     resolve({
                         os: os,
@@ -290,4 +293,4 @@ function release(done){
 
 gulp.task('release', release);
 
-exports.default = test;
+gulp.task('default', test);
