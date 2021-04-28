@@ -52,7 +52,7 @@
   "devDependencies": {
     "bower": "1.7.9",
     "electron": "^12.0.0",
-    "electron-packager": "7.5.1",
+    "electron-packager": "15.0.0",
     "gulp": "4.0.0",
     "gulp-mocha": "3.0.0",
     "gulp-replace": "0.5.4",
