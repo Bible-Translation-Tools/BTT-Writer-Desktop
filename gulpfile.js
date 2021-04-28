@@ -139,9 +139,9 @@ function release(done){
      */
     const downloadGit = function (version, arch) {
         return new Promise(function (resolve, reject) {
-            var cmd = `"./scripts/git/download_git.sh" "./vendor" ${version} ${arch}`;
-            exec(cmd, function (err, stdout, stderr) {
-                if (err) {
+            var cmd = `./scripts/git/download_git.sh ./vendor ${version} ${arch}`;
+            exec(cmd, function(err, stdout, stderr) {
+                if(err) {
                     reject(err);
                 } else {
                     resolve();
@@ -159,10 +159,10 @@ function release(done){
     const releaseWin = function (arch, os) {
         // TRICKY: the iss script cannot take the .exe extension on the file name
         var file = `BTT-Writer-${p.version}-${p.build}-win-x${arch}`;
-        var cmd = `iscc "./scripts/win_installer.iss" /DArch=${arch == '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${p.version} /DBuild=${p.build} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
-        return new Promise(function (resolve, reject) {
-            exec(cmd, function (err, stdout, stderr) {
-                if (err) {
+        var cmd = `iscc scripts/win_installer.iss /DArch=${arch == '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${p.version} /DBuild=${p.build} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
+        return new Promise(function(resolve, reject) {
+            exec(cmd, function(err, stdout, stderr) {
+                if(err) {
                     console.error(err);
                     resolve({
                         os: os,
