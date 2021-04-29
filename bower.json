@@ -4,8 +4,6 @@
   "dependencies": {
     "async": "~1.4.2",
     "iron-elements": "PolymerElements/iron-elements#~1.0.10",
-    "iron-icon": "PolymerElements/iron-icon#^2.0.0",
-    "iron-iconset": "PolymerElements/iron-iconset#^2.0.0",
     "neon-animation": "PolymerElements/neon-animation#~1.2.3",
     "paper-elements": "PolymerElements/paper-elements#~1.0.7",
     "polymer": "Polymer/polymer#~1.6.0",
@@ -13,8 +11,6 @@
     "webcomponentsjs": "^0.7.20"
   },
   "resolutions": {
-    "polymer": "~1.6.0",
-    "iron-icon": "^2.0.0",
-    "webcomponentsjs": "^0.7.20"
+    "polymer": "~1.6.0"
   }
 }
