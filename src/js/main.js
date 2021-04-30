@@ -276,13 +276,17 @@ ipcMain.on('fire-reload', function () {
 });
 
 ipcMain.on('save-as', function (event, arg) {
-    var input = dialog.showSaveDialog(mainWindow, arg.options);
-    event.returnValue = input || false;
+    dialog.showSaveDialog(mainWindow, arg.options)
+        .then(function (saveTo) {
+            event.returnValue = saveTo.filePath || saveTo.bookmark || false;
+        });
 });
 
 ipcMain.on('open-file', function (event, arg) {
-    var input = dialog.showOpenDialog(mainWindow, arg.options);
-    event.returnValue = input || false;
+    dialog.showOpenDialog(mainWindow, arg.options)
+        .then(function (value) {
+            event.returnValue = value.paths || value.bookmarks || false;
+        });
 });
 
 ipcMain.on('loading-status', function (event, status) {
