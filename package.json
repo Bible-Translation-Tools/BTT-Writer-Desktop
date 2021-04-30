@@ -64,7 +64,7 @@
     "electron": "12.0.0"
   },
   "scripts": {
-    "start": "electron src/js/main.js",
+    "start": "electron src/js/main.js --no-sandbox",
     "test": "jest"
   },
   "main": "src/js/main.js",
