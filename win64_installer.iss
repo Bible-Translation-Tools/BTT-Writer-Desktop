@@ -2,8 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "BTT-Writer"
-#define Version "1.0.5"
-#define Build "5"
+#define Version "1.1.0"
+#define Build "6"
 #define MyAppPublisher "Wycliffe Associates"
 #define MyAppURL "https://writer.bibletranslationtools.org"
 #define MyAppExeName "BTT-Writer.exe"

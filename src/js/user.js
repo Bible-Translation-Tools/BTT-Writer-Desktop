@@ -6,7 +6,7 @@ var _ = require('lodash'),
 function UserManager(auth, server) {
 
     var api = new Gogs(server + '/api/v1'),
-        tokenStub = {name: 'ts-desktop'};
+        tokenStub = {name: 'btt-writer-desktop'};
 
     return {
 
@@ -42,7 +42,7 @@ function UserManager(auth, server) {
         },
 
         register: function (user, deviceId) {
-            var keyStub = {title: 'ts-desktop ' + deviceId};
+            var keyStub = {title: 'btt-writer-desktop ' + deviceId};
             return api.listPublicKeys(user).then(function (keys) {
                 return _.find(keys, keyStub);
             }).then(function (key) {
@@ -54,7 +54,7 @@ function UserManager(auth, server) {
         },
 
         unregister: function (user, deviceId) {
-            var keyStub = {title: 'ts-desktop ' + deviceId};
+            var keyStub = {title: 'btt-writer-desktop ' + deviceId};
             return api.listPublicKeys(user).then(function (keys) {
                 return _.find(keys, keyStub);
             }).then(function (key) {
@@ -68,7 +68,7 @@ function UserManager(auth, server) {
             }).then(function (repo) {
                 return repo ? repo : api.createRepo({
                     name: reponame,
-                    description: 'ts-desktop: ' + reponame,
+                    description: 'btt-writer-desktop: ' + reponame,
                     private: false
                 }, user);
             });
