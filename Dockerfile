@@ -16,7 +16,7 @@ RUN apt update \
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json ./
 
 RUN npm install -g bower \
  && npm install -g gulp \
