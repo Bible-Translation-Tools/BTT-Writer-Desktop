@@ -78,7 +78,7 @@ function UserManager(auth, server) {
             u = u === '*' ? '' : (u || '');
             q = q === '*' ? '_' : (q || '_');
 
-            var limit = 100;
+            var limit = 1000;
 
             function searchUsers (visit) {
                 return api.searchUsers(u, limit).then(function (users) {
