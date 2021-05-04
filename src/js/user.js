@@ -8,7 +8,12 @@ function UserManager(auth, server) {
     var api = new Gogs(server + '/api/v1'),
         tokenStub = {name: 'btt-writer-desktop'};
 
-    const fetchRepoRecursively = function (uid, query, limit, page, resultList) {
+    const MAX_PAGE_SIZE = 50
+
+    const fetchRepoRecursively = function (uid, query, limit, page, repoList) {
+        limit = limit || 10; // size limit per page
+        page = page || 1;
+        repoList = repoList || [];
         /* 
          *  due to inadequate parameter (@page) in gogs client api searchRepos(),
          *  this parameter-embedded tweak is temporarily provided to make use of the client api.
@@ -18,10 +23,10 @@ function UserManager(auth, server) {
             .then(function (repos) {
                 if (repos.length == 0) {
                     // no more repos found
-                    return resultList;
+                    return repoList;
                 } else {
                     // collect result from current page
-                    let newList = resultList.concat(repos); 
+                    let newList = repoList.concat(repos); 
                     return fetchRepoRecursively(uid, query, limit, page + 1, newList) // recursive call to get next page
                 }
             });
@@ -82,10 +87,9 @@ function UserManager(auth, server) {
         },
 
         createRepo: function (user, reponame) {
-            let pageSize = 50; // max response size is 50
             let query = "_";
 
-            return fetchRepoRecursively(user.id, query, pageSize, 1, [])
+            return fetchRepoRecursively(user.id, query, MAX_PAGE_SIZE)
                 .then(function (repos) {
                     return _.find(repos, {full_name: user.username + '/' + reponame});
                 })
@@ -111,7 +115,7 @@ function UserManager(auth, server) {
                     return api.searchRepos(q, uid, defaultLimit);
                 } else {
                     // search all repos of user (uid)
-                    return fetchRepoRecursively(uid, q, 50, 1, []);
+                    return fetchRepoRecursively(uid, q, MAX_PAGE_SIZE);
                 }
             }
 
