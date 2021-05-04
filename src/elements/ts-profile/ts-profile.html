@@ -177,6 +177,8 @@
 
             return App.userManager.login(user)
                 .then(function (user) {
+                    console.log("User Object on login: ", user);
+
                     mythis.set('options.body', "Login Verified");
                     user.full_name = user.full_name === '' ? user.username : user.full_name;
                     setTimeout(function() {
