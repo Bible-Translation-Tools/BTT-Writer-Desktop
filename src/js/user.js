@@ -8,6 +8,25 @@ function UserManager(auth, server) {
     var api = new Gogs(server + '/api/v1'),
         tokenStub = {name: 'btt-writer-desktop'};
 
+    const fetchRepoRecursively = function (uid, query, limit, page, resultList) {
+        /* 
+         *  due to inadequate parameter (@page) in gogs client api searchRepos(),
+         *  this parameter-embedded tweak is temporarily provided to make use of the client api.
+         */
+        return api.searchRepos(`${query}&page=${page}`, uid, limit)
+            .then(_.flatten)
+            .then(function (repos) {
+                if (repos.length == 0) {
+                    // no more repos found
+                    return resultList;
+                } else {
+                    // collect result from current page
+                    let newList = resultList.concat(repos); 
+                    return fetchRepoRecursively(uid, query, limit, page + 1, newList) // recursive call to get next page
+                }
+            });
+    };
+
     return {
 
         deleteAccount: function (user) {
@@ -63,25 +82,41 @@ function UserManager(auth, server) {
         },
 
         createRepo: function (user, reponame) {
-            return api.searchRepos("_", user.id, 1000).then(_.flatten).then(function (repos) {
-                return _.find(repos, {full_name: user.username + '/' + reponame});
-            }).then(function (repo) {
-                return repo ? repo : api.createRepo({
-                    name: reponame,
-                    description: 'btt-writer-desktop: ' + reponame,
-                    private: false
-                }, user);
-            });
+            let pageSize = 50; // max response size is 50
+            let query = "_";
+
+            return fetchRepoRecursively(user.id, query, pageSize, 1, [])
+                .then(function (repos) {
+                    return _.find(repos, {full_name: user.username + '/' + reponame});
+                })
+                .then(function (repo) {
+                    return repo ? repo : api.createRepo({
+                        name: reponame,
+                        description: 'btt-writer-desktop: ' + reponame,
+                        private: false
+                    }, user);
+                });
         },
 
         retrieveRepos: function (u, q) {
             u = u === '*' ? '' : (u || '');
             q = q === '*' ? '_' : (q || '_');
 
-            var limit = 100;
+            let defaultLimit = 10;
+
+            function searchRepos(user) {
+                var uid = (typeof user === 'object' ? user.id : user) || 0;
+                if (uid == 0) {
+                    // search repos by query
+                    return api.searchRepos(q, uid, defaultLimit);
+                } else {
+                    // search all repos of user (uid)
+                    return fetchRepoRecursively(uid, q, 50, 1, []);
+                }
+            }
 
             function searchUsers (visit) {
-                return api.searchUsers(u, limit).then(function (users) {
+                return api.searchUsers(u, defaultLimit).then(function (users) {
                     var a = users.map(visit);
 
                     a.push(visit(0).then(function (repos) {
@@ -95,23 +130,18 @@ function UserManager(auth, server) {
                 });
             }
 
-            function searchRepos (user) {
-                var uid = (typeof user === 'object' ? user.id : user) || 0;
-                return api.searchRepos(q, uid, limit);
-            }
-
             var p = u ? searchUsers(searchRepos) : searchRepos();
 
             return p.then(_.flatten).then(function (repos) {
                 return _.uniq(repos, 'id');
             })
-            .then(function (repos) {
-                return _.map(repos, function (repo) {
-                    var user = repo.full_name.split("/")[0];
-                    var project = repo.full_name.split("/")[1];
-                    return {repo: repo.full_name, user: user, project: project};
-                })
-            });
+                .then(function (repos) {
+                    return _.map(repos, function (repo) {
+                        var user = repo.full_name.split("/")[0];
+                        var project = repo.full_name.split("/")[1];
+                        return {repo: repo.full_name, user: user, project: project};
+                    });
+                });
         }
 
     };
