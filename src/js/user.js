@@ -53,10 +53,9 @@ function UserManager(auth, server) {
                     .then(function (token) {
                         return token ? token : api.createToken(tokenStub, userObj);
                     })
-                    .then(function (token) {
-                        console.log("Token applied on login: ", token);
-                        
+                    .then(function (token) {                      
                         user.token = token.sha1;
+                        console.log("Token applied: ", token);
                         return user;
                     });
             });
