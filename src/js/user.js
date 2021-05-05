@@ -11,7 +11,7 @@ function UserManager(auth, server) {
     var api = new Gogs(server + '/api/v1');
 
     const tokenStub = {
-        name: `btt-writer-desktop_${os.hostname()}_${process.platform}_${utils.getMachineIdSync()}`
+        name: `btt-writer-desktop_${os.hostname()}_${process.platform}__${utils.getMachineIdSync()}`
     }
 
     const fetchRepoRecursively = function (uid, query, limit, page, resultList) {
