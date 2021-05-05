@@ -284,7 +284,7 @@ function release(done){
         Promise.all(promises).then(() => done());
     }
 
-    mkdirp('release', _release);
+    mkdirp('release').then(_release);
 }
 
 gulp.task('release', release);
