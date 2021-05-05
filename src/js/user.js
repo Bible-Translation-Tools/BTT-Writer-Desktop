@@ -1,12 +1,18 @@
 'use strict';
 
 var _ = require('lodash'),
-    Gogs = require('gogs-client');
+    Gogs = require('gogs-client'),
+    os = require('os'),
+    utils = require('../js/lib/utils');
+
 
 function UserManager(auth, server) {
 
-    var api = new Gogs(server + '/api/v1'),
-        tokenStub = {name: 'btt-writer-desktop'};
+    var api = new Gogs(server + '/api/v1');
+
+    const tokenStub = {
+        name: `btt-writer-desktop_${os.hostname()}_${process.platform}_${utils.getMachineIdSync()}`
+    }
 
     const fetchRepoRecursively = function (uid, query, limit, page, resultList) {
         /* 
@@ -48,14 +54,21 @@ function UserManager(auth, server) {
             return api.getUser(userObj).then(function (user) {
                 return api.listTokens(userObj)
                     .then(function (tokens) {
+                        console.log("All tokens: ", tokens);
                         return _.find(tokens, tokenStub);
                     })
                     .then(function (token) {
-                        return token ? token : api.createToken(tokenStub, userObj);
+                        if (token) {
+                            console.log("token found: ", token);
+                            return token;
+                        } else {
+                            console.log("token applied: ", tokenStub);
+                            return api.createToken(tokenStub, userObj);
+                        }
                     })
                     .then(function (token) {                      
-                        user.token = token.sha1;
                         console.log("Token applied: ", token);
+                        user.token = token.sha1;
                         return user;
                     });
             });

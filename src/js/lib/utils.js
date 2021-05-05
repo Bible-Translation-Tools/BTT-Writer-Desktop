@@ -4,6 +4,7 @@
 
 var diacritics = require('./diacritics'),
     getmac = require('getmac'),
+    nodeMachineId = require('node-machine-id'),
     fs = require('fs'),
     path = require('path'),
     fse = require('fs-extra'),
@@ -373,6 +374,13 @@ var utils = {
         return getMac().then(function (mac) {
             return mac.replace(/-|:/g, '');
         });
+    },
+
+    /**
+     * Synchronously returns a unique OS native UUID/GUID
+     */
+    getMachineIdSync: function () {
+        return nodeMachineId.machineIdSync({ original: true }).replace(/-|:/g, '');;
     },
 
     makeProjectPaths: function (baseDir, project) {
