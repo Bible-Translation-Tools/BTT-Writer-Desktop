@@ -54,20 +54,16 @@ function UserManager(auth, server) {
             return api.getUser(userObj).then(function (user) {
                 return api.listTokens(userObj)
                     .then(function (tokens) {
-                        console.log("All tokens: ", tokens);
                         return _.find(tokens, tokenStub);
                     })
                     .then(function (token) {
                         if (token) {
-                            console.log("token found: ", token);
                             return token;
                         } else {
-                            console.log("token applied: ", tokenStub);
                             return api.createToken(tokenStub, userObj);
                         }
                     })
                     .then(function (token) {                      
-                        console.log("Token applied: ", token);
                         user.token = token.sha1;
                         return user;
                     });

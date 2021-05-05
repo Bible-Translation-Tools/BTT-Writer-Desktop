@@ -97,8 +97,6 @@ function GitManager() {
         },
 
         commitAll: function (user, dir) {
-            console.log("Committing all by user: ");
-            console.log(user);
             var msg = new Date();
             var username = user.username || 'tsDesktop';
             var email = user.email || 'you@example.com';
