@@ -380,7 +380,7 @@ var utils = {
      * Synchronously returns a unique OS native UUID/GUID
      */
     getMachineIdSync: function () {
-        return nodeMachineId.machineIdSync({ original: true }).replace(/-|:/g, '');;
+        return nodeMachineId.machineIdSync({ original: true }).replace(/-|:/g, '');
     },
 
     makeProjectPaths: function (baseDir, project) {
