@@ -300,7 +300,9 @@
                 this.set('settings', App.configurator.refreshUserSetting());
                 this.saveSettings();
                 // Lgout user.
+                const user = App.configurator.getValue('userdata');
                 this.fire('iron-signal', {name: 'updateuser', data: {}});
+                App.userManager.logout(user);
                 App.keyManager.destroyKeys();
                 // Notify user that the app needs to be restarted.
                 // TODO This bypasses Polymer to call the ts-dashboard.showMessage() function.  Is there a better way?
