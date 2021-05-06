@@ -41,11 +41,10 @@ after_success:
 - test -d src/components
 - gulp prince
 - test -d src/prince
-- travis_wait 30 gulp build --win
-- travis_wait 30 gulp build --linux
-- travis_wait 30 gulp build --osx
+- travis_wait gulp build --win
+- travis_wait gulp build --linux
+- travis_wait gulp build --osx
 - travis_wait gulp release
-
 deploy:
 -  provider: s3
    edge: true
