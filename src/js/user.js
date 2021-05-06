@@ -2,6 +2,7 @@
 
 var _ = require('lodash'),
     Gogs = require('gogs-client'),
+    requester = require('gogs-client/lib/request'),
     os = require('os'),
     utils = require('../js/lib/utils');
 
@@ -63,11 +64,35 @@ function UserManager(auth, server) {
                             return api.createToken(tokenStub, userObj);
                         }
                     })
-                    .then(function (token) {                      
+                    .then(function (token) {             
+                        user.tokenId = token.id;
                         user.token = token.sha1;
                         return user;
                     });
             });
+        },
+
+        /* Delete the corresponding token on server
+         * 
+         * Note: the gogs-client api currently does not support DELETE token method. 
+         * However, the endpoint is available for usage.
+         */ 
+        logout: function(userObj) {
+            if (userObj.tokenId && userObj.token) {
+                let userAuth = {
+                    username: userObj.username,
+                    password: userObj.token
+                }
+
+                let apiRequest = requester(server + '/api/v1');
+                let path = `users/${userObj.username}/tokens/${userObj.tokenId}`;
+                return apiRequest(path, userAuth, null, 'DELETE')
+                    .catch(err => {
+                        console.err("Error when deleting token remotely, please manually delete it.", err)
+                    });
+            } else {
+                return Promise.resolve();
+            }
         },
 
         register: function (user, deviceId) {
