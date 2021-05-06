@@ -35,6 +35,32 @@ function UserManager(auth, server) {
             });
     };
 
+
+    /* Delete the corresponding token on server (for server account)
+     *
+     * Note: the gogs-client api currently does not support DELETE token method.
+     * However, the endpoint is available for usage.
+     */
+    const deleteAccessToken = function (user) {
+        if (user.tokenId && (user.token || user.password)) {
+            const userAuth = {
+                username: user.username,
+                password: user.password ? user.password : user.token
+            }
+            let apiRequest = requester(apiUrl);
+            let path = `users/${user.username}/tokens/${user.tokenId}`;
+            return apiRequest(path, userAuth, null, 'DELETE')
+                .then(res => {
+                    if (res.status != 204) {
+                        console.error("Error when deleting token remotely! Please manually delete it.", res);
+                    }
+                });
+        } else {
+            // local account
+            return Promise.resolve();
+        }
+    }
+
     return {
 
         deleteAccount: function (user) {
@@ -59,13 +85,20 @@ function UserManager(auth, server) {
                         return _.find(tokens, tokenStub);
                     })
                     .then(function (token) {
+                        // delete existing token on server
                         if (token) {
-                            return token;
+                            let usr = { 
+                                username: userObj.username, 
+                                password: userObj.password, 
+                                tokenId: token.id
+                            }
+                            return deleteAccessToken(usr)
+                                    .then(() => api.createToken(tokenStub, userObj));
                         } else {
                             return api.createToken(tokenStub, userObj);
                         }
                     })
-                    .then(function (token) {             
+                    .then(function (token) { 
                         user.tokenId = token.id;
                         user.token = token.sha1;
                         return user;
@@ -73,27 +106,8 @@ function UserManager(auth, server) {
             });
         },
 
-        /* Delete the corresponding token on server
-         * 
-         * Note: the gogs-client api currently does not support DELETE token method. 
-         * However, the endpoint is available for usage.
-         */ 
-        logout: function(userObj) {
-            if (userObj.tokenId && userObj.token) {
-                let userAuth = {
-                    username: userObj.username,
-                    password: userObj.token
-                }
-
-                let apiRequest = requester(apiUrl);
-                let path = `users/${userObj.username}/tokens/${userObj.tokenId}`;
-                return apiRequest(path, userAuth, null, 'DELETE')
-                    .catch(err => {
-                        console.err("Error when deleting token remotely, please manually delete it.", err)
-                    });
-            } else {
-                return Promise.resolve();
-            }
+        logout: function(user) {
+            deleteAccessToken(user);
         },
 
         register: function (user, deviceId) {
