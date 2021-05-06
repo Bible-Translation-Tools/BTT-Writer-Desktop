@@ -8,8 +8,9 @@ var _ = require('lodash'),
 
 
 function UserManager(auth, server) {
-
-    var api = new Gogs(server + '/api/v1');
+    
+    const apiUrl = server + '/api/v1';
+    var api = new Gogs(apiUrl);
 
     const tokenStub = {
         name: `btt-writer-desktop_${os.hostname()}_${process.platform}__${utils.getMachineIdSync()}`
@@ -84,7 +85,7 @@ function UserManager(auth, server) {
                     password: userObj.token
                 }
 
-                let apiRequest = requester(server + '/api/v1');
+                let apiRequest = requester(apiUrl);
                 let path = `users/${userObj.username}/tokens/${userObj.tokenId}`;
                 return apiRequest(path, userAuth, null, 'DELETE')
                     .catch(err => {
