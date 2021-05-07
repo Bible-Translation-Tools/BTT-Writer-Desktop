@@ -282,7 +282,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
 
             if (meta.type.id === "tw") {
                 var dict = meta.project.id;
-                frames = dataManager.getAllWords(dict);
+                frames = dataManager.getAllWords(source.language_id, dict);
             } else if (meta.source_translations.length) {
                 var source = meta.source_translations[0];
                 var container = source.language_id + "_" + source.project_id + "_" + source.resource_id;

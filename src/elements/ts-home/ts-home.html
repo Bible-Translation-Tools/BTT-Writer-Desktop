@@ -258,7 +258,7 @@
                         <template is="dom-repeat" items="{{projectlist}}" as="project">
                             <div class="row">
                                 <div class="left" on-tap="openproject">
-                                    <span class="smallspan"><iron-icon class="icon" icon$="[[checkicon(project)]]"></iron-icon></span>
+                                    <span class="smallspan"><iron-icon class="icon" src$="[[checkicon(project)]]"></iron-icon></span>
                                     <span class="bigspan">[[project.project.name]]</span>
                                     <span class="medspan smalltext"><span>[[project.type.name]]</span><span class$="[[typeclass(project.resource.id)]]">[[project.resource.id]]</span></span>
                                     <span class="smalltext bigspan">[[project.target_language.name]]</span>
@@ -368,7 +368,8 @@
         },
 
         checkicon: function (projectmeta) {
-            return projectmeta.project.id === "obs" || projectmeta.project_type_class === "extant" ? 'uw-obs-icon:uw-obs-icon' : 'uw-project-icon:uw-project-icon';
+            return projectmeta.project.id === "obs" || projectmeta.project_type_class === "extant" ? 
+                '../elements/ts-icons/uw-icon-small.png' : '../elements/ts-icons/uw-project-icon.png';
         },
 
         sortbible: function () {

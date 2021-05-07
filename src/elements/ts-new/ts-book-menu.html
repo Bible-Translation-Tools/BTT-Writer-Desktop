@@ -86,7 +86,7 @@
           <iron-list id="list" items="[[newdata.category.data]]" as="project">
               <template>
                   <div class="row" on-tap="store">
-                      <iron-icon class="small" icon$="[[checkicon(project.category_slug)]]"></iron-icon>
+                      <iron-icon class="small" src$="[[checkicon(project.category_slug)]]"></iron-icon>
                       <span>[[project.name]]</span>
                   </div>
               </template>
@@ -120,7 +120,7 @@
       ],
 
       checkicon: function (category) {
-          return category === "other" ? 'uw-obs-icon:uw-obs-icon' : 'uw-project-icon:uw-project-icon';
+          return category === "other" ? '../elements/ts-icons/uw-icon-small.png' : '../elements/ts-icons/uw-project-icon.png';
       },
 
       store: function(e) {

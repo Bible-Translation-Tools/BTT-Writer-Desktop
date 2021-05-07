@@ -87,7 +87,7 @@
               <template>
                   <div class="row" on-tap="store">
                       <div>
-                          <iron-icon class="small" icon$="[[checkicon(category.name)]]"></iron-icon>
+                          <iron-icon class="small" src$="[[checkicon(category.name)]]"></iron-icon>
                           <span>[[category.name]]</span>
                       </div>
                       <iron-icon icon="chevron-right"></iron-icon>
@@ -131,7 +131,7 @@
       ],
 
       checkicon: function (name) {
-          return name === "Other" ? 'uw-obs-icon:uw-obs-icon' : 'uw-project-icon:uw-project-icon';
+          return name === "Other" ? '../elements/ts-icons/uw-icon-small.png' : '../elements/ts-icons/uw-project-icon.png';
       },
 
       tolang: function () {

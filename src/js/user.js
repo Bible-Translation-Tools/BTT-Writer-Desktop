@@ -10,7 +10,7 @@ var _ = require('lodash'),
 function UserManager(auth, server) {
     
     const apiUrl = server + '/api/v1';
-    var api = new Gogs(apiUrl);
+    const api = new Gogs(apiUrl);
 
     const tokenStub = {
         name: `btt-writer-desktop_${os.hostname()}_${process.platform}__${utils.getMachineIdSync()}`
@@ -60,6 +60,31 @@ function UserManager(auth, server) {
             return Promise.resolve();
         }
     }
+
+    const MAX_PAGE_SIZE = 50
+
+    const fetchRepoExhaustively = async function (uid, query, limit) {
+        limit = limit || MAX_PAGE_SIZE;
+        let page = 1;
+        let repoList = [];
+        let hasMore = true;
+
+        while (hasMore) {
+            /*
+            *  due to inadequate parameter (@page) in gogs client api searchRepos(),
+            *  this parameter-embedded tweak is temporarily provided to make use of the api
+            */
+            let repos = await api.searchRepos(`${query}&page=${page}`, uid, limit).then(_.flatten);
+            if (repos.length > 0) {
+                repos.forEach((repo) => repoList.push(repo));
+                page++;
+            } else {
+                hasMore = false;
+            }
+        }
+
+        return repoList;
+    };
 
     return {
 
@@ -132,10 +157,9 @@ function UserManager(auth, server) {
         },
 
         createRepo: function (user, reponame) {
-            let pageSize = 50; // max response size is 50
             let query = "_";
 
-            return fetchRepoRecursively(user.id, query, pageSize, 1, [])
+            return fetchRepoExhaustively(user.id, query, MAX_PAGE_SIZE)
                 .then(function (repos) {
                     return _.find(repos, {full_name: user.username + '/' + reponame});
                 })
@@ -152,16 +176,16 @@ function UserManager(auth, server) {
             u = u === '*' ? '' : (u || '');
             q = q === '*' ? '_' : (q || '_');
 
-            let defaultLimit = 10;
+            let limit = 10;
 
             function searchRepos(user) {
                 var uid = (typeof user === 'object' ? user.id : user) || 0;
                 if (uid == 0) {
                     // search repos by query
-                    return api.searchRepos(q, uid, defaultLimit);
+                    return api.searchRepos(q, uid, limit);
                 } else {
                     // search all repos of user (uid)
-                    return fetchRepoRecursively(uid, q, 50, 1, []);
+                    return fetchRepoExhaustively(uid, q, MAX_PAGE_SIZE);
                 }
             }
 
