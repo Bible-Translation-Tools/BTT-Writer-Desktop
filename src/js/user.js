@@ -3,33 +3,39 @@
 var _ = require('lodash'),
     Gogs = require('gogs-client');
 
-function UserManager(auth, server) {
+function UserManager(auth, server) {   
+    
+    const apiUrl = server + '/api/v1';
+    const api = new Gogs(apiUrl);
+    
+    const MAX_PAGE_SIZE = 50;
 
     var api = new Gogs(server + '/api/v1'),
         tokenStub = {name: 'btt-writer-desktop'};
 
     const MAX_PAGE_SIZE = 50
 
-    const fetchRepoRecursively = function (uid, query, limit, page, repoList) {
-        limit = limit || 10; // size limit per page
-        page = page || 1;
-        repoList = repoList || [];
-        /* 
-         *  due to inadequate parameter (@page) in gogs client api searchRepos(),
-         *  this parameter-embedded tweak is temporarily provided to make use of the client api.
-         */
-        return api.searchRepos(`${query}&page=${page}`, uid, limit)
-            .then(_.flatten)
-            .then(function (repos) {
-                if (repos.length == 0) {
-                    // no more repos found
-                    return repoList;
-                } else {
-                    // collect result from current page
-                    let newList = repoList.concat(repos); 
-                    return fetchRepoRecursively(uid, query, limit, page + 1, newList) // recursive call to get next page
-                }
-            });
+    const fetchRepoExhaustively = async function (uid, query, limit) {
+        limit = limit || MAX_PAGE_SIZE;
+        let page = 1;
+        let repoList = [];
+        let hasMore = true;
+
+        while (hasMore) {
+            /*
+            *  due to inadequate parameter (@page) in gogs client api searchRepos(),
+            *  this parameter-embedded tweak is temporarily provided to make use of the api
+            */
+            let repos = await api.searchRepos(`${query}&page=${page}`, uid, limit).then(_.flatten);
+            if (repos.length > 0) {
+                repos.forEach((repo) => repoList.push(repo));
+                page++;
+            } else {
+                hasMore = false;
+            }
+        }
+
+        return repoList;
     };
 
     return {
@@ -65,6 +71,10 @@ function UserManager(auth, server) {
             });
         },
 
+        logout: function(user) {
+            return deleteAccessToken(user);
+        },
+
         register: function (user, deviceId) {
             var keyStub = {title: 'btt-writer-desktop ' + deviceId};
             return api.listPublicKeys(user).then(function (keys) {
@@ -89,7 +99,7 @@ function UserManager(auth, server) {
         createRepo: function (user, reponame) {
             let query = "_";
 
-            return fetchRepoRecursively(user.id, query, MAX_PAGE_SIZE)
+            return fetchRepoExhaustively(user.id, query, MAX_PAGE_SIZE)
                 .then(function (repos) {
                     return _.find(repos, {full_name: user.username + '/' + reponame});
                 })
@@ -106,21 +116,21 @@ function UserManager(auth, server) {
             u = u === '*' ? '' : (u || '');
             q = q === '*' ? '_' : (q || '_');
 
-            let defaultLimit = 10;
+            let limit = 10;
 
             function searchRepos(user) {
                 var uid = (typeof user === 'object' ? user.id : user) || 0;
                 if (uid == 0) {
                     // search repos by query
-                    return api.searchRepos(q, uid, defaultLimit);
+                    return api.searchRepos(q, uid, limit);
                 } else {
                     // search all repos of user (uid)
-                    return fetchRepoRecursively(uid, q, MAX_PAGE_SIZE);
+                    return fetchRepoExhaustively(uid, q, MAX_PAGE_SIZE);
                 }
             }
 
             function searchUsers (visit) {
-                return api.searchUsers(u, defaultLimit).then(function (users) {
+                return api.searchUsers(u, limit).then(function (users) {
                     var a = users.map(visit);
 
                     a.push(visit(0).then(function (repos) {
