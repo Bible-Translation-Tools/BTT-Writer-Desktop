@@ -3,10 +3,35 @@
 var _ = require('lodash'),
     Gogs = require('gogs-client');
 
-function UserManager(auth, server) {
-
+function UserManager(auth, server) {   
+    
     var api = new Gogs(server + '/api/v1'),
         tokenStub = {name: 'btt-writer-desktop'};
+
+    const MAX_PAGE_SIZE = 50
+
+    const fetchRepoExhaustively = async function (uid, query, limit) {
+        limit = limit || MAX_PAGE_SIZE;
+        let page = 1;
+        let repoList = [];
+        let hasMore = true;
+
+        while (hasMore) {
+            /*
+            *  due to inadequate parameter (@page) in gogs client api searchRepos(),
+            *  this parameter-embedded tweak is temporarily provided to make use of the api
+            */
+            let repos = await api.searchRepos(`${query}&page=${page}`, uid, limit).then(_.flatten);
+            if (repos.length > 0) {
+                repos.forEach((repo) => repoList.push(repo));
+                page++;
+            } else {
+                hasMore = false;
+            }
+        }
+
+        return repoList;
+    };
 
     return {
 
@@ -63,22 +88,37 @@ function UserManager(auth, server) {
         },
 
         createRepo: function (user, reponame) {
-            return api.searchRepos("_", user.id, 1000).then(_.flatten).then(function (repos) {
-                return _.find(repos, {full_name: user.username + '/' + reponame});
-            }).then(function (repo) {
-                return repo ? repo : api.createRepo({
-                    name: reponame,
-                    description: 'btt-writer-desktop: ' + reponame,
-                    private: false
-                }, user);
-            });
+            let query = "_";
+
+            return fetchRepoExhaustively(user.id, query, MAX_PAGE_SIZE)
+                .then(function (repos) {
+                    return _.find(repos, {full_name: user.username + '/' + reponame});
+                })
+                .then(function (repo) {
+                    return repo ? repo : api.createRepo({
+                        name: reponame,
+                        description: 'btt-writer-desktop: ' + reponame,
+                        private: false
+                    }, user);
+                });
         },
 
         retrieveRepos: function (u, q) {
             u = u === '*' ? '' : (u || '');
             q = q === '*' ? '_' : (q || '_');
 
-            var limit = 100;
+            let limit = 10;
+
+            function searchRepos(user) {
+                var uid = (typeof user === 'object' ? user.id : user) || 0;
+                if (uid == 0) {
+                    // search repos by query
+                    return api.searchRepos(q, uid, limit);
+                } else {
+                    // search all repos of user (uid)
+                    return fetchRepoExhaustively(uid, q, MAX_PAGE_SIZE);
+                }
+            }
 
             function searchUsers (visit) {
                 return api.searchUsers(u, limit).then(function (users) {
@@ -95,23 +135,18 @@ function UserManager(auth, server) {
                 });
             }
 
-            function searchRepos (user) {
-                var uid = (typeof user === 'object' ? user.id : user) || 0;
-                return api.searchRepos(q, uid, limit);
-            }
-
             var p = u ? searchUsers(searchRepos) : searchRepos();
 
             return p.then(_.flatten).then(function (repos) {
                 return _.uniq(repos, 'id');
             })
-            .then(function (repos) {
-                return _.map(repos, function (repo) {
-                    var user = repo.full_name.split("/")[0];
-                    var project = repo.full_name.split("/")[1];
-                    return {repo: repo.full_name, user: user, project: project};
-                })
-            });
+                .then(function (repos) {
+                    return _.map(repos, function (repo) {
+                        var user = repo.full_name.split("/")[0];
+                        var project = repo.full_name.split("/")[1];
+                        return {repo: repo.full_name, user: user, project: project};
+                    });
+                });
         }
 
     };
