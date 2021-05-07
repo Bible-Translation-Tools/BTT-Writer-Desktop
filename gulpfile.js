@@ -22,16 +22,22 @@ const APP_NAME = 'BTT-Writer',
     BUILD_DIR = 'out/',
     RELEASE_DIR = 'release/';
 
-gulp.task('test', function () {
-    return gulp.src(UNIT_TEST_FILES, { read: false })
-        .pipe(mocha({reporter: 'spec', grep: (argv.grep || argv.g)}));
-});
 
-gulp.task('clean', function () {
+function clean(done) {
     rimraf.sync('src/logs');
     rimraf.sync('logs');
     rimraf.sync('ssh');
-});
+    done();
+}
+
+gulp.task('clean', clean);
+
+function test() {
+    return gulp.src(UNIT_TEST_FILES, { read: false })
+        .pipe(mocha({ reporter: 'spec', grep: (argv.grep || argv.g) }));
+}
+
+gulp.task('test', test);
 
 gulp.task('bump', function () {
     var build = require('./package').build;
@@ -56,11 +62,10 @@ gulp.task('prince', function(done) {
         .then(function() {
             done();
         })
-        .catch(done);
+        .catch(() => done());
 });
 
-// pass parameters like: gulp build --win --osx --linux
-gulp.task('build', ['clean'], function (done) {
+function build(done) {
 
     var platforms = [];
 
@@ -102,13 +107,13 @@ gulp.task('build', ['clean'], function (done) {
         'out': BUILD_DIR,
         'app-version': p.version,
         'icon': './icons/icon'
-    }, function () {
-        console.log('Done building...');
-        done();
-    });
-});
+    }).then(() => done());
+}
 
-gulp.task('release', function(done) {
+// pass parameters like: gulp build --win --osx --linux
+gulp.task('build', gulp.series(clean, build));
+
+function release(done){
     const p = require('./package');
     const archiver = require('archiver');
     const exec = require('child_process').exec;
@@ -130,7 +135,7 @@ gulp.task('release', function(done) {
      * @param arch 64|32
      * @returns {Promise}
      */
-    const downloadGit = function(version, arch) {
+    const downloadGit = function (version, arch) {
         return new Promise(function (resolve, reject) {
             var cmd = `./scripts/git/download_git.sh ./vendor ${version} ${arch}`;
             exec(cmd, function(err, stdout, stderr) {
@@ -149,7 +154,7 @@ gulp.task('release', function(done) {
      * @param os
      * @returns {Promise}
      */
-    const releaseWin = function(arch, os) {
+    const releaseWin = function (arch, os) {
         // TRICKY: the iss script cannot take the .exe extension on the file name
         var file = `BTT-Writer-${p.version}-${p.build}-win-x${arch}`;
         var cmd = `iscc scripts/win_installer.iss /DArch=${arch == '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${p.version} /DBuild=${p.build} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
@@ -173,8 +178,8 @@ gulp.task('release', function(done) {
         });
     };
 
-    mkdirp('release', function() {
-        for(var os of platforms) {
+    function _release() {
+        for (var os of platforms) {
             switch (os) {
                 case 'win32':
                     if (fs.existsSync(BUILD_DIR + 'BTT-Writer-win32-ia32/')) {
@@ -239,14 +244,6 @@ gulp.task('release', function(done) {
                     let linuxBuildPath = BUILD_DIR + 'BTT-Writer-linux-x64/';
                     if (fs.existsSync(linuxBuildPath)) {
                         promises.push(new Promise(function (os, resolve, reject) {
-                            // copy old libs to app's root for linux
-                            let files = fs.readdirSync("old_linux_libs/");
-                            files.forEach(fileName => {
-                                fs.createReadStream(`old_linux_libs/${fileName}`).pipe(
-                                    fs.createWriteStream(linuxBuildPath + fileName)
-                                );
-                            });
-
                             var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-${p.build}-linux-x64.zip`;
                             try {
                                 var output = fs.createWriteStream(dest);
@@ -283,7 +280,14 @@ gulp.task('release', function(done) {
                     console.warn('No release procedure has been defined for ' + os);
             }
         }
-    });
-});
 
-gulp.task('default', ['test']);
+        Promise.all(promises).then(() => done());
+    }
+
+    mkdirp.sync('release')
+    _release();
+}
+
+gulp.task('release', release);
+
+gulp.task('default', test);
