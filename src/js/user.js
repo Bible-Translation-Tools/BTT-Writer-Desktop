@@ -8,7 +8,7 @@ var _ = require('lodash'),
 
 
 function UserManager(auth, server) {
-    
+
     const apiUrl = server + '/api/v1';
     const api = new Gogs(apiUrl);
 
@@ -132,7 +132,7 @@ function UserManager(auth, server) {
         },
 
         logout: function(user) {
-            deleteAccessToken(user);
+            return deleteAccessToken(user);
         },
 
         register: function (user, deviceId) {
