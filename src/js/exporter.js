@@ -100,7 +100,7 @@ function ExportManager(configurator, git) {
                                     // TODO: we need to get the chapter reference and insert it here
                                     chapterContent += '////\n';
                                     //console.log('chapter ' + currentChapter, chapterContent);
-                                    zip.append(new Buffer(chapterContent), {name: currentChapter + '.md'});
+                                    zip.append(Buffer.from(chapterContent), {name: currentChapter + '.md'});
                                 }
                                 currentChapter = frame.chunkmeta.chapter;
                                 chapterContent = '';
@@ -133,7 +133,7 @@ function ExportManager(configurator, git) {
                         if(chapterContent !== '' && numFinishedFrames > 0) {
                             // TODO: we need to get the chapter reference and insert it here
                             chapterContent += '////\n';
-                            zip.append(new Buffer(chapterContent), {name: currentChapter + '.md'});
+                            zip.append(Buffer.from(chapterContent), {name: currentChapter + '.md'});
                         }
                         zip.finalize();
                         resolve(true);

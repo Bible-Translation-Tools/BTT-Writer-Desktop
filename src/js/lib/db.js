@@ -13,7 +13,7 @@ function Db (schemaPath, dbPath) {
 
     function saveDB (sql) {
         let data = sql.export();
-        let buffer = new Buffer(data);
+        let buffer = Buffer.from(data);
 
         mkdirp.sync(dbDirPath, '0755');
         fs.writeFileSync(dbFilePath, buffer);
