@@ -66,10 +66,6 @@ function UserManager(auth, server) {
             });
         },
 
-        logout: function(user) {
-            return deleteAccessToken(user);
-        },
-
         register: function (user, deviceId) {
             var keyStub = {title: 'btt-writer-desktop ' + deviceId};
             return api.listPublicKeys(user).then(function (keys) {
