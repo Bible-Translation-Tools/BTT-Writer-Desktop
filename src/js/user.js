@@ -5,11 +5,6 @@ var _ = require('lodash'),
 
 function UserManager(auth, server) {   
     
-    const apiUrl = server + '/api/v1';
-    const api = new Gogs(apiUrl);
-    
-    const MAX_PAGE_SIZE = 50;
-
     var api = new Gogs(server + '/api/v1'),
         tokenStub = {name: 'btt-writer-desktop'};
 
