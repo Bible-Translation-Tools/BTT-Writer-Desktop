@@ -12,6 +12,8 @@ function UserManager(auth, server) {
     const apiUrl = server + '/api/v1';
     const api = new Gogs(apiUrl);
 
+    const MAX_PAGE_SIZE = 50;
+
     const tokenStub = {
         name: `btt-writer-desktop_${os.hostname()}_${process.platform}__${utils.getMachineIdSync()}`
     }
@@ -60,8 +62,6 @@ function UserManager(auth, server) {
             return Promise.resolve();
         }
     }
-
-    const MAX_PAGE_SIZE = 50
 
     const fetchRepoExhaustively = async function (uid, query, limit) {
         limit = limit || MAX_PAGE_SIZE;
@@ -190,7 +190,7 @@ function UserManager(auth, server) {
             }
 
             function searchUsers (visit) {
-                return api.searchUsers(u, defaultLimit).then(function (users) {
+                return api.searchUsers(u, limit).then(function (users) {
                     var a = users.map(visit);
 
                     a.push(visit(0).then(function (repos) {
