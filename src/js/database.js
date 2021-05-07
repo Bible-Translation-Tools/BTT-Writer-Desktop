@@ -423,22 +423,22 @@ function DataManager(db, resourceDir, sourceDir) {
             if (source.resource_id === "obs") {
                 dict = "bible-obs";
             }
-            var container = "en_" + dict + "_tw";
+            var container = source.language_id + "_" + dict + "_tw";
             var list = this.parseYaml(container, "config.yml");
 
             if (list && list[slug] && list[slug]["see_also"]) {
                 var slugs = list[slug]["see_also"];
 
                 return slugs.map(function (item) {
-                    return mythis.getWord(dict, item);
+                    return mythis.getWord(source.language_id, dict, item);
                 });
             } else {
                 return [];
             }
         },
 
-        getWord: function (dict, slug) {
-            var container = 'en_' + dict + '_tw';
+        getWord: function (language_id, dict, slug) {
+            var container = language_id + "_" + dict + '_tw';
             var contentpath = path.join(resourceDir, container, "content", slug, "01.md");
 
             try {
@@ -450,9 +450,9 @@ function DataManager(db, resourceDir, sourceDir) {
             }
         },
 
-        getAllWords: function (dict) {
+        getAllWords: function (language_id, dict) {
             var mythis = this;
-            var container = "en_" + dict + "_tw";
+            var container = language_id + "_" + dict + "_tw";
             var frames = this.extractContainer(container);
 
             return frames.map(function (item) {
@@ -467,7 +467,7 @@ function DataManager(db, resourceDir, sourceDir) {
             if (source.resource_id === "obs") {
                 dict = "bible-obs";
             }
-            var container = "en_" + dict + "_tw";
+            var container = source.language_id + "_" + dict + "_tw";
             var list = this.parseYaml(container, "config.yml");
 
             if (list && list[slug] && list[slug]["examples"]) {
