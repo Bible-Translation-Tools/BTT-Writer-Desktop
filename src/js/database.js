@@ -424,9 +424,7 @@ function DataManager(db, resourceDir, sourceDir) {
                 dict = "bible-obs";
             }
             var container = source.language_id + "_" + dict + "_tw";
-            console.log(container);
             var list = this.parseYaml(container, "config.yml");
-            console.log(list);
 
             if (list && list[slug] && list[slug]["see_also"]) {
                 var slugs = list[slug]["see_also"];
