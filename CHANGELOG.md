@@ -1,6 +1,7 @@
 # Change log
 
 ## [1.1.0 (build 6)](https://github.com/Bible-Translation-Tools/BTT-Writer-Desktop/releases/tag/v1.1.0)  - latest
+
 #### ADDED:
 - Look for user installed fonts - Issue [#8](https://github.com/Bible-Translation-Tools/BTT-Writer-Desktop/issues/8)
 - Show translationWords content for languages other than English - PR [#39](https://github.com/Bible-Translation-Tools/BTT-Writer-Desktop/pull/39)
