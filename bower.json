@@ -7,7 +7,8 @@
     "neon-animation": "PolymerElements/neon-animation#~1.2.3",
     "paper-elements": "PolymerElements/paper-elements#~1.0.7",
     "polymer": "Polymer/polymer#~1.6.0",
-    "lodash": "~3.10.1"
+    "lodash": "~3.10.1",
+    "webcomponentsjs": "^0.7.20"
   },
   "resolutions": {
     "polymer": "~1.6.0"

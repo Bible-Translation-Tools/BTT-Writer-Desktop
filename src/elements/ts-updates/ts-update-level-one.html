@@ -102,7 +102,7 @@
               <template>
                   <div class="row" on-tap="store">
                       <div>
-                          <iron-icon class="small book" icon$="[[checkicon(item.slug)]]"></iron-icon>
+                          <iron-icon class="small book" src$="[[checkicon(item.slug)]]"></iron-icon>
                           <span>[[item.name]]</span>
                       </div>
                       <span class="code lang">(<span>[[item.slug]]</span>)</span>
@@ -156,7 +156,7 @@
       },
 
       checkicon: function (slug) {
-          return slug === "bible-ot" || slug === "bible-nt" ? 'uw-project-icon:uw-project-icon' : 'uw-obs-icon:uw-obs-icon';
+          return slug === "bible-ot" || slug === "bible-nt" ? '../elements/ts-icons/uw-project-icon.png' : '../elements/ts-icons/uw-icon-small.png';
       },
 
       sortByLang: function (list) {
