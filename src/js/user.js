@@ -1,14 +1,67 @@
 'use strict';
 
 var _ = require('lodash'),
-    Gogs = require('gogs-client');
+    Gogs = require('gogs-client'),
+    requester = require('gogs-client/lib/request'),
+    os = require('os'),
+    utils = require('../js/lib/utils');
 
-function UserManager(auth, server) {   
-    
-    var api = new Gogs(server + '/api/v1'),
-        tokenStub = {name: 'btt-writer-desktop'};
 
-    const MAX_PAGE_SIZE = 50
+function UserManager(auth, server) {
+
+    const apiUrl = server + '/api/v1';
+    const api = new Gogs(apiUrl);
+
+    const MAX_PAGE_SIZE = 50;
+
+    const tokenStub = {
+        name: `btt-writer-desktop_${os.hostname()}_${process.platform}__${utils.getMachineIdSync()}`
+    }
+
+    const fetchRepoRecursively = function (uid, query, limit, page, resultList) {
+        /* 
+         *  due to inadequate parameter (@page) in gogs client api searchRepos(),
+         *  this parameter-embedded tweak is temporarily provided to make use of the client api.
+         */
+        return api.searchRepos(`${query}&page=${page}`, uid, limit)
+            .then(_.flatten)
+            .then(function (repos) {
+                if (repos.length == 0) {
+                    // no more repos found
+                    return resultList;
+                } else {
+                    // collect result from current page
+                    let newList = resultList.concat(repos); 
+                    return fetchRepoRecursively(uid, query, limit, page + 1, newList) // recursive call to get next page
+                }
+            });
+    };
+
+
+    /* Delete the corresponding token on server (for server account)
+     *
+     * Note: the gogs-client api currently does not support DELETE token method.
+     * However, the endpoint is available for usage.
+     */
+    const deleteAccessToken = function (user) {
+        if (user.tokenId && (user.token || user.password)) {
+            const userAuth = {
+                username: user.username,
+                password: user.password ? user.password : user.token
+            }
+            let apiRequest = requester(apiUrl);
+            let path = `users/${user.username}/tokens/${user.tokenId}`;
+            return apiRequest(path, userAuth, null, 'DELETE')
+                .then(res => {
+                    if (res.status != 204) {
+                        console.error("Error when deleting token remotely! Please manually delete it.", res);
+                    }
+                });
+        } else {
+            // local account
+            return Promise.resolve();
+        }
+    }
 
     const fetchRepoExhaustively = async function (uid, query, limit) {
         limit = limit || MAX_PAGE_SIZE;
@@ -57,13 +110,29 @@ function UserManager(auth, server) {
                         return _.find(tokens, tokenStub);
                     })
                     .then(function (token) {
-                        return token ? token : api.createToken(tokenStub, userObj);
+                        // delete existing token on server
+                        if (token) {
+                            let usr = { 
+                                username: userObj.username, 
+                                password: userObj.password, 
+                                tokenId: token.id
+                            }
+                            return deleteAccessToken(usr)
+                                    .then(() => api.createToken(tokenStub, userObj));
+                        } else {
+                            return api.createToken(tokenStub, userObj);
+                        }
                     })
-                    .then(function (token) {
+                    .then(function (token) { 
+                        user.tokenId = token.id;
                         user.token = token.sha1;
                         return user;
                     });
             });
+        },
+
+        logout: function(user) {
+            return deleteAccessToken(user);
         },
 
         register: function (user, deviceId) {

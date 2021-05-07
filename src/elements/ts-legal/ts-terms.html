@@ -125,7 +125,9 @@
         },
 
         logout: function () {
+            const user = App.configurator.getValue("userdata");
             this.fire('iron-signal', {name: 'updateuser', data: {}});
+            App.userManager.logout(user);
             App.keyManager.destroyKeys();
         },
 

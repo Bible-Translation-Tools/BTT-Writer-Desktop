@@ -123,8 +123,10 @@
         },
 
         logout: function () {
+            const user = this.currentuser;
             this.fire('iron-signal', {name: 'updateuser', data: {}});
             this.fire('iron-signal', {name: 'reset'});
+            App.userManager.logout(user);
             App.keyManager.destroyKeys();
         },
 

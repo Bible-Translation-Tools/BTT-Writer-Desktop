@@ -104,7 +104,9 @@
 
         logout: function () {
             this.$.menu.close();
+            const user = App.configurator.getValue('userdata');
             this.fire('iron-signal', {name: 'updateuser', data: {}});
+            App.userManager.logout(user);
             App.keyManager.destroyKeys();
         },
 
