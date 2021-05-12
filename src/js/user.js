@@ -135,8 +135,9 @@ function UserManager(auth, server) {
             return deleteAccessToken(user);
         },
 
-        register: function (user, deviceId) {
-            var keyStub = {title: 'btt-writer-desktop ' + deviceId};
+        register: function (user) {
+            var keyStub = {title: tokenStub.name};
+            // var keyStub = {title: 'btt-writer-desktop ' + deviceId};
             return api.listPublicKeys(user).then(function (keys) {
                 return _.find(keys, keyStub);
             }).then(function (key) {
@@ -147,8 +148,8 @@ function UserManager(auth, server) {
             });
         },
 
-        unregister: function (user, deviceId) {
-            var keyStub = {title: 'btt-writer-desktop ' + deviceId};
+        unregister: function (user) {
+            var keyStub = {title: tokenStub.name};
             return api.listPublicKeys(user).then(function (keys) {
                 return _.find(keys, keyStub);
             }).then(function (key) {
