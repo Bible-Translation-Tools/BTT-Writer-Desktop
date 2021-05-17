@@ -61,8 +61,8 @@ deploy:
    api_key:
      secure: "EdwxrFkAoTk/B+NdEWmeNWtVAqiu1DcavsWjKZwHn+DfXFx7DjyTk6Ybs5wNP/J/P3BdASe7i5RKoXOlGv52O4UgheWHspmnnbutQtPx6X1izURsciZyum5qJ4l90gJHfQsPPHSJRNsfWO06yQOgEP7Mphbilesh3b0Xa+Hy1SirEDEUoYARlfVN0HP+p3r7RTOCfftDwHSuN1PZvPR6ItPvr+qOjwIoeySZ689YQB7fjdfmQIM1n2tGXa0C8i1F3s9/qud3Gfvfhv1kodd0UGh0uwdN/iBn6JRVVuaNi4Ei6bK8M8g8B3k+LUh19Y7sD87TdVfEX933SApfzyIs6CRlUz9gOwHPEgD4MGoC5dFVgVdL+YAoBrirjrQ2ojt8bUkK+GWlv7rDJaxQNahNwH4D/DWY6JxGgqXN7leE5HKwUpHOnHaS+MGiYnCU+sfuQDpJDQoCbwDPFwM8aqZAwWet9Ya1F7qlvPRz1BRhLx9sOUFAFw1uw9mSy6pkCJHqiQCrTxMb+NKfdm+/VKtN0UiSdkfD63qHItG9+MqXbXelqkqwQ8aM4uneOBM1HDISrU83jzwOFmRB721dd/AHL+8/C3Ftn4J6up1ulaHtd/z2hqQ86NQFllTmOsaMUeQRoCIF2gNt5JOgR0AAMlCkff7DPk+ktUlaNclUYAMAwjk="
    file:
-   - "*.exe"
-   - "*.zip"
+   - "${TRAVIS_BUILD_DIR}/release/*.exe"
+   - "${TRAVIS_BUILD_DIR}/release/*.zip"
    file_glob: true
    skip_cleanup: true
    overwrite: true
