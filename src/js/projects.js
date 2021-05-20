@@ -227,8 +227,14 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                 }
 
                 var sources = [];
+                
+                console.log("Manifest: ", manifest);
+                console.log("Source: ",manifest.source_translations);
+                console.log("source count: ", manifest.source_translations.length);
 
-                for (var j = 0; j < manifest.source_translations.length; j++) {
+
+                for (let j = 0; j < manifest.source_translations.length; j++) {
+                    console.log("j: ", manifest.source_translations.length);
                     var details = dataManager.getSourceDetails(manifest.project.id, manifest.source_translations[j].language_id, manifest.source_translations[j].resource_id);
 
                     if (manifest.source_translations[j].resource_id === "udb" && manifest.resource.id !== "udb") {
