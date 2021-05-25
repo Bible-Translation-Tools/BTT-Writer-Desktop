@@ -285,7 +285,7 @@ ipcMain.on('save-as', function (event, arg) {
 ipcMain.on('open-file', function (event, arg) {
     dialog.showOpenDialog(mainWindow, arg.options)
         .then(function (value) {
-            event.returnValue = value.paths || value.bookmarks || false;
+            event.returnValue = value.filePaths || value.bookmarks || false;
         });
 });
 
