@@ -278,14 +278,16 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         getProjectFrameNum: function (meta) {
-            var frames = [];
-
+            let frames = [];
+            let sourceList = meta.source_translations;
+            
             if (meta.type.id === "tw") {
-                var dict = meta.project.id;
-                frames = dataManager.getAllWords(source.language_id, dict);
-            } else if (meta.source_translations.length) {
-                var source = meta.source_translations[0];
-                var container = source.language_id + "_" + source.project_id + "_" + source.resource_id;
+                let dict = meta.project.id;
+                let sourceLanguage = (sourceList.length) ? sourceList[0].language_id : "en";
+                frames = dataManager.getAllWords(sourceLanguage, dict);
+            } else if (sourceList.length) {
+                let source = sourceList[0];
+                let container = source.language_id + "_" + source.project_id + "_" + source.resource_id;
                 frames = dataManager.getContainerData(container);
             }
             return frames.length;
