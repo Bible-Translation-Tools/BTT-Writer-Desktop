@@ -1,5 +1,11 @@
 # Change log
 
+## [1.1.1 (build 7)](https://github.com/Bible-Translation-Tools/BTT-Writer-Desktop/releases/tag/v1.1.1)  - latest
+
+#### FIXED:
+ - Import from Project file & usfm file
+ - Create translation words project - Issue [#48](https://github.com/Bible-Translation-Tools/BTT-Writer-Desktop/issues/48)
+
 ## [1.1.0 (build 6)](https://github.com/Bible-Translation-Tools/BTT-Writer-Desktop/releases/tag/v1.1.0)  - latest
 
 #### ADDED:
