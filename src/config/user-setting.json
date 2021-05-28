@@ -127,14 +127,6 @@
         "visible": true
     },
     {
-        "name": "attribution",
-        "mainText": "Attribution",
-        "value": "",
-        "group": "legal",
-        "enabled": true,
-        "visible": true
-    },
-    {
         "name": "serversuite",
         "mainText": "Server Suite (e.g. WACS or DCS)",
         "value": {"name": "WACS"},
