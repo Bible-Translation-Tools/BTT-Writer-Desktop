@@ -400,7 +400,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
 
             var setLicense = function () {
                 var srcDir = path.resolve(path.join(__dirname, '..'));
-                var file = meta.project.id === 'obs' ? 'OBS_LICENSE.md' : 'LICENSE.md';
+                var file = 'LICENSE.md';
                 return read(path.join(srcDir, 'assets', file))
                     .then(function(data) {
                         return write(paths.license, data);
