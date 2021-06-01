@@ -27,7 +27,6 @@
 <link rel="import" href="../ts-legal/ts-statement.html">
 <link rel="import" href="../ts-legal/ts-guidelines.html">
 <link rel="import" href="../ts-legal/ts-software.html">
-<link rel="import" href="../ts-legal/ts-attribution.html">
 
 <dom-module id="ts-dashboard">
 
@@ -219,10 +218,6 @@
           <ts-software></ts-software>
       </paper-dialog>
 
-      <paper-dialog id="attribution" class="popup legal" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-          <ts-attribution></ts-attribution>
-      </paper-dialog>
-
       <paper-dialog id="conflict" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
           <ts-conflict currentproject="[[currentproject]]" importdata="{{importdata}}" currentuser="[[currentuser]]" on-startrepoimport="startRepoImport"></ts-conflict>
       </paper-dialog>
@@ -243,7 +238,6 @@
       <iron-signals on-iron-signal-openguidelines="openGuidelines"></iron-signals>
       <iron-signals on-iron-signal-openstatement="openStatement"></iron-signals>
       <iron-signals on-iron-signal-opensoftware="openSoftware"></iron-signals>
-      <iron-signals on-iron-signal-openattribution="openAttribution"></iron-signals>
       <iron-signals on-iron-signal-changeproject="changeProject"></iron-signals>
       <iron-signals on-iron-signal-deleteproject="deleteProject"></iron-signals>
       <iron-signals on-iron-signal-openupdate="openUpdate"></iron-signals>
@@ -321,14 +315,6 @@
 
       openSoftware: function () {
           var legal = this.$.software;
-          legal.open();
-          setTimeout(function () {
-              legal.scrollTop = 0;
-          }, 250);
-      },
-
-      openAttribution: function () {
-          var legal = this.$.attribution;
           legal.open();
           setTimeout(function () {
               legal.scrollTop = 0;
