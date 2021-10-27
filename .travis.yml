@@ -22,21 +22,19 @@ before_install:
   -iv $encrypted_7e3718570525_iv -in private.json.enc -out src/config/private.json
   -d; fi
 before_script:
-- git config --global url."https://".insteadOf git://
 - npm install
-- patch --forward --reject-file=- node_modules/gogs-client/lib/request.js < gogs-client-lib-request.diff
-  || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
+- patch --forward --reject-file=- node_modules/gogs-client/lib/request.js < gogs-client-lib-request.diff || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
 - npm install gulp -g
 - npm install bower -g
 script: npm test
 after_success:
 - test $TRAVIS_TEST_RESULT == 0 && $TRAVIS_PULL_REQUEST == "false"
-- test -z $TRAVIS_TAG && ./scripts/bump.sh
 - wget --no-verbose "https://btt-writer-resources.s3.amazonaws.com/resource_containers.zip"
 - if [ -f resource_containers.zip ]; then rm -r ./src/index; fi
 - unzip -qq resource_containers.zip -d ./src/index/
 - test -f src/index/index.sqlite
 - test -d src/index/resource_containers
+- export ENVVER=$(grep '"version"' package.json | cut -d '"' -f 4 | head -n 1)
 - bower install
 - test -d src/components
 - gulp prince
