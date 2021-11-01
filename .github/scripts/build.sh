@@ -1,13 +1,15 @@
 #!/bin/bash
 
-add-apt-repository --yes ppa:ubuntu-wine/ppa
-add-apt-repository --yes ppa:arx/release
-apt-get update -d
-apt-get install -y -q innoextract wine python-software-properties
+set -x
+
+sudo add-apt-repository --yes ppa:ubuntu-wine/ppa
+sudo add-apt-repository --yes ppa:arx/release
+sudo apt-get update -d
+sudo apt-get install -y -q innoextract wine python-software-properties
 wine --version
 innoextract --version
 "./scripts/innosetup/innoinstall.sh"
-cp scripts/innosetup/iscc /usr/local/bin/iscc
+sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
 iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
 npm install
 patch --forward --reject-file=- node_modules/gogs-client/lib/request.js < gogs-client-lib-request.diff || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
