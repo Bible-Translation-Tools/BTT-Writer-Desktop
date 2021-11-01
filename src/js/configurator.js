@@ -275,14 +275,10 @@
             getAppData: function() {
                 try {
                     let p = require('../../package');
+                    let build = p.version.split("+").pop();
                     return {
                         version: p.version,
-                        build: p.build,
-                        toString: function () {
-                            var v = p.version.split('.').slice(0,-1).join('.');
-                            var b = p.build;
-                            return v + ' (Build ' + b + ')';
-                        }
+                        build: build
                     };
                 } catch (e) { console.log(e); }
             },
