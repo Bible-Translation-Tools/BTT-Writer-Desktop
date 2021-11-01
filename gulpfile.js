@@ -39,19 +39,6 @@ function test() {
 
 gulp.task('test', test);
 
-gulp.task('bump', function () {
-    var build = require('./package').build;
-
-    var bumped = ++build;
-
-    var replaceString = '$1"' + bumped + '"$2';
-
-    console.log(bumped);
-    return gulp.src(['package.json'])
-        .pipe(replace(/("build"\s*:\s*)"\d+"(.*)/, replaceString))
-        .pipe(gulp.dest('./'));
-});
-
 /**
  * This will download and install prince binaries for all os'
  */
@@ -156,8 +143,8 @@ function release(done){
      */
     const releaseWin = function (arch, os) {
         // TRICKY: the iss script cannot take the .exe extension on the file name
-        var file = `BTT-Writer-${p.version}-${p.build}-win-x${arch}`;
-        var cmd = `iscc scripts/win_installer.iss /DArch=${arch == '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${p.version} /DBuild=${p.build} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
+        var file = `BTT-Writer-${p.version}-win-x${arch}`;
+        var cmd = `iscc scripts/win_installer.iss /DArch=${arch == '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${p.version} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
         return new Promise(function(resolve, reject) {
             exec(cmd, function(err, stdout, stderr) {
                 if(err) {
@@ -208,7 +195,7 @@ function release(done){
                 case 'darwin':
                     if (fs.existsSync(BUILD_DIR + 'BTT-Writer-darwin-x64/')) {
                         promises.push(new Promise(function (os, resolve, reject) {
-                            var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-${p.build}-osx-x64.zip`;
+                            var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-osx-x64.zip`;
                             try {
                                 var output = fs.createWriteStream(dest);
                                 output.on('close', function () {
@@ -244,7 +231,7 @@ function release(done){
                     let linuxBuildPath = BUILD_DIR + 'BTT-Writer-linux-x64/';
                     if (fs.existsSync(linuxBuildPath)) {
                         promises.push(new Promise(function (os, resolve, reject) {
-                            var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-${p.build}-linux-x64.zip`;
+                            var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-linux-x64.zip`;
                             try {
                                 var output = fs.createWriteStream(dest);
                                 output.on('close', function () {
