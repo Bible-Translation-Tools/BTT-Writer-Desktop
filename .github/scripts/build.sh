@@ -2,10 +2,11 @@
 
 set -x
 
-sudo add-apt-repository --yes ppa:ubuntu-wine/ppa
+#sudo add-apt-repository --yes ppa:ubuntu-wine/ppa
+sudo dpkg --add-architecture i386
 sudo add-apt-repository --yes ppa:arx/release
 sudo apt-get update -d
-sudo apt-get install -y -q innoextract wine python-software-properties
+sudo apt-get install -y -q innoextract wine32 wine64 python-software-properties
 wine --version
 innoextract --version
 "./scripts/innosetup/innoinstall.sh"
