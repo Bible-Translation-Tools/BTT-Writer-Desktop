@@ -6,7 +6,7 @@ set -x
 sudo dpkg --add-architecture i386
 sudo add-apt-repository --yes ppa:arx/release
 sudo apt-get update -d
-sudo apt-get install -y -q innoextract wine32 wine64 python-software-properties
+sudo apt-get install -y -q innoextract wine32 wine64 software-properties-common
 wine --version
 innoextract --version
 "./scripts/innosetup/innoinstall.sh"
