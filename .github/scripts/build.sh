@@ -9,6 +9,12 @@ sudo apt-get update -d
 sudo apt-get install -y -q innoextract wine32 wine64 software-properties-common
 wine --version
 innoextract --version
+
+#update version number in package.json with build number
+PACKAGEJSONVER=$(cat package.json | jq --compact-output --raw-output '.version') && VER_ARRAY=($(echo $PACKAGEJSONVER | tr "+" "\n")) && ENVVER="${VER_ARRAY[0]}+$GITHUB_RUN_NUMBER"
+export ENVVER
+cat package.json | jq --arg variable "$ENVVER" '.version = $variable' > package.json.tmp && cp package.json.tmp package.json && rm package.json.tmp
+
 "./scripts/innosetup/innoinstall.sh"
 sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
 iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
