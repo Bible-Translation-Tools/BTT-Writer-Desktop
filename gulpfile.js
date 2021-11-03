@@ -107,7 +107,7 @@ function release(done){
 
     var promises = [];
     var platforms = [];
-    const gitVersion = '2.9.2';
+    const gitVersion = '2.33.0';
 
     if (argv.win) platforms.push('win32', 'win64');
     if (argv.win32) platforms.push('win32');
@@ -118,7 +118,7 @@ function release(done){
 
     /**
      *
-     * @param version 2.9.2
+     * @param version 2.33.0
      * @param arch 64|32
      * @returns {Promise}
      */
