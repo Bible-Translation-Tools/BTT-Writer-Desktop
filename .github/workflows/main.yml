@@ -40,3 +40,11 @@ jobs:
           aws_bucket: ${{ secrets.AWS_BUCKET }}
           source_dir: ./release
           destination_dir: ${{ env.CURRENT_S3_DESTINATION }}
+
+      - name: upload artifacts to github releases on tags
+        uses: "marvinpinto/action-automatic-releases@1.2.1"
+        if: contains( github.ref, 'refs/tags/v' )
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: release/*.*
