@@ -42,7 +42,7 @@ jobs:
           destination_dir: ${{ env.CURRENT_S3_DESTINATION }}
 
       - name: upload artifacts to github releases on tags
-        uses: "marvinpinto/action-automatic-releases@1.2.1"
+        uses: "marvinpinto/action-automatic-releases@v1.2.1"
         if: contains( github.ref, 'refs/tags/v' )
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
