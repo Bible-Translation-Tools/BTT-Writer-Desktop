@@ -77,7 +77,7 @@ function GitManager() {
                     if (installed) {
                         msg = "Your version of Git is out of date. We detected "  + err + ", but the app needs at least version " + minGitVersion + " in order to run.";
                     } else {
-                        msg = "Git is not installed. It is required to run tStudio Desktop."
+                        msg = "Git is not installed. It is required to run BTT-Writer Desktop."
                     }
                     throw msg;
                 });
