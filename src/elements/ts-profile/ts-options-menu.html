@@ -92,8 +92,10 @@
         },
 
         create: function () {
-            this.set('newinfo', {});
-            this.set('selected', 2);
+            // this.set('newinfo', {});
+            // this.set('selected', 2);
+            console.log("Clickaroo!");
+            require("electron").shell.openExternal("https://www.example.com");
         },
 
         local: function () {
