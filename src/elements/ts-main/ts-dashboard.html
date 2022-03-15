@@ -1351,7 +1351,7 @@
 
           App.configurator.refreshUserSetting();
           App.configurator.setUserSetting('gitversion', gitversion);
-          App.configurator.setUserSetting('appversion', App.configurator.getAppData().toString());
+          App.configurator.setUserSetting('appversion', App.configurator.getAppData().version);
           App.configurator.setUserSetting('datapath', App.configurator.getValue('rootdir'));
 
           var location = App.configurator.getUserSetting('datalocation');

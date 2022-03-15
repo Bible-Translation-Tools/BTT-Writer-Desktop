@@ -2,8 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "BTT-Writer"
-#define Version "1.1.1"
-#define Build "7"
+#define Version {%ENVVER|"0.0.1"}
 #define MyAppPublisher "Wycliffe Associates"
 #define MyAppURL "https://writer.bibletranslationtools.org"
 #define MyAppExeName "BTT-Writer.exe"
@@ -25,7 +24,7 @@ DisableDirPage=yes
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=out\
-OutputBaseFilename=BTT-Writer-{#Version}-{#Build}-win-x64
+OutputBaseFilename=BTT-Writer-{#Version}-win-x64
 SetupIconFile=icons\icon.ico
 Compression=lzma
 SolidCompression=yes
