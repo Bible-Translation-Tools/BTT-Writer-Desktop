@@ -90,6 +90,7 @@ function ImportManager(configurator, migrator, dataManager) {
                     }
                     var chunks = [];
                     var markers = dataManager.getChunkMarkers(projectmeta.project.id);
+                    var lastLabeledChapter = null;
 
                     for (var i = 0; i < markers.length; i++) {
                         var frameid = markers[i].verse;
@@ -112,6 +113,19 @@ function ImportManager(configurator, migrator, dataManager) {
                                 transcontent: transcontent.trim(),
                                 completed: false
                             });
+                            
+                            if (parsedData[chapter].verses.title && lastLabeledChapter !== chapter) {
+                                var title = parsedData[chapter].verses.title.contents.trim();
+                                chunks.unshift({
+                                    chunkmeta: {
+                                        chapterid: chapter,
+                                        frameid: "title"
+                                    },
+                                    transcontent: title,
+                                    completed: false
+                                });
+                                lastLabeledChapter = chapter;
+                            }
                         }
                     }
 
@@ -157,6 +171,11 @@ function UsfmParser () {
             regEx: /\\h[0-9]*/,
             hasOptions: false,
             type: "heading"
+        },
+        chapterLabel: {
+            regEx: /\\cl/,
+            hasOptions: false,
+            type: "chapterLabel"
         },
         chapter: {
             regEx: /\\c/,
@@ -259,6 +278,7 @@ function UsfmParser () {
             var chap;
             var chapnum = 0;
             var lastverse = 100;
+            var lastchapterlabel = null;
 
             var createchapter = function (chapnum) {
                 chap = chapnum.toString();
@@ -275,11 +295,22 @@ function UsfmParser () {
                 if (marker.type === "heading" && chapnum === 0) {
                     createchapter("front");
                     mythis.chapters[chap].contents = marker.contents.trim();
+                } else if (marker.type === "chapterLabel") {
+                    lastchapterlabel = marker.contents.trim();
                 } else if (marker.type === "chapter") {
                     chapnum = parseInt(marker.options);
                     createchapter(chapnum);
                     lastverse = 0;
                 } else if (marker.type === "verse") {
+                    if (lastchapterlabel) {
+                        mythis.chapters[chap].verses["title"] = {
+                            id: "title",
+                            contents: lastchapterlabel
+                        };
+                        lastchapterlabel = null;
+                    }
+                    
+                    
                     var thisverse = parseInt(marker.options);
 
                     if (thisverse < lastverse) {
