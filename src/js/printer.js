@@ -52,7 +52,7 @@ function PrintManager(configurator) {
             });
         },
 
-        savePdf: function (title, license, body, filePath, direction) {
+        savePdf: function (resource, title, license, body, filePath, direction) {
             var fontSizeMap = {
                 'small': '50%',
                 'normal': '100%',
@@ -66,14 +66,15 @@ function PrintManager(configurator) {
             var size = fontSizeMap[sizeValue];
             var mainheader = '\<!DOCTYPE html\>\<html\>\<head\>\<link rel="stylesheet" href="' + cssPath + '"\>\<\/head\>\<body\>';
             var mainfooter = '\<\/body\>\<\/html\>';
-            var titlegroup = '\<h1 id="title" class="break titles" style="font-family: ' + font + ';"\>' + title + '\<\/h1\>';
+            var resourcegroup = '\<h1 id="resource" class="titles" style="font-family: ' + font + ';"\>' + resource + '\<\/h1\>';
+            var titlegroup = '\<h1 id="title" class="break" style="font-family: ' + font + ';"\>' + title + '\<\/h1\>';
             var licensegroup = '\<div id="license" class="break"\>' + license + '\<\/div\>';
             var bodygroup = '\<div id="textholder" style="direction: ' + direction + '; font-family: ' + font + '; font-size: ' + size + ';"\>' + body + '\<\/div\>';
 
             var princeInfo = princePackager.info(os.platform());
 
             mkdirp.sync(tempPath);
-            fs.writeFileSync(input, mainheader + titlegroup + licensegroup + bodygroup + mainfooter);
+            fs.writeFileSync(input, mainheader + resourcegroup + titlegroup + licensegroup + bodygroup + mainfooter);
 
             return Prince()
                 .binary(path.join(srcDir, 'prince', princeInfo.binary))

@@ -120,7 +120,8 @@
             </div>
         </div>
         <div id="content">
-            <h1 id="title" class="break titles targetfont"></h1>
+            <h1 id="resource" class="titles targetfont"></h1>
+            <h1 id="title" class="break targetfont"></h1>
             <div id="license" class="break">
                 <marked-element id="licenseholder">
                     <div class="markdown-html"></div>
@@ -190,6 +191,7 @@
             var filename = this.currentproject.projectmeta.project.id === "obs" ? "OBS_LICENSE.md" : "LICENSE.md";
 
             this.$.licenseholder.markdown = App.printManager.getLicense(filename);
+            this.$.resource.innerHTML = chunks[0].projectmeta.target_language.name + ": " + chunks[0].projectmeta.resource.name;
             this.$.title.innerHTML = chunks[0].transcontent || chunks[0].srccontent;
             if (this.currentproject.projectmeta.project.id === "obs") {
                 this.$.licenseholder.classList.add('obs');
@@ -260,12 +262,13 @@
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
+            var resource = mythis.$.resource.innerHTML;
             var title = mythis.$.title.innerHTML;
             var license = mythis.$.license.innerHTML;
             var body = mythis.$.textholder.innerHTML;
 
             setTimeout(function() {
-                return App.printManager.savePdf(title, license, body, filePath, direction)
+                return App.printManager.savePdf(resource, title, license, body, filePath, direction)
                     .then(function () {
                         mythis.set('options.title', "PDF Created");
                         mythis.set('options.body', "Your project has been successfully saved to a PDF.");
