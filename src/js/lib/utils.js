@@ -412,12 +412,7 @@ var utils = {
         let fontpaths = [];
 
         fontDirs.forEach(dir => {
-            if (fs.existsSync(dir)) {
-                fs.readdirSync(dir).forEach(function (fontName) {
-                    let fontLocation = path.join(dir, fontName);
-                    fontpaths.push(fontLocation);
-                });
-            }
+            fontpaths = fontpaths.concat(utils.getPathsRecursevly(dir));
         });
 
         var list = fontpaths.map(function (fontpath) {
@@ -476,6 +471,19 @@ var utils = {
             seconds = ("0" + date.getSeconds()).slice(-2);
 
         return year + '-' + month + '-' + day + '_' + hour + '.' + minutes + '.' + seconds;
+    },
+
+    getPathsRecursevly: function(dir, paths = []) {
+        if (fs.existsSync(dir)) {
+            fs.readdirSync(dir).forEach(function (file) {
+                const filepath = path.join(dir, file);
+                if (fs.statSync(filepath).isDirectory()) {
+                    return utils.getPathsRecursevly(filepath, paths);
+                }
+                paths.push(filepath);
+            });
+        }
+        return paths;
     }
 };
 
