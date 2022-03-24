@@ -408,17 +408,9 @@ var utils = {
                 os.homedir() + '/.local/share/fonts']
         }[process.platform]();
 
-        let fontDirs = defaultFontDirs.map(dir => path.resolve(dir));
-        let fontpaths = [];
-
-        fontDirs.forEach(dir => {
-            if (fs.existsSync(dir)) {
-                fs.readdirSync(dir).forEach(function (fontName) {
-                    let fontLocation = path.join(dir, fontName);
-                    fontpaths.push(fontLocation);
-                });
-            }
-        });
+        let fontpaths = defaultFontDirs
+            .map(dir => utils.getPaths(path.resolve(dir)))
+            .flat()
 
         var list = fontpaths.map(function (fontpath) {
             var font = false;
@@ -476,6 +468,25 @@ var utils = {
             seconds = ("0" + date.getSeconds()).slice(-2);
 
         return year + '-' + month + '-' + day + '_' + hour + '.' + minutes + '.' + seconds;
+    },
+
+    getPaths: function(root) {
+        let dirsToCheck = [root];
+        let paths = [];
+        while (dirsToCheck.length > 0) {
+            const dir = dirsToCheck.pop();
+            if (fs.existsSync(dir)) {
+                fs.readdirSync(dir).forEach(function (file) {
+                    const filepath = path.join(dir, file);
+                    if (fs.statSync(filepath).isDirectory()) {
+                        dirsToCheck.push(filepath);
+                    } else {
+                        paths.push(filepath);
+                    }
+                });
+            }
+        }
+        return paths;
     }
 };
 
