@@ -302,7 +302,7 @@ function UsfmParser () {
                     createchapter("front");
                     mythis.chapters[chap].contents = marker.contents.trim();
                 } else if (marker.type === "chapterLabel") {
-                    if (chap == "front") {
+                    if (chap === "front") {
                         globalChapterLabel = marker.contents.trim();
                     } else {
                         localChapterLabel = marker.contents.trim();
