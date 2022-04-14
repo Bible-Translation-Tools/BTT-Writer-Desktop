@@ -242,7 +242,7 @@ function Renderer() {
             }
         },
 
-        renderPrintPreview: function (chunks, options, resource) {
+        renderPrintPreview: function (chunks, options, pagetitle) {
             var mythis = this;
             var module = "ts-print";
             var startheader = "\<h2 class='style-scope " + module + "'\>";
@@ -260,7 +260,7 @@ function Renderer() {
             var startdiv = "\<div class='style-scope " + add + module + "'\>";
             var enddiv = "\<\/div\>";
             var chapters = [];
-            var pagetitle = options.pagetitle ? "\<div class='style-scope page-title hide " + module + "' \>" + resource + "\<\/div\>" : "";
+            var pagetitle = options.pagetitle ? "\<div class='style-scope page-title hide " + module + "' \>" + pagetitle + "\<\/div\>" : "";
             var text = "\<div id='startnum' class='style-scope " + module + "'\>";
 
             _.forEach(_.groupBy(chunks, function(chunk) {
