@@ -192,6 +192,11 @@ function UsfmParser () {
             hasOptions: false,
             type: "sectionHeading"
         },
+        paragraph: {
+            regEx: /\\p/,
+            hasOptions: false,
+            type: "paragraph"
+        },
         tableOfContents: {
             regEx: /\\toc[0-2]*/,
             hasOptions: false,
@@ -278,7 +283,8 @@ function UsfmParser () {
             var chap;
             var chapnum = 0;
             var lastverse = 100;
-            var lastchapterlabel = null;
+            var globalChapterLabel = null;
+            var localChapterLabel = null;
 
             var createchapter = function (chapnum) {
                 chap = chapnum.toString();
@@ -296,22 +302,26 @@ function UsfmParser () {
                     createchapter("front");
                     mythis.chapters[chap].contents = marker.contents.trim();
                 } else if (marker.type === "chapterLabel") {
-                    lastchapterlabel = marker.contents.trim();
+                    if (chap == "front") {
+                        globalChapterLabel = marker.contents.trim();
+                    } else {
+                        localChapterLabel = marker.contents.trim();
+                    }
                 } else if (marker.type === "chapter") {
                     chapnum = parseInt(marker.options);
                     createchapter(chapnum);
                     lastverse = 0;
+                    localChapterLabel = null;
                 } else if (marker.type === "verse") {
-                    if (lastchapterlabel) {
+                    if ((globalChapterLabel || localChapterLabel) && !mythis.chapters[chap].verses.title) {
+                        const label = localChapterLabel ? localChapterLabel : globalChapterLabel + " " + chapnum;
                         mythis.chapters[chap].verses["title"] = {
                             id: "title",
-                            contents: lastchapterlabel
+                            contents: label
                         };
-                        lastchapterlabel = null;
                     }
                     
-                    
-                    var thisverse = parseInt(marker.options);
+                    const thisverse = parseInt(marker.options);
 
                     if (thisverse < lastverse) {
                         chapnum++;
