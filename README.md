@@ -16,6 +16,9 @@ After the repository has been cloned to your computer run the following command 
 
     $ npm install && bower install
 
+Alternatively, a Docker build pipeline and makefile are provided to make
+building and running easier.
+
 For more information please read the [wiki](https://github.com/unfoldingWord-dev/ts-desktop/wiki).
 
 ###Commands
