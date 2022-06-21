@@ -27,3 +27,6 @@ src/logs/
 
 *.swp
 package-lock.json
+
+.vscode
+yarn.lock
