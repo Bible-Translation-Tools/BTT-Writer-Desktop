@@ -29,4 +29,3 @@ src/logs/
 package-lock.json
 
 .vscode
-yarn.lock
