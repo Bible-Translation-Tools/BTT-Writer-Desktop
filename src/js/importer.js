@@ -90,6 +90,7 @@ function ImportManager(configurator, migrator, dataManager) {
                     }
                     var chunks = [];
                     var markers = dataManager.getChunkMarkers(projectmeta.project.id);
+                    var lastLabeledChapter = null;
 
                     for (var i = 0; i < markers.length; i++) {
                         var frameid = markers[i].verse;
@@ -112,6 +113,19 @@ function ImportManager(configurator, migrator, dataManager) {
                                 transcontent: transcontent.trim(),
                                 completed: false
                             });
+                            
+                            if (parsedData[chapter].verses.title && lastLabeledChapter !== chapter) {
+                                var title = parsedData[chapter].verses.title.contents.trim();
+                                chunks.unshift({
+                                    chunkmeta: {
+                                        chapterid: chapter,
+                                        frameid: "title"
+                                    },
+                                    transcontent: title,
+                                    completed: false
+                                });
+                                lastLabeledChapter = chapter;
+                            }
                         }
                     }
 
@@ -158,6 +172,11 @@ function UsfmParser () {
             hasOptions: false,
             type: "heading"
         },
+        chapterLabel: {
+            regEx: /\\cl/,
+            hasOptions: false,
+            type: "chapterLabel"
+        },
         chapter: {
             regEx: /\\c/,
             hasOptions: true,
@@ -172,6 +191,11 @@ function UsfmParser () {
             regEx: /\\s[0-9]*/,
             hasOptions: false,
             type: "sectionHeading"
+        },
+        paragraph: {
+            regEx: /\\p/,
+            hasOptions: false,
+            type: "paragraph"
         },
         tableOfContents: {
             regEx: /\\toc[0-2]*/,
@@ -259,6 +283,8 @@ function UsfmParser () {
             var chap;
             var chapnum = 0;
             var lastverse = 100;
+            var globalChapterLabel = null;
+            var localChapterLabel = null;
 
             var createchapter = function (chapnum) {
                 chap = chapnum.toString();
@@ -275,12 +301,27 @@ function UsfmParser () {
                 if (marker.type === "heading" && chapnum === 0) {
                     createchapter("front");
                     mythis.chapters[chap].contents = marker.contents.trim();
+                } else if (marker.type === "chapterLabel") {
+                    if (chap === "front") {
+                        globalChapterLabel = marker.contents.trim();
+                    } else {
+                        localChapterLabel = marker.contents.trim();
+                    }
                 } else if (marker.type === "chapter") {
                     chapnum = parseInt(marker.options);
                     createchapter(chapnum);
                     lastverse = 0;
+                    localChapterLabel = null;
                 } else if (marker.type === "verse") {
-                    var thisverse = parseInt(marker.options);
+                    if ((globalChapterLabel || localChapterLabel) && !mythis.chapters[chap].verses.title) {
+                        const label = localChapterLabel ? localChapterLabel : globalChapterLabel + " " + chapnum;
+                        mythis.chapters[chap].verses["title"] = {
+                            id: "title",
+                            contents: label
+                        };
+                    }
+                    
+                    const thisverse = parseInt(marker.options);
 
                     if (thisverse < lastverse) {
                         chapnum++;

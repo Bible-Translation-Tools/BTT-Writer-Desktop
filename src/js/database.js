@@ -190,6 +190,12 @@ function DataManager(db, resourceDir, sourceDir) {
                             return true;
                         });
                 })
+				.then(function () {
+                    return mythis.downloadContainer(language, "bible", "tw")
+                        .catch(function () {
+                            return true;
+                        });
+                })
                 .then(function () {
                     return item;
                 });
@@ -242,6 +248,9 @@ function DataManager(db, resourceDir, sourceDir) {
                 })
                 .then(function () {
                     return mythis.activateContainer(language, project, "udb");
+                })
+				.then(function () {
+                    return mythis.activateContainer(language, "bible", "tw");
                 });
         },
 
