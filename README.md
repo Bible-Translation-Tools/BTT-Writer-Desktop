@@ -31,6 +31,8 @@ After the repository has been cloned to your computer run the following command 
 
     $ npm install && bower install
 
+		Alternatively, a Docker build pipeline and makefile are provided to make building and running easier.
+
 ### Commands
 The following commands are available from within the project directory:
 
