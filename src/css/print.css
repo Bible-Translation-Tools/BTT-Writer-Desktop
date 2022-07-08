@@ -50,6 +50,18 @@ h1, h2 {
     }
 }
 
+.page-title {
+    string-set: title contents;
+    break-before: page;
+    display: none;
+}
+
+@page { 
+    @top-center { 
+        content: string(title) 
+    } 
+}
+
 #startnum {
     page: main;
     counter-reset: page 1;
