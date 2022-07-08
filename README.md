@@ -5,7 +5,7 @@ BTT-Writer Desktop
 
 A tool to translate the Bible into your own language. 
 
-##Quick Start
+## Quick Start
 First make sure you have [NodeJS](https://nodejs.org/) installed (choose the Current, not LTS). Then, in your terminal/command line window:
 
 	$ npm install -g bower
@@ -19,9 +19,7 @@ After the repository has been cloned to your computer run the following command 
 Alternatively, a Docker build pipeline and makefile are provided to make
 building and running easier.
 
-For more information please read the [wiki](https://github.com/unfoldingWord-dev/ts-desktop/wiki).
-
-###Commands
+### Commands
 The following commands are available from within the project directory:
 
 * `$ gulp build --win` builds a windows distribution (other available flags are `--osx` and `--linux`)
