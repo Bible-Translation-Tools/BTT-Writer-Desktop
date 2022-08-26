@@ -124,8 +124,12 @@
         },
 
         gotocreate: function () {
-            this.set('newinfo', {});
-            this.set('selected', 2);
+            // To restore the original behavior where this opens the
+            // "Create Account" form, uncomment the next two lines:
+            // this.set('newinfo', {});
+            // this.set('selected', 2);
+            var createaccounturl = App.configurator.getUserSetting('createaccounturl');
+            require("electron").shell.openExternal(createaccounturl);
         },
 
         ready: function() {
