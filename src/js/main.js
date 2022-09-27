@@ -119,6 +119,7 @@ function createMainWindow () {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
+            preload: path.join(__dirname, 'preload.js')
         }
     });
 
@@ -330,6 +331,7 @@ app.on('ready', function () {
     setTimeout(function () {
         splashScreen.show();
         createMainWindow();
+        loadUserColorTheme();
     }, 500);
 });
 
