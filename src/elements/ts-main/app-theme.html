@@ -1,30 +1,71 @@
 <style is="custom-style">
 
-:root {
-    --primary-color: #0250D3; 
-    --primary-color-light: #E2F0FF;
-    --primary-color-dark: #003389;
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #1C1C1C;
 
-    --accent-color: #00A56C;
-    --accent-color-light: #A5E4FF;
-    --accent-color-dark: #00B0FF;
+        --primary-color: #6a91D3; 
+        --primary-color-light: #E2F0FF;
+        --primary-color-dark: #445E89;
 
-    --reverse-text-color: #FFFFFF;
-    --card-background-color: #FFFFFF;
+        --accent-color: #52A588;
+        --accent-color-light: #A5E4FF;
+        --accent-color-dark: #80D8FF;
 
-    --completed-color: #19C457;
-    --review-color: #FF9800;
-    --warning-color: red;
+        --reverse-text-color: #1C1C1C;
+        --card-background-color: #272727;
+        --popup-background-color: #272727;
 
-    --primary-text-color: #1C1C1C;
-    --secondary-text-color: #888888;
-    --icon-color: #BFBFBF;
-    --border-color: #DDDDDD;
-    --shadow-color: rgba(0,0,0,0.5);
+        --completed-color: #62C485;
+        --review-color: #FFCB80;
+        --warning-color: #FF8080;
 
-    --note-card-pink: #F0A4A4;
-    --highlight-color: yellow;
+        --primary-text-color: #D2D2D2;
+        --secondary-text-color: #A4A4A4;
+        --icon-color: #777777;
+        --border-color: #333333;
+        --shadow-color: rgba(0,0,0,0.5);
 
+        --note-card-pink: #F0A4A4;
+        --highlight-color: yellow;
+        --card-hover-color: #0073a4;
+
+        --image-icon-color: invert(100%);
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --background-color: #EFEFEF;
+
+        --primary-color: #0250D3; 
+        --primary-color-light: #E2F0FF;
+        --primary-color-dark: #003389;
+
+        --accent-color: #00A56C;
+        --accent-color-light: #A5E4FF;
+        --accent-color-dark: #00B0FF;
+
+        --reverse-text-color: #FFFFFF;
+        --card-background-color: #FFFFFF;
+        --popup-background-color: #FFFFFF;
+
+        --completed-color: #19C457;
+        --review-color: #FF9800;
+        --warning-color: #FF0000;
+
+        --primary-text-color: #1C1C1C;
+        --secondary-text-color: #888888;
+        --icon-color: #BFBFBF;
+        --border-color: #DDDDDD;
+        --shadow-color: rgba(0,0,0,0.5);
+
+        --note-card-pink: #F0A4A4;
+        --highlight-color: yellow;
+        --card-hover-color: #A5E4FF;
+
+        --image-icon-color: invert(0%);
+    }
 }
 
 </style>
