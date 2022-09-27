@@ -119,7 +119,6 @@ function createMainWindow () {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            preload: path.join(__dirname, 'preload.js')
         }
     });
 
@@ -226,21 +225,21 @@ function createAppMenus() {
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
-function loadUserColorTheme() {
-    mainWindow.webContents
-            .executeJavaScript('App.configurator.getUserSetting("colortheme");', true)
-            .then(theme => {
-                switch (theme.name) {
-                    case 'Light':
-                        nativeTheme.themeSource = 'light';
-                        break;
-                    case 'Dark':
-                        nativeTheme.themeSource = 'dark';
-                        break;
-                    default:
-                        nativeTheme.themeSource = 'system';
-                }
-            });
+function reloadApplication() {
+    if (splashScreen) {
+        splashScreen.show();
+    } else {
+        createReloadSplash();
+    }
+    setTimeout(function () {
+        splashScreen.show();
+        setTimeout(function () {
+            if (mainWindow) {
+                mainWindow.hide();
+                mainWindow.reload();
+            }
+        }, 500);
+    }, 500);
 }
 
 ipcMain.on('main-window', function (event, arg) {
@@ -280,20 +279,7 @@ ipcMain.on('open-academy', function (event, id) {
 });
 
 ipcMain.on('fire-reload', function () {
-    if (splashScreen) {
-        splashScreen.show();
-    } else {
-        createReloadSplash();
-    }
-    setTimeout(function () {
-        splashScreen.show();
-        setTimeout(function () {
-            if (mainWindow) {
-                mainWindow.hide();
-                mainWindow.reload();
-            }
-        }, 500);
-    }, 500);
+    reloadApplication();
 });
 
 ipcMain.on('save-as', function (event, arg) {
@@ -329,8 +315,13 @@ ipcMain.on('ta-loading-done', function () {
     }
 });
 
-ipcMain.handle('dark-mode:set', (theme) => {
-    nativeTheme.themeSource = theme;
+ipcMain.on('theme-changed', (event, theme) => {
+    nativeTheme.themeSource = theme.toLowerCase();
+    reloadApplication();
+});
+
+ipcMain.on('theme-loaded', (event, theme) => {
+    nativeTheme.themeSource = theme.toLowerCase();
 });
 
 app.on('ready', function () {
@@ -339,7 +330,6 @@ app.on('ready', function () {
     setTimeout(function () {
         splashScreen.show();
         createMainWindow();
-        loadUserColorTheme();
     }, 500);
 });
 
