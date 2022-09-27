@@ -1,12 +1,15 @@
 'use strict';
 
+const { Configurator } = require('./configurator');
+
 var electron = require('electron'),
     Menu = electron.Menu,
     dialog = electron.dialog,
     path = require('path'),
     app = electron.app,
     BrowserWindow = electron.BrowserWindow,
-    ipcMain = electron.ipcMain;
+    ipcMain = electron.ipcMain,
+    nativeTheme = electron.nativeTheme;
 
 app.setPath('userData', (function (dataDir) {
     var base = process.env.LOCALAPPDATA ||
@@ -116,6 +119,7 @@ function createMainWindow () {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
+            preload: path.join(__dirname, 'preload.js')
         }
     });
 
@@ -222,6 +226,23 @@ function createAppMenus() {
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
+function loadUserColorTheme() {
+    mainWindow.webContents
+            .executeJavaScript('App.configurator.getUserSetting("colortheme");', true)
+            .then(theme => {
+                switch (theme.name) {
+                    case 'Light':
+                        nativeTheme.themeSource = 'light';
+                        break;
+                    case 'Dark':
+                        nativeTheme.themeSource = 'dark';
+                        break;
+                    default:
+                        nativeTheme.themeSource = 'system';
+                }
+            });
+}
+
 ipcMain.on('main-window', function (event, arg) {
     if (typeof mainWindow[arg] === 'function') {
         let ret = mainWindow[arg]();
@@ -308,12 +329,17 @@ ipcMain.on('ta-loading-done', function () {
     }
 });
 
+ipcMain.handle('dark-mode:set', (theme) => {
+    nativeTheme.themeSource = theme;
+});
+
 app.on('ready', function () {
     createAppMenus();
     createMainSplash();
     setTimeout(function () {
         splashScreen.show();
         createMainWindow();
+        loadUserColorTheme();
     }, 500);
 });
 
