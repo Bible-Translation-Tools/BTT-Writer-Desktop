@@ -24,10 +24,16 @@
 
         splash.content = {title: "BTT Writer", subtitle: versiontext, message: "Loading main window..."};
 
+        const Configurator = require('../js/configurator').Configurator;
+        const configurator = new Configurator();
+        configurator.setStorage(window.localStorage);
+        const theme = configurator.getUserSetting("colortheme").name;
+
+        ipcRenderer.send('theme-loaded', theme);
+
         ipcRenderer.on('loading-status', function (event, status) {
             splash.updateMessage(status);
         });
-
     })();
     </script>
 </body>
