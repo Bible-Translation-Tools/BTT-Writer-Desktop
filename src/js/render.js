@@ -379,6 +379,7 @@ function Renderer() {
         renderResourceLinks: function (text, module) {
             var talinktest = new RegExp(/(\[\[:en:ta)(:[^:]*:[^:]*:)([^:\]]*)(\]\])/);
             var biblelinktest = new RegExp(/(\[\[:en:bible)(:[^:]*:)(\w*:\d*:\d*)(\|[^\]]*\]\])/);
+            var hrefRegex = new RegExp(/\s*href=\".*?\"/);
             var linkname;
             var starta;
             var enda = "\<\/a\>";
@@ -398,6 +399,11 @@ function Renderer() {
                 starta = "\<a href='" + linkname + "' class='style-scope biblelink " + module + "' id='" + chapter + ":" + verse + "'\>";
 
                 text = text.replace(biblelinktest, starta + chapter + ":" + verse + enda);
+            }
+        
+            while (hrefRegex.test(text)) {
+                // remove external link to avoid crash when clicked
+                text = text.replace(hrefRegex, '');
             }
 
             return text;
