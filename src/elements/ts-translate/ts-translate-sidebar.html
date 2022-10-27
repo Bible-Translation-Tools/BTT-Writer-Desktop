@@ -218,6 +218,10 @@
 
         prevchap: function () {
             var chapter = this.modestatus.chapter;
+            if (chapter <= 1) {
+                return;
+            }
+
             var type = this.currentproject.projectmeta.type.id;
 
             if (type === "tw") {
