@@ -406,7 +406,7 @@ function Renderer() {
                     text = text.replace(hrefRegex, '');
                 }
             }
-            removeHrefLinks() // remove external URL to avoid crashing
+            removeHrefLinks() // remove relative resource path to avoid crashing when clicked
 
             return text;
         },
