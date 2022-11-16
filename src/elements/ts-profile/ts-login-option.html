@@ -83,8 +83,8 @@
                 <p><iron-icon icon="notification:wifi"></iron-icon> This will use your internet connection</p>
             </div>
             <div class="body">
-                <input is="iron-input" bind-value="{{newinfo.username}}" placeholder="Username">
-                <input is="iron-input" bind-value="{{newinfo.password}}" placeholder="Password" type="password">
+                <input is="iron-input" bind-value="{{newinfo.username}}" placeholder="Username" on-keydown="keyinput">
+                <input is="iron-input" bind-value="{{newinfo.password}}" placeholder="Password" type="password" on-keydown="keyinput">
             </div>
             <div class="buttons">
                 <paper-button class="nofill" on-tap="gotocreate">Create a New Account</paper-button>
@@ -121,6 +121,12 @@
 
         login: function () {
             this.fire('login');
+        },
+
+        keyinput: function (e) {
+            if (e.key == "Enter") {
+                this.login();
+            }
         },
 
         gotocreate: function () {
