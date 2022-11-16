@@ -399,9 +399,19 @@ function Renderer() {
 
                 text = text.replace(biblelinktest, starta + chapter + ":" + verse + enda);
             }
+        
+            text = this.removeHrefPaths(text) // remove relative resource path to avoid crashing when clicked
 
             return text;
         },
+
+        removeHrefPaths: function(text) {
+            const hrefRegex = new RegExp(/\s*href=\".*?\"/);
+            while (hrefRegex.test(text)) {
+                text = text.replace(hrefRegex, '');
+            }
+            return text;
+        },    
 
         validateVerseMarkers: function (text, verses) {
             var returnstr = text.trim();
