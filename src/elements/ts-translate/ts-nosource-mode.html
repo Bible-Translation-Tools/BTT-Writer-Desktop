@@ -100,6 +100,10 @@
             cursor: pointer;
         }
 
+        .iconimage {
+            filter: var(--image-icon-color);
+        }
+
     </style>
 
     <template>
@@ -108,14 +112,14 @@
             <div id="header">
                 <paper-material id="top" elevation="1">
                     <span>Project: <span>[[projectmeta.project.name]]</span> - <span>[[projectmeta.target_language.name]]</span></span>
-                    <iron-icon class="click" src="../ts-icons/uw-tab-small.png" on-tap="openmodal"></iron-icon>
+                    <iron-icon class="click iconimage" src="../ts-icons/uw-tab-small.png" on-tap="openmodal"></iron-icon>
                 </paper-material>
                 <paper-material id="bottom" elevation="1">
                 </paper-material>
             </div>
             <div id="body">
                 <p>Choose source translation(s) to begin reading and translating</p>
-                <iron-icon class="click" src="../ts-icons/uw-tab-large.png" on-tap="openmodal"></iron-icon>
+                <iron-icon class="click iconimage" src="../ts-icons/uw-tab-large.png" on-tap="openmodal"></iron-icon>
             </div>
         </div>
 
