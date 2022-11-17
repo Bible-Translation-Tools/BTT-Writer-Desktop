@@ -218,6 +218,10 @@
 
         prevchap: function () {
             var chapter = this.modestatus.chapter;
+            if (chapter <= 1) {
+                return;
+            }
+
             var type = this.currentproject.projectmeta.type.id;
 
             if (type === "tw") {
@@ -291,6 +295,9 @@
             } else if (input > max) {
                 this.set('modestatus.index', length - 1);
                 this.set('modestatus.chapter', max);
+            } else {
+                this.set('modestatus.index', -1);
+                this.set('modestatus.chapter', 1);
             }
             this.navigate();
         },
