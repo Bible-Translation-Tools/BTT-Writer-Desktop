@@ -11,7 +11,7 @@
 
         :host {
             background: var(--primary-color);
-            color: var(--reverse-text-color);
+            color: white;
             min-width: 50px;
             align-self: stretch;
             display: flex;
@@ -22,7 +22,7 @@
 
         #menuicon {
             padding: 8px;
-            color: var(--reverse-text-color);
+            color: white;
         }
 
         paper-item {
@@ -34,7 +34,7 @@
         }
 
         paper-item:hover {
-            background: var(--accent-color-light);
+            background: var(--card-hover-color);
             cursor: pointer;
         }
 
@@ -44,8 +44,9 @@
 
         paper-menu {
             --paper-menu-selected-item: {
-                 font-weight: normal;
-             }
+                font-weight: normal;
+            };
+            background-color: var(--popup-background-color);
         }
 
         .smallicon {

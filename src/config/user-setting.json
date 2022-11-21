@@ -18,6 +18,16 @@
         "visible": true
     },
     {
+        "name": "colortheme",
+        "mainText": "Color Theme",
+        "helpText": "Set the color theme",
+        "value": {"name": "System"},
+        "options": [{"name": "Light"}, {"name": "Dark"}, {"name": "System"}],
+        "group": "general",
+        "enabled": true,
+        "visible": true
+    },
+    {
         "name": "appfont",
         "mainText": "App Font",
         "value": {"path": "default", "name": "Roboto"},

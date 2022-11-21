@@ -83,6 +83,10 @@
             color: var(--border-color);
         }
 
+        .iconimage {
+            filter: var(--image-icon-color);
+        }
+
         .upper {
             text-transform: uppercase;
             padding-left: 5px;
@@ -107,7 +111,7 @@
             <div class="fillspace"></div>
 		</div>
 		<div class="iconbutton">
-            <iron-icon class="click" src="../../ts-icons/uw-tab-small.png" on-tap="openmodal"></iron-icon>
+            <iron-icon class="click iconimage" src="../../ts-icons/uw-tab-small.png" on-tap="openmodal"></iron-icon>
 		</div>
 
 	</template>
