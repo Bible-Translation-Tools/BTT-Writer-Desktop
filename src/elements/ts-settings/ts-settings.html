@@ -309,6 +309,8 @@
                 // TODO This bypasses Polymer to call the ts-dashboard.showMessage() function.  Is there a better way?
                 var dashboard = document.querySelector('ts-dashboard')
                 dashboard.showMessage("Server Suite Changed", "Please close and restart the application.")
+            } else if(name == "colortheme") {
+                App.ipc.send('theme-changed', value.name);
             }
             App.configurator.applyPrefAppearance();
         },

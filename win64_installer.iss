@@ -4,7 +4,7 @@
 #define MyAppName "BTT-Writer"
 #define Version {%ENVVER|"0.0.1"}
 #define MyAppPublisher "Wycliffe Associates"
-#define MyAppURL "https://writer.bibletranslationtools.org"
+#define MyAppURL "https://bibletranslationtools.org/writer"
 #define MyAppExeName "BTT-Writer.exe"
 #define MyLicenseFile "LICENSE"
 
@@ -20,7 +20,7 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
-DisableDirPage=yes
+DisableDirPage=no
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=out\

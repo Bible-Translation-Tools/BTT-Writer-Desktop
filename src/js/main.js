@@ -1,12 +1,15 @@
 'use strict';
 
+const { Configurator } = require('./configurator');
+
 var electron = require('electron'),
     Menu = electron.Menu,
     dialog = electron.dialog,
     path = require('path'),
     app = electron.app,
     BrowserWindow = electron.BrowserWindow,
-    ipcMain = electron.ipcMain;
+    ipcMain = electron.ipcMain,
+    nativeTheme = electron.nativeTheme;
 
 app.setPath('userData', (function (dataDir) {
     var base = process.env.LOCALAPPDATA ||
@@ -222,6 +225,23 @@ function createAppMenus() {
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
+function reloadApplication() {
+    if (splashScreen) {
+        splashScreen.show();
+    } else {
+        createReloadSplash();
+    }
+    setTimeout(function () {
+        splashScreen.show();
+        setTimeout(function () {
+            if (mainWindow) {
+                mainWindow.hide();
+                mainWindow.reload();
+            }
+        }, 500);
+    }, 500);
+}
+
 ipcMain.on('main-window', function (event, arg) {
     if (typeof mainWindow[arg] === 'function') {
         let ret = mainWindow[arg]();
@@ -259,20 +279,7 @@ ipcMain.on('open-academy', function (event, id) {
 });
 
 ipcMain.on('fire-reload', function () {
-    if (splashScreen) {
-        splashScreen.show();
-    } else {
-        createReloadSplash();
-    }
-    setTimeout(function () {
-        splashScreen.show();
-        setTimeout(function () {
-            if (mainWindow) {
-                mainWindow.hide();
-                mainWindow.reload();
-            }
-        }, 500);
-    }, 500);
+    reloadApplication();
 });
 
 ipcMain.on('save-as', function (event, arg) {
@@ -306,6 +313,15 @@ ipcMain.on('ta-loading-done', function () {
         splashScreen.close();
         scrollAcademyWindow();
     }
+});
+
+ipcMain.on('theme-changed', (event, theme) => {
+    nativeTheme.themeSource = theme.toLowerCase();
+    reloadApplication();
+});
+
+ipcMain.on('theme-loaded', (event, theme) => {
+    nativeTheme.themeSource = theme.toLowerCase();
 });
 
 app.on('ready', function () {
