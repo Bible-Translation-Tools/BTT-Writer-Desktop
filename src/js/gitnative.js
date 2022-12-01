@@ -141,13 +141,14 @@ function GitManager() {
                     return mythis.getVersion();
                 })
                 .then(function (version) {
-                    var diff = cmd().cd(localPath).and.do('git diff --name-only --diff-filter=U');
-                    var pull = cmd().cd(localPath).and.do(`git pull "${remotePath}" master ${NO_REBASE}`);
-
+                    const diff = cmd().cd(localPath).and.do('git diff --name-only --diff-filter=U');
+                    let pullCommand = `git pull "${remotePath}" master ${NO_REBASE}`;
+                    
                     if (version.major > 2 || (version.major == 2 && version.minor > 8)) {
-                        pull += ` ${ALLOW_UNRELATED_HISTORIES}`;
+                        pullCommand += ` ${ALLOW_UNRELATED_HISTORIES}`;
                     }
-
+                    
+                    const pull = cmd().cd(localPath).and.do(pullCommand);
                     return pull.run()
                         .catch(function (err) {
                             if (err.stdout.includes('fix conflicts')) {
@@ -183,7 +184,11 @@ function GitManager() {
                     return mythis.commitAll(user, localPath);
                 })
                 .catch(function (err) {
-                    throw "Error while merging projects: " + err.stderr;
+                    if (err.stderr != undefined) {
+                        throw "Error while merging projects: " + err.stderr;
+                    } else {
+                        console.error(err);
+                    }
                 })
                 .then(utils.logr("Finished merging"))
                 .then(function () {
