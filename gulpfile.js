@@ -78,7 +78,7 @@ function build(done) {
     });
 
     packager({
-        'arch': 'all',
+        'arch': ['ia32', 'x64'],
         'platform': platforms,
         'dir': '.',
         'ignore': function (name) {
@@ -94,7 +94,8 @@ function build(done) {
         'out': BUILD_DIR,
         'app-version': p.version,
         'icon': './icons/icon'
-    }).then(() => done());
+    }).then(() => done())
+    .catch(_ => done());
 }
 
 // pass parameters like: gulp build --win --osx --linux
