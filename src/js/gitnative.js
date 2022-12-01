@@ -4,6 +4,9 @@ var path = require('path'),
     utils = require('../js/lib/utils'),
     cmdr = require('../js/lib/cmdr');
 
+const ALLOW_UNRELATED_HISTORIES = '--allow-unrelated-histories';
+const NO_REBASE = '--rebase=false';
+
 // NOTE: could use moment module for this
 function createTagName(datetime) {
     return 'R2P/' +
@@ -139,12 +142,10 @@ function GitManager() {
                 })
                 .then(function (version) {
                     var diff = cmd().cd(localPath).and.do('git diff --name-only --diff-filter=U');
-                    var pull = "";
+                    var pull = cmd().cd(localPath).and.do(`git pull "${remotePath}" master ${NO_REBASE}`);
 
                     if (version.major > 2 || (version.major == 2 && version.minor > 8)) {
-                        pull = cmd().cd(localPath).and.do(`git pull "${remotePath}" master --allow-unrelated-histories`);
-                    } else {
-                        pull = cmd().cd(localPath).and.do(`git pull "${remotePath}" master`);
+                        pull += ` ${ALLOW_UNRELATED_HISTORIES}`;
                     }
 
                     return pull.run()
