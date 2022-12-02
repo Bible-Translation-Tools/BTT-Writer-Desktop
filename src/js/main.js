@@ -325,7 +325,7 @@ ipcMain.on('theme-loaded', (event, theme) => {
 });
 
 ipcMain.on('show-devtools', () => {
-    BrowserWindow.getFocusedWindow().webContents.openDevTools()
+    BrowserWindow.getFocusedWindow().webContents.openDevTools();
 });
 
 app.on('ready', function () {
