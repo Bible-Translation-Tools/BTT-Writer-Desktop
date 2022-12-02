@@ -324,6 +324,10 @@ ipcMain.on('theme-loaded', (event, theme) => {
     nativeTheme.themeSource = theme.toLowerCase();
 });
 
+ipcMain.on('show-devtools', () => {
+    BrowserWindow.getFocusedWindow().webContents.openDevTools()
+});
+
 app.on('ready', function () {
     createAppMenus();
     createMainSplash();
