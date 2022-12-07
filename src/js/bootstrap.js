@@ -204,7 +204,7 @@ process.stdout.write = console.log.bind(console);
         },
 
         showDevTools: function () {
-            require('electron').remote.getCurrentWindow().toggleDevTools();
+            this.ipc.send('show-devtools');
         },
 
         utils: utils,
