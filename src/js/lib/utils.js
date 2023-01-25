@@ -400,7 +400,7 @@ var utils = {
     getSystemFonts: function () {
         var defaultFontDirs = {
             win32: () => ['/Windows/Fonts', os.homedir() + '/AppData/Local/Microsoft/Windows/Fonts'],
-            darwin: () => ['/Library/Fonts', os.homedir() + '/Library/Fonts'],
+            darwin: () => ['/Library/Fonts', '/System/Library/Fonts', os.homedir() + '/Library/Fonts'],
             linux: () => [
                 '/usr/share/fonts/truetype',
                 '/usr/local/share/fonts/truetype',
