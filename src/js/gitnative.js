@@ -92,7 +92,7 @@ function GitManager() {
 
         init: function (dir) {
             return utils.fs.readdir(dir).then(function (files) {
-                var init = cmd().cd(dir).and.do('git init');
+                var init = cmd().cd(dir).and.do('git init -b master');
                 var hasGitFolder = (files.indexOf('.git') >= 0);
 
                 return !hasGitFolder && init.run();
