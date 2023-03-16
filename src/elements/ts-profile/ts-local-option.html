@@ -83,7 +83,7 @@
                 <p>Enter your full name or pseudonym.  This name will be added to the contributor list of all projects you work on.  This name will be visible to others.</p>
             </div>
             <div class="body">
-                <input is="iron-input" bind-value="{{newinfo.full_name}}" placeholder="Full Name or Pseudonym">
+                <input is="iron-input" bind-value="{{newinfo.full_name}}" on-keydown="keyinput" placeholder="Full Name or Pseudonym">
             </div>
             <div class="buttons">
                 <paper-button class="nofill" on-tap="gotologin">Login with Server Account</paper-button>
@@ -124,6 +124,13 @@
         gotologin: function () {
             this.set('newinfo', {});
             this.set('selected', 1);
+        },
+
+        
+        keyinput: function (e) {
+            if (e.key == "Enter") {
+                this.local();
+            }
         },
 
         ready: function() {

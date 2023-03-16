@@ -4,6 +4,9 @@ var path = require('path'),
     utils = require('../js/lib/utils'),
     cmdr = require('../js/lib/cmdr');
 
+const ALLOW_UNRELATED_HISTORIES = '--allow-unrelated-histories';
+const NO_REBASE = '--rebase=false';
+
 // NOTE: could use moment module for this
 function createTagName(datetime) {
     return 'R2P/' +
@@ -89,7 +92,7 @@ function GitManager() {
 
         init: function (dir) {
             return utils.fs.readdir(dir).then(function (files) {
-                var init = cmd().cd(dir).and.do('git init');
+                var init = cmd().cd(dir).and.do('git init -b master');
                 var hasGitFolder = (files.indexOf('.git') >= 0);
 
                 return !hasGitFolder && init.run();
@@ -138,15 +141,14 @@ function GitManager() {
                     return mythis.getVersion();
                 })
                 .then(function (version) {
-                    var diff = cmd().cd(localPath).and.do('git diff --name-only --diff-filter=U');
-                    var pull = "";
-
+                    const diff = cmd().cd(localPath).and.do('git diff --name-only --diff-filter=U');
+                    let pullCommand = `git pull "${remotePath}" master ${NO_REBASE}`;
+                    
                     if (version.major > 2 || (version.major == 2 && version.minor > 8)) {
-                        pull = cmd().cd(localPath).and.do(`git pull "${remotePath}" master --allow-unrelated-histories`);
-                    } else {
-                        pull = cmd().cd(localPath).and.do(`git pull "${remotePath}" master`);
+                        pullCommand += ` ${ALLOW_UNRELATED_HISTORIES}`;
                     }
-
+                    
+                    const pull = cmd().cd(localPath).and.do(pullCommand);
                     return pull.run()
                         .catch(function (err) {
                             if (err.stdout.includes('fix conflicts')) {
@@ -182,7 +184,11 @@ function GitManager() {
                     return mythis.commitAll(user, localPath);
                 })
                 .catch(function (err) {
-                    throw "Error while merging projects: " + err.stderr;
+                    if (err.stderr != undefined) {
+                        throw "Error while merging projects: " + err.stderr;
+                    } else {
+                        console.error(err);
+                    }
                 })
                 .then(utils.logr("Finished merging"))
                 .then(function () {
