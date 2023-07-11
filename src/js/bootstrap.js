@@ -52,7 +52,7 @@ process.stdout.write = console.log.bind(console);
         mkdirp = require('mkdirp');
 
         setMsg('Loading DB...');
-        Db = require('door43-client');
+        Db = require('door43-client-fork');
 
         setMsg('Loading Reporter...');
         Reporter = require('../js/reporter').Reporter;
