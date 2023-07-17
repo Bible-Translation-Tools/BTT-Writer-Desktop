@@ -299,6 +299,7 @@
                 App.configurator.setUserSetting("readerserver", value.readerserver);
                 App.configurator.setUserSetting("createaccounturl", value.createaccounturl);
                 App.configurator.setUserSetting("languageurl", value.languageurl);
+                App.dataManager.updateLanguageUrl(value.languageurl);
 
                 this.set('settings', App.configurator.refreshUserSetting());
                 this.saveSettings();
@@ -313,6 +314,8 @@
                 dashboard.showMessage("Server Suite Changed", "Please close and restart the application.")
             } else if(name == "colortheme") {
                 App.ipc.send('theme-changed', value.name);
+            } else if(name == "languageurl") {
+                App.dataManager.updateLanguageUrl(value);
             }
             App.configurator.applyPrefAppearance();
         },
