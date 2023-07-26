@@ -155,7 +155,7 @@
                 "mediaserver": "https://api.bibletranslationtools.org", 
                 "readerserver": "http://read.bibletranslationtools.org/u",
                 "createaccounturl": "https://content.bibletranslationtools.org/user/sign_up",
-                "languageurl": "https://langnames-temp.walink.org/langnames.json"
+                "languageurl": "https://langnames.bibleineverylanguage.org/langnames.json"
             },
             {
                 "name": "DCS",  
@@ -209,8 +209,8 @@
     {
         "name": "languageurl",
         "mainText": "Languages URL",
-        "value": "https://langnames-temp.walink.org/langnames.json",
-        "default": "https://langnames-temp.walink.org/langnames.json",
+        "value": "https://langnames.bibleineverylanguage.org/langnames.json",
+        "default": "https://langnames.bibleineverylanguage.org/langnames.json",
         "group": "advanced",
         "enabled": true,
         "visible": true
