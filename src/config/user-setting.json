@@ -154,14 +154,16 @@
                 "dataserver": "https://wacs.bibletranslationtools.org", 
                 "mediaserver": "https://api.bibletranslationtools.org", 
                 "readerserver": "http://read.bibletranslationtools.org/u",
-                "createaccounturl": "https://content.bibletranslationtools.org/user/sign_up"
+                "createaccounturl": "https://content.bibletranslationtools.org/user/sign_up",
+                "languageurl": "https://langnames.bibleineverylanguage.org/langnames.json"
             },
             {
                 "name": "DCS",  
                 "dataserver": "https://git.door43.org",
                 "mediaserver": "https://api.unfoldingword.org", 
                 "readerserver": "https://door43.org/u",
-                "createaccounturl": "https://git.door43.org/user/sign_up" 
+                "createaccounturl": "https://git.door43.org/user/sign_up",
+                "languageurl": "https://td.unfoldingword.org/exports/langnames.json"
             }
         ],
         "group": "advanced",
@@ -200,6 +202,15 @@
         "mainText": "Create Account URL",
         "value": "https://content.bibletranslationtools.org/user/sign_up",
         "default": "https://content.bibletranslationtools.org/user/sign_up",
+        "group": "advanced",
+        "enabled": true,
+        "visible": true
+    },
+    {
+        "name": "languageurl",
+        "mainText": "Languages URL",
+        "value": "https://langnames.bibleineverylanguage.org/langnames.json",
+        "default": "https://langnames.bibleineverylanguage.org/langnames.json",
         "group": "advanced",
         "enabled": true,
         "visible": true
