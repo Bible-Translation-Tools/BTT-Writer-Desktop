@@ -118,6 +118,7 @@ function Renderer() {
         },
 
         renderTargetWithVerses: function (text, module) {
+            text = this.replaceParagraphs(text);
             text = this.renderParagraphs(text, module);
             text = this.renderSuperscriptVerses(text);
 
@@ -223,6 +224,10 @@ function Renderer() {
             text = text.replace(/\+/g, "\\+").replace(/\*/g, "\\*").replace(/\{/g, "\\{").replace(/\}/g, "\\}").replace(/\|/g, "\\|");
 
             return text;
+        },
+
+        replaceParagraphs: function (text) {
+            return text.replace(/\\p/g, "\n");
         },
 
         displayConflicts: function (content) {
@@ -447,7 +452,7 @@ function Renderer() {
         markersToBalloons: function (chunk, module) {
             var verses = chunk.chunkmeta.verses;
             var chap = chunk.chunkmeta.chapter;
-            var linearray = chunk.transcontent.split("\n");
+            var linearray = this.replaceParagraphs(chunk.transcontent).split("\n");
             var vmstr1 = "\<ts-verse-marker id='c";
             var vmstr2 = "v";
             var vmstr3 = "' draggable='true' class='markers' verse='";
