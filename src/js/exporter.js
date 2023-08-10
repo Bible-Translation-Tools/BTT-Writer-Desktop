@@ -145,19 +145,32 @@ function ExportManager(configurator, git) {
                         var content = "";
                         var currentChapter = 0;
 
+                        // Use first element from the translation array as a book meta
+                        const bookTranslation = translation[0];
+                        const bookTitle = bookTranslation.transcontent || meta.project.name;
+
                         content += "\\id " + meta.project.id + " " + meta.resource.name + "\n";
                         content += "\\ide " + meta.format + "\n";
-                        content += "\\h " + meta.project.name + "\n";
-                        content += "\\toc1 " + meta.project.name + "\n";
-                        content += "\\toc2 " + meta.project.name + "\n";
+                        content += "\\h " + bookTitle + "\n";
+                        content += "\\toc1 " + bookTitle + "\n";
+                        content += "\\toc2 " + bookTitle + "\n";
                         content += "\\toc3 " + meta.project.id + "\n";
-                        content += "\\mt " + meta.project.name + "\n";
+                        content += "\\mt " + bookTitle + "\n";
 
-                        translation.forEach(function (chunk) {
+                        translation.forEach(function (chunk, index) {
+                            // Skip first element, because it's a book title
+                            // and we don't want to render it as a chapter contents
+                            if (index === 0) return;
+
                             if (chunk.chunkmeta.chapter > 0) {
                                 if (chunk.chunkmeta.chapter !== currentChapter) {
                                     content += "\\c " + chunk.chunkmeta.chapter + "\n";
                                     currentChapter = chunk.chunkmeta.chapter;
+                                }
+                                if (chunk.chunkmeta.frame === 0 && chunk.transcontent) {
+                                    // Write chapter label to \cl marker
+                                    content += "\\cl " + chunk.transcontent + "\n";
+                                    return;
                                 }
                                 if (chunk.transcontent) {
                                     var text = chunk.transcontent;
