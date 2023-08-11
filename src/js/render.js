@@ -227,7 +227,7 @@ function Renderer() {
         },
 
         replaceParagraphs: function (text) {
-            return text.replace(/\\p/g, "\n");
+            return text.replace(/\\p[^a-z]/g, "\n");
         },
 
         displayConflicts: function (content) {
