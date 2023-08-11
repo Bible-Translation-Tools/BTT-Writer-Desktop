@@ -517,7 +517,7 @@ function Renderer() {
                     }
                     returnstr = returnstr.trim();
                     if (j !== paragraphs.length-1) {
-                        returnstr += "\n";
+                        returnstr += " \\p ";
                     }
                 }
             }
