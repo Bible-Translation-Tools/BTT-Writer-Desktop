@@ -11,6 +11,15 @@ var electron = require('electron'),
     ipcMain = electron.ipcMain,
     nativeTheme = electron.nativeTheme;
 
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+    // We couldn't obtain the lock.
+    // This means another instance of the app is running.
+    // So quitting the second instance.
+    app.quit();
+    return;
+}
+
 app.setPath('userData', (function (dataDir) {
     var base = process.env.LOCALAPPDATA ||
         (process.platform == 'darwin'
@@ -352,3 +361,11 @@ app.on('activate', function () {
         createMainWindow();
     }
 });
+
+app.on('second-instance', function () {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore()
+        mainWindow.focus()
+    }
+})
