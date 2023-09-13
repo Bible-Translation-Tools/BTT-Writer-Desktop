@@ -35,8 +35,10 @@ function ExportManager(configurator, git) {
                     archive.pipe(output);
                     archive.directory(paths.projectDir, name + "/");
                     archive.append(JSON.stringify(manifest, null, '\t'), {name: 'manifest.json'});
-                    archive.finalize();
-                    return filePath;
+                    return archive.finalize()
+                        .then(function () {
+                            return filePath;
+                        });
                 })
                 .catch(function (err) {
                     throw "Error creating backup: " + err;
