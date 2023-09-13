@@ -517,7 +517,10 @@
           mythis.showLoadingMessage('Deleting project.  Please wait...');
 
           setTimeout(function() {
-              return App.projectsManager.deleteTargetTranslation(projectmeta)
+              return App.exportManager.autoBackupTranslation(projectmeta)
+                  .then(function (result) {
+                      return App.projectsManager.deleteTargetTranslation(projectmeta)
+                  })
                   .then(function() {
                       App.projectsManager.unsetValues(projectmeta.unique_id);
 
@@ -531,9 +534,9 @@
                   .then(function () {
                       mythis.showMessage('Project Deleted', 'Your project has been successfully deleted.');
                   })
-                  .catch(function(err) {
-                      mythis.showErrorMessage('Delete Failed', 'An error occurred while trying to delete your project', err);
-                  });
+                  .catch(function (err) {
+                      mythis.showErrorMessage('Delete Failed', `An error occurred while trying to delete your project. (${err})`, err);
+                  })
           }, 500);
       },
 
