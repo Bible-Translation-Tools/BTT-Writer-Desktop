@@ -1,4 +1,4 @@
-FROM node:16.16.0
+FROM --platform=linux/amd64 node:16.16.0
 
 RUN apt update \
  && apt upgrade -y \
