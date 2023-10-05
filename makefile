@@ -21,6 +21,7 @@ run:
 	# Starts BTT-Writer in a container. Volume persists user data.
 	# Runs detached to prevent messing up the tty.  Use 'make stop' to end if needed.
 	# If on WSL: $$DISPLAY should be set to your X display manager, e.g. '192.168.3.3:0.0'
+	# If you see a blank window: You may need to call 'xhost +' before launching the app.
 	test $(DISPLAY) # If blank, then $$DISPLAY is not set
 	test ! $(CONTAINER_ID) # If not blank, then container is already running
 	docker run --detach --rm --net=host --ipc=host \
