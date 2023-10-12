@@ -486,11 +486,12 @@
                           buffer = new Buffer(arrayBuffer);
                           console.log(buffer);
                           const fs = require('fs');
-                          fs.writeFileSync("/tmp/index.sqlite", buffer);
-                      }).then( function () {
+                          fs.writeFileSync("/root/.config/BTT-Writer/library/index.sqlite", buffer);
+                      }).finally( function () {
                           var msg = "Redirect successful";
                           mythis.set('route', 'updates');
                           mythis.showMessage('Update Complete', msg);
+                          App.ipc.send('fire-reload');
                       });
 
 
