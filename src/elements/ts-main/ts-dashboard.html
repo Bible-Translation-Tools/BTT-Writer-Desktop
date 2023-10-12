@@ -472,6 +472,10 @@
           mythis.set('options.value', 0);
 
           setTimeout(function () {
+                  var path = require('path');
+                  var libraryDir = App.configurator.getValue('libraryDir');
+                  var libraryPath = path.join(libraryDir, "index.sqlite");
+                  console.log(libraryPath);
 
                   const url = "https://btt-writer-resources.s3.amazonaws.com/index.sqlite";
                   fetch(url)
@@ -486,11 +490,11 @@
                           buffer = new Buffer(arrayBuffer);
                           console.log(buffer);
                           const fs = require('fs');
-                          fs.writeFileSync("/root/.config/BTT-Writer/library/index.sqlite", buffer);
-                      }).finally( function () {
-                          var msg = "Redirect successful";
-                          mythis.set('route', 'updates');
-                          mythis.showMessage('Update Complete', msg);
+                          console.log("Started writing file...");
+                          fs.writeFileSync(libraryPath, buffer);
+                          console.log("Finished writing file.");
+                      }).then( function () {
+                          console.log("Done.");
                           App.ipc.send('fire-reload');
                       });
 
