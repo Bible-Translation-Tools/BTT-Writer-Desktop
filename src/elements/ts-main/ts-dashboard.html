@@ -472,33 +472,19 @@
           mythis.set('options.value', 0);
 
           setTimeout(function () {
-              // return App.dataManager.updateSources(onProgress)
-              //     .then(function () {
-              //         var after = App.dataManager.getMetrics();
-              //         var diff = after.resource_count_level3 - before.resource_count_level3;
-              //         var msg = diff + ' new Source Texts are available to be downloaded.';
-              //         if (diff < 1) {
-              //             msg = 'No new Source Texts have been added.';
-              //         }
-              //         if (diff === 1) {
-              //             msg = '1 new Source Text is available to be downloaded.';
-              //         }
-              //         mythis.set('route', 'updates');
-              //         mythis.showMessage('Update Complete', msg);
-              //     })
-              //     .catch(function (err) {
-              //         var errmessage = 'An error occurred while updating';
-              //         if (err.syscall === "getaddrinfo") {
-              //             errmessage = "Unable to connect to server";
-              //         }
-              //         if (err.syscall === "read") {
-              //             errmessage = "Lost connection to server";
-              //         }
-              //         mythis.showErrorMessage('Update Failed', errmessage, err);
-              //     });
-              msg = "Redirect successful";
-              mythis.set('route', 'updates');
-              mythis.showMessage('Update Complete', msg);
+
+                  const url = "https://btt-writer-resources.s3.amazonaws.com/index.sqlite";
+                  fetch(url)
+                      .then( function(response) {
+                          console.log(response);
+                      })
+                      .then( function () {
+                          var msg = "Redirect successful";
+                          mythis.set('route', 'updates');
+                          mythis.showMessage('Update Complete', msg);
+                      });
+
+
           }, 500);
       },
 
