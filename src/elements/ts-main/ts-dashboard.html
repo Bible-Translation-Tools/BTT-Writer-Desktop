@@ -477,8 +477,17 @@
                   fetch(url)
                       .then( function(response) {
                           console.log(response);
-                      })
-                      .then( function () {
+                          return response.blob();
+                      }).then( function (blob) {
+                          console.log(blob);
+                          return(blob.arrayBuffer())
+                      }).then( function (arrayBuffer) {
+                          console.log(arrayBuffer);
+                          buffer = new Buffer(arrayBuffer);
+                          console.log(buffer);
+                          const fs = require('fs');
+                          fs.writeFileSync("/tmp/index.sqlite", buffer);
+                      }).then( function () {
                           var msg = "Redirect successful";
                           mythis.set('route', 'updates');
                           mythis.showMessage('Update Complete', msg);
