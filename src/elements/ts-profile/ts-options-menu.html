@@ -48,19 +48,19 @@
 
         <div id="content">
             <div id="heading">
-                <span class="optiontitle">Setup your User Profile with one of the options below.</span>
+                <span class="optiontitle">{{locale.option_setup}}</span>
             </div>
             <div class="option" on-tap="login">
-                <span class="optiontitle">Login to your Server Account</span>
-                <p>Use this option to be able to upload projects to your existing account</p>
+                <span class="optiontitle">{{locale.server_login}}</span>
+                <p>{{locale.server_login_alt}}</p>
             </div>
             <div class="option" on-tap="create">
-                <span class="optiontitle">Create a Server Account</span>
-                <p>Use this option if you do not have an account but want to upload</p>
+                <span class="optiontitle">{{locale.server_login_create}}</span>
+                <p>{{locale.server_login_create_alt}}</p>
             </div>
             <div class="option" on-tap="local">
-                <span class="optiontitle">Create Local User Profile</span>
-                <p>Use this option if you do not have an account and do not want to upload</p>
+                <span class="optiontitle">{{locale.local_login}}</span>
+                <p>{{locale.local_login_alt}}</p>
             </div>
         </div>
 
@@ -83,6 +83,10 @@
                 type: Number,
                 value: 0,
                 notify: true
+            },
+            locale: {
+              type: Object,
+              value: {}
             }
         },
 
@@ -106,7 +110,7 @@
         },
 
         ready: function() {
-
+          this.set('locale', App.locale.dictionary);
         }
 
     });

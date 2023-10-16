@@ -55,8 +55,8 @@
     <template>
 
         <div id="content">
-            <h1>Software Licenses</h1>
-            <p>The following licenses apply to code packages and libraries used in this app.</p>
+            <h1>{{locale.software_licenses}}</h1>
+            <p>{{locale.license_explanation}}</p>
             <template is="dom-repeat" items="[[packages]]" as="package">
                 <div class="entry">
                     <div class="name">
@@ -66,13 +66,13 @@
                         <span><a href="[[package.link]]">[[package.link]]</a></span>
                     </div>
                     <div>
-                        <span>License Type:<span class="type">[[package.type]]</span></span>
+                        <span>{{locale.license_type}}:<span class="type">[[package.type]]</span></span>
                     </div>
                 </div>
             </template>
         </div>
         <div id="buttons">
-            <paper-button dialog-dismiss>Close</paper-button>
+            <paper-button dialog-dismiss>{{locale.close}}</paper-button>
         </div>
 
     </template>
@@ -88,6 +88,10 @@
             packages: {
                 type: Array,
                 value: []
+            },
+            locale: {
+                type: Object,
+                value: {}
             }
         },
 
@@ -134,6 +138,7 @@
                     });
                 }
             }, 3000);
+            this.set('locale', App.locale.dictionary);
         }
 
     });

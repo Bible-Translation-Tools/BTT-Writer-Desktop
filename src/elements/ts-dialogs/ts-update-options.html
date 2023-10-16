@@ -78,23 +78,23 @@
     <template>
 
         <div id="header">
-            <h2>Update Options</h2>
-            <span><iron-icon icon="notification:wifi"></iron-icon>These options all require an Internet connection</span>
-            <span>Updates may take a while</span>
+            <h2>{{locale.update_head}}</h2>
+            <span><iron-icon icon="notification:wifi"></iron-icon>{{locale.update_head2}}</span>
+            <span>{{locale.update_head3}}</span>
         </div>
         <div id="body">
             <div class="option" on-tap="source">
-                <span class="optiontitle">Update List of Available Source Texts<iron-icon class="icon" icon="info" title="Only updates the list of sources. Does not download new sources"></iron-icon></span>
+                <span class="optiontitle">{{locale.update_source_list}}<iron-icon class="icon" icon="info" title="{{locale.update_source_list_text}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="download">
-                <span class="optiontitle">Download Available Source Texts<iron-icon class="icon" icon="info" title="Choose which sources to download after updating the list"></iron-icon></span>
+                <span class="optiontitle">{{locale.download_source}}<iron-icon class="icon" icon="info" title="{{locale.download_source_text}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="language">
-                <span class="optiontitle">Update List of Available Target Languages<iron-icon class="icon" icon="info" title="Will add new target languages to available list"></iron-icon></span>
+                <span class="optiontitle">{{locale.update_targets}}<iron-icon class="icon" icon="info" title="{{locale.update_targets_text}}"></iron-icon></span>
             </div>
         </div>
         <div id="footer">
-            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button dialog-dismiss>{{locale.cancel}}</paper-button>
         </div>
 
     </template>
@@ -108,7 +108,10 @@
         is: 'ts-update-options',
 
         properties: {
-
+            locale: {
+              type: Object,
+              value: {}
+            }
         },
 
         language: function () {
@@ -126,6 +129,7 @@
         ready: function () {
             var shell = require('electron').shell;
             var links = this.getElementsByTagName('a');
+            this.set('locale', App.locale.dictionary);
             for (var i = 0; i < links.length; i++) {
                 links[i].addEventListener('click', function (event) {
                     event.preventDefault();

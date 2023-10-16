@@ -238,17 +238,17 @@
                 </template>
                 <template is="dom-if" if="{{projectlist.length}}">
                     <div id="sort">
-                        <paper-dropdown-menu id="sortorder" label="Columns To Sort By">
+                        <paper-dropdown-menu id="sortorder" label="{{locale.columns1}}">
                             <paper-listbox id="sort1" class="dropdown-content">
-                                <paper-item on-tap="sortproj">Project then Language</paper-item>
-                                <paper-item on-tap="sortlang">Language then Project</paper-item>
-                                <paper-item on-tap="sortprog">Progress then Project</paper-item>
+                                <paper-item on-tap="sortproj">{{locale.sort1}}</paper-item>
+                                <paper-item on-tap="sortlang">{{locale.sort2}}</paper-item>
+                                <paper-item on-tap="sortprog">{{locale.sort3}}</paper-item>
                             </paper-listbox>
                         </paper-dropdown-menu>
-                        <paper-dropdown-menu id="projectsort" label="Sort Project Column By">
+                        <paper-dropdown-menu id="projectsort" label="{{locale.columns2}}">
                             <paper-listbox id="sort2" class="dropdown-content">
-                                <paper-item on-tap="sortbible">Bible Order</paper-item>
-                                <paper-item on-tap="sortalpha">Alphabetical Order</paper-item>
+                                <paper-item on-tap="sortbible">{{locale.bible_order}}</paper-item>
+                                <paper-item on-tap="sortalpha">{{locale.abc_order}}</paper-item>
                             </paper-listbox>
                         </paper-dropdown-menu>
                     </div>
@@ -287,7 +287,7 @@
                 <p>{{locale.confirm_delete_translation}}</p>
             </div>
             <div class="buttons">
-                <paper-button on-tap="closedelete">Cancel</paper-button>
+                <paper-button on-tap="closedelete">{{locale.cancel}}</paper-button>
                 <paper-button on-tap="deleteproject">{{locale.confirm}}</paper-button>
             </div>
         </paper-dialog>

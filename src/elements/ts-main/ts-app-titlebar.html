@@ -11,7 +11,7 @@
         :host {
             width: 100%;
             display: block;
-            color: white;
+            color: var(--reverse-text-color);
             -webkit-app-region: drag;
             -webkit-user-select: none;
             user-select: none;
@@ -83,7 +83,7 @@
 
         <header>
             <span class="title">BTT Writer</span>
-            <span class$="[[loginclass(currentuser.full_name)]]"><span>Current User: </span><span>{{currentuser.full_name}}</span><span class="link" on-tap="logout">(Logout)</span></span>
+            <span class$="[[loginclass(currentuser.full_name)]]"><span>{{locale.currentuser}}</span> <span>{{currentuser.full_name}}</span><span class="link" on-tap="logout">({{locale.logout}})</span></span>
             <div class="window-buttons">
                 <button on-tap="minimizeWindow">
                     <iron-icon icon="titlebar:minimize" title="minimize"></iron-icon>
@@ -110,8 +110,11 @@
         properties: {
             currentuser: {
                 type: Object,
+              },
+            locale: {
+                type: Object,
                 value: {}
-            },
+              },
             busy: {
                 type: Boolean,
                 value: false
@@ -157,6 +160,8 @@
             App.ipc.on('unmaximize', function() {
                 resize.icon = 'titlebar:maximize';
             });
+
+            this.set('locale', App.locale.dictionary);
         }
 
     });

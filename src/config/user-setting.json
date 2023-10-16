@@ -1,197 +1,187 @@
 [
     {
         "name": "glmode",
-        "mainText": "Gateway Language Mode",
-        "helpText": "Display additional translation options for gateway languages",
+        "mainText": "glmode_maintext",
+        "helpText": "glmode_helptext",
         "value": false,
-        "group": "general",
+        "group": "gen_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "bemode",
-        "mainText": "Blind Edit Mode",
-        "helpText": "Display translation mode option that allows for blind drafting (Project will re-load if changed)",
+        "mainText": "bemode_maintext",
+        "helpText": "bemode_helptext",
         "value": true,
-        "group": "general",
-        "enabled": true,
-        "visible": true
-    },
-    {
-        "name": "colortheme",
-        "mainText": "Color Theme",
-        "helpText": "Set the color theme",
-        "value": {"name": "System"},
-        "options": [{"name": "Light"}, {"name": "Dark"}, {"name": "System"}],
-        "group": "general",
+        "group": "gen_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "appfont",
-        "mainText": "App Font",
+        "mainText": "appfont_maintext",
         "value": {"path": "default", "name": "Roboto"},
         "options": [],
-        "group": "general",
+        "group": "gen_group",
         "enabled": true,
         "visible": false
     },
     {
         "name": "targetfont",
-        "mainText": "Target Translation Font",
+        "mainText": "targetfont_maintext",
         "value": {"path": "default", "name": "Roboto"},
         "options": [],
-        "group": "general",
+        "group": "gen_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "sourcefont",
-        "mainText": "Source Translation Font",
+        "mainText": "sourcefont_maintext",
         "value": {"path": "default", "name": "Roboto"},
         "options": [],
-        "group": "general",
+        "group": "gen_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "targetsize",
-        "mainText": "Target Translation Font Size",
-        "value": {"name": "Normal"},
-        "options": [{"name": "Small"}, {"name": "Normal"}, {"name": "Large"}],
-        "group": "general",
+        "mainText": "targetsize_maintext",
+        "value": {"name": "size_normal"},
+        "options": [{"name": "size_small"}, {"name": "size_normal"}, {"name": "size_large"}],
+        "group": "gen_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "sourcesize",
-        "mainText": "Source Translation Font Size",
-        "value": {"name": "Normal"},
-        "options": [{"name": "Small"}, {"name": "Normal"}, {"name": "Large"}],
-        "group": "general",
+        "mainText": "sourcesize_maintext",
+        "value": {"name": "size_normal"},
+        "options": [{"name": "size_small"}, {"name": "size_normal"}, {"name": "size_large"}],
+        "group": "gen_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "datalocation",
-        "mainText": "Backup Location",
+        "mainText": "datalocation_maintext",
         "value": "~/BTT-Writer",
-        "group": "general",
+        "group": "gen_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "appversion",
-        "mainText": "App Version",
+        "mainText": "appversion_maintext",
         "value": "0.0.0",
-        "group": "about",
+        "group": "about_group",
         "enabled": false,
         "visible": true
     },
     {
         "name": "gitversion",
-        "mainText": "Git Version",
+        "mainText": "gitversion_maintext",
         "value": "N/A",
-        "group": "about",
+        "group": "about_group",
         "enabled": false,
         "visible": true
     },
     {
         "name": "datapath",
-        "mainText": "Data Path",
+        "mainText": "datapath_maintext",
         "value": "/test/path",
-        "group": "about",
+        "group": "about_group",
         "enabled": false,
         "visible": true
     },
     {
         "name": "license",
-        "mainText": "License Agreement",
+        "mainText": "license_button",
         "value": "",
-        "group": "legal",
+        "group": "legal_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "guidelines",
-        "mainText": "Translation Guidelines",
+        "mainText": "translation_button",
         "value": "",
-        "group": "legal",
+        "group": "legal_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "statement",
-        "mainText": "Statement of Faith",
+        "mainText": "statement_button",
         "value": "",
-        "group": "legal",
+        "group": "legal_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "software",
-        "mainText": "Software Licenses",
+        "mainText": "software_licenses",
         "value": "",
-        "group": "legal",
+        "group": "legal_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "attribution",
-        "mainText": "Attribution",
+        "mainText": "attribution_label",
         "value": "",
-        "group": "legal",
+        "group": "legal_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "serversuite",
-        "mainText": "Server Suite (e.g. WACS or DCS)",
+        "mainText": "server_suite_maintext",
         "value": {"name": "WACS"},
         "options": [
             {
-                "name": "WACS", 
-                "dataserver": "https://wacs.bibletranslationtools.org", 
-                "mediaserver": "https://api.bibletranslationtools.org", 
-                "readerserver": "http://read.bibletranslationtools.org/u",
+                "name": "WACS",
+                "dataserver": "https://wacs.bibletranslationtools.org",
+                "mediaserver": "https://api.bibletranslationtools.org",
+                "readerserver": "http://read.bibleineverylanguage.org"
                 "createaccounturl": "https://content.bibletranslationtools.org/user/sign_up"
             },
             {
-                "name": "DCS",  
+                "name": "DCS",
                 "dataserver": "https://git.door43.org",
-                "mediaserver": "https://api.unfoldingword.org", 
-                "readerserver": "https://door43.org/u",
-                "createaccounturl": "https://git.door43.org/user/sign_up" 
+                "mediaserver": "https://api.unfoldingword.org",
+                "readerserver": "https://door43.org/u"
+                "createaccounturl": "https://git.door43.org/user/sign_up"
             }
         ],
-        "group": "advanced",
+        "group": "advanced_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "dataserver",
-        "mainText": "Data Server",
+        "mainText": "data_server_label",
         "value": "https://wacs.bibletranslationtools.org",
         "default": "https://wacs.bibletranslationtools.org",
-        "group": "advanced",
+        "group": "advanced_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "mediaserver",
-        "mainText": "Media Server",
+        "mainText": "media_server_label",
         "value": "https://api.bibletranslationtools.org",
         "default": "https://api.bibletranslationtools.org",
-        "group": "advanced",
+        "group": "advanced_group",
         "enabled": true,
         "visible": true
     },
     {
         "name": "readerserver",
-        "mainText": "Reader Server",
-        "value": "http://read.bibletranslationtools.org/u",
-        "default": "http://read.bibletranslationtools.org/u",
-        "group": "advanced",
+        "mainText": "reader_server_label",
+        "value": "http://read.bibleineverylanguage.org/",
+        "default": "http://read.bibleineverylanguage.org/",
+        "group": "advanced_group",
         "enabled": true,
         "visible": true
     },
@@ -206,18 +196,18 @@
     },
     {
         "name": "logginglevel",
-        "mainText": "Logging Level",
+        "mainText": "logging_level_label",
         "value": "Warnings",
-        "options": ["Information", "Warnings", "Errors"],
-        "group": "advanced",
+        "options": ["information_level", "warning_level", "error_level"],
+        "group": "advanced_group",
         "enabled": true,
         "visible": false
     },
     {
         "name": "developertools",
-        "mainText": "Developer Tools",
-        "helpText": "Opens the developer tools",
-        "group": "advanced",
+        "mainText": "developer_tools",
+        "helpText": "developer_tools_label",
+        "group": "advanced_group",
         "enabled": true,
         "visible": true
     },
@@ -225,7 +215,7 @@
         "name": "refreshsettings",
         "mainText": "Refresh Settings",
         "helpText": "Update user options to the most current",
-        "group": "advanced",
+        "group": "advanced_group",
         "enabled": true,
         "visible": false
     }

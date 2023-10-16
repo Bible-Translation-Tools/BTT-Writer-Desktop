@@ -86,7 +86,7 @@
 
       <div id="main">
           <div id="header">
-              <input is="iron-input" id="input" bind-value="{{query}}" on-input="updateList" placeholder="Choose target language">
+              <input is="iron-input" id="input" bind-value="{{query}}" on-input="updateList" placeholder="Choose target language{{locale.choose_language}}">
               <iron-icon class="click" icon="search" on-tap="focussearch"></iron-icon>
           </div>
           <iron-list id="list" items="[[filtered]]" as="language">

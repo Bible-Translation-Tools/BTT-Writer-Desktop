@@ -38,7 +38,7 @@
 
         #heading {
             font-size: 125%;
-            color: white;
+            color: var(--reverse-text-color);
             display: flex;
             justify-content: flex-start;
             align-items: center;
@@ -68,7 +68,7 @@
                 <span id="backbutton">
                     <iron-icon class$="[[backclass(selected)]]" icon="arrow-back" on-tap="back"></iron-icon>
                 </span>
-                <span>User Profile</span>
+                <span>{{locale.user_profile_label}}</span>
             </div>
         </div>
 
@@ -112,6 +112,10 @@
             newinfo: {
                 type: Object,
                 value: {}
+            },
+            locale: {
+              type: Object,
+              value: {}
             },
             options: {
                 type: Object,
@@ -255,7 +259,7 @@
         },
 
         ready: function() {
-
+          this.set('locale', App.locale.dictionary);
         }
 
     });

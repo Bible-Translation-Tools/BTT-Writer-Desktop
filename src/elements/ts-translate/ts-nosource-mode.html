@@ -118,8 +118,8 @@
                 </paper-material>
             </div>
             <div id="body">
-                <p>Choose source translation(s) to begin reading and translating</p>
-                <iron-icon class="click iconimage" src="../ts-icons/uw-tab-large.png" on-tap="openmodal"></iron-icon>
+                <p>{{locale.choose_source}}</p>
+                <iron-icon class="click.iconimage" src="../ts-icons/uw-tab-large.png" on-tap="openmodal"></iron-icon>
             </div>
         </div>
 
@@ -139,6 +139,10 @@
 
         properties: {
             projectmeta: {
+                type: Object,
+                value: {}
+            },
+            locale: {
                 type: Object,
                 value: {}
             }
@@ -176,7 +180,7 @@
         },
 
         ready: function() {
-
+            this.set('locale', App.locale.dictionary);
         }
 
     });

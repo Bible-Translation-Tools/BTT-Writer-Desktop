@@ -79,16 +79,16 @@
 
         <div id="content">
             <div class="header">
-                <h2>Server Login</h2>
-                <p><iron-icon icon="notification:wifi"></iron-icon> This will use your internet connection</p>
+                <h2>{{locale.server_login_h}}</h2>
+                <p><iron-icon icon="notification:wifi"></iron-icon>{{locale.internet_warning}}</p>
             </div>
             <div class="body">
-                <input is="iron-input" bind-value="{{newinfo.username}}" placeholder="Username" on-keydown="keyinput">
-                <input is="iron-input" bind-value="{{newinfo.password}}" placeholder="Password" type="password" on-keydown="keyinput">
+                <input is="iron-input" bind-value="{{newinfo.username}}" placeholder="{{locale.username_label}}">
+                <input is="iron-input" bind-value="{{newinfo.password}}" placeholder="{{locale.password_label}}" type="password">
             </div>
             <div class="buttons">
-                <paper-button class="nofill" on-tap="gotocreate">Create a New Account</paper-button>
-                <paper-button raised class="fill" on-tap="login">Login</paper-button>
+                <paper-button class="nofill" on-tap="gotocreate">{{locale.create_new_account_label}}</paper-button>
+                <paper-button raised class="fill" on-tap="login">{{locale.login_button}}</paper-button>
             </div>
         </div>
 
@@ -139,7 +139,7 @@
         },
 
         ready: function() {
-
+            this.set('locale', App.locale.dictionary);
         }
 
     });

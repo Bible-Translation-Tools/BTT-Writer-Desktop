@@ -92,16 +92,16 @@
     <template>
 
         <div id="header">
-            <h2>Import from Server</h2>
+            <h2>{{locale.server_import_1}}</h2>
         </div>
         <div id="filters">
-            <input is="iron-input" bind-value="{{importdata.username}}" on-input="searchRepos" placeholder="User Name">
+            <input is="iron-input" bind-value="{{importdata.username}}" on-input="searchRepos" placeholder="{{locale.username}}">
             <paper-spinner id="spinner"></paper-spinner>
-            <input is="iron-input" bind-value="{{importdata.project}}" on-input="searchRepos" placeholder="Book or Language">
+            <input is="iron-input" bind-value="{{importdata.project}}" on-input="searchRepos" placeholder="{{locale.book_language}}">
         </div>
         <div id="headings">
-            <span>User Name</span>
-            <span>Project Name</span>
+            <span>{{locale.username}}</span>
+            <span>{{locale.projectname}}</span>
         </div>
         <iron-list id="body" items="{{repos}}" as="repo">
             <template>
@@ -112,7 +112,7 @@
             </template>
         </iron-list>
         <div id="footer">
-            <paper-button on-tap="cancel">Cancel</paper-button>
+            <paper-button on-tap="cancel">{{locale.cancel}}</paper-button>
         </div>
 
     </template>
@@ -134,6 +134,10 @@
                 type: Object,
                 value: {},
                 notify: true
+            },
+            locale: {
+                type: Object,
+                value: {}
             },
             p: {
                 type: Object,
@@ -182,6 +186,7 @@
 
         ready: function () {
             this.$.spinner.active = false;
+            this.set('locale', App.locale.dictionary);
         },
 
         attached: function () {

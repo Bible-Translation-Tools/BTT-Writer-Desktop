@@ -53,7 +53,7 @@
       #statusbar {
           width: 100%;
           background: var(--primary-color-dark);
-          color: white;
+          color: var(--reverse-text-color);
           min-height: 30px;
           padding: 0 20px;
           font-size: 75%;
@@ -157,7 +157,7 @@
   </style>
 
   <template>
-    
+
       <ts-app-titlebar currentuser="[[currentuser]]"></ts-app-titlebar>
       <neon-animated-pages attr-for-selected="data-route" selected="{{route}}">
           <ts-home data-route="home" route="{{route}}" currentproject="{{currentproject}}" projectlist="{{projectlist}}" importdata="{{importdata}}" id="home"></ts-home>
@@ -171,7 +171,7 @@
           <ts-terms data-route="terms"></ts-terms>
       </neon-animated-pages>
       <div id="statusbar">
-          <span>Status: </span><span id="message">{{message}}</span>
+          <span>{{locale.status}}: </span><span id="message">{{message}}</span>
       </div>
 
       <paper-dialog id="print" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
@@ -292,9 +292,13 @@
               type: Object,
               value: {}
           },
+          locale: {
+            type: Object,
+            value: {}
+          },
           message: {
               type: String,
-              value: "Idle"
+              value: "idle"
           }
       },
 
@@ -366,15 +370,15 @@
 
       showLoadingMessage: function (msg) {
           this.set('options', {});
-          this.set('options.body', msg);
+          this.set('options.body', this._lookupLocaleString(msg));
           this.set('options.loading', true);
           this.openLoading();
       },
 
       showMessage: function (title, body) {
           this.set('options', {});
-          this.set('options.title', title);
-          this.set('options.body', body);
+          this.set('options.title', this._lookupLocaleString(title));
+          this.set('options.body', this._lookupLocaleString(body));
           this.set('options.loading', false);
           this.$.wideloading.close();
           this.openLoading();
@@ -390,11 +394,11 @@
           var msg = body;
 
           if (conflicts && conflicts.length) {
-              App.reporter.logNotice(conflicts, 'Chunk Conflicts');
+              App.reporter.logNotice(conflicts, this._lookupLocaleString("conflicts"));
               if (conflicts.length === 1) {
-                  msg += ' There is ' + conflicts.length + ' chunk that contains a new conflict that needs your attention.';
+                  msg += this._lookupLocaleString("single_chunk_conflict_message");
               } else {
-                  msg += ' There are ' + conflicts.length + ' chunks that contain new conflicts that need your attention.';
+                  msg += this._lookupLocaleString("multiple_chunk_conflict_message");
               }
           }
 
@@ -416,7 +420,7 @@
           };
 
           mythis.$.update.close();
-          mythis.showLoadingMessage('Updating List of Target Languages. This may take a while. Please wait...');
+          mythis.showLoadingMessage('updating_target_status');
           mythis.set('options.progress', true);
           mythis.set('options.value', 33);
 
@@ -425,24 +429,24 @@
                   .then(function () {
                       var after = App.dataManager.getMetrics();
                       var diff = after.target_language_count - before.target_language_count;
-                      var msg = diff + ' Target Languages have been added.';
+                      var msg = diff + this._lookupLocaleString('number_target_updates');
                       if (diff < 1) {
-                          msg = 'No Target Languages have been added.';
+                          msg = this._lookupLocaleString("no_target_updates");
                       }
                       if (diff === 1) {
-                          msg = '1 Target Language has been added.';
+                          msg = this._lookupLocaleString("one_target_update");
                       }
-                      mythis.showMessage('Update Complete', msg);
+                      mythis.showMessage(mythis._lookupLocaleString("update_complete"), msg);
                   })
                   .catch(function (err) {
-                      var errmessage = 'An error occurred while updating';
+                      var errmessage = this._lookupLocaleString("update_error");
                       if (err.syscall === "getaddrinfo") {
-                          errmessage = "Unable to connect to server";
+                          errmessage = this._lookupLocaleString("connection_error");
                       }
                       if (err.syscall === "read") {
-                          errmessage = "Lost connection to server";
+                          errmessage = this._lookupLocaleString("read_error");
                       }
-                      mythis.showErrorMessage('Update Failed', errmessage, err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString("update_failed"), errmessage, err);
                   });
           }, 500);
       },
@@ -467,7 +471,7 @@
           };
 
           mythis.$.update.close();
-          mythis.showLoadingMessage('Updating List of Source Texts. This may take a while. Please wait...');
+          mythis.showLoadingMessage("source_update_status");
           mythis.set('options.progress', true);
           mythis.set('options.value', 0);
 
@@ -476,25 +480,25 @@
                   .then(function () {
                       var after = App.dataManager.getMetrics();
                       var diff = after.resource_count_level3 - before.resource_count_level3;
-                      var msg = diff + ' new Source Texts are available to be downloaded.';
+                      var msg = diff + this._lookupLocaleString('new_sources_available');
                       if (diff < 1) {
-                          msg = 'No new Source Texts have been added.';
+                          msg = this._lookupLocaleString('no_sources_available');
                       }
                       if (diff === 1) {
-                          msg = '1 new Source Text is available to be downloaded.';
+                          msg = this._lookupLocaleString('one_source_available');
                       }
                       mythis.set('route', 'updates');
-                      mythis.showMessage('Update Complete', msg);
+                      mythis.showMessage(mythis._lookupLocaleString('update_complete'), msg);
                   })
                   .catch(function (err) {
-                      var errmessage = 'An error occurred while updating';
+                      var errmessage = this._lookupLocaleString('update_error');
                       if (err.syscall === "getaddrinfo") {
-                          errmessage = "Unable to connect to server";
+                          errmessage = this._lookupLocaleString("connection_error");
                       }
                       if (err.syscall === "read") {
-                          errmessage = "Lost connection to server";
+                          errmessage = this._lookupLocaleString("read_error");
                       }
-                      mythis.showErrorMessage('Update Failed', errmessage, err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString("update_failed"), errmessage, err);
                   });
           }, 500);
       },
@@ -503,7 +507,7 @@
           var mythis = this;
 
           mythis.$.update.close();
-          mythis.showLoadingMessage('Loading source texts. Please wait...');
+          mythis.showLoadingMessage('source_loading_status');
 
           setTimeout(function() {
               mythis.set('route', 'updates');
@@ -514,7 +518,7 @@
           var mythis = this;
           var projectmeta = data.projectmeta;
 
-          mythis.showLoadingMessage('Deleting project.  Please wait...');
+          mythis.showLoadingMessage('deleting_project_status');
 
           setTimeout(function() {
               return App.projectsManager.deleteTargetTranslation(projectmeta)
@@ -529,10 +533,10 @@
                       return mythis.sortProjects(newlist);
                   })
                   .then(function () {
-                      mythis.showMessage('Project Deleted', 'Your project has been successfully deleted.');
+                      mythis.showMessage(mythis._lookupLocaleString("project_deleted1"), mythis._lookupLocaleString("project_deleted2"));
                   })
                   .catch(function(err) {
-                      mythis.showErrorMessage('Delete Failed', 'An error occurred while trying to delete your project', err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString('delete_failed1'), mythis._lookupLocaleString('delete_failed2'), err);
                   });
           }, 500);
       },
@@ -544,7 +548,7 @@
           var newmanifest = changedata.newmeta;
 
           mythis.set('route', 'home');
-          mythis.showLoadingMessage('Changing project.  Please wait...');
+          mythis.showLoadingMessage('changing_project_status');
 
           setTimeout(function () {
               return Promise.resolve(true)
@@ -582,10 +586,10 @@
                       return mythis.sortProjects(newlist);
                   })
                   .then(function () {
-                      mythis.showConflictsMessage('Change Complete', 'Your project has been changed.', conflicts);
+                      mythis.showConflictsMessage(mythis._lookupLocaleString("project_changed1"), mythis._lookupLocaleString("project_changed2"), conflicts);
                   })
                   .catch(function(err) {
-                      mythis.showErrorMessage('Change Failed', 'An error occurred while trying to change the project', err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString("change_failed1"), mythis._lookupLocaleString("change_failed2"), err);
                   });
           }, 500);
       },
@@ -629,7 +633,7 @@
               mythis.set('route', 'home');
               mythis.$.translate.reset();
           }
-          mythis.showLoadingMessage("Importing. Please wait...");
+          mythis.showLoadingMessage("importing_status");
 
           setTimeout(function() {
               return App.utils.fs.mkdirs(tmpPath)
@@ -661,7 +665,7 @@
                       }
                   })
                   .catch(function(err) {
-                      mythis.showErrorMessage("Import Failed", "An error occurred while importing your project", err && err.error ? err.error : err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString("import_failed1"), mythis._lookupLocaleString("import_failed2"), err && err.error ? err.error : err);
 
                       return mythis.clearTempDir();
                   });
@@ -677,7 +681,7 @@
           }
 
           mythis.$.import.close();
-          mythis.showLoadingMessage('Importing. Please wait...');
+          mythis.showLoadingMessage('importing_status');
 
           setTimeout(function() {
               return App.importManager.extractBackup(filePath[0])
@@ -694,13 +698,13 @@
                       }))
                   })
                   .catch(function(err) {
-                      var errmessage = 'An error occurred while importing your project';
+                      var errmessage = this._lookupLocaleString('import_failed2');
 
-                      if (err.includes("Error while extracting file")) {
+                      if (err.includes(this._lookupLocaleString("extraction_error"))) {
                           errmessage = err;
                       }
 
-                      mythis.showErrorMessage('Import Failed', errmessage, err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString('import_failed1'), errmessage, err);
 
                       return mythis.clearTempDir();
                   });
@@ -717,7 +721,7 @@
           var key = targetPath.split(path.sep).pop();
           var newmanifest = {};
 
-          mythis.showLoadingMessage("Importing. Please wait...");
+          mythis.showLoadingMessage("importing_status");
 
           setTimeout(function() {
               return Promise.resolve(true)
@@ -761,10 +765,10 @@
                       return mythis.sortProjects(newlist);
                   })
                   .then(function () {
-                      mythis.showConflictsMessage("Import Complete", "Your project has been successfully imported.", conflicts);
+                      mythis.showConflictsMessage(mythis._lookupLocaleString("project_imported1"), mythis._lookupLocaleString("project_imported2"), conflicts);
                   })
                   .catch(function(err) {
-                      mythis.showErrorMessage("Import Failed", "An error occurred while importing your project", err && err.error ? err.error : err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString("import_failed1"), mythis._lookupLocaleString("import_failed2"), err && err.error ? err.error : err);
 
                       return mythis.clearTempDir();
                   });
@@ -814,7 +818,7 @@
           var backupName = projectmeta.unique_id + '.' + timeString + '.tstudio';
           var backupPath = App.configurator.getUserPath('datalocation', 'backups', backupName);
 
-          mythis.showLoadingMessage('Importing.  Please wait...');
+          mythis.showLoadingMessage('importing_status');
 
           setTimeout(function() {
               return Promise.resolve(true)
@@ -843,10 +847,10 @@
                       return mythis.sortProjects(newlist);
                   })
                   .then(function () {
-                      mythis.showMessage('Import Complete', 'Your file has been imported. Please review it carefully. If it was not formatted properly, text may not appear as desired.');
+                      mythis.showMessage(mythis._lookupLocaleString("project_imported1"), mythis._lookupLocaleString("project_imported3"));
                   })
                   .catch(function (err) {
-                      mythis.showErrorMessage('Import Failed', 'Error occurred importing project', err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString('import_failed1'), mythis._lookupLocaleString("import_failed2"), err);
 
                       if (overwrite) {
                           return App.importManager.extractBackup(backupPath)
@@ -876,7 +880,7 @@
 
           mythis.set('importdata', {filepath: filePath[0]});
           mythis.$.import.close();
-          mythis.showLoadingMessage('Importing source text. Please wait...');
+          mythis.showLoadingMessage('importing_source_status');
 
           setTimeout(function() {
               return App.dataManager.checkForContainer(filePath[0])
@@ -895,15 +899,15 @@
           var mythis = this;
           var filePath = this.importdata.filepath;
 
-          mythis.showLoadingMessage('Importing source text. Please wait...');
+          mythis.showLoadingMessage('importing_source_status');
 
           setTimeout(function() {
               return App.dataManager.importContainer(filePath)
                   .then(function() {
-                      mythis.showMessage('Import Complete', 'Your source text has been successfully imported.');
+                      mythis.showMessage(mythis._lookupLocaleString("project_imported1"), mythis._lookupLocaleString("source_imported"));
                   })
                   .catch(function(err) {
-                      var errmessage = 'An error occurred while importing your source text.';
+                      var errmessage = mythis._lookupLocaleString("source_import_failed");
 
                       if (err.toString()) {
                           errmessage = err.toString();
@@ -999,21 +1003,21 @@
           var mythis = this;
           var projectmeta = this.currentproject.projectmeta;
           var defaultPath = App.configurator.getUserPath('datalocation', 'backups', projectmeta.unique_id);
-          var filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: 'Tstudio Files', extensions: ['tstudio']}]}});
+          var filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: this._lookupLocaleString("tstudio_files"), extensions: ['tstudio']}]}});
           if (!filePath) {
               return;
           }
 
           mythis.$.export.close();
-          mythis.showLoadingMessage('Creating Project File.  Please wait...');
+          mythis.showLoadingMessage('creating_project_file_status');
 
           setTimeout(function() {
               return App.exportManager.backupTranslation(projectmeta, filePath)
                   .then(function () {
-                      mythis.showMessage('Project File Complete', 'Your project has been successfully saved.');
+                      mythis.showMessage(mythis._lookupLocaleString("project_export1"), mythis._lookupLocaleString("project_export2"));
                   })
                   .catch(function (err) {
-                      mythis.showErrorMessage('File Failed', 'An error occurred while trying to save your project', err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString('project_failed1'), mythis._lookupLocaleString('project_failed2'), err);
                   });
           }, 500);
       },
@@ -1041,7 +1045,7 @@
           var current = this.route;
 
           mythis.$.print.close();
-          mythis.showLoadingMessage("Preparing to Print. Please wait...");
+          mythis.showLoadingMessage("preparing_print_status");
           if (current === "translate") {
               mythis.fire('iron-signal', {name: 'translateleft'});
           }
@@ -1106,32 +1110,32 @@
           var filePath;
 
           if (conflicts) {
-              mythis.showMessage("Conflicts Exist", "You must resolve all conflicts before exporting to USFM.");
+              mythis.showMessage(mythis._lookupLocaleString("conflicts_exist"),mythis._lookupLocaleString("conflicts_request"));
               return;
           }
 
           if (projectmeta.format === 'markdown') {
-              filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: 'Zip Files', extensions: ['zip']}]}});
+              filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: mythis._lookupLocaleString("zip_format"), extensions: ['zip']}]}});
           } else {
-              filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: 'USFM Files', extensions: ['usfm']}]}});
+              filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: mythis._lookupLocaleString("usfm_format"), extensions: ['usfm']}]}});
           }
           if (!filePath) {
               return;
           }
 
-          mythis.showLoadingMessage("Exporting Project.  Please wait...");
+          mythis.showLoadingMessage("exporting_project_status");
 
           setTimeout(function() {
               return App.exportManager.exportTranslation(translation, projectmeta, filePath, mediaServer)
                   .then(function () {
-                      mythis.showMessage("Project Exported", "Your project has been successfully exported to a file.");
+                      mythis.showMessage(mythis._lookupLocaleString("project_export3"), mythis._lookupLocaleString("project_export4"));
                   })
                   .catch(function (err) {
-                      var errmessage = "An error occurred while trying to export your project";
+                      var errmessage = mythis._lookupLocaleString("project_failed3");
                       if(err !== null) {
                           errmessage = err;
                       }
-                      mythis.showErrorMessage("Export Failed", errmessage, err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString("project_failed4"), errmessage, err);
                   });
           }, 500);
       },
@@ -1150,7 +1154,7 @@
           var mythis = this;
 
           mythis.closeFeedback();
-          mythis.showLoadingMessage("Sending Feedback. Please wait...");
+          mythis.showLoadingMessage("sending_feedback_status");
 
           if (App.reporter.canReportToGithub()) {
               return App.reporter.reportBug(message)
@@ -1162,25 +1166,25 @@
                       } catch (e) {}
 
                       if (response && response.url && response.repository_url) {
-                          App.reporter.logNotice(response.url, 'Feedback Sent');
-                          mythis.showMessage('Feedback Sent', 'Your feedback has been successfully sent.');
+                          App.reporter.logNotice(response.url, mythis._lookupLocaleString("feedback_sent"));
+                          mythis.showMessage(mythis._lookupLocaleString("feedback_sent")), mythis._lookupLocaleString("feedback_sent2");
                       } else {
-                          !response && App.reporter.logWarning(res, 'Feedback failed with invalid JSON response');
-                          mythis.showErrorMessage('Feedback Failed', 'Unable to post the feedback. Please try again.', response || null);
+                          !response && App.reporter.logWarning(res, mythis._lookupLocaleString("feedback_failed2"));
+                          mythis.showErrorMessage(mythis._lookupLocaleString("feedback_failed"), mythis._lookupLocaleString("feedback_failed3"), response || null);
                       }
                   })
                   .catch(function (err) {
-                      var errmessage = 'An error occurred while sending feedback';
+                      var errmessage = mythis._lookupLocaleString("feedback_failed4");
                       if (err.syscall === "getaddrinfo") {
-                          errmessage = "Unable to connect to server";
+                          errmessage = mythis._lookupLocaleString("connection_error");
                       }
                       if (err.syscall === "read") {
-                          errmessage = "Lost connection to server";
+                          errmessage = mythis._lookupLocaleString("read_error");
                       }
-                      mythis.showErrorMessage('Feedback Failed', errmessage, err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString("feedback_failed"), errmessage, err);
                   });
           } else {
-              mythis.showErrorMessage('Feedback Failed', 'You are not set up with a token to send feedback.', null);
+              mythis.showErrorMessage(mythis._lookupLocaleString('feedback_failed'), mythis._lookupLocaleString("token_error"), null);
           }
       },
 
@@ -1283,7 +1287,7 @@
           if (libraryBuild != appData.build) {
               var translations = [];
 
-              App.ipc.send('loading-status', 'Updating Index File...');
+              App.ipc.send('loading-status', mythis._lookupLocaleString("index_update_status"));
 
               if (parseInt(libraryBuild) >= 110) {
                   translations = App.dataManager.getTranslations();
@@ -1337,7 +1341,7 @@
                       return mythis.clearTempDir();
                   })
                   .then(function () {
-                      App.ipc.send('loading-status', 'Migrating Projects...');
+                      App.ipc.send('loading-status', mythis._lookupLocaleString("project_migration_status"));
                       return App.projectsManager.migrateTargetTranslationsList();
                   })
                   .then(function () {
@@ -1354,7 +1358,7 @@
 
           App.configurator.refreshUserSetting();
           App.configurator.setUserSetting('gitversion', gitversion);
-          App.configurator.setUserSetting('appversion', App.configurator.getAppData().version);
+          App.configurator.setUserSetting('appversion', App.configurator.getAppData().toString());
           App.configurator.setUserSetting('datapath', App.configurator.getValue('rootdir'));
 
           var location = App.configurator.getUserSetting('datalocation');
@@ -1365,13 +1369,23 @@
           App.configurator.applyPrefAppearance();
       },
 
+      _lookupLocaleString: function (keyValue) {
+          let localeText = this.locale[keyValue];
+          if (localeText === undefined) {
+              localeText = keyValue;
+          }
+          return localeText;
+        },
+
       ready: function() {
           var mythis = this;
 
+          this.set('locale', App.locale.dictionary);
+
           return App.gitManager.verifyGit()
               .then(function (version) {
-                  App.ipc.send('loading-status', 'Retrieving User Settings...');
-                  App.reporter.logNotice('Git Version ' + version);
+                  App.ipc.send('loading-status', mythis._lookupLocaleString("get_user_settings"));
+                  App.reporter.logNotice(mythis._lookupLocaleString("git_version") + version);
                   mythis.createInitialSettings(version);
                   mythis.checkUser(App.configurator.getValue("userdata"));
 
@@ -1382,21 +1396,21 @@
                       App.ipc.send('fire-reload');
                       return Promise.resolve(false);
                   } else {
-                      App.ipc.send('loading-status', 'Retrieving Project List...');
+                      App.ipc.send('loading-status', mythis._lookupLocaleString("get_project_list"));
                       return App.projectsManager.loadTargetTranslationsList()
                           .then(function (list) {
-                              App.ipc.send('loading-status', 'Opening resource containers...');
+                              App.ipc.send('loading-status', mythis._lookupLocaleString("get_resource_containers"));
                               return mythis.checkAllContainers(list);
                           })
                           .then(function (list) {
-                              App.ipc.send('loading-status', 'Updating Project List...');
+                              App.ipc.send('loading-status', mythis._lookupLocaleString("update_project_list"));
                               return _.compact(list.map(App.projectsManager.updateManifestToMeta, App.projectsManager));
                           })
                           .then(function (list) {
                               return mythis.sortProjects(list);
                           })
                           .then(function (list) {
-                              App.ipc.send('loading-status', 'Creating Auto Backups...');
+                              App.ipc.send('loading-status', mythis._lookupLocaleString("make_backups"));
                               return App.exportManager.backupAllTranslations(list);
                           })
                           .then(function () {
@@ -1406,8 +1420,8 @@
                   }
               })
               .catch(function (err) {
-                  var msg = 'Something broke.';
-                  err && err.stack && App.reporter.logError(err.stack, 'Error on startup');
+                  var msg = mythis._lookupLocaleString("something_broke");
+                  err && err.stack && App.reporter.logError(err.stack, mythis._lookupLocaleString("startup_error"));
 
                   if (err && typeof err === 'string') {
                       msg = err;
@@ -1415,7 +1429,7 @@
                       msg = err.toString();
                   }
 
-                  mythis.showErrorMessage('Error on startup', msg, err);
+                  mythis.showErrorMessage(mythis._lookupLocaleString("startup_error"), msg, err);
                   App.ipc.send('main-loading-done');
                   mythis.$.home.setsortfields();
               });

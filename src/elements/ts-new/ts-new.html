@@ -122,7 +122,7 @@
         <div id="header">
             <div id="title">
                 <iron-icon class="click" icon="arrow-back" on-tap="gohome"></iron-icon>
-                <span class="click" on-tap="gohome">Home</span>
+                <span class="click" on-tap="gohome">{{locale.home}}</span>
                 <iron-icon icon="chevron-right"></iron-icon>
                 <span>[[createtitle(route)]]</span>
             </div>
@@ -140,24 +140,24 @@
                 <h2>Overwrite?</h2>
             </div>
             <div class="body">
-                <p>This target translation already exists. Overwrite?</p>
+                <p>{{locale.overwrite_query}}</p>
             </div>
             <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button on-tap="startimport">Confirm</paper-button>
+                <paper-button dialog-dismiss>{{locale.cancel}}</paper-button>
+                <paper-button on-tap="startimport">{{locale.confirm}}</paper-button>
             </div>
         </paper-dialog>
 
         <paper-dialog id="confirmchange" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
             <div class="header">
-                <h2>File already exists</h2>
+                <h2>{{file_exists}}</h2>
             </div>
             <div class="body">
-                <p>This project already exists.  If you continue with this change, the two projects will be merged together.</p>
+                <p>{{locale.merge_warning}}</p>
             </div>
             <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button on-tap="firechange">Continue</paper-button>
+                <paper-button dialog-dismiss>{{locale.ancel}}</paper-button>
+                <paper-button on-tap="firechange">{{locale.continue}}</paper-button>
             </div>
         </paper-dialog>
 
@@ -214,6 +214,10 @@
                 type: Object,
                 value: {}
             },
+            locale: {
+                type: Object,
+                value: {}
+            },
             animationConfig: {
                 value: function () {
                     return {
@@ -251,11 +255,11 @@
             var title = "";
             if (route === "new") {
                 if (this.importdata.importing) {
-                    title = "Import Project";
+                    title = "{{locale.import_project}}";
                 } else if (this.changedata.changing) {
-                    title = "Change Language";
+                    title = "{{locale.change_language}}";
                 } else {
-                    title = "New Project";
+                    title = "New Project{{_lookupLocaleString(new_project)}}";
                 }
             }
             return title;
@@ -362,7 +366,15 @@
         },
 
         ready: function() {
+            this.set('locale', App.locale.dictionary);
+        },
 
+        _lookupLocaleString: function (keyValue) {
+            let localeText = this.locale[keyValue];
+            if (localeText === undefined) {
+                localeText = keyValue;
+            }
+            return localeText;
         }
 
     });
