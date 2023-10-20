@@ -622,7 +622,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         backupProject: function (projectDir) {
             const projectName = path.basename(projectDir);
             var autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
-            var filePath = path.join(autoBackupDir, `${projectName}.zip`);
+            var filePath = path.join(autoBackupDir, `${projectName}_${utils.getDateAndTime()}.zip`);
 
             return utils.fileExists(projectDir)
                 .then(function (exists) {
@@ -639,7 +639,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                         return filePath;
                     });
                 });
-            }
+        }
     };
 }
 

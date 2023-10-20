@@ -491,6 +491,18 @@ var utils = {
 
     fileExists: function (file) {
         return utils.fs.stat(file).then(utils.ret(true)).catch(utils.ret(false));
+    },
+
+    getDateAndTime: function () {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = `${date.getMonth() + 1}`.padStart(2, '0');
+        var day = `${date.getDate()}`.padStart(2, '0');
+        var hours = `${date.getHours()}`.padStart(2, '0');
+        var minutes = `${date.getMinutes()}`.padStart(2, '0');
+        var seconds = `${date.getSeconds()}`.padStart(2, '0');
+
+        return `${year}${month}${day}${hours}${minutes}${seconds}`;
     }
 };
 
