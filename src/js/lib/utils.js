@@ -487,6 +487,10 @@ var utils = {
             }
         }
         return paths;
+    },
+
+    fileExists: function (file) {
+        return utils.fs.stat(file).then(utils.ret(true)).catch(utils.ret(false));
     }
 };
 
