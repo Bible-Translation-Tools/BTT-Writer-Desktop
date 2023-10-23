@@ -1,14 +1,12 @@
 'use strict';
 
 var _ = require('lodash');
-var request = require('request');
 var utils = require('../js/lib/utils');
 var fs = require('fs-extra');
 var path = require('path');
 var yaml = require('js-yaml');
-var mkdirp = require('mkdirp');
 
-function DataManager(db, resourceDir, sourceDir) {
+function DataManager(db, resourceDir, sourceDir, configurator) {
 
     return {
 
@@ -28,8 +26,42 @@ function DataManager(db, resourceDir, sourceDir) {
         },
 
         updateSources: function (onProgress) {
-            var apiURL = App.configurator.getUserSetting("mediaserver") + "/v2/ts/catalog.json";
+            var apiURL = configurator.getUserSetting("mediaserver") + "/v2/ts/catalog.json";
             return db.updateSources(apiURL, onProgress);
+        },
+
+        updateIndex: async function (progressCallback) {
+            const url = "https://btt-writer-resources.s3.amazonaws.com/index.sqlite";
+            var libraryDir = configurator.getValue('libraryDir');
+            var libraryPath = path.join(libraryDir, "index.sqlite");
+
+            return await fetch(url)
+                .then(async function (response) {
+                    const reader = response.body.getReader();
+                    const writer = fs.createWriteStream(libraryPath);
+                    let bytesDone = 0;
+                    const total = parseInt(response.headers.get('Content-Length' || '0'));
+
+                    while (true) {
+                        const result = await reader.read();
+                        if (result.done) break;
+
+                        const chunk = result.value;
+                        if (chunk !== null) {
+                            writer.write(Buffer.from(chunk));
+
+                            if (typeof progressCallback === 'function') {
+                                bytesDone += chunk.byteLength;
+                                const percent = total === 0 ? null : Math.floor(bytesDone / total * 100);
+                                progressCallback(percent);
+                            }
+                        } else {
+                            throw "empty chunk downloaded";
+                        }
+                    }
+
+                    writer.end();
+              })
         },
 
         updateChunks: function () {
