@@ -140,11 +140,12 @@
         "value": {"name": "WACS"},
         "options": [
             {
-                "name": "WACS",
-                "dataserver": "https://wacs.bibletranslationtools.org",
-                "mediaserver": "https://api.bibletranslationtools.org",
-                "readerserver": "http://read.bibleineverylanguage.org"
-                "createaccounturl": "https://content.bibletranslationtools.org/user/sign_up"
+                "name": "WACS", 
+                "dataserver": "https://wacs.bibletranslationtools.org", 
+                "mediaserver": "https://api.bibletranslationtools.org", 
+                "readerserver": "https://read.bibleineverylanguage.org",
+                "createaccounturl": "https://content.bibletranslationtools.org/user/sign_up",
+                "languageurl": "https://langnames.bibleineverylanguage.org/langnames.json"
             },
             {
                 "name": "DCS",
@@ -190,6 +191,15 @@
         "mainText": "Create Account URL",
         "value": "https://content.bibletranslationtools.org/user/sign_up",
         "default": "https://content.bibletranslationtools.org/user/sign_up",
+        "group": "advanced",
+        "enabled": true,
+        "visible": true
+    },
+    {
+        "name": "languageurl",
+        "mainText": "Languages URL",
+        "value": "https://langnames.bibleineverylanguage.org/langnames.json",
+        "default": "https://langnames.bibleineverylanguage.org/langnames.json",
         "group": "advanced",
         "enabled": true,
         "visible": true

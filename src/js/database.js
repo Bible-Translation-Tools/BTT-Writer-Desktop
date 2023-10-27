@@ -20,6 +20,13 @@ function DataManager(db, resourceDir, sourceDir) {
             return db.updateCatalogs(onProgress);
         },
 
+        /**
+         * Changes the language catalog URL (langnames.json)
+         */
+        updateLanguageUrl: function(languageUrl) {
+            return db.setLanguageUrl(languageUrl);
+        },
+
         updateSources: function (onProgress) {
             var apiURL = App.configurator.getUserSetting("mediaserver") + "/v2/ts/catalog.json";
             return db.updateSources(apiURL, onProgress);

@@ -35,3 +35,15 @@ html, body {
         float: none !important;
     }
 }
+
+@media (prefers-color-scheme: dark) {
+    a, a:visited {
+        color: #80D8FF;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    a, a:visited {
+        color: #00B0FF;
+    }
+}

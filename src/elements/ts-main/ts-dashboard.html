@@ -521,7 +521,10 @@
           mythis.showLoadingMessage('deleting_project_status');
 
           setTimeout(function() {
-              return App.projectsManager.deleteTargetTranslation(projectmeta)
+              return App.exportManager.autoBackupTranslation(projectmeta)
+                  .then(function (result) {
+                      return App.projectsManager.deleteTargetTranslation(projectmeta)
+                  })
                   .then(function() {
                       App.projectsManager.unsetValues(projectmeta.unique_id);
 
@@ -1362,10 +1365,13 @@
           App.configurator.setUserSetting('datapath', App.configurator.getValue('rootdir'));
 
           var location = App.configurator.getUserSetting('datalocation');
-
           location = untildify(location);
           location = location.replace(/\\/g, "\/");
           App.configurator.setUserSetting('datalocation', location);
+
+          const languageUrl = App.configurator.getUserSetting('languageurl');
+          App.dataManager.updateLanguageUrl(languageUrl);
+          
           App.configurator.applyPrefAppearance();
       },
 
