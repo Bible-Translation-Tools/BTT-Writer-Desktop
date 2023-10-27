@@ -11,7 +11,7 @@
 
         :host {
             background: var(--primary-color);
-            color: white;
+            color: var(--reverse-text-color);
             min-width: 50px;
             align-self: stretch;
             display: flex;
@@ -22,7 +22,7 @@
 
         #menuicon {
             padding: 8px;
-            color: white;
+            color: var(--reverse-text-color);
         }
 
         paper-item {
@@ -34,7 +34,7 @@
         }
 
         paper-item:hover {
-            background: var(--card-hover-color);
+            background: var(--accent-color-light);
             cursor: pointer;
         }
 
@@ -44,9 +44,8 @@
 
         paper-menu {
             --paper-menu-selected-item: {
-                font-weight: normal;
-            };
-            background-color: var(--popup-background-color);
+                 font-weight: normal;
+             }
         }
 
         .smallicon {
@@ -66,12 +65,12 @@
         <paper-menu-button id="menu" horizontal-offset="10" vertical-offset="10" vertical-align="bottom">
             <iron-icon id="menuicon" class="dropdown-trigger" icon="more-vert"></iron-icon>
             <paper-menu class="dropdown-content">
-                <paper-item on-tap="update"><iron-icon class="smallicon" icon="maps:local-library"></iron-icon>Update</paper-item>
-                <paper-item on-tap="importmenu"><iron-icon class="smallicon" icon="file-download"></iron-icon>Import</paper-item>
-                <paper-item on-tap="academy"><iron-icon class="smallicon" icon="book"></iron-icon>translationAcademy</paper-item>
-                <paper-item on-tap="feedback"><iron-icon class="smallicon" icon="announcement"></iron-icon>Feedback</paper-item>
-                <paper-item on-tap="logout"><iron-icon class="smallicon" icon="perm-identity"></iron-icon>Logout</paper-item>
-                <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>Settings</paper-item>
+                <paper-item on-tap="update"><iron-icon class="smallicon" icon="maps:local-library"></iron-icon>{{locale.update}}</paper-item>
+                <paper-item on-tap="importmenu"><iron-icon class="smallicon" icon="file-download"></iron-icon>{{locale.import}}</paper-item>
+                <paper-item on-tap="academy"><iron-icon class="smallicon" icon="book"></iron-icon>{{locale.translationAcademy}}</paper-item>
+                <paper-item on-tap="feedback"><iron-icon class="smallicon" icon="announcement"></iron-icon>{{locale.feedback}}</paper-item>
+                <paper-item on-tap="logout"><iron-icon class="smallicon" icon="perm-identity"></iron-icon>{{locale.logout}}</paper-item>
+                <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>{{locale.settings}}</paper-item>
             </paper-menu>
         </paper-menu-button>
     </template>
@@ -89,6 +88,10 @@
                 type: String,
                 value: '',
                 notify: true
+            },
+            locale: {
+              type: Object,
+              value: {}
             }
         },
 
@@ -127,7 +130,7 @@
         },
 
         ready: function() {
-
+            this.set('locale', App.locale.dictionary);
         }
 
     });
