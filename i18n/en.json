@@ -32,6 +32,8 @@
             "information_level":"Information",
             "warning_level":"Warnings",
             "error_level":"Errors",
+          "create_account_label":"Create Account URL",
+          "language_url_label": "Languages URL",
 
   "__folder1": "ts-dialogs",
 

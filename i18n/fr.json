@@ -34,6 +34,7 @@
             "error_level": "Erreurs",
           "developer_tools": "Outils des Développeurs",
           "developer_tools_label": "ouvrez les outils des développeurs",
+          "create_account_label": "Create Account URL",
 
   "__folder1": "ts-dialogs",
 

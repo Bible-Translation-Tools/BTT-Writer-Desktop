@@ -105,18 +105,18 @@
                 <iron-icon class="click" icon="arrow-back" on-tap="goback"></iron-icon>
                 <span class="click" on-tap="goback">[[createtitle(backto)]]</span>
                 <iron-icon icon="chevron-right"></iron-icon>
-                <span>Settings</span>
+                <span>{{locale.settings}}</span>
             </div>
         </div>
         <div class="body">
             <template is="dom-repeat" items="[[settings]]" index-as="group">
-                <div class="setting-group-header">{{_capitalize(item.group)}}</div>
+                <div class="setting-group-header">{{_lookupLocaleString(item.group)}}</div>
                 <div class="setting-group-body">
                     <template is="dom-repeat" items="{{item.list}}" as="setting" index-as="list">
                         <template is="dom-if" if="{{_isVisible(setting.visible)}}">
                             <div id="{{setting.name}}" class="setting-group-item" on-tap="_runTapHandler" data-enabled={{_isEnabled(setting.enabled)}} data-group="[[group]]" data-list="[[list]]">
                                 <div class="setting-text avoid-clicks">
-                                    <div class="main-text">{{setting.mainText}}</div>
+                                    <div class="main-text">{{_lookupLocaleString(setting.mainText)}}</div>
                                     <div class="help-text">{{_computeHelpText(setting.*)}}</div>
                                 </div>
                                 <template is="dom-if" if="{{_isBoolean(setting.value)}}">
@@ -150,6 +150,10 @@
                 type: String,
                 notify: true,
                 observer: 'load'
+            },
+            locale: {
+              type: Object,
+              value: {}
             },
             backto: {
                 type: String,
@@ -193,7 +197,7 @@
         },
 
         ready: function () {
-
+            this.set('locale', App.locale.dictionary);
         },
 
         createtitle: function (backto) {
@@ -240,12 +244,21 @@
 
         _computeHelpText: function (setting) {
             var text;
-            if (typeof setting.base.value === "number" && setting.base.helpText) {
-                text = setting.base.helpText.replace("<int>", setting.base.value);
+            let helpText = this._lookupLocaleString(setting.base.helpText);
+            if (typeof setting.base.value === "number" && helpText) {
+                text = helpText.replace("<int>", setting.base.value);
             } else {
-                text = setting.base.helpText || setting.base.value.name || setting.base.value || setting.base.nullText;
+                text = helpText || setting.base.value.name || setting.base.value || setting.base.nullText;
             }
             return text;
+        },
+
+        _lookupLocaleString: function (keyValue) {
+            let localeText = this.locale[keyValue];
+            if (localeText === undefined) {
+              localeText = keyValue;
+            }
+            return localeText;
         },
 
         _isBoolean: function (value) {
@@ -297,10 +310,6 @@
                 App.configurator.setUserSetting("dataserver", value.dataserver);
                 App.configurator.setUserSetting("mediaserver", value.mediaserver);
                 App.configurator.setUserSetting("readerserver", value.readerserver);
-                App.configurator.setUserSetting("createaccounturl", value.createaccounturl);
-                App.configurator.setUserSetting("languageurl", value.languageurl);
-                App.dataManager.updateLanguageUrl(value.languageurl);
-
                 this.set('settings', App.configurator.refreshUserSetting());
                 this.saveSettings();
                 // Lgout user.
@@ -312,10 +321,6 @@
                 // TODO This bypasses Polymer to call the ts-dashboard.showMessage() function.  Is there a better way?
                 var dashboard = document.querySelector('ts-dashboard')
                 dashboard.showMessage("Server Suite Changed", "Please close and restart the application.")
-            } else if(name == "colortheme") {
-                App.ipc.send('theme-changed', value.name);
-            } else if(name == "languageurl") {
-                App.dataManager.updateLanguageUrl(value);
             }
             App.configurator.applyPrefAppearance();
         },
