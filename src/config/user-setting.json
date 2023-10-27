@@ -151,7 +151,7 @@
                 "name": "DCS",
                 "dataserver": "https://git.door43.org",
                 "mediaserver": "https://api.unfoldingword.org",
-                "readerserver": "https://door43.org/u"
+                "readerserver": "https://door43.org/u",
                 "createaccounturl": "https://git.door43.org/user/sign_up"
             }
         ],
