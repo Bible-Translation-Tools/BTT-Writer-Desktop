@@ -12,7 +12,9 @@ The [Releases](https://github.com/Bible-Translation-Tools/BTT-Writer-Desktop/rel
 
 **macOS** users can unzip the application and put it where they want it (usually the `/Applications/` directory).
 
-Both **Linux** and **Mac** users will need to install `git` to run the program. Linux users can probably do this with `sudo apt install git`, while Mac users are encouraged to use the version of `git-scm` available [here](https://sourceforge.net/projects/git-osx-installer/files/git-2.33.0-intel-universal-mavericks.dmg/download).
+Both **Linux** and **Mac** users will need to install `git` to run the program. Linux users can probably do this with `sudo apt install git`, while Intel Mac users are encouraged to use the version of `git-scm` available [here](https://sourceforge.net/projects/git-osx-installer/files/git-2.33.0-intel-universal-mavericks.dmg/download).
+
+> **Git versions < 2.28 are not supported.**
 
 The program is not signed for either **macOS** or **Windows**, so users will need to deal with the warnings, etc., involved with that.
 
