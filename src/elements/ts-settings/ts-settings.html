@@ -201,7 +201,7 @@
         },
 
         createtitle: function (backto) {
-            return backto === "translate" ? "Project" : "Home";
+            return backto === "translate" ? "Project" : this._lookupLocaleString("home");
         },
 
         load: function () {

@@ -34,7 +34,10 @@
             "error_level": "Erreurs",
           "developer_tools": "Outils des Développeurs",
           "developer_tools_label": "ouvrez les outils des développeurs",
-          "create_account_label": "Create Account URL",
+          "create_account_label": "URL Pour Création de Compte",
+          "language_url_label": "URL des Langues",
+          "refresh_settings_label": "Actualiser le Paramètres",
+            "refresh_settings_text": "Mettre les paramètres au plus courrant",
 
   "__folder1": "ts-dialogs",
 
@@ -380,6 +383,14 @@
 
           "__file40": "ts-profile.html",
             "user_profile_label": "Profil d'Utilisateur",
+            "verifying_login": "Vérification d'autorisation ...",
+              "login_verified" : "Autorisation Complete",
+              "login_error": "Une erreur lors d'autorisation",
+              "bad_user": "Utilisateur inconnu",
+              "bad_password": "Mot de passe incorrect",
+              "login_failed": "Echec d'Autorisation",
+            "complete_fields": "Remplissez tous les champs",
+            "incomplete_data": "Données Incompletes",
 
           "__file41": "ts-profile-sidebar.html",
       	"__folder9": "ts-review",

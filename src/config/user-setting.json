@@ -188,7 +188,7 @@
     },
     {
         "name": "createaccounturl",
-        "mainText": "Create Account URL",
+        "mainText": "create_account_label",
         "value": "https://content.bibletranslationtools.org/user/sign_up",
         "default": "https://content.bibletranslationtools.org/user/sign_up",
         "group": "advanced_group",
@@ -197,7 +197,7 @@
     },
     {
         "name": "languageurl",
-        "mainText": "Languages URL",
+        "mainText": "language_url_label",
         "value": "https://langnames.bibleineverylanguage.org/langnames.json",
         "default": "https://langnames.bibleineverylanguage.org/langnames.json",
         "group": "advanced_group",

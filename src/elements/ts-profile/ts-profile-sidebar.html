@@ -64,7 +64,7 @@
         <paper-menu-button id="menu" horizontal-offset="10" vertical-offset="10" vertical-align="bottom">
             <iron-icon id="menuicon" class="dropdown-trigger" icon="more-vert"></iron-icon>
             <paper-menu class="dropdown-content">
-                <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>Settings</paper-item>
+                <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>{{locale.settings}}</paper-item>
             </paper-menu>
         </paper-menu-button>
     </template>
@@ -82,6 +82,10 @@
                 type: String,
                 value: '',
                 notify: true
+            },
+            locale: {
+              type: Object,
+              value: {}
             }
         },
 
@@ -92,7 +96,7 @@
         },
 
         ready: function() {
-
+            this.set('locale', App.locale.dictionary);
         }
 
     });

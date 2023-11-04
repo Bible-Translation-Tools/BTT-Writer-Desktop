@@ -137,6 +137,10 @@
             allwords: {
                 type: Array,
                 value: []
+            },
+            locale: {
+                type: Object,
+                value: {}
             }
 		},
 
@@ -245,7 +249,7 @@
         },
 
 		ready: function() {
-
+            this.set('locale', App.locale.ditionary);
 		}
 
 	});

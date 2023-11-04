@@ -34,6 +34,8 @@
             "error_level":"Errors",
           "create_account_label":"Create Account URL",
           "language_url_label": "Languages URL",
+          "refresh_settings_label": "Refresh Settings",
+            "refresh_settings_text": "Update user options to the most current",
 
   "__folder1": "ts-dialogs",
 
@@ -386,6 +388,14 @@
 
 		"__file40": "ts-profile.html",
          "user_profile_label": "User Profile",
+         "verifying_login": "Verifying Login.  Please wait...",
+            "login_verified": "Login Verified",
+            "login_error": "An error occurred while trying to login",
+            "bad_user": "Incorrect Username",
+            "bad_password": "Incorrect Password",
+            "login_failed": "Login Failed",
+         "complete_fields": "Please complete all fields",
+         "incomplete_data": "Incomplete Data",
 
 		"__file41": "ts-profile-sidebar.html",
 
@@ -421,6 +431,7 @@
          "__file56": "ts-resource-card.html",
          "__file57": "ts-resource-data.html",
          "__file58": "ts-resource-display.html",
+
 		"__folder16": "ts-review-mode",
    		"__file59": "ts-review-card.html",
    		"__file60": "ts-review-mode.html",
@@ -461,6 +472,9 @@
     	"__file77": "ts-update-level-two.html",
     	"__file78": "ts-update-results.html",
       "__file79": "ts-updates.html",
+"__folder20": "views",
+   "__file80": "splash-screen.html",
+      "loading_text": "Loading main window...",
 
     "status": "Status",
     "idle": "Idle",
