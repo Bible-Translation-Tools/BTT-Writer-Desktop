@@ -3,6 +3,7 @@
 var _ = require('lodash'),
     path = require('path'),
     utils = require('../js/lib/utils'),
+    archiver = require('archiver'),
     fs = require('fs'),
     trash = require('trash');
 
@@ -228,15 +229,17 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
 
                 var sources = [];
 
-                for (var j = 0; j < manifest.source_translations.length; j++) {
-                    var details = dataManager.getSourceDetails(manifest.project.id, manifest.source_translations[j].language_id, manifest.source_translations[j].resource_id);
+                if ('source_translations' in manifest) {
+                    for (var j = 0; j < manifest.source_translations.length; j++) {
+                        var details = dataManager.getSourceDetails(manifest.project.id, manifest.source_translations[j].language_id, manifest.source_translations[j].resource_id);
 
-                    if (manifest.source_translations[j].resource_id === "udb" && manifest.resource.id !== "udb") {
-                        details = false;
-                    }
+                        if (manifest.source_translations[j].resource_id === "udb" && manifest.resource.id !== "udb") {
+                            details = false;
+                        }
 
-                    if (details) {
-                        sources.push(details);
+                        if (details) {
+                            sources.push(details);
+                        }
                     }
                 }
 
@@ -474,6 +477,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         loadTargetTranslationsList: function () {
+            const mythis = this;
             var paths = utils.makeProjectPaths.bind(utils, targetDir);
             return this.loadProjectsList()
                 .then(map(paths))
@@ -489,9 +493,21 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                         return test;
                     })
                 })
-                .then(map(read))
+                .then(map(function(manifestFile) {
+                    const projectDir = path.dirname(manifestFile);
+                    return read(manifestFile)
+                        .then(fromJSON)
+                        .then(function (meta) {
+                            meta.projectDir = projectDir;
+                            return meta;
+                        })
+                        .catch(function (err) {
+                            reporter.logError(`Error in ${manifestFile}`, err);
+
+                            mythis.backupProject(projectDir);
+                        });
+                }))
                 .then(Promise.all.bind(Promise))
-                .then(map(fromJSON))
         },
 
         migrateTargetTranslationsList: function () {
@@ -581,17 +597,47 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
 
         deleteTargetTranslation: function (meta) {
             var paths = utils.makeProjectPaths(targetDir, meta);
+            let projectDir = paths.projectDir;
 
-            return utils.fs.stat(paths.projectDir).then(utils.ret(true)).catch(utils.ret(false))
+            return utils.fileExists(projectDir)
+                .then(function (exists) {
+                    if (!exists) {
+                        projectDir = meta.projectDir;
+                        return utils.fileExists(projectDir)
+                    }
+                    return true;
+                })
                 .then(function (exists) {
                     if (exists) {
-                        return trash([paths.projectDir]);
+                        return trash([projectDir]);
                     } else {
-                        throw "Project file does not exist";
+                        throw "Project directory does not exist";
                     }
                 })
                 .catch(function (err) {
                     throw err || "Unable to delete file at this time.";
+                });
+        },
+
+        backupProject: function (projectDir) {
+            const projectName = path.basename(projectDir);
+            var autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
+            var filePath = path.join(autoBackupDir, `${projectName}_${utils.getDateAndTime()}.zip`);
+
+            return utils.fileExists(projectDir)
+                .then(function (exists) {
+                    if (!exists) {
+                        throw "Project directory does not exist";
+                    }
+                })
+                .then(function () {
+                    var output = fs.createWriteStream(filePath);
+                    var archive = archiver.create('zip');
+                    archive.pipe(output);
+                    archive.directory(projectDir, projectName + "/");
+                    return archive.finalize().then(function () {
+                        return filePath;
+                    });
                 });
         }
     };
