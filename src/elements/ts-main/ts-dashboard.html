@@ -203,7 +203,7 @@
       </paper-dialog>
 
       <paper-dialog id="update" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-          <ts-update-options on-language="updateLanguageList" on-source="updateSourceList" on-download="downloadSources"></ts-update-options>
+          <ts-update-options on-language="updateLanguageList" on-source="updateSourceList" on-download="downloadSources" on-index="updateIndex"></ts-update-options>
       </paper-dialog>
 
       <paper-dialog id="license" class="popup legal" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
@@ -472,33 +472,48 @@
           mythis.set('options.value', 0);
 
           setTimeout(function () {
-                  var path = require('path');
-                  var libraryDir = App.configurator.getValue('libraryDir');
-                  var libraryPath = path.join(libraryDir, "index.sqlite");
-                  console.log(libraryPath);
+              return App.dataManager.updateSources(onProgress)
+                  .then(function () {
+                      var after = App.dataManager.getMetrics();
+                      var diff = after.resource_count_level3 - before.resource_count_level3;
+                      var msg = diff + ' new Source Texts are available to be downloaded.';
+                      if (diff < 1) {
+                          msg = 'No new Source Texts have been added.';
+                      }
+                      if (diff === 1) {
+                          msg = '1 new Source Text is available to be downloaded.';
+                      }
+                      mythis.set('route', 'updates');
+                      mythis.showMessage('Update Complete', msg);
+                  })
+                  .catch(function (err) {
+                      var errmessage = 'An error occurred while updating';
+                      if (err.syscall === "getaddrinfo") {
+                          errmessage = "Unable to connect to server";
+                      }
+                      if (err.syscall === "read") {
+                          errmessage = "Lost connection to server";
+                      }
+                      mythis.showErrorMessage('Update Failed', errmessage, err);
+                  });
+          }, 500);
+      },
 
-                  const url = "https://btt-writer-resources.s3.amazonaws.com/index.sqlite";
-                  fetch(url)
-                      .then( function(response) {
-                          console.log(response);
-                          return response.blob();
-                      }).then( function (blob) {
-                          console.log(blob);
-                          return(blob.arrayBuffer())
-                      }).then( function (arrayBuffer) {
-                          console.log(arrayBuffer);
-                          buffer = new Buffer(arrayBuffer);
-                          console.log(buffer);
-                          const fs = require('fs');
-                          console.log("Started writing file...");
-                          fs.writeFileSync(libraryPath, buffer);
-                          console.log("Finished writing file.");
-                      }).then( function () {
-                          console.log("Done.");
-                          App.ipc.send('fire-reload');
-                      });
+      updateIndex: function () {
+          var mythis = this;
 
+          mythis.$.update.close();
+          mythis.showLoadingMessage("Updating Library's index.sqlite File. This may take a while. Please wait...");
+          mythis.set('options.progress', true);
+          mythis.set('options.value', 0);
 
+          setTimeout(function () {
+              App.dataManager.updateIndex(function (progress) {
+                  mythis.set('options.value', progress);
+              }).then(function () {
+                  console.log("Done.");
+                  App.ipc.send('fire-reload');
+              });
           }, 500);
       },
 
