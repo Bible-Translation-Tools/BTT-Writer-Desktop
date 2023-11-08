@@ -23,7 +23,7 @@ run:
 	# If on WSL: $$DISPLAY should be set to your X display manager, e.g. '192.168.3.3:0.0'
 	test $(DISPLAY) # If blank, then $$DISPLAY is not set
 	test ! $(CONTAINER_ID) # If not blank, then container is already running
-	docker run --detach --rm --net=host \
+	docker run --detach --rm --net=host --ipc=host \
 	           --volume="${XAUTHORITY}:/root/.Xauthority:rw" \
 	           --volume $(VOLUME_LABEL):/root \
 	           --env DISPLAY="${DISPLAY}" $(IMAGE_LABEL)
@@ -60,5 +60,16 @@ clean:
 
 release:
 	# Creates executables
-	# TODO: Add support for building Windows, etc. -- see .travis.yml
+	docker run --rm --volume $(RELEASE_DIR):/app/release $(IMAGE_LABEL) bash -c "gulp build && gulp release"
+
+release-win:
+	# Creates Windows executable
+	docker run --rm --volume $(RELEASE_DIR):/app/release $(IMAGE_LABEL) bash -c "gulp build --win && gulp release"
+
+release-linux:
+	# Creates Linux executable
 	docker run --rm --volume $(RELEASE_DIR):/app/release $(IMAGE_LABEL) bash -c "gulp build --linux && gulp release"
+
+release-osx:
+	# Creates MacOs executable
+	docker run --rm --volume $(RELEASE_DIR):/app/release $(IMAGE_LABEL) bash -c "gulp build --osx && gulp release"
