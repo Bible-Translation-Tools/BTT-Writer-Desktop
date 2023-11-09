@@ -48,7 +48,6 @@ RUN gulp prince
 COPY . .
 
 RUN chmod -R +x scripts/git/*.sh
-RUN chmod +x scripts/*.iss
 
 RUN bower install --allow-root
 
