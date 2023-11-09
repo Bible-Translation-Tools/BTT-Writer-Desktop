@@ -203,7 +203,7 @@
       </paper-dialog>
 
       <paper-dialog id="update" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-          <ts-update-options on-language="updateLanguageList" on-source="updateSourceList" on-download="downloadSources"></ts-update-options>
+          <ts-update-options on-language="updateLanguageList" on-source="updateSourceList" on-download="downloadSources" on-index="updateIndex"></ts-update-options>
       </paper-dialog>
 
       <paper-dialog id="license" class="popup legal" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
@@ -496,6 +496,24 @@
                       }
                       mythis.showErrorMessage('Update Failed', errmessage, err);
                   });
+          }, 500);
+      },
+
+      updateIndex: function () {
+          var mythis = this;
+
+          mythis.$.update.close();
+          mythis.showLoadingMessage("Updating Library's index.sqlite File. This may take a while. Please wait...");
+          mythis.set('options.progress', true);
+          mythis.set('options.value', 0);
+
+          setTimeout(function () {
+              App.dataManager.updateIndex(function (progress) {
+                  mythis.set('options.value', progress);
+              }).then(function () {
+                  console.log("Done.");
+                  App.ipc.send('fire-reload');
+              });
           }, 500);
       },
 

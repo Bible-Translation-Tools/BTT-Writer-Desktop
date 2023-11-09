@@ -159,7 +159,7 @@ process.stdout.write = console.log.bind(console);
 
         var db = new Db(libraryPath, resourceDir);
 
-        return new DataManager(db, resourceDir, srcResource);
+        return new DataManager(db, resourceDir, srcResource, configurator);
     })();
 
     setMsg('Initializing modules...');

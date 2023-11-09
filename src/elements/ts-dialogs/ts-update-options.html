@@ -84,7 +84,10 @@
         </div>
         <div id="body">
             <div class="option" on-tap="source">
-                <span class="optiontitle">Update List of Available Source Texts<iron-icon class="icon" icon="info" title="Only updates the list of sources. Does not download new sources"></iron-icon></span>
+                <span class="optiontitle">Update List of Available Source Texts<iron-icon class="icon" icon="info" title="Only updates the list of sources. Does not download new sources."></iron-icon></span>
+            </div>
+            <div class="option" on-tap="index">
+                <span class="optiontitle">Download New index.sqlite<iron-icon class="icon" icon="info" title="Downloads a new index.sqlite and plops it in the app dir."></iron-icon></span>
             </div>
             <div class="option" on-tap="download">
                 <span class="optiontitle">Download Available Source Texts<iron-icon class="icon" icon="info" title="Choose which sources to download after updating the list"></iron-icon></span>
@@ -121,6 +124,10 @@
 
         download: function () {
             this.fire('download');
+        },
+
+        index: function () {
+            this.fire('index');
         },
 
         ready: function () {
