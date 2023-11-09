@@ -536,7 +536,7 @@
 
           setTimeout(function() {
               return App.exportManager.autoBackupTranslation(projectmeta)
-                  .then(function (result) {
+                  .then(function () {
                       return App.projectsManager.deleteTargetTranslation(projectmeta)
                   })
                   .then(function() {
@@ -552,10 +552,34 @@
                   .then(function () {
                       mythis.showMessage('Project Deleted', 'Your project has been successfully deleted.');
                   })
-                  .catch(function (err) {
-                      mythis.showErrorMessage('Delete Failed', `An error occurred while trying to delete your project. (${err})`, err);
+                  .catch(function () {
+                      mythis.deleteCorruptProject(projectmeta);
                   })
           }, 500);
+      },
+
+      deleteCorruptProject: function (projectmeta) {
+          var mythis = this;
+          App.projectsManager.backupProject(projectmeta.projectDir)
+              .then(function () {
+                  return App.projectsManager.deleteTargetTranslation(projectmeta)
+              })
+              .then(function() {
+                  App.projectsManager.unsetValues(projectmeta.unique_id);
+
+                  var list = mythis.projectlist;
+                  var newlist = list.filter(function (item) {
+                      return item.unique_id !== projectmeta.unique_id;
+                  });
+
+                  return mythis.sortProjects(newlist);
+              })
+              .then(function () {
+                  mythis.showMessage('Project Deleted', 'Your project has been successfully deleted.');
+              })
+              .catch(function (err) {
+                  mythis.showErrorMessage('Delete Failed', `An error occurred while trying to delete your project. (${err})`, err);
+              })
       },
 
       changeProject: function (event, data) {
@@ -1249,14 +1273,16 @@
           for (var i = 0; i < list.length; i++) {
               var proj = list[i].project.id;
 
-              for (var j = 0; j < list[i].source_translations.length; j++) {
-                  var lang = list[i].source_translations[j].language_id;
-                  var res = list[i].source_translations[j].resource_id;
-                  var string = lang + "_" + proj + "_" + res;
-                  if (!strings[string]) {
-                      strings[string] = true;
-                      var open = App.dataManager.activateProjectContainers(lang, proj, res);
-                      promises.push(open);
+              if ('source_translations' in list[i]) {
+                  for (var j = 0; j < list[i].source_translations.length; j++) {
+                      var lang = list[i].source_translations[j].language_id;
+                      var res = list[i].source_translations[j].resource_id;
+                      var string = lang + "_" + proj + "_" + res;
+                      if (!strings[string]) {
+                          strings[string] = true;
+                          var open = App.dataManager.activateProjectContainers(lang, proj, res);
+                          promises.push(open);
+                      }
                   }
               }
           }
@@ -1410,7 +1436,7 @@
                       return App.projectsManager.loadTargetTranslationsList()
                           .then(function (list) {
                               App.ipc.send('loading-status', 'Opening resource containers...');
-                              return mythis.checkAllContainers(list);
+                              return mythis.checkAllContainers(_.compact(list));
                           })
                           .then(function (list) {
                               App.ipc.send('loading-status', 'Updating Project List...');
