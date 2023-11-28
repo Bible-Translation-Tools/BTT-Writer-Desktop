@@ -290,6 +290,9 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                 })
 				.then(function () {
                     return mythis.activateContainer(language, "bible", "tw");
+                })
+                .catch(function (err) {
+                    console.log(err);
                 });
         },
 
