@@ -31,7 +31,7 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
         },
 
         updateIndex: async function (progressCallback) {
-            const url = "https://btt-writer-resources.s3.amazonaws.com/index.sqlite";
+            const url = configurator.getUserSetting('indexsqliteurl');
             var libraryDir = configurator.getValue('libraryDir');
             var libraryPath = path.join(libraryDir, "index.sqlite");
 
@@ -61,7 +61,7 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                     }
 
                     writer.end();
-              })
+                });
         },
 
         updateChunks: function () {

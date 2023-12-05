@@ -216,6 +216,15 @@
         "visible": true
     },
     {
+        "name": "indexsqliteurl",
+        "mainText": "Index.sqlite URL",
+        "value": "https://btt-writer-resources.s3.amazonaws.com/index.sqlite",
+        "default": "https://btt-writer-resources.s3.amazonaws.com/index.sqlite",
+        "group": "advanced",
+        "enabled": true,
+        "visible": true
+    },
+    {
         "name": "logginglevel",
         "mainText": "Logging Level",
         "value": "Warnings",
