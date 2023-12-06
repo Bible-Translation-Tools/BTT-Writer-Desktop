@@ -156,7 +156,7 @@
                 "readerserver": "https://read.bibleineverylanguage.org",
                 "createaccounturl": "https://content.bibletranslationtools.org/user/sign_up",
                 "languageurl": "https://langnames.bibleineverylanguage.org/langnames.json",
-                "indexsqliteurl": "https://btt-writer-resources.s3.amazonaws.com/index.sqlite"
+                "indexsqliteurl": "https://writer-resources.bibletranslationtools.org/index.sqlite"
             },
             {
                 "name": "DCS",  
@@ -165,7 +165,7 @@
                 "readerserver": "https://door43.org/u",
                 "createaccounturl": "https://git.door43.org/user/sign_up",
                 "languageurl": "https://td.unfoldingword.org/exports/langnames.json",
-                "indexsqliteurl": "https://btt-writer-resources.s3.amazonaws.com/index.sqlite"
+                "indexsqliteurl": "https://writer-resources.bibletranslationtools.org/index.sqlite"
             }
         ],
         "group": "advanced",
@@ -220,8 +220,8 @@
     {
         "name": "indexsqliteurl",
         "mainText": "Index.sqlite URL",
-        "value": "https://btt-writer-resources.s3.amazonaws.com/index.sqlite",
-        "default": "https://btt-writer-resources.s3.amazonaws.com/index.sqlite",
+        "value": "https://writer-resources.bibletranslationtools.org/index.sqlite",
+        "default": "https://writer-resources.bibletranslationtools.org/index.sqlite",
         "group": "advanced",
         "enabled": true,
         "visible": true
