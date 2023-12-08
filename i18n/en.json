@@ -295,6 +295,7 @@
             "project_imported2":"Your project has been successfully imported.",
             "project_imported3": "Your file has been imported. Please review it carefully. If it was not formatted properly, text may not appear as desired.",
             "source_imported": "Your source text has been successfully imported.",
+          "project_upload": "Uploading Project. Please wait...",
          "creating_project_file_status": "Creating Project File.  Please wait...",
          "preparing_print_status": "Preparing to Print. Please wait...",
          "exporting_project_status": "Exporting Project.  Please wait...",

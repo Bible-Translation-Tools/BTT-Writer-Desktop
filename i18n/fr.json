@@ -295,6 +295,7 @@
               "project_imported2":"Votre projet est bien importé.",
               "project_imported3": "Votre fichier est importé. Svp le lire avec soin. S'il n'a pas été bien formatté le texte risque de ne pas apparaître comme souhaité.",
               "source_imported": "Votre texte source est bien importé",
+            "project_upload": "En Cours de Télécharger. Veuillez patienter...",
             "creating_project_file_status": "En cours de créer le fichier projet. Veuillez patienter...",
             "preparing_print_status": "En cours de preparer l'impression. Veuillez patienter...",
             "exporting_project_status": "En cours d'exporter le projet. Veuillez patienter...",
