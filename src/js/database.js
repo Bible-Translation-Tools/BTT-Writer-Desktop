@@ -267,6 +267,9 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                             });
                     }
                     return Promise.resolve(true);
+                })
+                .catch ((error) => {
+                    console.log(error);
                 });
         },
 
@@ -290,9 +293,6 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                 })
 				.then(function () {
                     return mythis.activateContainer(language, "bible", "tw");
-                })
-                .catch(function (err) {
-                    console.log(err);
                 });
         },
 
