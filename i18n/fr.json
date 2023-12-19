@@ -327,6 +327,10 @@
             "project_failed4": "Exportation Echoué",
 
             "download_images": "En cours de télécharger les images. Veuillez patienter...",
+              "download_images_error": "Une erreur s'est produit lors du téléchargement des images",
+            "extract_images": "En cours d'extraire les images. Veuillez patienter...",
+            "print_preview": "En cours de générer l'impression. Veuillez patienter...",
+            "download_failed": "Téléchargement échoué",
 
             "conflicts_exist": "Il y a de Conflits",
             "conflicts_request": "Il faut resoudre tout conflit avant d'exporter en USFM.",

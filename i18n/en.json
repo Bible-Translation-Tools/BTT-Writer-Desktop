@@ -327,6 +327,10 @@
          "project_failed4": "Export Failed",
 
          "download_images": "Downloading Images. Please wait...",
+            "download_images_error": "An error occurred while downloading images",
+         "extract_images": "Extracting Images. Please wait...",
+         "print_preview": "Creating print preview. Please wait...",
+         "download_failed": "Download Failed",
 
          "conflicts_exist":"Conflicts Exist",
          "conflicts_request": "You must resolve all conflicts before exporting to USFM.",
@@ -484,7 +488,7 @@
             "__file77": "ts-update-level-two.html",
             "__file78": "ts-update-results.html",
             "__file79": "ts-updates.html",
-            
+
          "__folder20": "views",
             "__file80": "splash-screen.html",
                "loading_text": "Loading main window...",
