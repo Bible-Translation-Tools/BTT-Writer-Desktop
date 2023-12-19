@@ -111,8 +111,8 @@
                 </template>
             </div>
             <div id="footer">
-                <paper-button on-tap="cancel">Cancel</paper-button>
-                <paper-button on-tap="confirm">Confirm</paper-button>
+                <paper-button on-tap="cancel">{{locale.cancel}}</paper-button>
+                <paper-button on-tap="confirm">{{locale.confirm}}</paper-button>
             </div>
         </div>
 
@@ -149,6 +149,10 @@
             },
             default: {
                 type: String
+            },
+            locale: {
+                type: Object,
+                value: {}
             }
         },
 
@@ -158,6 +162,8 @@
 					document.querySelector('paper-input').$.input.focus();
 				}
         	}, 30);
+
+            this.set('locale', App.locale.dictionary)
         },
 
         onOpen: function () {
