@@ -513,6 +513,9 @@
               }).then(function () {
                   console.log("Done.");
                   App.ipc.send('fire-reload');
+              })
+              .catch (function (err) {
+                  mythis.showErrorMessage('Download Failed', `An error occurred while trying to download index.sqlite file. (${err})`, err);
               });
           }, 500);
       },

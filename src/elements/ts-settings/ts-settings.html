@@ -300,6 +300,7 @@
                 App.configurator.setUserSetting("createaccounturl", value.createaccounturl);
                 App.configurator.setUserSetting("languageurl", value.languageurl);
                 App.dataManager.updateLanguageUrl(value.languageurl);
+                App.configurator.setUserSetting("indexsqliteurl", value.indexsqliteurl);
 
                 this.set('settings', App.configurator.refreshUserSetting());
                 this.saveSettings();
