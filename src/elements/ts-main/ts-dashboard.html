@@ -678,7 +678,7 @@
       startProjectImport: function() {
           var mythis = this;
           var defaultPath = App.configurator.getUserPath('datalocation', 'backups');
-          var filePath = App.ipc.sendSync('open-file', {options: {defaultPath: defaultPath, filters: [{name: 'Tstudio Files', extensions: ['tstudio']}], properties: ['openFile']}});
+          var filePath = App.ipc.sendSync('open-file', {options: {defaultPath: defaultPath, filters: [{name: mythis._lookupLocaleString("tstudio_files"), extensions: ['tstudio']}], properties: ['openFile']}});
           if (!filePath) {
               return;
           }
@@ -785,7 +785,7 @@
       startUsfmImport: function () {
           var mythis = this;
           var defaultPath = App.configurator.getUserPath('datalocation', 'backups');
-          var filePath = App.ipc.sendSync('open-file', {options: {defaultPath: defaultPath, filters: [{name: 'USFM Files', extensions: ['txt', 'usfm']}], properties: ['openFile']}});
+          var filePath = App.ipc.sendSync('open-file', {options: {defaultPath: defaultPath, filters: [{name: mythis._lookupLocaleString("usfm_format"), extensions: ['txt', 'usfm']}], properties: ['openFile']}});
           if (!filePath) {
               return;
           }
@@ -937,7 +937,7 @@
 
           mythis.$.export.close();
           mythis.set('options', {});
-          mythis.set('options.body', "Uploading Project.  Please wait...");
+          mythis.set('options.body', mythis._lookupLocaleString(project_upload));
           mythis.set('options.loading', true);
           loading.open();
 
@@ -1060,10 +1060,10 @@
               return Promise.resolve(true)
                   .then(function () {
                       if (options.includeImages) {
-                          mythis.set('options.body', "Downloading Images. Please wait...");
+                          mythis.set('options.body', mythis._lookupLocaleString('download_images'));
                           return App.printManager.downloadImages()
                               .then(function(){
-                                  mythis.set('options.body', "Extracting Images. Please wait...");
+                                  mythis.set('options.body', mythis._lookupLocaleString("extract_images"));
                                   return App.printManager.extractImages();
                               });
                       } else {
@@ -1071,7 +1071,7 @@
                       }
                   })
                   .then(function () {
-                      mythis.set('options.body', "Creating print preview. Please wait...");
+                      mythis.set('options.body', mythis._lookupLocaleString("print_preview"));
                       setTimeout(function() {
                           mythis.set('currentproject.printoptions', options);
                           mythis.$.preview.rendertext();
@@ -1081,11 +1081,11 @@
                       }, 500);
                   })
                   .catch(function(err){
-                      var errmessage = "An error occurred while downloading images";
+                      var errmessage = mythis._lookupLocaleString("download_images_error");
                       if(err !== null) {
                           errmessage = err;
                       }
-                      mythis.showErrorMessage("Download Failed", errmessage, err);
+                      mythis.showErrorMessage(mythis._lookupLocaleString("download_failed"), errmessage, err);
                   });
           }, 500);
       },
