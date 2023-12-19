@@ -24,7 +24,7 @@
           "gitversion_maintext": "Version de Git",
           "datapath_maintext": "Emplacement des Données",
           "software_licenses": "Licenses d'Utilisation des Logiciels",
-          "server_suite_maintext": "Bloc des Serveurs (e.g. WACS ou DCS)",
+          "server_suite_maintext": "Bloc de Serveurs (e.g. WACS ou DCS)",
           "data_server_label": "Serveur des Données",
           "media_server_label": "Serveur des Médias",
           "reader_server_label": "Serveur de Lecture",
@@ -421,6 +421,9 @@
               "__addedLookupLocaleString_function", true
               ],
       		"__file48": "ts-settings.html",
+              "suite_changed": "Bloc de Serveurs Changé",
+              "suite_changed_suite": "Veuillez fermer et redemarrer le logiciel.",
+              "font_list_update": "En cours de Mettre La Liste des Polices à Jour. Veuillez patienter...",
 
       	"__folder11": "ts-translate",
       		"__folder12": "ts-chunk-mode",

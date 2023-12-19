@@ -421,6 +421,9 @@
           "__addedLookupLocaleString_function", true
          ],
 		"__file48": "ts-settings.html",
+         "suite_changed": "Server Suite Changed",
+         "suite_changed_suite": "Please close and restart the application.",
+         "font_list_update": "Updating Font List. Please wait...",
 
 	"__folder11": "ts-translate",
 		"__folder12": "ts-chunk-mode",
