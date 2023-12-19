@@ -267,6 +267,9 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                             });
                     }
                     return Promise.resolve(true);
+                })
+                .catch ((error) => {
+                    console.log(error);
                 });
         },
 
