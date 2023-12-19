@@ -81,14 +81,14 @@
         <div id="header">
             <div id="title">
                 <iron-icon class="click" icon="arrow-back" on-tap="goback"></iron-icon>
-                <span class="click" on-tap="goback">Project</span>
+                <span class="click" on-tap="goback">{{locale.project}}</span>
                 <iron-icon icon="chevron-right"></iron-icon>
-                <span>Review Project</span>
+                <span>{{locale.review_project}}</span>
             </div>
             <div id="steps">
-                <paper-button raised class="buttons" on-tap="goproject"><span id="project">Project</span></paper-button>
-                <paper-button raised class="buttons" on-tap="gocontrib"><span id="contrib">Contributors</span></paper-button>
-                <paper-button raised class="buttons" on-tap="goexport"><span>Upload/Export</span></paper-button>
+                <paper-button raised class="buttons" on-tap="goproject"><span id="project">{{locale.project}}</span></paper-button>
+                <paper-button raised class="buttons" on-tap="gocontrib"><span id="contrib">{{locale.contributors}}</span></paper-button>
+                <paper-button raised class="buttons" on-tap="goexport"><span>{{locale.upload_export}}</span></paper-button>
             </div>
         </div>
 
@@ -119,6 +119,10 @@
                 type: Number,
                 value: 0,
                 observer: 'change'
+            },
+            locale: {
+                type: Object,
+                value: {}
             },
             route: {
                 type: String,

@@ -414,7 +414,13 @@
 		"__file43": "ts-review-chunk.html",
 		"__file44": "ts-review-contrib.html",
 		"__file45": "ts-review.html",
+         "review_project": "Review Project",
+         "_project": "from ts-home.html",
+         "contributors": "Contributors",
+         "_upload_export": "from ts-project-info.html",
 		"__file46": "ts-review-project.html",
+         "project_details": "Project Details",
+         "next": "Next",
 
 	"__folder10": "ts-settings",
 		"__file47": ["ts-setting-modal.html",
