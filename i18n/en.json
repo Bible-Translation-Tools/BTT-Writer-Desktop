@@ -32,6 +32,8 @@
             "information_level":"Information",
             "warning_level":"Warnings",
             "error_level":"Errors",
+          "developer_tools": "Developer Tools",
+            "developer_tools_label": "open the developer tools",
           "create_account_label":"Create Account URL",
           "language_url_label": "Languages URL",
           "refresh_settings_label": "Refresh Settings",
@@ -226,6 +228,7 @@
 
       "__file21": "ts-software.html",
          "license_explanation": "The following licenses apply to code packages and libraries used in this app.",
+         "license_type": "Type of License",
       "__file22": "ts-statement.html",
          "statement_head": "Statement of Faith",
          "statement_head2": "Essential Beliefs",
@@ -323,6 +326,8 @@
          "project_failed3": "An error occurred while trying to export your project",
          "project_failed4": "Export Failed",
 
+         "download_images": "Downloading Images. Please wait...",
+
          "conflicts_exist":"Conflicts Exist",
          "conflicts_request": "You must resolve all conflicts before exporting to USFM.",
 
@@ -408,7 +413,9 @@
 		"__file46": "ts-review-project.html",
 
 	"__folder10": "ts-settings",
-		"__file47": "ts-setting-modal.html",
+		"__file47": ["ts-setting-modal.html",
+          "__addedLookupLocaleString_function", true
+         ],
 		"__file48": "ts-settings.html",
 
 	"__folder11": "ts-translate",
@@ -460,22 +467,27 @@
             "__file71": "ts-target-view.html",
             "__file72": "ts-target-words.html",
             "__file73": "ts-verse-marker.html",
-  		"__file74": "ts-translate.html",
-        "loading_project": "Loading Project",
+      		"__file74": "ts-translate.html",
+              "loading_project": "Loading Project",
 
-  		"__file75": "ts-translate-sidebar.html",
-        "home": "Home",
-        "project_review": "Project Review",
-        "search": "Search",
+            "__file75": "ts-translate-sidebar.html",
+            "home": "Home",
+            "project_review": "Project Review",
+            "search": "Search",
+            "readmode": "Read",
+            "content-copy": "Blind Edit",
+            "view-week": "Edit-Review",
+            "warning": "Conflicts",
 
-  "__folder19": "ts-updates",
-    	"__file76": "ts-update-level-one.html",
-    	"__file77": "ts-update-level-two.html",
-    	"__file78": "ts-update-results.html",
-      "__file79": "ts-updates.html",
-"__folder20": "views",
-   "__file80": "splash-screen.html",
-      "loading_text": "Loading main window...",
+         "__folder19": "ts-updates",
+            "__file76": "ts-update-level-one.html",
+            "__file77": "ts-update-level-two.html",
+            "__file78": "ts-update-results.html",
+            "__file79": "ts-updates.html",
+            
+         "__folder20": "views",
+            "__file80": "splash-screen.html",
+               "loading_text": "Loading main window...",
 
     "status": "Status",
     "idle": "Idle",

@@ -117,6 +117,7 @@
 
         "__folder2": "ts-home",
       		"__file11": "ts-completion-icon.html",
+
       		"__file12": "ts-home.html",
             "app_name": "BTT Writer (test)",
             "home_title": "Vos Projets de Traduction",
@@ -129,6 +130,7 @@
             "sort1": "Projet Avant Langue",
             "sort2": "Langue Avant Projet",
             "sort3": "Progres Avant Projet",
+
             "columns2": "Trier la Colonne des Projets Par",
             "bible_order": "Ordre Biblique",
             "abc_order": "Ordre Alphabétique",
@@ -264,16 +266,17 @@
               "import_complete_text": "Votre projet est importé avec succès",
             "import_failed": "Echec d'Importation",
               "import_failed_text": "Une erreur s'est produite lors de l'importation de votre projet.",
-            "updating_target_status": "Mise à jour de la liste des Langues Cibles. Cela peut prendre un peu de temps. Veuillez patienter...",
-            "number_target_updates": "diff + ' Langues Cibles ont été ajoutées'",
-            "no_target_updates": "Aucune Langue Cible n'a été ajoutée.",
-            "one_target_update": "Une Langue Cible a été ajoutée.",
-            "update_complete": "Mise à Jour Complète",
-            "update_error": "Une erreur s'est produite lors de la mise à jour",
-            "connection_error": "Impossible de se connecter au serveur",
-            "read_error": "Connexion au serveur perdue",
-            "update_failed": "Echec de Mise à Jour",
-            "source_update_status": "Mise à jour de la list des Textes Sources. Cela peut prendre un peu de temps. Veuillez patienter...",
+                "updates": "clées pour mise-à-jours",
+                  "updating_target_status": "Mise à jour de la liste des Langues Cibles. Cela peut prendre un peu de temps. Veuillez patienter...",
+                  "number_target_updates": "diff + ' Langues Cibles ont été ajoutées'",
+                  "no_target_updates": "Aucune Langue Cible n'a été ajoutée.",
+                  "one_target_update": "Une Langue Cible a été ajoutée.",
+                  "update_complete": "Mise à Jour Complète",
+                  "update_error": "Une erreur s'est produite lors de la mise à jour",
+                  "connection_error": "Impossible de se connecter au serveur",
+                  "read_error": "Connexion au serveur perdue",
+                  "update_failed": "Echec de Mise à Jour",
+                  "source_update_status": "Mise à jour de la list des Textes Sources. Cela peut prendre un peu de temps. Veuillez patienter...",
             "source_loading_status": "En cours de charger les textes sources. Veuillez patienter...",
             "deleting_project_status": "En cours d'effacer le projet. Veuillez patienter...",
               "project_deleted1":"Projet Effacé",
@@ -323,6 +326,8 @@
             "project_failed3": "Une erreur lors de l'export du projet",
             "project_failed4": "Exportation Echoué",
 
+            "download_images": "En cours de télécharger les images. Veuillez patienter...",
+
             "conflicts_exist": "Il y a de Conflits",
             "conflicts_request": "Il faut resoudre tout conflit avant d'exporter en USFM.",
 
@@ -344,9 +349,12 @@
             "startup_error": "Erreur lors du démarrage",
 
       		"__file29": "ts-splash.html",
+
       	"__folder6": "ts-new",
       		"__file30": "ts-book-menu.html",
       		"__file31": "ts-language-menu.html",
+            "import_project": "Importer un Projet",
+            "change_language": "Changer de Langue",
             "choose_language": "Choisir de langue cible",
 
           "__file32": "ts-new.html",
@@ -355,8 +363,10 @@
 
           "__file33": "ts-project-menu.html",
       		"__file34": "ts-type-menu.html",
+
       	"__folder7": "ts-print",
       		"__file35": "ts-print.html",
+
       	"__folder8": "ts-profile",
       		"__file36": "ts-create-option.html",
 
@@ -394,17 +404,20 @@
             "incomplete_data": "Données Incompletes",
 
           "__file41": "ts-profile-sidebar.html",
+
       	"__folder9": "ts-review",
       		"__file42": "ts-review-chapter.html",
       		"__file43": "ts-review-chunk.html",
       		"__file44": "ts-review-contrib.html",
       		"__file45": "ts-review.html",
       		"__file46": "ts-review-project.html",
+
       	"__folder10": "ts-settings",
       		"__file47": [ "ts-setting-modal.html",
-              "__addedLookupLocaleString_function", "true" 
+              "__addedLookupLocaleString_function", true
               ],
       		"__file48": "ts-settings.html",
+
       	"__folder11": "ts-translate",
       		"__folder12": "ts-chunk-mode",
             "__file49": "ts-chunk-card.html",
@@ -426,6 +439,7 @@
             "__file56": "ts-resource-card.html",
             "__file57": "ts-resource-data.html",
             "__file58": "ts-resource-display.html",
+
       		"__folder16": "ts-review-mode",
          		"__file59": "ts-review-card.html",
          		"__file60": "ts-review-mode.html",
@@ -443,8 +457,8 @@
               "downloading_source": "Téléchargement des données sources. Veuillez patienter...",
               "exit_to_update": "Quitter pour mettre à jour la liste des textes sources",
 
-
             "__file66": "ts-source-tab.html",
+
       		"__folder18": "ts-target",
          		"__file67": "ts-target-conflict.html",
          		"__file68": "ts-target-edit.html",
@@ -460,18 +474,26 @@
               "home": "Acceuil",
               "project_review": "Révision de Projet",
               "search": "Chercher",
+              "readmode": "Lecture",
+              "content-copy": "Edition Aveugle",
+              "view-week": "Edition-Revision",
+              "warning": "Conflits",
 
         "__folder19": "ts-updates",
           	"__file76": "ts-update-level-one.html",
           	"__file77": "ts-update-level-two.html",
           	"__file78": "ts-update-results.html",
             "__file79": "ts-updates.html",
+        
+        "__folder20": "views",
+            "__file80": "splash-screen.html",
+              "loading_text": "Charchement de la fenêtre principale...",
 
     "status": "Situation",
     "idle": "Inactif",
     "update": "Actualiser",
     "import": "Importer",
-    "translationAcademy": "translationAcademy (翻譯學院)",
+    "translationAcademy": "translationAcademy",
     "logout": "Se Déconnecter",
     "settings": "Parametres"
   }
