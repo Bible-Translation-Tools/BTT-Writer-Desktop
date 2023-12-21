@@ -66,7 +66,7 @@
     <template>
 
         <div id="header">
-            <h2>Resource Options</h2>
+            <h2>{{locale.resource_options}}</h2>
         </div>
         <div id="body">
             <template is="dom-repeat" items="[[resourceoptions]]" as="resource">
@@ -76,7 +76,7 @@
             </template>
         </div>
         <div id="footer">
-            <paper-button on-tap="cancel">Cancel</paper-button>
+            <paper-button on-tap="cancel">{{locale.cancel}}</paper-button>
         </div>
 
     </template>

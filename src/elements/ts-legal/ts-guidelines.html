@@ -32,42 +32,42 @@
     <template>
 
         <div id="content">
-            <h1>Translation Guidelines</h1>
+            <h1>{{locale.guidelines_head}}</h1>
             <p>
-              <strong>Accurate</strong>
-              <br/>Accurate translations effectively communicate the intended meaning of the original, divinely inspired text. An accurate translation expresses the meaning the author intended for the original audience in the original context.
+              <strong>{{locale.accurate_label}}</strong>
+              <br/>{{locale.accurate_text}}
               <ol>
-                <li>To the extent that is possible, nothing is added, misconstrued, or deleted from the original message.</li>
-                <li>It does not recast the meaning of the original text to make it more relevant to the contemporary audience.</li>
-                <li>An accurate translation does not distort the meaning in order to favor a specific interpretive perspective. It should be free from theological, cultural, or personal biases.</li>
-                <li>An accurate translation communicates historical events and facts accurately.</li>
+                <li>{{locale.accurate1}}</li>
+                <li>{{locale.accurate2}}</li>
+                <li>{{locale.accurate3}}</li>
+                <li>{{locale.accurate4}}</li>
               </ol>
               <br/>
-              <strong>Clear</strong>
-              <br/>Clear translations will use whatever language structures are needed to help readers easily read and understand it.
+              <strong>{{locale.clear_label}}</strong>
+              <br/>{{locale.clear_text}}
               <ol>
-                  <li>A clear translation may use as many or as few terms as necessary to communicate the original meaning as clearly as possible.</li>
-                  <li>Making a clear translation does not mean that the translator clarifies something that is ambiguous in the source text.</li>
-                  <li>Making a clear translation does not mean that the translator gives the reader a specific interpretation for every passage where meaning is genuinely debated.</li>
+                  <li>{{locale.clear1}}</li>
+                  <li>{{locale.clear2}}</li>
+                  <li>{{locale.clear3}}</li>
               </ol>
               <br/>
-              <strong>Natural</strong>
-              <br/>Natural translations use language forms that are reflect the way the target language is used in corresponding contexts.
+              <strong>{{locale.natural_label}}</strong>
+              <br/>{{locale.natural_text}}
               <ol>
-                  <li>Natural Bible translations sound like they were produced by an adult native speaker who speaks and/or writes well.</li>
-                  <li>A natural Bible translation does not use expressions that are particular to their own culture in order to make the translation appear natural.</li>
-                  <li>It is more important for a portion of Scripture to be translated accurately than for it to sound perfectly natural to everyone who reads it.</li>
+                  <li>{{locale.natural1}}</li>
+                  <li>{{locale.natural2}}</li>
+                  <li>{{locale.natural3}}</li>
               </ol>
             </p>
             <br/>
-            <p> We believe that a translation has the highest likelihood of being good quality when after applying the guidelines above, the following are completed: </p>
+            <p>{{locale.guideline_tldr}}</p>
             <ol>
-                <li>It is tested and approved by believers of the language community and their church leaders.</li>
-                <li>Ongoing revisions and improvements are made.</li>
+                <li>{{locale.tldr1}}</li>
+                <li>{{locale.tldr2}}</li>
             </ol>
         </div>
         <div id="buttons">
-            <paper-button dialog-dismiss>Close</paper-button>
+            <paper-button dialog-dismiss>{{locale.close}}</paper-button>
         </div>
 
     </template>
@@ -80,11 +80,14 @@
         is: 'ts-guidelines',
 
         properties: {
-
+            locale: {
+              type: Object,
+              value: {}
+            }
         },
 
         ready: function() {
-
+            this.set('locale', App.locale.dictionary);
         }
 
     });

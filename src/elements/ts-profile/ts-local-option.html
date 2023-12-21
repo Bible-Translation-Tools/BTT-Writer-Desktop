@@ -79,14 +79,14 @@
 
         <div id="content">
             <div class="header">
-                <h2>Local User Profile</h2>
-                <p>Enter your full name or pseudonym.  This name will be added to the contributor list of all projects you work on.  This name will be visible to others.</p>
+                <h2>{{locale.local_profile_h}}</h2>
+                <p>{{locale.local_profile_text}}</p>
             </div>
             <div class="body">
-                <input is="iron-input" bind-value="{{newinfo.full_name}}" on-keydown="keyinput" placeholder="Full Name or Pseudonym">
+                <input is="iron-input" bind-value="{{newinfo.full_name}}" placeholder="{{locale.local_user_prompt}}">
             </div>
             <div class="buttons">
-                <paper-button class="nofill" on-tap="gotologin">Login with Server Account</paper-button>
+                <paper-button class="nofill" on-tap="gotologin">{{locale.local_server_prompt}}</paper-button>
                 <paper-button raised class="fill" on-tap="local">Ok</paper-button>
             </div>
         </div>
@@ -111,6 +111,10 @@
                 value: 0,
                 notify: true
             },
+            locale: {
+              type: Object,
+              value: {}
+            },
             newinfo: {
                 type: Object,
                 value: {}
@@ -126,15 +130,8 @@
             this.set('selected', 1);
         },
 
-        
-        keyinput: function (e) {
-            if (e.key == "Enter") {
-                this.local();
-            }
-        },
-
         ready: function() {
-
+          this.set('locale', App.locale.dictionary);
         }
 
     });

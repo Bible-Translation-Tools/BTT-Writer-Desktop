@@ -70,21 +70,20 @@
 
         <div id="header">
             <div id="title">
-                <span>Terms of Use</span>
+                <span>{{locale.terms_title}}</span>
             </div>
         </div>
 
         <div id="body">
             <div id="main">
-                <p>By using this app you agree with the statement of faith and translation guidelines and to release your work under
-                the terms of the Creative Commons Attribution-ShareAlike 4.0 International License.</p>
-                <paper-button raised on-tap="openlicense">License Agreement</paper-button>
-                <paper-button raised on-tap="openguidelines">Translation Guidelines</paper-button>
-                <paper-button raised on-tap="openstatement">Statement of Faith</paper-button>
+                <p>{{locale.terms1}}</p>
+                <paper-button raised on-tap="openlicense">{{locale.license_button}}</paper-button>
+                <paper-button raised on-tap="openguidelines">{{locale.translation_button}}</paper-button>
+                <paper-button raised on-tap="openstatement">{{locale.statement_button}}</paper-button>
             </div>
             <div class="buttons">
-                <paper-button on-tap="logout">No Thanks</paper-button>
-                <paper-button on-tap="accept">I Agree</paper-button>
+                <paper-button on-tap="logout">{{locale.no_button}}</paper-button>
+                <paper-button on-tap="accept">{{locale.agree_button}}</paper-button>
             </div>
         </div>
 
@@ -115,6 +114,10 @@
                         }
                     }
                 }
+            },
+            locale: {
+              type: Object,
+              value: {}
             }
         },
 
@@ -144,7 +147,7 @@
         },
 
         ready: function() {
-
+            this.set('locale', App.locale.dictionary);
         }
 
     });

@@ -70,24 +70,24 @@
     <template>
 
         <div id="header">
-            <h2>Import Options</h2>
+            <h2>{{locale.import_options_title}}</h2>
         </div>
         <div id="body">
             <div class="option" on-tap="repo">
-                <span class="optiontitle">Import from Server<iron-icon class="icon" icon="info" title="Can be from any account"></iron-icon></span>
+                <span class="optiontitle">{{locale.server_import_1}}<iron-icon class="icon" icon="info" title="{{locale.server_import_2}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="project">
-                <span class="optiontitle">Import Project File<iron-icon class="icon" icon="info" title="Must have .tstudio extension"></iron-icon></span>
+                <span class="optiontitle">{{locale.project_import_1}}<iron-icon class="icon" icon="info" title="{{locale.project_import_2}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="usfm">
-                <span class="optiontitle">Import USFM File<iron-icon class="icon" icon="info" title="Must have either .usfm or .txt extension"></iron-icon></span>
+                <span class="optiontitle">{{locale.usfm_import_1}}<iron-icon class="icon" icon="info" title="{{locale.usfm_import_2}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="container">
-                <span class="optiontitle">Import Source Text<iron-icon class="icon" icon="info" title="Must be in resource container format"></iron-icon></span>
+                <span class="optiontitle">{{locale.source_import_1}}<iron-icon class="icon" icon="info" title="{{locale.source_import_2}}"></iron-icon></span>
             </div>
         </div>
         <div id="footer">
-            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button dialog-dismiss>{{locale.cancel}}</paper-button>
         </div>
 
     </template>
@@ -101,7 +101,10 @@
         is: 'ts-import-options',
 
         properties: {
-
+            locale: {
+              type: Object,
+              value: {}
+            }
         },
 
         project: function () {
@@ -123,6 +126,7 @@
         ready: function () {
             var shell = require('electron').shell;
             var links = this.$.header.getElementsByTagName('a');
+            this.set('locale', App.locale.dictionary);
             for (var i = 0; i < links.length; i++) {
                 links[i].addEventListener('click', function (event) {
                     event.preventDefault();

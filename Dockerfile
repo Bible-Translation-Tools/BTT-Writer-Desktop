@@ -1,4 +1,4 @@
-FROM node:16.16.0
+FROM --platform=linux/amd64 node:16.16.0
 
 RUN apt update \
  && apt upgrade -y \
@@ -13,6 +13,21 @@ RUN apt update \
         libxshmfence-dev \
         libxss-dev \
         libxtst-dev
+
+# Install wine
+RUN apt install -y software-properties-common
+RUN dpkg --add-architecture i386 && \
+    wget -nc https://dl.winehq.org/wine-builds/winehq.key && \
+    apt-key add winehq.key && \
+    add-apt-repository 'deb https://dl.winehq.org/wine-builds/debian/ buster main'
+RUN apt-get update
+RUN apt-get install -y --install-recommends winehq-stable innoextract
+
+# Install InnoSetup
+COPY scripts/innosetup/iscc /usr/local/bin/iscc
+COPY scripts/innosetup/innoinstall.sh /innoinstall.sh
+RUN /bin/bash -c '/innoinstall.sh'
+RUN rm /innoinstall.sh
 
 WORKDIR /app
 

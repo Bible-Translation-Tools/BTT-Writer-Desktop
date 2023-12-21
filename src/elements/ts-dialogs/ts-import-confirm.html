@@ -46,15 +46,15 @@
     <template>
 
         <div id="header">
-            <h2>Project Already Exists</h2>
+            <h2>{{locale.project_exists}}</h2>
         </div>
         <div id="body">
-            <p>This project already exists locally. How would you like to proceed?</p>
+            <p>{{locale.project_exists_2}}</p>
         </div>
         <div id="footer">
-            <paper-button dialog-confirm on-tap="cancel">Cancel</paper-button>
-            <paper-button dialog-confirm on-tap="merge">Merge Projects</paper-button>
-            <paper-button dialog-confirm on-tap="overwrite">Overwrite Project</paper-button>
+            <paper-button dialog-confirm on-tap="cancel">{{locale.cancel}}</paper-button>
+            <paper-button dialog-confirm on-tap="merge">{{locale.merge}}</paper-button>
+            <paper-button dialog-confirm on-tap="overwrite">{{locale.overwrite}}</paper-button>
         </div>
 
     </template>
