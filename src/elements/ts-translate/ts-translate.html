@@ -38,28 +38,28 @@
             background-color: var(--popup-background-color);
         }
 
-        #checklistpopup {
+        .checklistpopup {
             width: 350px;
             height: 225px;
             text-align: center;
             color: var(--primary-text-color);
         }
 
-        #checklistpopup p {
+        .checklistpopup p {
             margin: 0;
         }
 
-        #checklistpopup p#spaced {
+        .checklistpopup p.spaced {
             margin-bottom: 15px;
         }
 
-        #checklistpopup .buttons {
+        .checklistpopup .buttons {
             display: flex;
             justify-content: center;
             color: var(--secondary-text-color);
         }
 
-        #checklistpopup .buttons paper-button:hover {
+        .checklistpopup .buttons paper-button:hover {
             color: var(--accent-color);
         }
 
@@ -192,10 +192,10 @@
 
         <ts-resource-display id="resourcedisplay" class="hide" chunks="[[currentproject.chunks]]" modestatus="{{modestatus}}" on-navigate="navigate" on-closeresource="closeresource"></ts-resource-display>
 
-        <paper-dialog id="checklistpopup" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
+        <paper-dialog id="checklistpopup" class="checklistpopup popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
             <h2>Chunk Checklist</h2>
             <div>
-                <p id="spaced">Are you sure you're Done with this chunk?</p>
+                <p class="spaced">Are you sure you're Done with this chunk?</p>
                 <p class$="[[versecheck(currentproject.projectmeta)]]">I have placed the verses correctly</p>
                 <p>I have reviewed the words and meanings</p>
                 <p class$="[[standardcheck(currentproject.projectmeta)]]">I have reviewed the translationQuestions</p>
@@ -203,6 +203,20 @@
             <div class="buttons">
                 <paper-button dialog-dismiss>Cancel</paper-button>
                 <paper-button dialog-confirm on-tap="closechecklist">Confirm</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="projectchecklistpopup" class="checklistpopup popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
+            <h2>Project Checklist</h2>
+            <div>
+                <p class="spaced">Are you sure you're Done with this project?</p>
+                <p class$="[[versecheck(currentproject.projectmeta)]]">I have placed the verses correctly</p>
+                <p>I have reviewed the words and meanings</p>
+                <p class$="[[standardcheck(currentproject.projectmeta)]]">I have reviewed the translationQuestions</p>
+            </div>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm on-tap="closeprojectchecklist">Confirm</paper-button>
             </div>
         </paper-dialog>
 
@@ -262,6 +276,7 @@
         <iron-signals on-iron-signal-translateright="setrightanimation"></iron-signals>
         <iron-signals on-iron-signal-translateleft="setleftanimation"></iron-signals>
         <iron-signals on-iron-signal-openresource="openresource"></iron-signals>
+        <iron-signals on-iron-signal-openprojectchecklist="openprojectchecklist"></iron-signals>
 
     </template>
 
@@ -511,6 +526,14 @@
         closechecklist: function () {
             var index = this.modestatus.index;
             this.fire('iron-signal', {name: 'completechunk', data: {index: index}});
+        },
+
+        openprojectchecklist: function () {
+            this.$.projectchecklistpopup.open();
+        },
+
+        closeprojectchecklist: function () {
+            this.markchunksdone();
         },
 
         openedit: function (event, data) {
@@ -1562,6 +1585,22 @@
         setleftanimation: function () {
             this.animationConfig.exit.name = 'slide-left-animation';
             this.animationConfig.entry.name = 'slide-from-left-animation';
+        },
+
+        markchunksdone: function () {
+            var mythis = this;
+            var chunks = mythis.currentproject.chunks;
+            var marked = 0;
+            chunks.forEach(function(chunk, index) {
+                if (chunk.transcontent !== "") {
+                    mythis.fire('iron-signal', {name: 'completechunk', data: {index: index}});
+                    marked++;
+                }
+            });
+
+            var title = "Result";
+            var message = `${marked} chunks marked as done out of ${chunks.length}`;
+            mythis.fire('iron-signal', {name: 'showmessage', data: {title, message}});
         },
 
         ready: function() {

@@ -253,6 +253,7 @@
       <iron-signals on-iron-signal-openloading="openLoading"></iron-signals>
       <iron-signals on-iron-signal-closeloading="closeLoading"></iron-signals>
       <iron-signals on-iron-signal-updatesourcelist="updateSourceList"></iron-signals>
+      <iron-signals on-iron-signal-showmessage="openMessagePopup"></iron-signals>
 
   </template>
 
@@ -361,6 +362,7 @@
       },
 
       closeLoading: function () {
+          this.$.loading.entryAnimation = null;
           this.$.loading.close();
       },
 
@@ -399,6 +401,13 @@
           }
 
           this.showMessage(title, msg);
+      },
+
+      openMessagePopup: function (event, data) {
+          var title = data.title;
+          var message = data.message;
+          this.$.loading.entryAnimation = "scale-up-animation";
+          this.showMessage(title, message);
       },
 
       openUpdate: function () {
