@@ -157,7 +157,7 @@
   </style>
 
   <template>
-
+    
       <ts-app-titlebar currentuser="[[currentuser]]"></ts-app-titlebar>
       <neon-animated-pages attr-for-selected="data-route" selected="{{route}}">
           <ts-home data-route="home" route="{{route}}" currentproject="{{currentproject}}" projectlist="{{projectlist}}" importdata="{{importdata}}" id="home"></ts-home>
@@ -203,7 +203,7 @@
       </paper-dialog>
 
       <paper-dialog id="update" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-          <ts-update-options on-language="updateLanguageList" on-source="updateSourceList" on-download="downloadSources"></ts-update-options>
+          <ts-update-options on-language="updateLanguageList" on-source="updateSourceList" on-download="downloadSources" on-index="updateIndex"></ts-update-options>
       </paper-dialog>
 
       <paper-dialog id="license" class="popup legal" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
@@ -293,12 +293,12 @@
               value: {}
           },
           locale: {
-            type: Object,
-            value: {}
+              type: Object,
+              value: {}
           },
           message: {
               type: String,
-              value: "idle"
+              value: "Idle"
           }
       },
 
@@ -503,6 +503,24 @@
           }, 500);
       },
 
+      updateIndex: function () {
+          var mythis = this;
+
+          mythis.$.update.close();
+          mythis.showLoadingMessage("Updating Library's index.sqlite File. This may take a while. Please wait...");
+          mythis.set('options.progress', true);
+          mythis.set('options.value', 0);
+
+          setTimeout(function () {
+              App.dataManager.updateIndex(function (progress) {
+                  mythis.set('options.value', progress);
+              }).then(function () {
+                  console.log("Done.");
+                  App.ipc.send('fire-reload');
+                  });
+          }, 500);
+      },
+
       downloadSources: function () {
           var mythis = this;
 
@@ -538,10 +556,34 @@
                   .then(function () {
                       mythis.showMessage(mythis._lookupLocaleString("project_deleted1"), mythis._lookupLocaleString("project_deleted2"));
                   })
-                  .catch(function(err) {
+                  .catch(function (err) {
                       mythis.showErrorMessage(mythis._lookupLocaleString('delete_failed1'), mythis._lookupLocaleString('delete_failed2'), err);
-                  });
+                  })
           }, 500);
+      },
+
+      deleteCorruptProject: function (projectmeta) {
+          var mythis = this;
+          App.projectsManager.backupProject(projectmeta.projectDir)
+              .then(function () {
+                  return App.projectsManager.deleteTargetTranslation(projectmeta)
+              })
+              .then(function() {
+                  App.projectsManager.unsetValues(projectmeta.unique_id);
+
+                  var list = mythis.projectlist;
+                  var newlist = list.filter(function (item) {
+                      return item.unique_id !== projectmeta.unique_id;
+                  });
+
+                  return mythis.sortProjects(newlist);
+              })
+              .then(function () {
+                  mythis.showMessage(mythis._lookupLocaleString("project_deleted1"), mythis._lookupLocaleString("project_deleted2"));
+              })
+              .catch(function (err) {
+                  mythis.showErrorMessage(mythis._lookupLocaleString('delete_failed1'), mythis._lookupLocaleString('delete_failed2'), err);
+              })
       },
 
       changeProject: function (event, data) {
@@ -1381,7 +1423,7 @@
               localeText = keyValue;
           }
           return localeText;
-        },
+      },
 
       ready: function() {
           var mythis = this;

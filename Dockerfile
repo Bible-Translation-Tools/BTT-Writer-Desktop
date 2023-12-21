@@ -25,7 +25,9 @@ RUN apt-get install -y --install-recommends winehq-stable innoextract
 
 # Install InnoSetup
 COPY scripts/innosetup/iscc /usr/local/bin/iscc
+RUN chmod +x /usr/local/bin/iscc
 COPY scripts/innosetup/innoinstall.sh /innoinstall.sh
+RUN chmod +x /innoinstall.sh
 RUN /bin/bash -c '/innoinstall.sh'
 RUN rm /innoinstall.sh
 
@@ -37,10 +39,17 @@ RUN npm install -g bower \
  && npm install -g gulp \
  && npm install
 
+# Install prince
+COPY gulpfile.js ./
+COPY src/js/lib ./src/js/lib
+COPY src/js/prince-packager.js ./src/js/
+RUN gulp prince
+
 COPY . .
 
+RUN chmod -R +x scripts/git/*.sh
+
 RUN bower install --allow-root
-RUN gulp prince
 
 VOLUME /root
 

@@ -126,6 +126,10 @@
             this.fire('download');
         },
 
+        index: function () {
+            this.fire('index');
+        },
+
         ready: function () {
             var shell = require('electron').shell;
             var links = this.getElementsByTagName('a');
