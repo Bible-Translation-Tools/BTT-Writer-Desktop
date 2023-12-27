@@ -1593,6 +1593,7 @@
             var marked = 0;
             chunks.forEach(function(chunk, index) {
                 if (chunk.transcontent !== "") {
+                    chunk.completed = true;
                     mythis.fire('iron-signal', {name: 'completechunk', data: {index: index}});
                     marked++;
                 }
