@@ -266,7 +266,7 @@ function Renderer() {
             var enddiv = "\<\/div\>";
             var chapters = [];
 
-            var pagetitle = options.pagetitle ? "\<div class='style-scope page-title hides " + module + "' \>" + pagetitle + "\<\/div\>" : "";
+            var pagetitle = options.pagetitle ? "\<div class='style-scope page-title centered " + module + "' \>" + pagetitle + "\<\/div\>" : "";
             var text = "\<div id='startnum' class='style-scope " + module + "'\>";
 
             _.forEach(_.groupBy(chunks, function(chunk) {
@@ -293,12 +293,17 @@ function Renderer() {
 
             chapters.forEach(function (chapter) {
                 if (chapter.content) {
+                    if (options.newpage) {
+                        text += pagetitle;
+                    }
                     text += startheader + chapter.title + endheader;
                     text += startdiv + mythis.renderTargetWithVerses(chapter.content, module) + enddiv;
                 }
             });
 
-            return pagetitle + text + enddiv;
+            var title = !options.newpage ? pagetitle : "";
+
+            return title + text + enddiv;
         },
 
         renderObsPrintPreview: function (chunks, options, imagePath) {
