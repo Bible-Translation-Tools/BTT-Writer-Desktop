@@ -68,6 +68,7 @@
             <div><paper-checkbox id="doublespacebox"></paper-checkbox><span>{{locale.with_double}}</span></div>
             <div><paper-checkbox id="justifybox"></paper-checkbox><span>{{locale.with_full}}</span></div>
             <div id="page"><paper-checkbox id="pagebox"></paper-checkbox><span>{{locale.with_newpages}}</span></div>
+            <div id="title"><paper-checkbox id="pagetitle"></paper-checkbox><span>{{locale.with_title}}</span></div>
         </div>
         <div id="footer">
             <paper-button dialog-dismiss>{{locale.cancel}}</paper-button>
@@ -107,13 +108,16 @@
             this.$.doublespacebox.checked = false;
             this.$.justifybox.checked = false;
             this.$.pagebox.checked = false;
+            this.$.pagetitle.checked = false;
             var project = this.currentproject.projectmeta.project.id;
             if (project === 'obs') {
                 this.$.image.hidden = false;
                 this.$.page.hidden = true;
+                this.$.title.hidden = true;
             } else {
                 this.$.image.hidden = true;
                 this.$.page.hidden = false;
+                this.$.title.hidden = false;
             }
         },
 
@@ -123,7 +127,8 @@
                 includeImages: this.$.imagebox.checked,
                 doubleSpace: this.$.doublespacebox.checked,
                 justify: this.$.justifybox.checked,
-                newpage: this.$.pagebox.checked
+                newpage: this.$.pagebox.checked,
+                pagetitle: this.$.pagetitle.checked
             };
 
             this.set('options', options);

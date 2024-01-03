@@ -97,7 +97,7 @@
             	<template is="dom-if" if="{{selected}}">
 	            	<paper-radio-group selected="[[selected]]">
 		                <template is="dom-repeat" items="[[options]]" as="option">
-	                        <paper-radio-button name$="[[option]]" data-value$="{{option}}" class="row" on-tap="selectOption" checked$="{{_checkSelected(selected,option)}}">[[option.name]]</paper-radio-button>
+	                        <paper-radio-button name$="[[option]]" data-value$="{{option}}" class="row" on-tap="selectOption" checked$="{{_checkSelected(selected,option)}}">[[_lookupLocaleString(option.name)]]</paper-radio-button>
 		                </template>
 	                </paper-radio-group>
                 </template>
@@ -105,7 +105,7 @@
                 	<paper-input value="{{text}}"></paper-input>
                     <template is="dom-if" if="{{default}}">
                         <div id="default">
-                            Default value: {{default}}
+                            {{locale.default_value}}: {{default}}
                         </div>
                     </template>
                 </template>
@@ -175,6 +175,14 @@
 
         selectOption: function (event) {
         	this.selected = event.model.option;
+        },
+
+        _lookupLocaleString: function (keyValue) {
+            let localeText = this.locale[keyValue];
+            if (localeText === undefined) {
+                localeText = keyValue;
+            }
+            return localeText;
         },
 
         cancel: function () {

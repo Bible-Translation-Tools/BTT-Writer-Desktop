@@ -18,6 +18,16 @@
         "visible": true
     },
     {
+        "name": "colortheme",
+        "mainText": "colortheme_maintext",
+        "helpText": "colortheme_helptext",
+        "value": {"name": "theme_system"},
+        "options": [{"name": "theme_light"}, {"name": "theme_dark"}, {"name": "theme_system"}],
+        "group": "gen_group",
+        "enabled": true,
+        "visible": true
+    },
+    {
         "name": "appfont",
         "mainText": "appfont_maintext",
         "value": {"path": "default", "name": "Roboto"},
@@ -145,14 +155,17 @@
                 "mediaserver": "https://api.bibletranslationtools.org", 
                 "readerserver": "https://read.bibleineverylanguage.org",
                 "createaccounturl": "https://content.bibletranslationtools.org/user/sign_up",
-                "languageurl": "https://langnames.bibleineverylanguage.org/langnames.json"
+                "languageurl": "https://langnames.bibleineverylanguage.org/langnames.json",
+                "indexsqliteurl": "https://writer-resources.bibletranslationtools.org/index.sqlite"
             },
             {
                 "name": "DCS",
                 "dataserver": "https://git.door43.org",
                 "mediaserver": "https://api.unfoldingword.org",
                 "readerserver": "https://door43.org/u",
-                "createaccounturl": "https://git.door43.org/user/sign_up"
+                "createaccounturl": "https://git.door43.org/user/sign_up",
+                "languageurl": "https://td.unfoldingword.org/exports/langnames.json",
+                "indexsqliteurl": "https://writer-resources.bibletranslationtools.org/index.sqlite"
             }
         ],
         "group": "advanced_group",
@@ -200,6 +213,15 @@
         "mainText": "language_url_label",
         "value": "https://langnames.bibleineverylanguage.org/langnames.json",
         "default": "https://langnames.bibleineverylanguage.org/langnames.json",
+        "group": "advanced_group",
+        "enabled": true,
+        "visible": true
+    },
+    {
+        "name": "indexsqliteurl",
+        "mainText": "Index.sqlite URL",
+        "value": "https://writer-resources.bibletranslationtools.org/index.sqlite",
+        "default": "https://writer-resources.bibletranslationtools.org/index.sqlite",
         "group": "advanced_group",
         "enabled": true,
         "visible": true

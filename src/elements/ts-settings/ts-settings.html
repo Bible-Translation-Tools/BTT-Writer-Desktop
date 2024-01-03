@@ -310,6 +310,11 @@
                 App.configurator.setUserSetting("dataserver", value.dataserver);
                 App.configurator.setUserSetting("mediaserver", value.mediaserver);
                 App.configurator.setUserSetting("readerserver", value.readerserver);
+                App.configurator.setUserSetting("createaccounturl", value.createaccounturl);
+                App.configurator.setUserSetting("languageurl", value.languageurl);
+                App.dataManager.updateLanguageUrl(value.languageurl);
+                App.configurator.setUserSetting("indexsqliteurl", value.indexsqliteurl);
+
                 this.set('settings', App.configurator.refreshUserSetting());
                 this.saveSettings();
                 // Lgout user.
@@ -321,6 +326,10 @@
                 // TODO This bypasses Polymer to call the ts-dashboard.showMessage() function.  Is there a better way?
                 var dashboard = document.querySelector('ts-dashboard')
                 dashboard.showMessage(this._lookupLocaleString("suite_changed"), this._lookupLocaleString("suite_changd_suite"))
+            } else if(name === "colortheme") {
+                App.ipc.send('theme-changed', value.name);
+            } else if(name === "languageurl") {
+                App.dataManager.updateLanguageUrl(value);
             }
             App.configurator.applyPrefAppearance();
         },
@@ -346,7 +355,7 @@
             var setting = event.model.setting;
             modal.id = "setting-modal";
             modal.style.display = 'block';
-            modal.heading = setting.mainText;
+            modal.heading = this._lookupLocaleString(setting.mainText);
             // The following assignments will determine what kind of interface the modal
             // will have (Edit for text, select for selected.)
             if (setting.options) {

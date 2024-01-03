@@ -130,6 +130,12 @@
             this.set('selected', 1);
         },
 
+        keyinput: function (e) {
+            if (e.key == "Enter") {
+                this.local();
+            }
+        },
+
         ready: function() {
           this.set('locale', App.locale.dictionary);
         }

@@ -53,7 +53,7 @@
       #statusbar {
           width: 100%;
           background: var(--primary-color-dark);
-          color: var(--reverse-text-color);
+          color: white;
           min-height: 30px;
           padding: 0 20px;
           font-size: 75%;
@@ -517,7 +517,10 @@
               }).then(function () {
                   console.log("Done.");
                   App.ipc.send('fire-reload');
-                  });
+              })
+              .catch (function (err) {
+                  mythis.showErrorMessage('Download Failed', `An error occurred while trying to download index.sqlite file. (${err})`, err);
+              });
           }, 500);
       },
 
@@ -540,7 +543,7 @@
 
           setTimeout(function() {
               return App.exportManager.autoBackupTranslation(projectmeta)
-                  .then(function (result) {
+                  .then(function () {
                       return App.projectsManager.deleteTargetTranslation(projectmeta)
                   })
                   .then(function() {
@@ -556,8 +559,8 @@
                   .then(function () {
                       mythis.showMessage(mythis._lookupLocaleString("project_deleted1"), mythis._lookupLocaleString("project_deleted2"));
                   })
-                  .catch(function (err) {
-                      mythis.showErrorMessage(mythis._lookupLocaleString('delete_failed1'), mythis._lookupLocaleString('delete_failed2'), err);
+                  .catch(function () {
+                      mythis.deleteCorruptProject(projectmeta);
                   })
           }, 500);
       },
@@ -1277,14 +1280,16 @@
           for (var i = 0; i < list.length; i++) {
               var proj = list[i].project.id;
 
-              for (var j = 0; j < list[i].source_translations.length; j++) {
-                  var lang = list[i].source_translations[j].language_id;
-                  var res = list[i].source_translations[j].resource_id;
-                  var string = lang + "_" + proj + "_" + res;
-                  if (!strings[string]) {
-                      strings[string] = true;
-                      var open = App.dataManager.activateProjectContainers(lang, proj, res);
-                      promises.push(open);
+              if ('source_translations' in list[i]) {
+                  for (var j = 0; j < list[i].source_translations.length; j++) {
+                      var lang = list[i].source_translations[j].language_id;
+                      var res = list[i].source_translations[j].resource_id;
+                      var string = lang + "_" + proj + "_" + res;
+                      if (!strings[string]) {
+                          strings[string] = true;
+                          var open = App.dataManager.activateProjectContainers(lang, proj, res);
+                          promises.push(open);
+                      }
                   }
               }
           }
@@ -1403,7 +1408,7 @@
 
           App.configurator.refreshUserSetting();
           App.configurator.setUserSetting('gitversion', gitversion);
-          App.configurator.setUserSetting('appversion', App.configurator.getAppData().toString());
+          App.configurator.setUserSetting('appversion', App.configurator.getAppData().version);
           App.configurator.setUserSetting('datapath', App.configurator.getValue('rootdir'));
 
           var location = App.configurator.getUserSetting('datalocation');
@@ -1448,7 +1453,7 @@
                       return App.projectsManager.loadTargetTranslationsList()
                           .then(function (list) {
                               App.ipc.send('loading-status', mythis._lookupLocaleString("get_resource_containers"));
-                              return mythis.checkAllContainers(list);
+                              return mythis.checkAllContainers(_.compact(list));
                           })
                           .then(function (list) {
                               App.ipc.send('loading-status', mythis._lookupLocaleString("update_project_list"));
