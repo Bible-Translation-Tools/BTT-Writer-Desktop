@@ -152,6 +152,10 @@
                         }
                     }
                 }
+            },
+            locale: {
+                type: Object,
+                value: {}
             }
         },
 
@@ -193,7 +197,7 @@
         },
 
         ready: function() {
-
+            this.set('locale', App.locale.dictionary);
         }
     });
 

@@ -176,6 +176,10 @@
                         }
                     }
                 }
+            },
+            locale: {
+                type: Object,
+                value: {}
             }
         },
 
@@ -205,13 +209,18 @@
         },
 
         createtitle: function (backto) {
-            if (backto === "translate") {
-                return "Project";
-            } else if (backto === "review") {
-                return "Review";
+            if (this.locale) {
+                if (backto === "translate") {
+                    return this.locale.project;
+                } else if (backto === "review") {
+                    return this.locale.review;
+                } else {
+                    return this.locale.home;
+                }
             } else {
-                return "Home";
+                return "home";
             }
+
         },
 
         load: function () {
@@ -290,8 +299,16 @@
             }, 500);
         },
 
-        ready: function () {
+        _lookupLocaleString: function (keyValue) {
+            let localeText = this.locale[keyValue];
+            if (localeText === undefined) {
+                localeText = keyValue;
+            }
+            return localeText;
+        },
 
+        ready: function () {
+            this.set('locale', App.locale.dictionary);
         }
 
     });

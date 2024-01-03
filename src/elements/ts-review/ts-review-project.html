@@ -98,6 +98,7 @@
         },
 
         createchapters: function () {
+            var mythis = this;
             var transchapters = [];
             var translation = _.cloneDeep(this.currentproject.chunks);
             var projectmeta = this.currentproject.projectmeta;
@@ -141,7 +142,7 @@
                 var chapter = parseInt(chap) || 0;
                 var reference;
                 if (chap === "front") {
-                    reference = this._lookupLocaleString("project_details");
+                    reference = mythis._lookupLocaleString("project_details");
                 } else if (typeclass === "extant") {
                     reference = name;
                 } else {
@@ -174,16 +175,16 @@
             this.fire('next');
         },
 
-        ready: function() {
-            this.set('locale', App.locale.dictionary);
-        },
-
         _lookupLocaleString: function (keyValue) {
             let localeText = this.locale[keyValue];
             if (localeText == undefined) {
                 localeText = keyValue;
             }
             return localeText;
+        },
+
+        ready: function() {
+            this.set('locale', App.locale.dictionary);
         }
 
     });

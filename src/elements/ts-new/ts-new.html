@@ -256,11 +256,11 @@
             var title = "";
             if (route === "new") {
                 if (this.importdata.importing) {
-                    title = "{{locale.import_project}}";
+                    title = this.locale.import_project;
                 } else if (this.changedata.changing) {
-                    title = "{{locale.change_language}}";
+                    title = this.locale.change_language;
                 } else {
-                    title = "New Project{{_lookupLocaleString(new_project)}}";
+                    title = this.locale.new_project;
                 }
             }
             return title;
