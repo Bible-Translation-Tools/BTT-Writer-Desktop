@@ -265,7 +265,8 @@ function Renderer() {
             var startdiv = "\<div class='style-scope " + add + module + "'\>";
             var enddiv = "\<\/div\>";
             var chapters = [];
-            var pagetitleRendered = options.pagetitle ? "\<div class='style-scope page-title hide " + module + "' \>" + pagetitle + "\<\/div\>" : "";
+
+            var pagetitle = options.pagetitle ? "\<div class='style-scope page-title hides " + module + "' \>" + pagetitle + "\<\/div\>" : "";
             var text = "\<div id='startnum' class='style-scope " + module + "'\>";
 
             _.forEach(_.groupBy(chunks, function(chunk) {
@@ -297,7 +298,7 @@ function Renderer() {
                 }
             });
 
-            return pagetitleRendered + text + enddiv;
+            return pagetitle + text + enddiv;
         },
 
         renderObsPrintPreview: function (chunks, options, imagePath) {
