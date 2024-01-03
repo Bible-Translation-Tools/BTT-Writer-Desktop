@@ -149,6 +149,7 @@
                     <paper-item on-tap="goacademy"><iron-icon class="smallicon" icon="book"></iron-icon>translationAcademy</paper-item>
                     <paper-item on-tap="gofeedback"><iron-icon class="smallicon" icon="announcement"></iron-icon>Feedback</paper-item>
                     <paper-item on-tap="gosearch" class$="[[searchclass(currentproject.projectmeta.project_type_class, selected)]]"><iron-icon class="smallicon" icon="search"></iron-icon>Search</paper-item>
+                    <paper-item on-tap="projectdone"><iron-icon class="smallicon" icon="check"></iron-icon>Mark All Chunks Done</paper-item>
                     <paper-item on-tap="gosettings"><iron-icon class="smallicon" icon="settings"></iron-icon>Settings</paper-item>
                 </paper-menu>
             </paper-menu-button>
@@ -442,6 +443,11 @@
         gofeedback: function() {
             this.$.menu.close();
             this.fire('iron-signal', {name: 'openfeedback'});
+        },
+
+        projectdone: function() {
+            this.$.menu.close();
+            this.fire('iron-signal', {name: 'openprojectchecklist'});
         },
 
         ready: function() {
