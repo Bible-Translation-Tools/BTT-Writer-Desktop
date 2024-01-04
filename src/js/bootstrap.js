@@ -50,56 +50,56 @@ process.stdout.write = console.log.bind(console);
         setMsg('Loading Locale...');
         i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
 
-        setMsg(i18n.dictionary.loading_mkdirp);
+        setMsg(i18n.translate("loading_mkdirp"));
         mkdirp = require('mkdirp');
 
-        setMsg(i18n.dictionary.loading_db);
+        setMsg(i18n.translate("loading_db"));
         Db = require('door43-client-fork');
 
-        setMsg(i18n.dictionary.loading_reporter);
+        setMsg(i18n.translate("loading_reporter"));
         Reporter = require('../js/reporter').Reporter;
 
-        setMsg(i18n.dictionary.loading_config);
+        setMsg(i18n.translate("loading_config"));
         Configurator = require('../js/configurator').Configurator;
 
-        setMsg(i18n.dictionary.loading_git_mgr);
+        setMsg(i18n.translate("loading_git_mgr"));
         GitManager = require('../js/gitnative').GitManager;
 
-        setMsg(i18n.dictionary.loading_key_mgr);
+        setMsg(i18n.translate("loading_key_mgr"));
         KeyManager = require('../js/keys').KeyManager;
 
-        setMsg(i18n.dictionary.loading_projects_mgr);
+        setMsg(i18n.translate("loading_projects_mgr"));
         ProjectsManager = require('../js/projects').ProjectsManager;
 
-        setMsg(i18n.dictionary.loading_migrate_mgr);
+        setMsg(i18n.translate("loading_migrate_mgr"));
         MigrateManager = require('../js/migrator').MigrateManager;
 
-        setMsg(i18n.dictionary.loading_data_mgr);
+        setMsg(i18n.translate("loading_data_mgr"));
         DataManager = require('../js/database').DataManager;
 
-        setMsg(i18n.dictionary.loading_user_mgr);
+        setMsg(i18n.translate("loading_user_mgr"));
         UserManager = require('../js/user').UserManager;
 
-        setMsg(i18n.dictionary.loading_import_mgr);
+        setMsg(i18n.translate("loading_import_mgr"));
         ImportManager = require('../js/importer').ImportManager;
 
-        setMsg(i18n.dictionary.loading_export_mgr);
+        setMsg(i18n.translate("loading_export_mgr"));
         ExportManager = require('../js/exporter').ExportManager;
 
-        setMsg(i18n.dictionary.loading_print_mgr);
+        setMsg(i18n.translate("loading_print_mgr"));
         PrintManager = require('../js/printer').PrintManager;
 
-        setMsg(i18n.dictionary.loading_renderer);
+        setMsg(i18n.translate("loading_renderer"));
         Renderer = require('../js/render').Renderer;
 
-        setMsg(i18n.dictionary.loading_utils);
+        setMsg(i18n.translate("loading_utils"));
         utils = require('../js/lib/utils');
     } catch (err) {
         // display error and fail
         setMsg(err.message);
         throw new Error(err);
     }
-    setMsg(i18n.dictionary.init_config);
+    setMsg(i18n.translate("init_config"));
 
     // TODO: refactor this so we can just pass an object to the constructor
     let configurator = (function () {
@@ -161,7 +161,7 @@ process.stdout.write = console.log.bind(console);
         return new DataManager(db, resourceDir, srcResource, configurator);
     })();
 
-    setMsg(i18n.dictionary.init_modules);
+    setMsg(i18n.translate("init_modules"));
 
     let gitManager = new GitManager();
 
@@ -267,7 +267,7 @@ process.stdout.write = console.log.bind(console);
     //     });
     // });
 
-    setMsg(i18n.dictionary.loading_ui);
+    setMsg(i18n.translate("loading_ui"));
 
     window.App = App;
 

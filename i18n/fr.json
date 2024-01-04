@@ -376,6 +376,9 @@
 
     "__folder7": "ts-print",
     "__file35": "ts-print.html",
+    "print_preview_title": "Aperçu avant impression",
+    "save_pdf": "Enregistrer en PDF",
+    "pdf_generated_by": "PDF générés par {0}",
 
     "__folder8": "ts-profile",
     "__file36": "ts-create-option.html",
@@ -521,7 +524,6 @@
 
     "__folder21": "js",
     "__file81": "bootstrap.js",
-
     "loading_mkdirp": "Chargement de la mkdirp...",
     "loading_db": "Chargement de la Base de Données...",
     "loading_reporter": "Chargement du Rapporteur...",

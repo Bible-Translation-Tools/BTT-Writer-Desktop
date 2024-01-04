@@ -6,6 +6,12 @@ let jsonfile = require('jsonfile');
 let _ = require('lodash');
 let locale2 = new require('locale');
 
+String.prototype.format = function(...args) {
+    return this.replace(/{(\d+)}/g, function(match, number) {
+        return typeof args[number] != 'undefined' ? args[number] : match;
+    });
+};
+
 /**
  * Loads the i18n dictionary from the library.
  * The default local will provide a fallback for missing locale
@@ -50,7 +56,7 @@ function supportedLocales (dir) {
  * @param {Locale}
  */
 function chooseBestLocale(dir, code) {
-    let defaultLocale = new locale2.Locales(code || 'en');
+    let defaultLocale = new locale2.Locales(code || 'fr');
     return defaultLocale.best(supportedLocales(dir));
 }
 
@@ -72,13 +78,14 @@ function Locale (dir, defaultLocaleCode) {
          * Returns the localized value.
          * If no value is found it will log the missing key in the console
          * @param key
+         * @param args
          * @returns {string} an empty string if the localization does not exist
          * @private
          */
-        _: function (key) {
+        translate: function (key, ...args) {
             if (Object.keys(dictionary).length > 0) {
                 if (dictionary.hasOwnProperty(key)) {
-                    return dictionary[key];
+                    return dictionary[key].format(...args);
                 }
             }
             console.log('i18n: Missing localization for key "' + key + '"');
