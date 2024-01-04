@@ -517,5 +517,27 @@
     "import": "Importer",
     "translationAcademy": "translationAcademy",
     "logout": "Se Déconnecter",
-    "settings": "Parametres"
+    "settings": "Parametres",
+
+    "__folder21": "js",
+    "__file81": "bootstrap.js",
+
+    "loading_mkdirp": "Chargement de la mkdirp...",
+    "loading_db": "Chargement de la Base de Données...",
+    "loading_reporter": "Chargement du Rapporteur...",
+    "loading_config": "Chargement du Configurateur...",
+    "loading_git_mgr": "Chargement du Gestionnaire Git...",
+    "loading_key_mgr": "Chargement du Gestionnaire de Clés...",
+    "loading_projects_mgr": "Chargement du Gestionnaire de Projets...",
+    "loading_migrate_mgr": "Chargement du Gestionnaire de Migration...",
+    "loading_data_mgr": "Chargement du Gestionnaire de Données...",
+    "loading_user_mgr": "Chargement du Gestionnaire d'utilisateurs...",
+    "loading_import_mgr": "Chargement du Gestionnaire d'importation...",
+    "loading_export_mgr": "Chargement du Gestionnaire d'exportation...",
+    "loading_print_mgr": "Chargement du Gestionnaire d'impression...",
+    "loading_renderer": "Chargement du Moteur de rendu...",
+    "loading_utils": "Chargement des utilitaires...",
+    "init_config": "Initialisation du configurateur...",
+    "init_modules": "Initialisation des modules...",
+    "loading_ui": "Chargement de l'iu..."
 }

@@ -517,5 +517,27 @@
     "import": "Import",
     "translationAcademy": "translationAcademy",
     "logout": "Logout",
-    "settings": "Settings"
+    "settings": "Settings",
+
+    "__folder21": "js",
+    "__file81": "bootstrap.js",
+
+    "loading_mkdirp": "Loading mkdirp...",
+    "loading_db": "Loading Database...",
+    "loading_reporter": "Loading Reporter...",
+    "loading_config": "Loading Configurator...",
+    "loading_git_mgr": "Loading Git Manager...",
+    "loading_key_mgr": "Loading Key Manager...",
+    "loading_projects_mgr": "Loading Projects Manager...",
+    "loading_migrate_mgr": "Loading Migrate Manager...",
+    "loading_data_mgr": "Loading Data Manager...",
+    "loading_user_mgr": "Loading User Manager...",
+    "loading_import_mgr": "Loading Import Manager...",
+    "loading_export_mgr": "Loading Export Manager...",
+    "loading_print_mgr": "Loading Print Manager...",
+    "loading_renderer": "Loading Renderer...",
+    "loading_utils": "Loading Utils...",
+    "init_config": "Initializing configurator...",
+    "init_modules": "Initializing modules...",
+    "loading_ui": "Loading UI..."
 }
