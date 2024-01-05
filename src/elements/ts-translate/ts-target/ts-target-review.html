@@ -112,7 +112,7 @@
                 <div id="textholder" class$="[[chunk.projectmeta.target_language.direction]]"></div>
             </div>
             <div id="togglebox">
-                <p>Mark chunk as done</p>
+                <p>{{translate("mark_chunk_done")}}</p>
                 <paper-toggle-button id="toggle" on-change="checkdone"></paper-toggle-button>
             </div>
         </paper-material>
@@ -326,8 +326,11 @@
             this.fire('edit');
         },
 
-		ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+		ready: function() {
 		}
 
 	});

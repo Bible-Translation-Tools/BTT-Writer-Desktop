@@ -140,14 +140,14 @@
 
         <div id="contain">
             <div id="header">
-                <input is="iron-input" id="input" bind-value="{{query}}" on-input="organizeSources" placeholder="Choose source translations">
+                <input is="iron-input" id="input" bind-value="{{query}}" on-input="organizeSources" placeholder="{{translate('choose_source_placeholder')}}">
                 <paper-icon-button icon="search" on-tap="focussearch"></paper-icon-button>
             </div>
 
             <div id="body">
                 <div class="row-header">
-                    <span>Selected (maximum: 3)</span>
-                    <span class$="[[updateclass(selected)]]"><iron-icon icon="refresh"></iron-icon>Requires an Internet Connection<iron-icon icon="notification:wifi"></iron-icon></span>
+                    <span>{{translate("selected_max", 3)}}</span>
+                    <span class$="[[updateclass(selected)]]"><iron-icon icon="refresh"></iron-icon>{{translate("requires_internet")}}<iron-icon icon="notification:wifi"></iron-icon></span>
                 </div>
                 <template is="dom-repeat" items="[[selected]]" as="source">
                     <div class$="[[rowclass(source.direction)]]">
@@ -156,13 +156,13 @@
                                 <span>[[source.language_name]]</span> (<span>[[source.language_id]]</span>) - <span>[[source.resource_name]]</span>
                             </div>
                             <div class="buttons">
-                                <paper-icon-button icon="refresh" title="update" class$="[[checkupdate(source.current)]]" on-tap="downloadSource"></paper-icon-button>
+                                <paper-icon-button icon="refresh" title="{{translate('update')}}" class$="[[checkupdate(source.current)]]" on-tap="downloadSource"></paper-icon-button>
                                 <paper-checkbox checked="[[source.selected]]" on-change="removeSource"></paper-checkbox>
                             </div>
                         </template>
                         <template is="dom-if" if="{{source.updating}}">
                             <div>
-                                <span>Updating source data. Please wait...</span>
+                                <span>{{translate("updating_source_status")}}</span>
                             </div>
                             <div>
                                 <paper-spinner active></paper-spinner>
@@ -171,7 +171,7 @@
                     </div>
                 </template>
 
-                <div class="row-header">Available</div>
+                <div class="row-header">{{translate("available")}}</div>
                 <template is="dom-repeat" items="[[available]]" as="source">
                     <div class$="[[rowclass(source.direction)]]">
                         <template is="dom-if" if="{{!source.updating}}">
@@ -184,7 +184,7 @@
                         </template>
                         <template is="dom-if" if="{{source.updating}}">
                             <div>
-                                <span>Activating this source. Please wait...</span>
+                                <span>{{translate("activating_source")}}</span>
                             </div>
                             <div>
                                 <paper-spinner active></paper-spinner>
@@ -194,8 +194,8 @@
                 </template>
 
                 <div class="row-header">
-                    <span>Available Online</span>
-                    <span>Requires an Internet Connection<iron-icon icon="notification:wifi"></iron-icon></span>
+                    <span>{{translate("available_online")}}</span>
+                    <span>{{translate("requires_internet")}}<iron-icon icon="notification:wifi"></iron-icon></span>
                 </div>
                 <template is="dom-repeat" items="[[download]]" as="source">
                     <div class$="[[rowclass(source.direction)]]">
@@ -204,12 +204,12 @@
                                 <span>[[source.language_name]]</span> (<span>[[source.language_id]]</span>) - <span>[[source.resource_name]]</span>
                             </div>
                             <div class="buttons">
-                                <paper-icon-button icon="file-download" title="download" on-tap="downloadSource"></paper-icon-button>
+                                <paper-icon-button icon="file-download" title="{{translate('download')}}" on-tap="downloadSource"></paper-icon-button>
                             </div>
                         </template>
                         <template is="dom-if" if="{{source.updating}}">
                             <div>
-                                <span>Downloading source data. Please wait...</span>
+                                <span>{{translate("downloading_source")}}</span>
                             </div>
                             <div>
                                 <paper-spinner active></paper-spinner>
@@ -220,10 +220,10 @@
             </div>
 
             <div id="footer">
-                <paper-button on-tap="gotoupdate">Exit to Update Source Text List</paper-button>
+                <paper-button on-tap="gotoupdate">{{translate("exit_to_update")}}</paper-button>
                 <div>
-                    <paper-button on-tap="cancel">Cancel</paper-button>
-                    <paper-button on-tap="confirm">Confirm</paper-button>
+                    <paper-button on-tap="cancel">{{translate("cancel")}}</paper-button>
+                    <paper-button on-tap="confirm">{{translate("confirm")}}</paper-button>
                 </div>
             </div>
 
@@ -466,8 +466,11 @@
                 });
         },
 
-        ready: function () {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function () {
         }
 
     });

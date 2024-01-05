@@ -433,22 +433,22 @@
                   .then(function () {
                       var after = App.dataManager.getMetrics();
                       var diff = after.target_language_count - before.target_language_count;
-                      var msg = diff + this.translate('number_target_updates');
+                      var msg = diff + mythis.translate('number_target_updates');
                       if (diff < 1) {
-                          msg = this.translate("no_target_updates");
+                          msg = mythis.translate("no_target_updates");
                       }
                       if (diff === 1) {
-                          msg = this.translate("one_target_update");
+                          msg = mythis.translate("one_target_update");
                       }
                       mythis.showMessage(mythis.translate("update_complete"), msg);
                   })
                   .catch(function (err) {
-                      var errmessage = this.translate("update_error");
+                      var errmessage = mythis.translate("update_error");
                       if (err.syscall === "getaddrinfo") {
-                          errmessage = this.translate("connection_error");
+                          errmessage = mythis.translate("connection_error");
                       }
                       if (err.syscall === "read") {
-                          errmessage = this.translate("read_error");
+                          errmessage = mythis.translate("read_error");
                       }
                       mythis.showErrorMessage(mythis.translate("update_failed"), errmessage, err);
                   });
@@ -484,23 +484,23 @@
                   .then(function () {
                       var after = App.dataManager.getMetrics();
                       var diff = after.resource_count_level3 - before.resource_count_level3;
-                      var msg = diff + this.translate('new_sources_available');
+                      var msg = diff + mythis.translate('new_sources_available');
                       if (diff < 1) {
-                          msg = this.translate('no_sources_available');
+                          msg = mythis.translate('no_sources_available');
                       }
                       if (diff === 1) {
-                          msg = this.translate('one_source_available');
+                          msg = mythis.translate('one_source_available');
                       }
                       mythis.set('route', 'updates');
                       mythis.showMessage(mythis.translate('update_complete'), msg);
                   })
                   .catch(function (err) {
-                      var errmessage = this.translate('update_error');
+                      var errmessage = mythis.translate('update_error');
                       if (err.syscall === "getaddrinfo") {
-                          errmessage = this.translate("connection_error");
+                          errmessage = mythis.translate("connection_error");
                       }
                       if (err.syscall === "read") {
-                          errmessage = this.translate("read_error");
+                          errmessage = mythis.translate("read_error");
                       }
                       mythis.showErrorMessage(mythis.translate("update_failed"), errmessage, err);
                   });
@@ -750,9 +750,9 @@
                       }))
                   })
                   .catch(function(err) {
-                      var errmessage = this.translate('import_failed2');
+                      var errmessage = mythis.translate('import_failed2');
 
-                      if (err.includes(this.translate("extraction_error"))) {
+                      if (err.includes(mythis.translate("extraction_error"))) {
                           errmessage = err;
                       }
 
@@ -1055,7 +1055,7 @@
           var mythis = this;
           var projectmeta = this.currentproject.projectmeta;
           var defaultPath = App.configurator.getUserPath('datalocation', 'backups', projectmeta.unique_id);
-          var filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: this.translate("tstudio_files"), extensions: ['tstudio']}]}});
+          var filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: mythis.translate("tstudio_files"), extensions: ['tstudio']}]}});
           if (!filePath) {
               return;
           }

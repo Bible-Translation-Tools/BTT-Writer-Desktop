@@ -87,7 +87,7 @@
                 </template>
                 <template is="dom-if" if="{{options.progress}}">
                     <paper-progress value="{{options.value}}"></paper-progress>
-                    <span id="progress">{{translate("percent_complete")}}</span>
+                    <span id="progress">{{translate("percent_complete", options.value)}}</span>
                 </template>
             </template>
         </div>

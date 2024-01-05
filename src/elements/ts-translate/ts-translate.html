@@ -82,7 +82,7 @@
 
         #sourcepopup {
             height: 500px;
-            width: 500px;
+            max-width: 750px;
             display: flex;
         }
 
@@ -193,61 +193,61 @@
         <ts-resource-display id="resourcedisplay" class="hide" chunks="[[currentproject.chunks]]" modestatus="{{modestatus}}" on-navigate="navigate" on-closeresource="closeresource"></ts-resource-display>
 
         <paper-dialog id="checklistpopup" class="checklistpopup popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-            <h2>Chunk Checklist</h2>
+            <h2>{{translate("chunk_checklist")}}</h2>
             <div>
-                <p class="spaced">Are you sure you're Done with this chunk?</p>
-                <p class$="[[versecheck(currentproject.projectmeta)]]">I have placed the verses correctly</p>
-                <p>I have reviewed the words and meanings</p>
-                <p class$="[[standardcheck(currentproject.projectmeta)]]">I have reviewed the translationQuestions</p>
+                <p class="spaced">{{translate("chunk_checklist_warning")}}</p>
+                <p class$="[[versecheck(currentproject.projectmeta)]]">{{translate("chunk_checklist_option1")}}</p>
+                <p>{{translate("chunk_checklist_option2")}}</p>
+                <p class$="[[standardcheck(currentproject.projectmeta)]]">{{translate("chunk_checklist_option3")}}</p>
             </div>
             <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm on-tap="closechecklist">Confirm</paper-button>
+                <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
+                <paper-button dialog-confirm on-tap="closechecklist">{{translate("confirm")}}</paper-button>
             </div>
         </paper-dialog>
 
         <paper-dialog id="projectchecklistpopup" class="checklistpopup popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-            <h2>Project Checklist</h2>
+            <h2>{{translate("project_checklist")}}</h2>
             <div>
-                <p class="spaced">Are you sure you're Done with this project?</p>
-                <p class$="[[versecheck(currentproject.projectmeta)]]">I have placed the verses correctly</p>
-                <p>I have reviewed the words and meanings</p>
-                <p class$="[[standardcheck(currentproject.projectmeta)]]">I have reviewed the translationQuestions</p>
+                <p class="spaced">{{translate("project_checklist_warning")}}</p>
+                <p class$="[[versecheck(currentproject.projectmeta)]]">{{translate("chunk_checklist_option1")}}</p>
+                <p>{{translate("chunk_checklist_option2")}}</p>
+                <p class$="[[standardcheck(currentproject.projectmeta)]]">{{translate("chunk_checklist_option3")}}</p>
             </div>
             <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm on-tap="closeprojectchecklist">Confirm</paper-button>
+                <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
+                <paper-button dialog-confirm on-tap="closeprojectchecklist">{{translate("confirm")}}</paper-button>
             </div>
         </paper-dialog>
 
         <paper-dialog id="editpopup" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-            <h2>Edit Chunk</h2>
+            <h2>{{translate("edit_chunk")}}</h2>
             <div>
-                <p>This chunk is done. Continue editing?</p>
+                <p>{{translate("edit_chunk_warning")}}</p>
             </div>
             <div class="buttons">
-                <paper-button dialog-dismiss>Dismiss</paper-button>
-                <paper-button dialog-confirm on-tap="closeedit">Edit</paper-button>
+                <paper-button dialog-dismiss>{{translate("dismiss")}}</paper-button>
+                <paper-button dialog-confirm on-tap="closeedit">{{translate("edit")}}</paper-button>
             </div>
         </paper-dialog>
 
         <paper-dialog id="nodatapopup" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-            <h2>Missing Data</h2>
+            <h2>{{translate("missing_data")}}</h2>
             <div>
-                <p>All fields are not complete.</p>
+                <p>{{translate("missing_data_error")}}</p>
             </div>
             <div class="buttons">
-                <paper-button dialog-dismiss>OK</paper-button>
+                <paper-button dialog-dismiss>{{translate("ok")}}</paper-button>
             </div>
         </paper-dialog>
 
         <paper-dialog id="note" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
             <div id="noteheader">
-                <h2>Footnote</h2>
+                <h2>{{translate("footnote")}}</h2>
             </div>
             <div id="notebody"></div>
             <div id="notefooter">
-                <paper-button dialog-dismiss>Dismiss</paper-button>
+                <paper-button dialog-dismiss>{{translate("dismiss")}}</paper-button>
             </div>
         </paper-dialog>
 
@@ -472,7 +472,7 @@
                             })
                             .catch(function (err) {
                                 mythis.set('options', {});
-                                mythis.set('options.title', "Auto Backup Failed");
+                                mythis.set('options.title', mythis.translate("autobackup_failed"));
                                 mythis.set('options.body', err);
                                 mythis.set('options.loading', false);
                                 mythis.fire('iron-signal', {name: 'openloading'});
@@ -485,15 +485,15 @@
                 })
                 .then(function () {
                     if (changes) {
-                        mythis.set('message', "Changes Saved");
+                        mythis.set('message', mythis.translate("changes_saved"));
                     } else {
-                        mythis.set('message', "No Changes Found");
+                        mythis.set('message', mythis.translate("no_changes_found"));
                     }
                     return Promise.resolve(true);
                 })
                 .then(function () {
                     setTimeout(function() {
-                        mythis.set('message', "Idle");
+                        mythis.set('message', mythis.translate("idle"));
                     }, 1000);
                     return Promise.resolve(true);
                 });
@@ -552,7 +552,7 @@
             var modal = this.$.modal;
 
             mythis.set('options', {});
-            mythis.set('options.body', "Loading source options. Please wait...");
+            mythis.set('options.body', mythis.translate("loading_source_message"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
             mythis.savestate();
@@ -587,8 +587,8 @@
                                     }, 500);
                                 });
                         } else {
-                            mythis.set('options.title', "Loading Failed");
-                            mythis.set('options.body', "Cannot find sources. Try restarting app.");
+                            mythis.set('options.title', mythis.translate("loading_failed"));
+                            mythis.set('options.body', mythis.translate("source_not_found_error"));
                             mythis.set('options.loading', false);
                         }
                     });
@@ -785,7 +785,7 @@
                         .then(function (translation) {
                             mythis.set('currentproject.rawdata.main', translation);
                             if (projectmeta.type.id === "ta") {
-                                throw "At this time, translationAcademy translation projects are not supported.";
+                                throw mythis.translate("translation_academy_projects_error");
                             }
                             var source = projectmeta.source_translations[projectmeta.currentsource];
 
@@ -800,12 +800,12 @@
                         })
                         .catch(function(err) {
                             App.reporter.logError(err);
-                            var errmessage = "An error occurred while trying to load this project";
+                            var errmessage = mythis.translate("loading_project_error");
                             if(err !== null) {
                                 errmessage = err;
                             }
                             mythis.set('route', 'home');
-                            mythis.set('options.title', "Project Load Failed");
+                            mythis.set('options.title', mythis.translate("load_project_failed"));
                             mythis.set('options.body', errmessage);
                             mythis.set('options.loading', false);
                         });
@@ -816,7 +816,7 @@
         updatesources: function (event, data) {
             var mythis = this;
             mythis.set('options', {});
-            mythis.set('options.body', "Loading source. Please wait...");
+            mythis.set('options.body', mythis.translate("loading_source"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
             setTimeout(function() {
@@ -885,7 +885,7 @@
             var source = sources[selected];
             var container = source.language_id + "_" + source.project_id + "_" + source.resource_id;
 
-            mythis.set('options.body', "Removing invalid source: " + container);
+            mythis.set('options.body', mythis.translate("removing_invalid_source", container));
             mythis.set('options.loading', true);
 
             sources.splice(selected, 1);
@@ -1063,6 +1063,7 @@
         },
 
         getFrameResources: function (language_id, frame, notes, questions, udb, wordlist, verses) {
+            var mythis = this;
             var resources = [];
             var note = [];
             var question = [];
@@ -1077,7 +1078,7 @@
                 note = framenotes[0].content;
             }
             if (note.length) {
-                resources.push({title: "Notes", array: true, data: note});
+                resources.push({title: mythis.translate("resource_notes"), array: true, data: note});
             }
 
             if (wordlist && wordlist[frame.chapter] && wordlist[frame.chapter][frame.chunk]) {
@@ -1091,7 +1092,7 @@
                 if (word) {
                     words.push(word);
                 } else {
-                    console.log("Cannot find data for:", frame.chapter, frame.chunk, frameword);
+                    console.log(mythis.translate("cannot_find_data", frame.chapter, frame.chunk, frameword));
                 }
             });
 
@@ -1115,7 +1116,7 @@
             }
 
             if (words.length) {
-                resources.push({title: "Words", array: true, data: words});
+                resources.push({title: mythis.translate("resource_words"), array: true, data: words});
             }
 
             var frameques = questions.filter(function (ques) {
@@ -1134,7 +1135,7 @@
                 question = _.uniq(question, 'title');
             }
             if (question.length) {
-                resources.push({title: "Questions", array: true, data: question});
+                resources.push({title: mythis.translate("resource_questions"), array: true, data: question});
             }
 
             var frameudb = udb.filter(function (chunk) {
@@ -1156,6 +1157,7 @@
         },
 
         createFrameMeta: function (frame, projectmeta, verses, title) {
+            var mythis = this;
             var refaddon = projectmeta.target_language.name;
             var resource = projectmeta.resource.id;
             var name = projectmeta.project.name;
@@ -1172,25 +1174,25 @@
 
             if (name === "Open Bible Stories") {
                 if (chapterid === "front" && frameid === "title") {
-                    chapterref = "Project Title";
-                    chunkref = "Project Title";
+                    chapterref = mythis.translate("project_title");
+                    chunkref = mythis.translate("project_title");
                 } else if (frameid === "title") {
-                    chapterref = "Story Title";
-                    chunkref = "Story Title";
+                    chapterref = mythis.translate("story_title");
+                    chunkref = mythis.translate("story_title");
                 } else if (frameid === "reference") {
-                    chapterref = "Story Reference";
-                    chunkref = "Story Reference";
+                    chapterref = mythis.translate("story_reference");
+                    chunkref = mythis.translate("story_reference");
                 } else {
                     chapterref = title;
-                    chunkref = title + ":" + framenum;
+                    chunkref = mythis.translate("story_chunk_title", title, framenum);
                 }
             } else {
                 if (chapterid === "front" && frameid === "title") {
-                    chapterref = "Project Title";
-                    chunkref = "Project Title";
+                    chapterref = mythis.translate("project_title");
+                    chunkref = mythis.translate("project_title");
                 } else if (frameid === "title") {
-                    chapterref = name + " " + chapternum + " Title";
-                    chunkref = name + " " + chapternum + " Title";
+                    chapterref = mythis.translate("project_chapter_title", name, chapternum);
+                    chunkref = mythis.translate("project_chapter_title", name, chapternum);
                 } else {
                     chapterref = name + " " + chapternum;
                     chunkref = name + " " + chapternum + ":" + verses[0] + "–" + verses[verses.length-1];
@@ -1487,7 +1489,7 @@
             var mythis = this;
 
             mythis.set('options', {});
-            mythis.set('options.body', "Closing project. Please wait...");
+            mythis.set('options.body', mythis.translate("closing_project_status"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
@@ -1508,7 +1510,7 @@
 
             if (mythis.currentproject.projectmeta.source_translations.length || typeclass === "extant") {
                 mythis.set('options', {});
-                mythis.set('options.body', "Loading review page. Please wait...");
+                mythis.set('options.body', mythis.translate("loading_review_status"));
                 mythis.set('options.loading', true);
                 mythis.fire('iron-signal', {name: 'openloading'});
                 setTimeout(function() {
@@ -1525,8 +1527,8 @@
                 }, 250);
             } else {
                 mythis.set('options', {});
-                mythis.set('options.title', "Project Empty");
-                mythis.set('options.body', "This project has nothing to review");
+                mythis.set('options.title', mythis.translate("project_empty"));
+                mythis.set('options.body', mythis.translate("project_nothing_to_review"));
                 mythis.set('options.loading', false);
                 mythis.fire('iron-signal', {name: 'openloading'});
             }
@@ -1599,8 +1601,8 @@
                 }
             });
 
-            var title = "Result";
-            var message = `${marked} chunks marked as done out of ${chunks.length}`;
+            var title = mythis.translate("result");
+            var message = mythis.translate("chunks_marked_done_result", marked, chunks.length);
             mythis.fire('iron-signal', {name: 'showmessage', data: {title, message}});
         },
 

@@ -148,7 +148,7 @@
                 </template>
             </div>
             <paper-material id="togglebox" elevation="1">
-                <p>Mark chunk as done</p>
+                <p>{{translate("mark_chunk_done")}}</p>
                 <paper-toggle-button id="toggle" on-change="checkdone"></paper-toggle-button>
             </paper-material>
         </div>
@@ -186,11 +186,11 @@
         },
 
         checktitle: function (type) {
-            return type === "tw" ? "Translate word here" : "Translate title here";
+            return type === "tw" ? this.translate("translate_word_here") : this.translate("translate_title_here");
         },
 
         checkbody: function (type) {
-            return type === "tw" ? "Translate definition here" : "Translate text here";
+            return type === "tw" ? this.translate("translate_definition_here") : this.translate("translate_text_here");
         },
 
         rendertext: function () {
@@ -263,8 +263,11 @@
             }
         },
 
-		ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+		ready: function() {
 		}
 
 	});

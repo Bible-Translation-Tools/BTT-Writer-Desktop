@@ -92,7 +92,10 @@
     "source_import_2": "Doit être en format de Resource Container",
 
     "__file7": "ts-loading.html",
-    "percent_complete": "<span>{{options.value}}</span>% Complet",
+
+    "percent_complete": "{0}% Complet",
+    "__percent_complete": "{0} - completion percentage",
+
     "close": "Fermer",
 
     "__file8": "ts-print-options.html",
@@ -166,6 +169,7 @@
     "dismiss": "Renvoyer",
     "yes": "Oui",
     "no": "Non",
+    "ok": "OK",
     "print": "Imprimer",
     "review": "Reviser",
     "upload_export": "Télécharger/Exporter",
@@ -311,7 +315,9 @@
     "exporting_project_status": "En cours d'exporter le projet. Veuillez patienter...",
     "updating_index_file_status": "Mise à jour du fichier index.sqlite de la bibliothèque. Cela peut prendre un certain temps. Veuillez patienter...",
     "download_index_file_error": "Une erreur s'est produite lors du téléchargement du fichier index.sqlite.",
+
     "read_file_error": "Une erreur s'est produite lors de la lecture du fichier: {0}",
+    "__read_file_error": "{0} - file name",
 
     "sending_feedback_status": "En cours d'envoyer la réaction. Veuillez patienter...",
     "feedback_sent": "Réaction Transmise",
@@ -382,7 +388,9 @@
     "__file35": "ts-print.html",
     "print_preview_title": "Aperçu avant impression",
     "save_pdf": "Enregistrer en PDF",
+
     "pdf_generated_by": "PDF générés par {0}",
+    "__pdf_generated_by": "{0} - link to Prince library",
 
     "__folder8": "ts-profile",
     "__file36": "ts-create-option.html",
@@ -480,7 +488,11 @@
 
     "__file65": "ts-source-modal.html",
     "choose_source_placeholder": "Choisir la traduction source",
-    "selected_max_3": "Sélectionnée(s) (maximum: 3)",
+    "download": "Télécharger",
+
+    "selected_max": "Sélectionnée(s) (maximum: {0})",
+    "__selected_max": "{0} - maximum number of sources",
+
     "available": "Disponible",
     "available_online": "Disponible en ligne",
     "downloading_source": "Téléchargement des données sources. Veuillez patienter...",
@@ -490,14 +502,92 @@
 
     "__folder18": "ts-target",
     "__file67": "ts-target-conflict.html",
+
+    "resource_title": "Titre: {0}",
+    "__resource_title": "{0} - resource title content",
+
+    "resource_body": "Corps: {0}",
+    "__resource_body": "{0} - resource body content",
+
+    "resolve_conflict_action": "Résoudre le conflit - Cliquer sur la version à conserver",
+
     "__file68": "ts-target-edit.html",
+    "conflict_exists": "Le conflit existe",
+    "conflict_exists_warning": "Il y a un conflit qui doit être résolu avant de traduire ou de créer des notes pour ces versets. Vous pouvez vous rendre dans le projet connexe pour examiner et résoudre le conflit.",
+
     "__file69": "ts-target-helps.html",
+
+    "click_to_add_resource": "Cliquer pour ajouter des {0}",
+    "__click_to_add_resource": "{0} - resource name",
+
+    "mark_chunk_done": "Marquer le morceau comme terminé",
+    "add_question_here": "Ajouter une question ici",
+    "add_answer_here": "Ajouter une réponse ici",
+    "reference_text": "Texte de référence",
+    "note_text": "Texte de la note",
+
     "__file70": "ts-target-review.html",
     "__file71": "ts-target-view.html",
     "__file72": "ts-target-words.html",
+    "translate_word_here": "Traduire le mot ici",
+    "translate_title_here": "Traduire le titre ici",
+    "translate_definition_here": "Traduire la définition ici",
+    "translate_text_here": "Traduire le texte ici",
+
     "__file73": "ts-verse-marker.html",
     "__file74": "ts-translate.html",
     "loading_project": "En cours de charger le projet",
+    "chunk_checklist": "Liste de contrôle des morceaux",
+    "chunk_checklist_warning": "Êtes-vous sûr d'en avoir fini avec ce morceau?",
+    "chunk_checklist_option1": "J'ai placé les versets correctement",
+    "chunk_checklist_option2": "J'ai revu les mots et les significations",
+    "chunk_checklist_option3": "J'ai révisé la translationQuestions",
+    "project_checklist": "Liste de contrôle du projet",
+    "project_checklist_warning": "Êtes-vous sûr d'en avoir fini avec ce projet?",
+    "edit_chunk": "Modifier le morceau",
+    "edit_chunk_warning": "Cette morceau est terminée. Poursuivre la rédaction?",
+    "edit": "Modifier",
+    "missing_data": "Données manquantes",
+    "missing_data_error": "Tous les champs ne sont pas remplis.",
+    "footnote": "Note",
+    "autobackup_failed": "Échec de l'auto-sauvegarde",
+    "changes_saved": "Modifications sauvegardées",
+    "no_changes_found": "Aucune modification n'a été trouvée",
+    "loading_source_message": "Chargement des options de la source. Veuillez patienter...",
+    "loading_failed": "Échec du chargement",
+    "source_not_found_error": "Impossible de trouver les sources. Essayez de redémarrer l'application.",
+    "translation_academy_projects_error": "Pour l'instant, les projets de traduction de translationAcademy ne sont pas pris en charge.",
+    "loading_project_error": "Une erreur s'est produite lors du chargement de ce projet",
+    "load_project_failed": "Échec du chargement du projet",
+    "loading_source": "Chargement de la source. Veuillez patienter...",
+
+    "removing_invalid_source": "Suppression d'une source invalide: {0}",
+    "__removing_invalid_source": "{0} - source name",
+
+    "cannot_find_data": "Impossible de trouver les données pour: {0}, {1}, {2}",
+    "__cannot_find_data": "{0} - chapter number, {1} - chunk number, {2} - frame word",
+
+    "resource_notes": "Notes",
+    "resource_words": "Mots",
+    "resource_questions": "Questions",
+    "project_title": "Titre du projet",
+    "story_title": "Titre de l'article",
+    "story_reference": "Référence de l'article",
+
+    "story_chunk_title": "{0}: {1}",
+    "__story_chunk_title": "{0} - chunk title, {1} - frame number",
+
+    "project_chapter_title": "{0} {1} Titre",
+    "__project_chapter_title": "{0} - book name, {1} - chapter number",
+
+    "closing_project_status": "Clôture du projet. Veuillez patienter...",
+    "loading_review_status": "Chargement de la page d'évaluation. Veuillez patienter...",
+    "project_empty": "Projet Vide",
+    "project_nothing_to_review": "Ce projet n'a rien à voir avec la révision",
+    "result": "Résultat",
+
+    "chunks_marked_done_result": "{0} morceaux sur {1} marqués comme faits",
+    "__chunks_marked_done_result": "{0} - quantity of chunks marked as done, {1} - total chunks number",
 
     "__file75": "ts-translate-sidebar.html",
     "home": "Acceuil",
@@ -508,6 +598,16 @@
     "view-week": "Edition-Revision",
     "warning": "Conflits",
     "mark_chunks_done": "Marquer tous les morceaux terminés",
+    "first-page": "Le début",
+    "last-page": "La fin",
+    "previous_letter": "Lettre Précédente",
+    "previous_chapter": "Chapitre Précédent",
+    "next_letter": "Lettre Suivante",
+    "next_chapter": "Chapitre Suivant",
+    "previous_word": "Mot Précédent",
+    "previous_chunk": "Morceau Précédent",
+    "next_word": "Mot Suivant",
+    "next_chunk": "Morceau Suivant",
 
     "__folder19": "ts-updates",
     "__file76": "ts-update-level-one.html",
