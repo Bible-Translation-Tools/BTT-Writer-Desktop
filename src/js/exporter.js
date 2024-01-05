@@ -169,9 +169,12 @@ function ExportManager(configurator, git) {
                                     content += "\\c " + chunk.chunkmeta.chapter + "\n";
                                     currentChapter = chunk.chunkmeta.chapter;
                                 }
-                                if (chunk.chunkmeta.frame === 0 && chunk.transcontent) {
-                                    // Write chapter label to \cl marker
-                                    content += "\\cl " + chunk.transcontent + "\n";
+                                if (chunk.chunkmeta.frame === 0) {
+                                    if (chunk.transcontent) {
+                                        // Write chapter label to \cl marker
+                                        content += "\\cl " + chunk.transcontent + "\n";
+                                    }
+                                    content += "\\p\n";
                                     return;
                                 }
                                 if (chunk.transcontent) {
