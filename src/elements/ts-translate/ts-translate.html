@@ -742,7 +742,7 @@
             };
 
             mythis.set('options', {});
-            mythis.set('options.body', "Loading project. Please wait...");
+            mythis.set('options.body', mythis.translate("loading_project"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
@@ -1438,7 +1438,7 @@
             var mythis = this;
 
             mythis.set('options', {});
-            mythis.set('options.body', "Loading project. Please wait...");
+            mythis.set('options.body', mythis.translate("loading_project"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
@@ -1562,6 +1562,10 @@
         setleftanimation: function () {
             this.animationConfig.exit.name = 'slide-left-animation';
             this.animationConfig.entry.name = 'slide-from-left-animation';
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
         ready: function() {

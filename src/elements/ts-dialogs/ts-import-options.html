@@ -70,24 +70,24 @@
     <template>
 
         <div id="header">
-            <h2>{{locale.import_options_title}}</h2>
+            <h2>{{translate("import_options_title")}}</h2>
         </div>
         <div id="body">
             <div class="option" on-tap="repo">
-                <span class="optiontitle">{{locale.server_import_1}}<iron-icon class="icon" icon="info" title="{{locale.server_import_2}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("server_import_1")}}<iron-icon class="icon" icon="info" title="{{translate('server_import_2')}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="project">
-                <span class="optiontitle">{{locale.project_import_1}}<iron-icon class="icon" icon="info" title="{{locale.project_import_2}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("project_import_1")}}<iron-icon class="icon" icon="info" title="{{translate('project_import_2')}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="usfm">
-                <span class="optiontitle">{{locale.usfm_import_1}}<iron-icon class="icon" icon="info" title="{{locale.usfm_import_2}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("usfm_import_1")}}<iron-icon class="icon" icon="info" title="{{translate('usfm_import_2')}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="container">
-                <span class="optiontitle">{{locale.source_import_1}}<iron-icon class="icon" icon="info" title="{{locale.source_import_2}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("source_import_1")}}<iron-icon class="icon" icon="info" title="{{translate('source_import_2')}}"></iron-icon></span>
             </div>
         </div>
         <div id="footer">
-            <paper-button dialog-dismiss>{{locale.cancel}}</paper-button>
+            <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
         </div>
 
     </template>
@@ -101,10 +101,6 @@
         is: 'ts-import-options',
 
         properties: {
-            locale: {
-              type: Object,
-              value: {}
-            }
         },
 
         project: function () {
@@ -123,10 +119,13 @@
             this.fire('container');
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function () {
             var shell = require('electron').shell;
             var links = this.$.header.getElementsByTagName('a');
-            this.set('locale', App.locale.dictionary);
             for (var i = 0; i < links.length; i++) {
                 links[i].addEventListener('click', function (event) {
                     event.preventDefault();

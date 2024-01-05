@@ -45,14 +45,14 @@
     <template>
 
         <div id="header">
-            <h2>{{locale.project_change}}</h2>
+            <h2>{{translate("project_change")}}</h2>
         </div>
         <div id="body">
-            <p>{{locale.change_warning1}} <span>[[currentproject.projectmeta.project.name]]</span> {{locale.change_warning2}} <span>[[currentproject.projectmeta.target_language.name]]</span> {{locale.change_warning3}}</p>
+            <p>{{translate("change_warning1")}} <span>[[currentproject.projectmeta.project.name]]</span> {{translate("change_warning2")}} <span>[[currentproject.projectmeta.target_language.name]]</span> {{translate("change_warning3")}}</p>
         </div>
         <div id="footer">
-            <paper-button dialog-dismiss>{{locale.no}}</paper-button>
-            <paper-button dialog-confirm on-tap="importchanges">{{locale.yes}}</paper-button>
+            <paper-button dialog-dismiss>{{translate("no")}}</paper-button>
+            <paper-button dialog-confirm on-tap="importchanges">{{translate("yes")}}</paper-button>
         </div>
 
     </template>
@@ -78,10 +78,6 @@
             currentuser: {
                 type: Object,
                 value: {}
-            },
-            locale: {
-                type: Object,
-                value: {}
             }
         },
 
@@ -95,8 +91,11 @@
                 });
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function () {
-            this.set('locale', App.locale.dictionary);
         }
 
     });

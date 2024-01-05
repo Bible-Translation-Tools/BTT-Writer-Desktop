@@ -74,27 +74,27 @@
     <template>
 
         <div id="header">
-            <h2>{{locale.upload_options}}</h2>
+            <h2>{{translate("upload_options")}}</h2>
         </div>
         <div id="body">
             <div class="option" on-tap="upload">
-                <span class="optiontitle">{{locale.to_server}}<iron-icon class="icon" icon="info" title="{{locale.to_server_text}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("to_server")}}<iron-icon class="icon" icon="info" title="{{translate('to_server_text')}}"></iron-icon></span>
             </div>
             <div class$="[[checkusfmclass(currentproject.projectmeta.project_type_class, currentproject.projectmeta.format, currentproject.projectmeta.source_translations)]]" on-tap="checkusfm">
-                <span class="optiontitle">{{locale.to_usfm}}<iron-icon class="icon" icon="info" title="{{locale.to_usfm_text}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("to_usfm")}}<iron-icon class="icon" icon="info" title="{{translate('to_usfm_text')}}"></iron-icon></span>
             </div>
             <div class$="[[checkmarkdownclass(currentproject.projectmeta.project_type_class, currentproject.projectmeta.format, currentproject.projectmeta.source_translations)]]" on-tap="checkusfm">
-                <span class="optiontitle">{{locale.to_text}}<iron-icon class="icon" icon="info" title="{{locale.to_text_text}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("to_text")}}<iron-icon class="icon" icon="info" title="{{translate('to_text_text')}}"></iron-icon></span>
             </div>
             <div class$="[[checkprintclass(currentproject.projectmeta.project_type_class, currentproject.projectmeta.source_translations)]]" on-tap="checkprint">
-                <span class="optiontitle">{{locale.to_pdf}}<iron-icon class="icon" icon="info" title="{{locale.to_pdf_text}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("to_pdf")}}<iron-icon class="icon" icon="info" title="{{translate('to_pdf_text')}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="project">
-                <span class="optiontitle">{{locale.to_project}}<iron-icon class="icon" icon="info" title="{{locale.to_project_text}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("to_project")}}<iron-icon class="icon" icon="info" title="{{translate('to_project_text')}}"></iron-icon></span>
             </div>
         </div>
         <div id="footer">
-            <paper-button dialog-dismiss>{{locale.cancel}}</paper-button>
+            <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
         </div>
 
     </template>
@@ -109,10 +109,6 @@
 
         properties: {
             currentproject: {
-                type: Object,
-                value: {}
-            },
-            locale: {
                 type: Object,
                 value: {}
             }
@@ -146,6 +142,10 @@
             this.fire('checkusfm');
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function () {
             var shell = require('electron').shell;
             var links = this.$.header.getElementsByTagName('a');
@@ -155,7 +155,6 @@
                     shell.openExternal(this.href);
                 });
             };
-            this.set('locale', App.locale.dictionary);
         }
 
     });

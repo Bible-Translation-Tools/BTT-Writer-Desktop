@@ -45,14 +45,14 @@
     <template>
 
         <div id="header">
-            <h2>{{locale.source_exists}}</h2>
+            <h2>{{translate("source_exists")}}</h2>
         </div>
         <div id="body">
-            <p>Do you want to overwrite the existing source text?</p>
+            <p>{{translate("source_warning")}}</p>
         </div>
         <div id="footer">
-            <paper-button dialog-dismiss>{{locale.cancel}}</paper-button>
-            <paper-button dialog-confirm on-tap="overwrite">{{locale.confirm}}</paper-button>
+            <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
+            <paper-button dialog-confirm on-tap="overwrite">{{translate("confirm")}}</paper-button>
         </div>
 
     </template>
@@ -66,10 +66,6 @@
         is: 'ts-container-confirm',
 
         properties: {
-            locale: {
-                type: Object,
-                value: {}
-            }
         },
 
         overwrite: function () {
@@ -80,8 +76,11 @@
             }, 500);
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function () {
-            this.set('locale', App.locale.dictionary);
         }
 
     });

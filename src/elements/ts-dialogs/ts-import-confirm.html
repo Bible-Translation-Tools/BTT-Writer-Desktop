@@ -46,15 +46,15 @@
     <template>
 
         <div id="header">
-            <h2>{{locale.project_exists}}</h2>
+            <h2>{{translate("project_exists")}}</h2>
         </div>
         <div id="body">
-            <p>{{locale.project_exists_2}}</p>
+            <p>{{translate("project_exists_2")}}</p>
         </div>
         <div id="footer">
-            <paper-button dialog-confirm on-tap="cancel">{{locale.cancel}}</paper-button>
-            <paper-button dialog-confirm on-tap="merge">{{locale.merge}}</paper-button>
-            <paper-button dialog-confirm on-tap="overwrite">{{locale.overwrite}}</paper-button>
+            <paper-button dialog-confirm on-tap="cancel">{{translate("cancel")}}</paper-button>
+            <paper-button dialog-confirm on-tap="merge">{{translate("merge")}}</paper-button>
+            <paper-button dialog-confirm on-tap="overwrite">{{translate("overwrite")}}</paper-button>
         </div>
 
     </template>
@@ -99,8 +99,11 @@
             }, 500);
         },
 
-        ready: function () {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function () {
         }
 
     });

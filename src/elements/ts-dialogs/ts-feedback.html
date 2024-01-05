@@ -50,15 +50,15 @@
     <template>
 
         <div id="header">
-            <h2>{{locale.feedback}}</h2>
-            <p><iron-icon icon="notification:wifi"></iron-icon> {{locale.internet_warning}}</p>
+            <h2>{{translate("feedback")}}</h2>
+            <p><iron-icon icon="notification:wifi"></iron-icon> {{translate("internet_warning")}}</p>
         </div>
         <div id="body">
-            <input is="iron-input" bind-value="{{feedback}}" placeholder="{{locale.describe_problem}}">
+            <input is="iron-input" bind-value="{{feedback}}" placeholder="{{translate('describe_problem')}}">
         </div>
         <div id="footer">
-            <paper-button on-tap="close">{{locale.cancel}}</paper-button>
-            <paper-button on-tap="send">{{locale.confirm}}</paper-button>
+            <paper-button on-tap="close">{{translate("cancel")}}</paper-button>
+            <paper-button on-tap="send">{{translate("confirm")}}</paper-button>
         </div>
 
     </template>
@@ -76,10 +76,6 @@
                 type: String,
                 value: "",
                 notify: true
-            },
-            locale: {
-                type: Object,
-                value: {}
             }
         },
 
@@ -91,8 +87,11 @@
             this.fire('send');
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function () {
-            this.set('locale', App.locale.dictionary);
         }
 
     });

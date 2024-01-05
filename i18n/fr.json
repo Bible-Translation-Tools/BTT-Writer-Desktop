@@ -103,7 +103,7 @@
     "with_full": "Justifier le texte",
     "with_newpages": "Nouvelle page pour chaque chapitre",
     "with_preview": "Créer un aperçu",
-    "with_title": "Language and book title on each page",
+    "with_title": "Langue et titre du livre à chaque page",
 
     "__file9": "ts-repo-search.html",
     "username": "Nom d'Utilisateur",
@@ -272,6 +272,7 @@
     "import_complete_text": "Votre projet est importé avec succès",
     "import_failed": "Echec d'Importation",
     "import_failed_text": "Une erreur s'est produite lors de l'importation de votre projet.",
+    "upload_failed": "Échec du téléchargement",
     "updates": "clées pour mise-à-jours",
     "updating_target_status": "Mise à jour de la liste des Langues Cibles. Cela peut prendre un peu de temps. Veuillez patienter...",
     "number_target_updates": "diff + ' Langues Cibles ont été ajoutées'",
@@ -308,6 +309,9 @@
     "creating_project_file_status": "En cours de créer le fichier projet. Veuillez patienter...",
     "preparing_print_status": "En cours de preparer l'impression. Veuillez patienter...",
     "exporting_project_status": "En cours d'exporter le projet. Veuillez patienter...",
+    "updating_index_file_status": "Mise à jour du fichier index.sqlite de la bibliothèque. Cela peut prendre un certain temps. Veuillez patienter...",
+    "download_index_file_error": "Une erreur s'est produite lors du téléchargement du fichier index.sqlite.",
+    "read_file_error": "Une erreur s'est produite lors de la lecture du fichier: {0}",
 
     "sending_feedback_status": "En cours d'envoyer la réaction. Veuillez patienter...",
     "feedback_sent": "Réaction Transmise",
