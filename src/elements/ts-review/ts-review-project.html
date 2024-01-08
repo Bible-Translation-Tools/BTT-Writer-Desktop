@@ -39,7 +39,7 @@
                 <ts-review-chapter chapter="[[chapter]]"></ts-review-chapter>
             </template>
             <div id="button">
-                <paper-button raised id="next" on-tap="next">{{locale.next}}</paper-button>
+                <paper-button raised id="next" on-tap="next">{{translate("next")}}</paper-button>
             </div>
         </div>
 
@@ -68,10 +68,6 @@
             chapters: {
                 type: Array,
                 value: []
-            },
-            locale: {
-                type: Object,
-                value: {}
             }
         },
 
@@ -142,7 +138,7 @@
                 var chapter = parseInt(chap) || 0;
                 var reference;
                 if (chap === "front") {
-                    reference = mythis._lookupLocaleString("project_details");
+                    reference = mythis.translate("project_details");
                 } else if (typeclass === "extant") {
                     reference = name;
                 } else {
@@ -175,16 +171,11 @@
             this.fire('next');
         },
 
-        _lookupLocaleString: function (keyValue) {
-            let localeText = this.locale[keyValue];
-            if (localeText == undefined) {
-                localeText = keyValue;
-            }
-            return localeText;
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
         ready: function() {
-            this.set('locale', App.locale.dictionary);
         }
 
     });
