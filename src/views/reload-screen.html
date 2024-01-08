@@ -17,9 +17,11 @@
 
     <script>
     (function () {
+        var path = require('path');
+        var i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
         var splash = document.getElementById('splash');
 
-        splash.content = {title: "Reloading", subtitle: "Please wait...", message: ""};
+        splash.content = {title: i18n.translate("reloading"), subtitle: i18n.translate("please_wait"), message: ""};
     })();
     </script>
 </body>

@@ -673,7 +673,9 @@
     "__folder20": "views",
     "__file80": "splash-screen.html",
     "loading_text": "Charchement de la fenêtre principale...",
+    
     "version_title": "Version {0}",
+    "__version_title": "{0} - version number",
 
     "status": "Situation",
     "idle": "Inactif",
@@ -707,5 +709,52 @@
     
     "__file82": "printer.js",
     "write_to_file_failed": "Impossible d'écrire dans le fichier. Il se peut qu'il soit déjà ouvert.",
-    "create_file_failed": "Il y a eu un problème lors de la création du fichier."
+    "create_file_failed": "Il y a eu un problème lors de la création du fichier.",
+
+    "__file83": "database.js",
+    "download_unknown_error": "Erreur inconnue lors du téléchargement",
+    "source_on_server_not_found": "Source non trouvée sur le serveur",
+
+    "rc_doesnt_exist": "Le conteneur de ressources {0} n'existe pas",
+    "__rc_doesnt_exist": "{0} - resource container id",
+
+    "__file84": "exporter.js",
+    "backup_location_not_found": "L'emplacement de la sauvegarde n'a pas été trouvé. Attachez un disque externe ou modifiez l'emplacement de la sauvegarde dans les paramètres.",
+    "project_export_format_not_supported": "Nous ne prenons pas encore en charge l'exportation de ce format de projet.",
+    "project_export_type_not_supported": "Nous ne pouvons pas encore exporter ce type de projet.",
+
+    "__file85": "gitnative.js",
+    
+    "git_ver_outdated": "Votre version de Git n'est pas à jour. Nous avons détecté la version {0}, mais l'application a besoin d'au moins la version {1} pour fonctionner.",
+    "__git_ver_outdated": "{0} - current git version, {1} - minimum git version",
+
+    "git_not_installed": "Git n'est pas installé. Il est nécessaire pour exécuter BTT-Writer Desktop.",
+    "git_initialized": "Git est initialisé",
+    "files_committed": "Files are committed",
+    
+    "projects_merge_error": "Erreur lors de la fusion des projets: {0}",
+    "__projects_merge_error": "{0} - projects list",
+
+    "merge_finished": "Fusion terminée",
+
+    "starting_push": "Démarrage de la poussée vers le serveur...\n {0}",
+    "__starting_push": "{0} - push message",
+
+    "files_pushed": "Les fichiers sont poussés",
+    "project_cloned": "Projet cloné",
+
+    "__file86": "importer.js",
+    "could_not_restore_project": "Could not restore this project",
+    
+    "extract_file_error": "Erreur lors de l'extraction du fichier: {0}",
+    "__extract_file_error": "{0} - error details",
+
+    "parse_file_error": "Erreur d'analyse du fichier: {0}",
+    "__parse_file_error": "{0} - error details",
+
+    "not_valid_usfm_file": "Il ne s'agit pas d'un fichier USFM valide.",
+
+    "__file87": "reload-screen.html",
+    "reloading": "Rechargement",
+    "please_wait": "Veuillez patienter..."
 }

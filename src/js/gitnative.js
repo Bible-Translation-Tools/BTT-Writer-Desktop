@@ -64,6 +64,7 @@ function GitManager() {
         },
 
         verifyGit: function () {
+            var mythis = this;
             var installed = false;
 
             return this.getVersion()
@@ -78,9 +79,9 @@ function GitManager() {
                     var msg = "";
 
                     if (installed) {
-                        msg = "Your version of Git is out of date. We detected "  + err + ", but the app needs at least version " + minGitVersion + " in order to run.";
+                        msg = mythis.translate("git_ver_outdated", err, minGitVersion);
                     } else {
-                        msg = "Git is not installed. It is required to run BTT-Writer Desktop."
+                        msg = mythis.translate("git_not_installed")
                     }
                     throw msg;
                 });
@@ -91,15 +92,17 @@ function GitManager() {
         },
 
         init: function (dir) {
+            var mythis = this;
             return utils.fs.readdir(dir).then(function (files) {
                 var init = cmd().cd(dir).and.do('git init -b master');
                 var hasGitFolder = (files.indexOf('.git') >= 0);
 
                 return !hasGitFolder && init.run();
-            }).then(logr('Git is initialized'));
+            }).then(logr(mythis.translate("git_initialized")));
         },
 
         commitAll: function (user, dir) {
+            var mythis = this;
             var msg = new Date();
             var username = user.username || 'tsDesktop';
             var email = user.email || 'you@example.com';
@@ -117,7 +120,7 @@ function GitManager() {
                     }
                     return true;
                 })
-                .then(logr('Files are committed'));
+                .then(logr(mythis.translate("files_committed")));
         },
 
         merge: function (user, localPath, remotePath) {
@@ -185,12 +188,12 @@ function GitManager() {
                 })
                 .catch(function (err) {
                     if (err.stderr != undefined) {
-                        throw "Error while merging projects: " + err.stderr;
+                        throw mythis.translate("projects_merge_error", err.stderr);
                     } else {
                         console.error(err);
                     }
                 })
-                .then(utils.logr("Finished merging"))
+                .then(utils.logr(mythis.translate("merge_finished")))
                 .then(function () {
                     return {conflicts: conflicts, manifest: mergedManifest};
                 });
@@ -200,6 +203,7 @@ function GitManager() {
         push: function (user, dir, repo, opts) {
             opts = opts || {};
 
+            var mythis = this;
             var ssh = `ssh -i "${user.reg.paths.privateKeyPath}" -o "StrictHostKeyChecking no"`;
             var pushUrl = user.reg ? repo.ssh_url : repo.html_url;
             var gitSshPush = `git push -u ${pushUrl} master --follow-tags`;
@@ -207,16 +211,17 @@ function GitManager() {
             var tagName = createTagName(new Date());
             var tag = opts.requestToPublish ? cmd().cd(dir).and.do(`git tag -a ${tagName} -m "Request to Publish"`).run() : Promise.resolve();
 
-            console.log('Starting push to server...\n' + push);
+            console.log(mythis.translate("starting_push", push));
 
             return tag
                 .then(function () {
                     return push.run();
                 })
-                .then(logr('Files are pushed'));
+                .then(logr(mythis.translate("files_pushed")));
         },
 
         clone: function (repoUrl, localPath) {
+            var mythis = this;
             var repoName = repoUrl.replace(/\.git/, '').split('/').pop();
             var savePath = localPath.includes(repoName) ? localPath : path.join(localPath, repoName);
             var clone = cmd().do(`git clone ${repoUrl} "${savePath}"`);
@@ -228,8 +233,12 @@ function GitManager() {
                     }
                     return err;
                 })
-                .then(logr('Project cloned'));
-        }
+                .then(logr(mythis.translate("project_cloned")));
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
     };
 }
 

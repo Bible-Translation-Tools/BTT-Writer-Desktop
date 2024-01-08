@@ -13,6 +13,7 @@ function ImportManager(configurator, migrator, dataManager) {
     return {
 
         extractBackup: function(filePath) {
+            var mythis = this;
             var tmpDir = configurator.getValue('tempDir');
             var targetDir = configurator.getValue('targetTranslationsDir');
             var basename = path.basename(filePath, '.tstudio');
@@ -33,7 +34,7 @@ function ImportManager(configurator, migrator, dataManager) {
                 .then(migrator.migrateAll.bind(migrator))
                 .then(function (results) {
                     if (!results.length) {
-                        throw new Error ("Could not restore this project");
+                        throw new Error (mythis.translate("could_not_restore_project"));
                     }
                     return results;
                 })
@@ -54,7 +55,7 @@ function ImportManager(configurator, migrator, dataManager) {
                     });
                 })
                 .catch(function (err) {
-                    throw "Error while extracting file: " + err;
+                    throw mythis.translate("extract_file_error", err);
                 })
                 .then(Promise.all.bind(Promise));
         },
@@ -79,6 +80,7 @@ function ImportManager(configurator, migrator, dataManager) {
         },
 
         importFromUSFM: function (filepath, projectmeta) {
+            var mythis = this;
             var parser = new UsfmParser();
 
             return parser.load(filepath)
@@ -86,7 +88,7 @@ function ImportManager(configurator, migrator, dataManager) {
                     var parsedData = parser.parse();
 
                     if (JSON.stringify(parsedData) === JSON.stringify({})) {
-                        throw new Error('This is not a valid USFM file.');
+                        throw new Error(mythis.translate("not_valid_usfm_file"));
                     }
                     var chunks = [];
                     var markers = dataManager.getChunkMarkers(projectmeta.project.id);
@@ -142,9 +144,13 @@ function ImportManager(configurator, migrator, dataManager) {
                     return chunks;
                 })
                 .catch(function (err) {
-                    throw "Error occurred parsing file: " + err;
+                    throw mythis.translate("parse_file_error", err);
                 });
-        }
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
     };
 }
 
