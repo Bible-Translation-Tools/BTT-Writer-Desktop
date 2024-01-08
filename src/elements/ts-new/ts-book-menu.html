@@ -81,7 +81,7 @@
               <iron-icon icon="chevron-right"></iron-icon>
               <span class="click" on-tap="togroup">[[newdata.category.name]]</span>
               <iron-icon icon="chevron-right"></iron-icon>
-              <span><em>Choose a project</em></span>
+              <span><em>{{translate("choose_project")}}</em></span>
           </div>
           <iron-list id="list" items="[[newdata.category.data]]" as="project">
               <template>
@@ -152,8 +152,11 @@
           this.set('selected', 0);
       },
 
-      ready: function() {
+      translate: function (key, ...args) {
+          return App.locale.translate(key, ...args);
+      },
 
+      ready: function() {
       }
 
   });

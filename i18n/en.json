@@ -76,7 +76,6 @@
     "describe_problem": "Describe the problem you are experiencing",
 
     "__file5": "ts-import-confirm.html",
-    "project_exists": "Project Already Exists",
     "project_exists_2": "This project already exists locally. How would you like to proceed?",
     "merge": "Merge Projects",
     "overwrite": "Overwrite Project",
@@ -373,6 +372,8 @@
 
     "__folder6": "ts-new",
     "__file30": "ts-book-menu.html",
+    "choose_project": "Choose a project",
+
     "__file31": "ts-language-menu.html",
     "import_project": "Import Project",
     "change_language": "Change Language",
@@ -380,10 +381,31 @@
 
     "__file32": "ts-new.html",
     "new_project": "New Project",
+    "overwrite_title": "Overwrite?",
     "overwrite_query": "This target translation already exists. Overwrite?",
+    "create_project_status": "Creating project. Please wait...",
+    "unknown_error": "Unknown Error",
+    "project_info_corrupt_error": "The project information is corrupt",
+    "duplicate_found_error": "Duplicate Found",
+    "project_exists": "This project already exists",
+    "no_translation": "No Translation",
+    "project_doesnt_exist_error": "Cannot start this project until a standard translation project exists",
 
     "__file33": "ts-project-menu.html",
+    "choose_category": "Choose a category",
+    "old_testament": "Old Testament",
+    "new_testament": "New Testament",
+    "other_project": "Other",
+    
     "__file34": "ts-type-menu.html",
+    "choose_type": "Choose a type",
+    "text_type": "Text",
+    "ulb_type": "Unlocked Literal Bible",
+    "udb_type": "Unlocked Dynamic Bible",
+    "obs_type": "Open Bible Stories",
+    "tn_type": "Notes",
+    "tw_type": "Words",
+    "tq_type": "Questions",
 
     "__folder7": "ts-print",
     "__file35": "ts-print.html",

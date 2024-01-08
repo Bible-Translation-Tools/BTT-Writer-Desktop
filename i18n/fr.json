@@ -76,7 +76,6 @@
     "describe_problem": "Expliquez le problème que vous rencontrez",
 
     "__file5": "ts-import-confirm.html",
-    "project_exists": "Le Projet Existe Déjà",
     "project_exists_2": "Ce projet existe déjà sur l'appareil. Comment preferez-vous proceder?",
     "merge": "Fusionnez les Projets",
     "overwrite": "Ecrasez le Projet sur cet appareil",
@@ -373,6 +372,8 @@
 
     "__folder6": "ts-new",
     "__file30": "ts-book-menu.html",
+    "choose_project": "Choisir un projet",
+
     "__file31": "ts-language-menu.html",
     "import_project": "Importer un Projet",
     "change_language": "Changer de Langue",
@@ -381,9 +382,29 @@
     "__file32": "ts-new.html",
     "new_project": "Projet Nouveau",
     "overwrite_query": "Cette traduction cible éxiste déjà. Ecrasez?",
+    "create_project_status": "Création du projet. Veuillez patienter...",
+    "unknown_error": "Erreur inconnue",
+    "project_info_corrupt_error": "Les informations sur le projet sont corrompues",
+    "duplicate_found_error": "Duplicata trouvé",
+    "project_exists": "Ce projet existe déjà",
+    "no_translation": "Absence de traduction",
+    "project_doesnt_exist_error": "Impossible de lancer ce projet tant qu'un projet de traduction standard n'existe pas.",
 
     "__file33": "ts-project-menu.html",
+    "choose_category": "Choisir une catégorie",
+    "old_testament": "Ancien Testament",
+    "new_testament": "Nouveau Testament",
+    "other_project": "Autres",
+
     "__file34": "ts-type-menu.html",
+    "choose_type": "Choisir un type",
+    "text_type": "Texte",
+    "ulb_type": "Bible littérale déverrouillée",
+    "udb_type": "Bible dynamique débloquée",
+    "obs_type": "Histoires bibliques ouvertes",
+    "tn_type": "Notes",
+    "tw_type": "Mots",
+    "tq_type": "Questions",
 
     "__folder7": "ts-print",
     "__file35": "ts-print.html",

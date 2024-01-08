@@ -123,7 +123,7 @@
         <div id="header">
             <div id="title">
                 <iron-icon class="click" icon="arrow-back" on-tap="gohome"></iron-icon>
-                <span class="click" on-tap="gohome">{{locale.home}}</span>
+                <span class="click" on-tap="gohome">{{translate("home")}}</span>
                 <iron-icon icon="chevron-right"></iron-icon>
                 <span>[[createtitle(route)]]</span>
             </div>
@@ -138,14 +138,14 @@
 
         <paper-dialog id="confirmimport" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
             <div class="header">
-                <h2>Overwrite?</h2>
+                <h2>{{translate("overwrite_title")}}</h2>
             </div>
             <div class="body">
-                <p>{{locale.overwrite_query}}</p>
+                <p>{{translate("overwrite_query")}}</p>
             </div>
             <div class="buttons">
-                <paper-button dialog-dismiss>{{locale.cancel}}</paper-button>
-                <paper-button on-tap="startimport">{{locale.confirm}}</paper-button>
+                <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
+                <paper-button on-tap="startimport">{{translate("confirm")}}</paper-button>
             </div>
         </paper-dialog>
 
@@ -154,11 +154,11 @@
                 <h2>{{file_exists}}</h2>
             </div>
             <div class="body">
-                <p>{{locale.merge_warning}}</p>
+                <p>{{translate("merge_warning")}}</p>
             </div>
             <div class="buttons">
-                <paper-button dialog-dismiss>{{locale.ancel}}</paper-button>
-                <paper-button on-tap="firechange">{{locale.continue}}</paper-button>
+                <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
+                <paper-button on-tap="firechange">{{translate("continue")}}</paper-button>
             </div>
         </paper-dialog>
 
@@ -215,10 +215,6 @@
                 type: Object,
                 value: {}
             },
-            locale: {
-                type: Object,
-                value: {}
-            },
             animationConfig: {
                 value: function () {
                     return {
@@ -256,11 +252,11 @@
             var title = "";
             if (route === "new") {
                 if (this.importdata.importing) {
-                    title = this.locale.import_project;
+                    title = this.translate("import_project");
                 } else if (this.changedata.changing) {
-                    title = this.locale.change_language;
+                    title = this.translate("change_language");
                 } else {
-                    title = this.locale.new_project;
+                    title = this.translate("new_project");
                 }
             }
             return title;
@@ -279,7 +275,7 @@
             var projectarray = this.projectlist;
 
             mythis.set('options', {});
-            mythis.set('options.body', "Creating project. Please wait...");
+            mythis.set('options.body', mythis.translate("create_project_status"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
@@ -298,8 +294,8 @@
             var newprojectmeta = App.projectsManager.updateManifestToMeta(newprojectmanifest);
 
             if (newprojectmeta === null) {
-                mythis.set('options.title', "Unknown Error");
-                mythis.set('options.body', "The project information is corrupt");
+                mythis.set('options.title', mythis.translate("unknown_error"));
+                mythis.set('options.body', mythis.translate("project_info_corrupt_error"));
                 mythis.set('options.loading', false);
                 return;
             }
@@ -316,8 +312,8 @@
                         mythis.$.confirmimport.open();
                         return;
                     } else {
-                        mythis.set('options.title', "Duplicate Found");
-                        mythis.set('options.body', "This project already exists");
+                        mythis.set('options.title', mythis.translate("duplicate_found_error"));
+                        mythis.set('options.body', mythis.translate("project_exists"));
                         mythis.set('options.loading', false);
                         return;
                     }
@@ -325,8 +321,8 @@
             }
 
             if (!typedata.allowed) {
-                mythis.set('options.title', "No Translation");
-                mythis.set('options.body', "Cannot start this project until a standard translation project exists");
+                mythis.set('options.title', mythis.translate("no_translation"));
+                mythis.set('options.body', mythis.translate("project_doesnt_exist_error"));
                 mythis.set('options.loading', false);
                 return;
             }
@@ -366,16 +362,11 @@
             this.set('route', "home");
         },
 
-        ready: function() {
-            this.set('locale', App.locale.dictionary);
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
-        _lookupLocaleString: function (keyValue) {
-            let localeText = this.locale[keyValue];
-            if (localeText === undefined) {
-                localeText = keyValue;
-            }
-            return localeText;
+        ready: function() {
         }
 
     });
