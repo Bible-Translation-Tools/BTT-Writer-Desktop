@@ -395,6 +395,10 @@
 
     "__folder8": "ts-profile",
     "__file36": "ts-create-option.html",
+    "server_account_create": "Création d'un compte serveur",
+    "email_label": "Email",
+    "verify_password": "Vérifier le mot de passe",
+    "submit": "Soumettre",
 
     "__file37": "ts-local-option.html",
     "local_profile_h": "Profil d'Utilisateur Local",

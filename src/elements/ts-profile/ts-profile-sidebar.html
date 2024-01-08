@@ -10,7 +10,7 @@
 
         :host {
             background: var(--primary-color);
-            color: var(--reverse-text-color);
+            color: white;
             min-width: 50px;
             align-self: stretch;
             display: flex;
@@ -33,7 +33,7 @@
         }
 
         paper-item:hover {
-            background: var(--accent-color-light);
+            background: var(--card-hover-color);
             cursor: pointer;
         }
 
@@ -43,8 +43,9 @@
 
         paper-menu {
             --paper-menu-selected-item: {
-                 font-weight: normal;
-             }
+                font-weight: normal;
+            };
+            background-color: var(--popup-background-color);
         }
 
         .smallicon {
@@ -64,7 +65,7 @@
         <paper-menu-button id="menu" horizontal-offset="10" vertical-offset="10" vertical-align="bottom">
             <iron-icon id="menuicon" class="dropdown-trigger" icon="more-vert"></iron-icon>
             <paper-menu class="dropdown-content">
-                <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>{{locale.settings}}</paper-item>
+                <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>{{translate("settings")}}</paper-item>
             </paper-menu>
         </paper-menu-button>
     </template>
@@ -82,10 +83,6 @@
                 type: String,
                 value: '',
                 notify: true
-            },
-            locale: {
-              type: Object,
-              value: {}
             }
         },
 
@@ -95,8 +92,11 @@
             this.set('route', 'settings');
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function() {
-            this.set('locale', App.locale.dictionary);
         }
 
     });

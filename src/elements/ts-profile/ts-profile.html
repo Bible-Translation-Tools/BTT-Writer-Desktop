@@ -68,7 +68,7 @@
                 <span id="backbutton">
                     <iron-icon class$="[[backclass(selected)]]" icon="arrow-back" on-tap="back"></iron-icon>
                 </span>
-                <span>{{locale.user_profile_label}}</span>
+                <span>{{translate("user_profile_label")}}</span>
             </div>
         </div>
 
@@ -112,10 +112,6 @@
             newinfo: {
                 type: Object,
                 value: {}
-            },
-            locale: {
-              type: Object,
-              value: {}
             },
             options: {
                 type: Object,
@@ -167,21 +163,21 @@
 
             if (!user.username || !user.password) {
                 mythis.set('options', {});
-                mythis.set('options.title', mythis._lookupLocaleString("incomplete_data"));
-                mythis.set('options.body', mythis._lookupLocaleString("complete_fields"));
+                mythis.set('options.title', mythis.translate("incomplete_data"));
+                mythis.set('options.body', mythis.translate("complete_fields"));
                 mythis.set('options.loading', false);
                 mythis.fire('iron-signal', {name: 'openloading'});
                 return;
             }
 
             mythis.set('options', {});
-            mythis.set('options.body', mythis._lookupLocaleString("verifying_login"));
+            mythis.set('options.body', mythis.translate("verifying_login"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
             return App.userManager.login(user)
                 .then(function (user) {
-                    mythis.set('options.body', mythis._lookupLocaleString("login_verified"));
+                    mythis.set('options.body', mythis.translate("login_verified"));
                     user.full_name = user.full_name === '' ? user.username : user.full_name;
                     setTimeout(function() {
                         mythis.reset();
@@ -189,15 +185,15 @@
                     }, 500);
                 })
                 .catch(function (err) {
-                    var errmessage = mythis._lookupLocaleString("login_error");
+                    var errmessage = mythis.translate("login_error");
                     if (err.syscall === "getaddrinfo") {
-                        errmessage = mythis._lookupLocaleString("connection_error");
+                        errmessage = mythis.translate("connection_error");
                     } else if (err.status === 404) {
-                        errmessage = mythis._lookupLocaleString("bad_user");
+                        errmessage = mythis.translate("bad_user");
                     } else if (err.status === 401) {
-                        errmessage = mythis._lookupLocaleString("bad_password");
+                        errmessage = mythis.translate("bad_password");
                     }
-                    mythis.set('options.title', mythis._lookupLocaleString("login_failed"));
+                    mythis.set('options.title', mythis.translate("login_failed"));
                     mythis.set('options.body', errmessage);
                     mythis.set('options.loading', false);
                     mythis.set('newinfo', {});
@@ -210,8 +206,8 @@
 
             if (!user.username || !user.password || !user.full_name || !user.email) {
                 mythis.set('options', {});
-                mythis.set('options.title', mythis._lookupLocaleString("incomplete_data"));
-                mythis.set('options.body', mythis._lookupLocaleString("complete_fields"));
+                mythis.set('options.title', mythis.translate("incomplete_data"));
+                mythis.set('options.body', mythis.translate("complete_fields"));
                 mythis.set('options.loading', false);
                 mythis.fire('iron-signal', {name: 'openloading'});
                 return;
@@ -258,16 +254,11 @@
                 });
         },
 
-        ready: function() {
-          this.set('locale', App.locale.dictionary);
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
-        _lookupLocaleString: function(keyValue) {
-            let localeText = this.locale[keyValue];
-            if (localeText === undefined) {
-                localeText = keyValue;
-            }
-            return localeText;
+        ready: function() {
         }
 
     });

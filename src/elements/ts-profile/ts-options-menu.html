@@ -48,19 +48,19 @@
 
         <div id="content">
             <div id="heading">
-                <span class="optiontitle">{{locale.option_setup}}</span>
+                <span class="optiontitle">{{translate("option_setup")}}</span>
             </div>
             <div class="option" on-tap="login">
-                <span class="optiontitle">{{locale.server_login}}</span>
-                <p>{{locale.server_login_alt}}</p>
+                <span class="optiontitle">{{translate("server_login")}}</span>
+                <p>{{translate("server_login_alt")}}</p>
             </div>
             <div class="option" on-tap="create">
-                <span class="optiontitle">{{locale.server_login_create}}</span>
-                <p>{{locale.server_login_create_alt}}</p>
+                <span class="optiontitle">{{translate("server_login_create")}}</span>
+                <p>{{translate("server_login_create_alt")}}</p>
             </div>
             <div class="option" on-tap="local">
-                <span class="optiontitle">{{locale.local_login}}</span>
-                <p>{{locale.local_login_alt}}</p>
+                <span class="optiontitle">{{translate("local_login")}}</span>
+                <p>{{translate("local_login_alt")}}</p>
             </div>
         </div>
 
@@ -83,10 +83,6 @@
                 type: Number,
                 value: 0,
                 notify: true
-            },
-            locale: {
-              type: Object,
-              value: {}
             }
         },
 
@@ -109,8 +105,11 @@
             this.set('selected', 3);
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function() {
-          this.set('locale', App.locale.dictionary);
         }
 
     });
