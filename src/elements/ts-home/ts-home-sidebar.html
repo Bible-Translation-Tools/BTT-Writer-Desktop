@@ -67,12 +67,12 @@
         <paper-menu-button id="menu" horizontal-offset="10" vertical-offset="10" vertical-align="bottom">
             <iron-icon id="menuicon" class="dropdown-trigger" icon="more-vert"></iron-icon>
             <paper-menu class="dropdown-content">
-                <paper-item on-tap="update"><iron-icon class="smallicon" icon="maps:local-library"></iron-icon>{{locale.update}}</paper-item>
-                <paper-item on-tap="importmenu"><iron-icon class="smallicon" icon="file-download"></iron-icon>{{locale.import}}</paper-item>
-                <paper-item on-tap="academy"><iron-icon class="smallicon" icon="book"></iron-icon>{{locale.translationAcademy}}</paper-item>
-                <paper-item on-tap="feedback"><iron-icon class="smallicon" icon="announcement"></iron-icon>{{locale.feedback}}</paper-item>
-                <paper-item on-tap="logout"><iron-icon class="smallicon" icon="perm-identity"></iron-icon>{{locale.logout}}</paper-item>
-                <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>{{locale.settings}}</paper-item>
+                <paper-item on-tap="update"><iron-icon class="smallicon" icon="maps:local-library"></iron-icon>{{translate("update")}}</paper-item>
+                <paper-item on-tap="importmenu"><iron-icon class="smallicon" icon="file-download"></iron-icon>{{translate("import")}}</paper-item>
+                <paper-item on-tap="academy"><iron-icon class="smallicon" icon="book"></iron-icon>{{translate("translationAcademy")}}</paper-item>
+                <paper-item on-tap="feedback"><iron-icon class="smallicon" icon="announcement"></iron-icon>{{translate("feedback")}}</paper-item>
+                <paper-item on-tap="logout"><iron-icon class="smallicon" icon="perm-identity"></iron-icon>{{translate("logout")}}</paper-item>
+                <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>{{translate("settings")}}</paper-item>
             </paper-menu>
         </paper-menu-button>
     </template>
@@ -90,10 +90,6 @@
                 type: String,
                 value: '',
                 notify: true
-            },
-            locale: {
-              type: Object,
-              value: {}
             }
         },
 
@@ -131,8 +127,11 @@
             App.ipc.send('open-academy', "");
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function() {
-            this.set('locale', App.locale.dictionary);
         }
 
     });

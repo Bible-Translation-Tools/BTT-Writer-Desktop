@@ -157,7 +157,7 @@
     "confirm": "Confirm",
 
     "file_exists": "File already exists",
-    "merge_warning": "This project already exists.  If you continue with this change, the two projects will be merged together.",
+    "merge_warning": "This project already exists. If you continue with this change, the two projects will be merged together.",
     "continue": "Continue",
 
     "__file13": "ts-home-sidebar.html",
