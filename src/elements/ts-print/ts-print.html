@@ -265,7 +265,7 @@
             }
 
             mythis.set('options', {});
-            mythis.set('options.body', "Creating PDF. Please wait...");
+            mythis.set('options.body', mythis.translate("creating_pdf_status"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
@@ -277,17 +277,17 @@
             setTimeout(function() {
                 return App.printManager.savePdf(resource, title, license, body, filePath, direction)
                     .then(function () {
-                        mythis.set('options.title', "PDF Created");
-                        mythis.set('options.body', "Your project has been successfully saved to a PDF.");
+                        mythis.set('options.title', mythis.translate("pdf_created"));
+                        mythis.set('options.body', mythis.translate("project_saved_pdf"));
                         mythis.set('options.loading', false);
                         mythis.goback();
                     })
                     .catch(function (err) {
-                        var errmessage = "An error occurred saving your project";
+                        var errmessage = mythis.translate("save_project_error");
                         if(err !== null) {
                             errmessage = err;
                         }
-                        mythis.set('options.title', "Print Failed");
+                        mythis.set('options.title', mythis.translate("print_failed"));
                         mythis.set('options.body', errmessage);
                         mythis.set('options.loading', false);
                     });

@@ -389,6 +389,11 @@
     "__file35": "ts-print.html",
     "print_preview_title": "Aperçu avant impression",
     "save_pdf": "Enregistrer en PDF",
+    "creating_pdf_status": "Création d'un PDF. Veuillez patienter...",
+    "pdf_created": "PDF Créé",
+    "project_saved_pdf": "Votre projet a été enregistré avec succès au format PDF.",
+    "save_project_error": "Une erreur s'est produite lors de l'enregistrement de votre projet",
+    "print_failed": "Échec de l'impression",
 
     "pdf_generated_by": "PDF générés par {0}",
     "__pdf_generated_by": "{0} - link to Prince library",
@@ -672,5 +677,9 @@
     "loading_utils": "Chargement des utilitaires...",
     "init_config": "Initialisation du configurateur...",
     "init_modules": "Initialisation des modules...",
-    "loading_ui": "Chargement de l'iu..."
+    "loading_ui": "Chargement de l'iu...",
+    
+    "__file82": "printer.js",
+    "write_to_file_failed": "Impossible d'écrire dans le fichier. Il se peut qu'il soit déjà ouvert.",
+    "create_file_failed": "Il y a eu un problème lors de la création du fichier."
 }

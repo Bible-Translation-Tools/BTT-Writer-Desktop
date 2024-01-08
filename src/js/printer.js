@@ -53,6 +53,7 @@ function PrintManager(configurator) {
         },
 
         savePdf: function (resource, title, license, body, filePath, direction) {
+            var mythis = this;
             var fontSizeMap = {
                 'small': '50%',
                 'normal': '100%',
@@ -86,10 +87,10 @@ function PrintManager(configurator) {
                     return utils.fs.remove(tempPath)
                         .then(function () {
                             if (err.stderr.includes("Permission denied")) {
-                                throw "Cannot write to file. It may already be open.";
+                                throw mythis.translate("write_to_file_failed");
                             } else {
                                 console.log(err);
-                                throw "There was a problem creating the file."
+                                throw mythis.translate("create_file_failed");
                             }
                         });
                 })
@@ -101,7 +102,11 @@ function PrintManager(configurator) {
 
         getLicense: function (filename) {
             return fs.readFileSync(path.join(srcDir, 'assets', filename), 'utf8');
-        }
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
     };
 }
 
