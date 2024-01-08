@@ -20,9 +20,12 @@
         var ipcRenderer = require('electron').ipcRenderer;
         var splash = document.getElementById('splash');
         var pack = require('../../package');
-        var versiontext = "Version " + pack.version;
+        var path = require('path');
+        var i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
 
-        splash.content = {title: "BTT Writer", subtitle: versiontext, message: "Loading main window..."};
+        var versiontext = i18n.translate("version_title", pack.version);
+
+        splash.content = {title: "BTT Writer", subtitle: versiontext, message: i18n.translate("loading_text")};
 
         const Configurator = require('../js/configurator').Configurator;
         const configurator = new Configurator();

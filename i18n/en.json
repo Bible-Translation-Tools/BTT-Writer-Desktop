@@ -263,6 +263,8 @@
     "__folder5": "ts-main",
     "__file24": "app-theme.html",
     "__file25": "ts-academy.html",
+    "loading_academy": "Loading Academy data...",
+
     "__file26": "ts-academy-titlebar.html",
 
     "__file27": "ts-app-titlebar.html",
@@ -671,6 +673,7 @@
     "__folder20": "views",
     "__file80": "splash-screen.html",
     "loading_text": "Loading main window...",
+    "version_title": "Version {0}",
 
     "status": "Status",
     "idle": "Idle",
@@ -700,6 +703,7 @@
     "init_config": "Initializing configurator...",
     "init_modules": "Initializing modules...",
     "loading_ui": "Loading UI...",
+    "setting_index_file": "Setting up index file...",
     
     "__file82": "printer.js",
     "write_to_file_failed": "Cannot write to file. It may already be open.",

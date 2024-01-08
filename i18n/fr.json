@@ -263,6 +263,8 @@
     "__folder5": "ts-main",
     "__file24": "app-theme.html",
     "__file25": "ts-academy.html",
+    "loading_academy": "Chargement des données de l'Académie...",
+
     "__file26": "ts-academy-titlebar.html",
 
     "__file27": "ts-app-titlebar.html",
@@ -381,6 +383,7 @@
 
     "__file32": "ts-new.html",
     "new_project": "Projet Nouveau",
+    "overwrite_title": "Écraser?",
     "overwrite_query": "Cette traduction cible éxiste déjà. Ecrasez?",
     "create_project_status": "Création du projet. Veuillez patienter...",
     "unknown_error": "Erreur inconnue",
@@ -670,6 +673,7 @@
     "__folder20": "views",
     "__file80": "splash-screen.html",
     "loading_text": "Charchement de la fenêtre principale...",
+    "version_title": "Version {0}",
 
     "status": "Situation",
     "idle": "Inactif",
@@ -699,6 +703,7 @@
     "init_config": "Initialisation du configurateur...",
     "init_modules": "Initialisation des modules...",
     "loading_ui": "Chargement de l'iu...",
+    "setting_index_file": "Mise en place du fichier d'index...",
     
     "__file82": "printer.js",
     "write_to_file_failed": "Impossible d'écrire dans le fichier. Il se peut qu'il soit déjà ouvert.",

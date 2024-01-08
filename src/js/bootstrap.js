@@ -149,7 +149,7 @@ process.stdout.write = console.log.bind(console);
         } catch(e) {}
 
         if (!indexstat) {
-            setMsg('Setting up index file...');
+            setMsg(i18n.translate("setting_index_file"));
             mkdirp.sync(libraryDir);
             var content = fs.readFileSync(srcDB);
             fs.writeFileSync(libraryPath, content);
