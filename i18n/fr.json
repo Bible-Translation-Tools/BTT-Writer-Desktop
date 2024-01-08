@@ -475,12 +475,25 @@
     "__folder15": "ts-resource",
     "__file56": "ts-resource-card.html",
     "__file57": "ts-resource-data.html",
+    "click_display_text": "Cliquez pour afficher le texte",
+
     "__file58": "ts-resource-display.html",
+    "see_also": "Voir aussi:",
+    "examples": "Exemples:",
+    "words_index": "Index des mots",
 
     "__folder16": "ts-review-mode",
     "__file59": "ts-review-card.html",
     "__file60": "ts-review-mode.html",
     "__file61": "ts-search-bar.html",
+    "search_in": "Recherche dans la:",
+    "source": "Source",
+    "target": "Cible",
+    "search_text": "Recherche de texte",
+
+    "found_in_chunks": "Trouvé en {0} morceaux.",
+    "__found_in_chunks": "{0} - number of chunks",
+
     "__folder17": "ts-source",
     "__file62": "ts-note-marker.html",
     "__file63": "ts-source-card.html",

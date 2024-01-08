@@ -78,31 +78,31 @@
 
         <paper-material id="content">
             <div id="header">
-                <paper-button on-tap="closeresource"><iron-icon icon="clear"></iron-icon>Close</paper-button>
+                <paper-button on-tap="closeresource"><iron-icon icon="clear"></iron-icon>{{translate("close")}}</paper-button>
             </div>
             <div id="body" class="sourcefont sourcesize">
                 <div id="textholder"></div>
                 <template is="dom-if" if="{{related.length}}">
-                    <h3>See Also:</h3>
+                    <h3>{{translate("see_also")}}</h3>
                     <template is="dom-repeat" items="{{related}}" as="word">
                         <p class="link" on-tap="newword">{{word.title}}</p>
                     </template>
                 </template>
                 <template is="dom-if" if="{{examples.length}}">
-                    <h3>Examples:</h3>
+                    <h3>{{translate("examples")}}</h3>
                     <template is="dom-repeat" items="{{examples}}" as="example">
                         <p class="link" on-tap="examplescroll"><span>{{chunks.0.projectmeta.project.name}}</span> <span>{{example.chapter}}</span>:<span>{{example.frame}}</span></p>
                     </template>
                 </template>
                 <template is="dom-if" if="{{allwords.length}}">
-                    <h3>Words Index</h3>
+                    <h3>{{translate("words_index")}}</h3>
                     <template is="dom-repeat" items="{{allwords}}" as="word">
                         <p class="link" on-tap="newword">{{word.title}}</p>
                     </template>
                 </template>
             </div>
             <div id="footer">
-                <p class="link" on-tap="openindex">Words Index</p>
+                <p class="link" on-tap="openindex">{{translate("words_index")}}</p>
             </div>
         </paper-material>
 
@@ -137,10 +137,6 @@
             allwords: {
                 type: Array,
                 value: []
-            },
-            locale: {
-                type: Object,
-                value: {}
             }
 		},
 
@@ -248,8 +244,11 @@
             this.fire('closeresource');
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
 		ready: function() {
-            this.set('locale', App.locale.ditionary);
 		}
 
 	});
