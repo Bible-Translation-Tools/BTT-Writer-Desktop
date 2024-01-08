@@ -29,21 +29,21 @@
     <template>
 
         <div id="content">
-            <h1>{{locale.statement_head}}</h1>
-            <h2>{{locale.statement_head2}}</h2>
-            <p>{{locale.statement_tldr}}</p>
-            <p>{{locale.statement_believe}}</p>
+            <h1>{{translate("statement_head")}}</h1>
+            <h2>{{translate("statement_head2")}}</h2>
+            <p>{{translate("statement_tldr")}}</p>
+            <p>{{translate("statement_believe")}}</p>
             <ul>
-                <li>{{locale.statement1}}</li>
-                <li>{{locale.statement2}}</li>
-                <li>{{locale.statement3}}</li>
-                <li>{{locale.statement4}}</li>
-                <li>{{locale.statement5}}</li>
-                <li>{{locale.statement6}}</li>
+                <li>{{translate("statement1")}}</li>
+                <li>{{translate("statement2")}}</li>
+                <li>{{translate("statement3")}}</li>
+                <li>{{translate("statement4")}}</li>
+                <li>{{translate("statement5")}}</li>
+                <li>{{translate("statement6")}}</li>
             </ul>
         </div>
         <div id="buttons">
-            <paper-button dialog-dismiss>{{locale.close}}</paper-button>
+            <paper-button dialog-dismiss>{{translate("close")}}</paper-button>
         </div>
 
     </template>
@@ -56,14 +56,13 @@
         is: 'ts-statement',
 
         properties: {
-            locale: {
-              type: Object,
-              value: {}
-            }
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
         ready: function() {
-            this.set('locale', App.locale.dictionary);
         }
 
     });

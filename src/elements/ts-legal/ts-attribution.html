@@ -29,16 +29,16 @@
     <template>
 
         <div id="content">
-            <h2>{{locale.obs_title}}</h2>
-            <h2>{{locale.obs_subtitle}}</h2>
+            <h2>{{translate("obs_title")}}</h2>
+            <h2>{{translate("obs_subtitle")}}</h2>
             <p><a href="http://openbiblestories.com">http://openbiblestories.com</a></p>
-            <p>{{locale.obs_title3}}</p>
-            <p>{{locale.obs_description}}</p>
-            <p>{{locale.obs_trademark_use}}</p>
-            <p>{{locale.obs_artwork}}</p>
+            <p>{{translate("obs_title3")}}</p>
+            <p>{{translate("obs_description")}}</p>
+            <p>{{translate("obs_trademark_use")}}</p>
+            <p>{{translate("obs_artwork")}}</p>
         </div>
         <div id="buttons">
-            <paper-button dialog-dismiss>{{locale.close}}</paper-button>
+            <paper-button dialog-dismiss>{{translate("close")}}</paper-button>
         </div>
 
     </template>
@@ -51,11 +51,10 @@
         is: 'ts-attribution',
 
         properties: {
-            locale: {
-                type: Object,
-                value: {}
-            }
+        },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
         ready: function() {
@@ -67,7 +66,6 @@
                     shell.openExternal(this.href);
                 });
             };
-            this.set('locale', App.locale.dictionary);
         }
 
     });

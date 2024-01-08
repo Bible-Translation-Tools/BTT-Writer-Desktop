@@ -55,8 +55,8 @@
     <template>
 
         <div id="content">
-            <h1>{{locale.software_licenses}}</h1>
-            <p>{{locale.license_explanation}}</p>
+            <h1>{{translate("software_licenses")}}</h1>
+            <p>{{translate("license_explanation")}}</p>
             <template is="dom-repeat" items="[[packages]]" as="package">
                 <div class="entry">
                     <div class="name">
@@ -66,13 +66,13 @@
                         <span><a href="[[package.link]]">[[package.link]]</a></span>
                     </div>
                     <div>
-                        <span>{{locale.license_type}}:<span class="type">[[package.type]]</span></span>
+                        <span>{{translate("license_type")}}:<span class="type">[[package.type]]</span></span>
                     </div>
                 </div>
             </template>
         </div>
         <div id="buttons">
-            <paper-button dialog-dismiss>{{locale.close}}</paper-button>
+            <paper-button dialog-dismiss>{{translate("close")}}</paper-button>
         </div>
 
     </template>
@@ -88,11 +88,11 @@
             packages: {
                 type: Array,
                 value: []
-            },
-            locale: {
-                type: Object,
-                value: {}
             }
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
         ready: function() {
@@ -138,7 +138,6 @@
                     });
                 }
             }, 3000);
-            this.set('locale', App.locale.dictionary);
         }
 
     });
