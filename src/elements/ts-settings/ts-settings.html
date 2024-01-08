@@ -105,18 +105,18 @@
                 <iron-icon class="click" icon="arrow-back" on-tap="goback"></iron-icon>
                 <span class="click" on-tap="goback">[[createtitle(backto)]]</span>
                 <iron-icon icon="chevron-right"></iron-icon>
-                <span>{{locale.settings}}</span>
+                <span>{{translate("settings")}}</span>
             </div>
         </div>
         <div class="body">
             <template is="dom-repeat" items="[[settings]]" index-as="group">
-                <div class="setting-group-header">{{_lookupLocaleString(item.group)}}</div>
+                <div class="setting-group-header">{{translate(item.group)}}</div>
                 <div class="setting-group-body">
                     <template is="dom-repeat" items="{{item.list}}" as="setting" index-as="list">
                         <template is="dom-if" if="{{_isVisible(setting.visible)}}">
                             <div id="{{setting.name}}" class="setting-group-item" on-tap="_runTapHandler" data-enabled={{_isEnabled(setting.enabled)}} data-group="[[group]]" data-list="[[list]]">
                                 <div class="setting-text avoid-clicks">
-                                    <div class="main-text">{{_lookupLocaleString(setting.mainText)}}</div>
+                                    <div class="main-text">{{translate(setting.mainText)}}</div>
                                     <div class="help-text">{{_computeHelpText(setting.*)}}</div>
                                 </div>
                                 <template is="dom-if" if="{{_isBoolean(setting.value)}}">
@@ -150,10 +150,6 @@
                 type: String,
                 notify: true,
                 observer: 'load'
-            },
-            locale: {
-              type: Object,
-              value: {}
             },
             backto: {
                 type: String,
@@ -197,11 +193,10 @@
         },
 
         ready: function () {
-            this.set('locale', App.locale.dictionary);
         },
 
         createtitle: function (backto) {
-            return backto === "translate" ? this._lookupLocaleString("project") : this._lookupLocaleString("home");
+            return backto === "translate" ? this.translate("project") : this.translate("home");
         },
 
         load: function () {
@@ -244,21 +239,17 @@
 
         _computeHelpText: function (setting) {
             var text;
-            let helpText = this._lookupLocaleString(setting.base.helpText);
+            let helpText = setting.base.helpText ? this.translate(setting.base.helpText) : null;
             if (typeof setting.base.value === "number" && helpText) {
                 text = helpText.replace("<int>", setting.base.value);
             } else {
-                text = helpText || setting.base.value.name || setting.base.value || setting.base.nullText;
+                text = this.translate(helpText || setting.base.value.name || setting.base.value || setting.base.nullText);
             }
             return text;
         },
 
-        _lookupLocaleString: function (keyValue) {
-            let localeText = this.locale[keyValue];
-            if (localeText === undefined) {
-              localeText = keyValue;
-            }
-            return localeText;
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
         _isBoolean: function (value) {
@@ -325,7 +316,7 @@
                 // Notify user that the app needs to be restarted.
                 // TODO This bypasses Polymer to call the ts-dashboard.showMessage() function.  Is there a better way?
                 var dashboard = document.querySelector('ts-dashboard')
-                dashboard.showMessage(this._lookupLocaleString("suite_changed"), this._lookupLocaleString("suite_changd_suite"))
+                dashboard.showMessage(this.translate("suite_changed"), this.translate("suite_changd_suite"))
             } else if(name === "colortheme") {
                 App.ipc.send('theme-changed', value.name);
             } else if(name === "languageurl") {
@@ -355,7 +346,7 @@
             var setting = event.model.setting;
             modal.id = "setting-modal";
             modal.style.display = 'block';
-            modal.heading = this._lookupLocaleString(setting.mainText);
+            modal.heading = this.translate(setting.mainText);
             // The following assignments will determine what kind of interface the modal
             // will have (Edit for text, select for selected.)
             if (setting.options) {
@@ -363,7 +354,7 @@
                 modal.selected = setting.value;
                 if (setting.name === "targetfont" || setting.name === "sourcefont") {
                     mythis.set('options', {});
-                    mythis.set('options.body', mythis._lookupLocaleString("font_list_update"));
+                    mythis.set('options.body', mythis.translate("font_list_update"));
                     mythis.set('options.loading', true);
                     mythis.fire('iron-signal', {name: 'openloading'});
                     setTimeout(function() {

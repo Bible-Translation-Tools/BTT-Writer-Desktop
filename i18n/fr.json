@@ -38,11 +38,12 @@
     "warning_level": "Avertissements",
     "error_level": "Erreurs",
     "developer_tools": "Outils des Développeurs",
-    "developer_tools_label": "ouvrez les outils des développeurs",
+    "developer_tools_label": "Ouvrez les outils des développeurs",
     "create_account_label": "URL Pour Création de Compte",
     "language_url_label": "URL des Langues",
     "refresh_settings_label": "Actualiser le Paramètres",
     "refresh_settings_text": "Mettre les paramètres au plus courrant",
+    "indexsqliteurl_label": "Index.sqlite URL",
 
     "__folder1": "ts-dialogs",
 

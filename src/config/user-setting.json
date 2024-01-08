@@ -20,7 +20,6 @@
     {
         "name": "colortheme",
         "mainText": "colortheme_maintext",
-        "helpText": "colortheme_helptext",
         "value": {"name": "theme_system"},
         "options": [{"name": "theme_light"}, {"name": "theme_dark"}, {"name": "theme_system"}],
         "group": "gen_group",
@@ -219,7 +218,7 @@
     },
     {
         "name": "indexsqliteurl",
-        "mainText": "Index.sqlite URL",
+        "mainText": "indexsqliteurl_label",
         "value": "https://writer-resources.bibletranslationtools.org/index.sqlite",
         "default": "https://writer-resources.bibletranslationtools.org/index.sqlite",
         "group": "advanced_group",
@@ -227,19 +226,10 @@
         "visible": true
     },
     {
-        "name": "indexsqliteurl",
-        "mainText": "Index.sqlite URL",
-        "value": "https://writer-resources.bibletranslationtools.org/index.sqlite",
-        "default": "https://writer-resources.bibletranslationtools.org/index.sqlite",
-        "group": "advanced",
-        "enabled": true,
-        "visible": true
-    },
-    {
         "name": "logginglevel",
         "mainText": "logging_level_label",
-        "value": "Warnings",
-        "options": ["information_level", "warning_level", "error_level"],
+        "value": {"name": "warning_level"},
+        "options": [{"name": "information_level"}, {"name": "warning_level"}, {"name": "error_level"}],
         "group": "advanced_group",
         "enabled": true,
         "visible": false
@@ -254,8 +244,8 @@
     },
     {
         "name": "refreshsettings",
-        "mainText": "Refresh Settings",
-        "helpText": "Update user options to the most current",
+        "mainText": "refresh_settings_label",
+        "helpText": "refresh_settings_text",
         "group": "advanced_group",
         "enabled": true,
         "visible": false

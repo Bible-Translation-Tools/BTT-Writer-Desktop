@@ -2,10 +2,10 @@
     "__folder0": "src/config",
     "__file0": "user-setting.json",
     "__GROUPS": "",
-    "gen_group": "general",
-    "about_group": "about",
-    "legal_group": "legal",
-    "adv_group": "advanced",
+    "gen_group": "General",
+    "about_group": "About",
+    "legal_group": "Legal",
+    "advanced_group": "Advanced",
 
     "glmode_maintext": "Gateway Language Mode",
     "glmode_helptext": "Display additional translation options for gateway languages",
@@ -38,11 +38,12 @@
     "warning_level": "Warnings",
     "error_level": "Errors",
     "developer_tools": "Developer Tools",
-    "developer_tools_label": "open the developer tools",
+    "developer_tools_label": "Open the developer tools",
     "create_account_label": "Create Account URL",
     "language_url_label": "Languages URL",
     "refresh_settings_label": "Refresh Settings",
     "refresh_settings_text": "Update user options to the most current",
+    "indexsqliteurl_label": "Index.sqlite URL",
 
     "__folder1": "ts-dialogs",
 

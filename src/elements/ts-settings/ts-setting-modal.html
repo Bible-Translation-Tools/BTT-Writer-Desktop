@@ -97,7 +97,7 @@
             	<template is="dom-if" if="{{selected}}">
 	            	<paper-radio-group selected="[[selected]]">
 		                <template is="dom-repeat" items="[[options]]" as="option">
-	                        <paper-radio-button name$="[[option]]" data-value$="{{option}}" class="row" on-tap="selectOption" checked$="{{_checkSelected(selected,option)}}">[[_lookupLocaleString(option.name)]]</paper-radio-button>
+	                        <paper-radio-button name$="[[option]]" data-value$="{{option}}" class="row" on-tap="selectOption" checked$="{{_checkSelected(selected,option)}}">[[translate(option.name)]]</paper-radio-button>
 		                </template>
 	                </paper-radio-group>
                 </template>
@@ -105,14 +105,14 @@
                 	<paper-input value="{{text}}"></paper-input>
                     <template is="dom-if" if="{{default}}">
                         <div id="default">
-                            {{locale.default_value}}: {{default}}
+                            {{translate("default_value")}}: {{default}}
                         </div>
                     </template>
                 </template>
             </div>
             <div id="footer">
-                <paper-button on-tap="cancel">{{locale.cancel}}</paper-button>
-                <paper-button on-tap="confirm">{{locale.confirm}}</paper-button>
+                <paper-button on-tap="cancel">{{translate("cancel")}}</paper-button>
+                <paper-button on-tap="confirm">{{translate("confirm")}}</paper-button>
             </div>
         </div>
 
@@ -149,10 +149,6 @@
             },
             default: {
                 type: String
-            },
-            locale: {
-                type: Object,
-                value: {}
             }
         },
 
@@ -162,8 +158,6 @@
 					document.querySelector('paper-input').$.input.focus();
 				}
         	}, 30);
-
-            this.set('locale', App.locale.dictionary)
         },
 
         onOpen: function () {
@@ -177,12 +171,8 @@
         	this.selected = event.model.option;
         },
 
-        _lookupLocaleString: function (keyValue) {
-            let localeText = this.locale[keyValue];
-            if (localeText === undefined) {
-                localeText = keyValue;
-            }
-            return localeText;
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
         cancel: function () {

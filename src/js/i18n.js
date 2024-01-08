@@ -89,7 +89,7 @@ function Locale (dir, defaultLocaleCode) {
                 }
             }
             console.log('i18n: Missing localization for key "' + key + '"');
-            return '[i18n: ' + key + ']';
+            return key;
         },
 
         /**
