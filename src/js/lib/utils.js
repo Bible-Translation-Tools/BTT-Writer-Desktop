@@ -226,12 +226,12 @@ var utils = {
 
             list.forEach(function (l) {
                 p = p.then(visit.bind(null, l))
-                     .catch(function (err) {
+                    .catch(function (err) {
                         return fail(err, l);
-                     })
-                     .then(function (result) {
-                         results.push(result);
-                     });
+                    })
+                    .then(function (result) {
+                        results.push(result);
+                    });
             });
 
             return p.then(function () {
@@ -433,9 +433,9 @@ var utils = {
                 return false;
             }
         });
-        
+
         list = _.compact(list);
-        
+
         list = list.sort(function (a, b) {
             if (a.name.toLowerCase() > b.name.toLowerCase()) {
                 return 1;
@@ -506,19 +506,32 @@ var utils = {
     },
 
     getLocalizations: function () {
-        var localizationDir = 'i18n';
-        
-        let locnames = utils.getPaths(path.resolve(localizationDir))
-            .map(function (loc) { return path.parse(loc).name });
+        var list;
+        var rootDir = fs.readdirSync(".");
+        var localizationDir;
+        for (const item of rootDir) {
+            if (item === "i18n") {
+                localizationDir = "i18n";
+                break;
+            }
+        }
 
-        var languages = App.dataManager.getTargetLanguages()
-            .filter(function (lang, i) {
-                return locnames.includes(lang.id);
+        try {
+            let locnames = utils.getPaths(path.resolve(localizationDir))
+                .map(function (loc) { return path.parse(loc).name });
+
+            var languages = App.dataManager.getTargetLanguages()
+                .filter(function (lang, i) {
+                    return locnames.includes(lang.id);
+                });
+
+            list = languages.map(function (lang) {
+                return { id: lang.id, name: lang.name };
             });
-
-        var list = languages.map(function (lang) {
-            return {id: lang.id, name: lang.name};
-        });
+        } catch (err) {
+            console.log("Localization directory not found. Using default values.");
+            list = [{id: "en", name: "English"}];
+        }
 
         return list;
     },
@@ -528,7 +541,7 @@ var utils = {
  * See note on 'promisify' function for example usage.
  */
 utils.fs = utils.promisifyAll(fse);
-utils.lodash = utils.guardAll(_);    
+utils.lodash = utils.guardAll(_);
 utils.fs.chmodr = utils.promisify(chmodr);
 
 utils.fs.mover = function (src, dest) {
