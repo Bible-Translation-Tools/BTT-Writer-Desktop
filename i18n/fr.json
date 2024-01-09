@@ -44,6 +44,7 @@
     "refresh_settings_label": "Actualiser le Paramètres",
     "refresh_settings_text": "Mettre les paramètres au plus courrant",
     "indexsqliteurl_label": "Index.sqlite URL",
+    "localization_maintext": "Langue de l'interface",
 
     "__folder1": "ts-dialogs",
 
@@ -496,6 +497,7 @@
     "suite_changed": "Bloc de Serveurs Changé",
     "suite_changed_suite": "Veuillez fermer et redemarrer le logiciel.",
     "font_list_update": "En cours de Mettre La Liste des Polices à Jour. Veuillez patienter...",
+    "localizations_list_load": "Chargement des langues. Veuillez patienter...",
 
     "__folder11": "ts-translate",
     "__folder12": "ts-chunk-mode",
@@ -690,7 +692,6 @@
     "loading_mkdirp": "Chargement de la mkdirp...",
     "loading_db": "Chargement de la Base de Données...",
     "loading_reporter": "Chargement du Rapporteur...",
-    "loading_config": "Chargement du Configurateur...",
     "loading_git_mgr": "Chargement du Gestionnaire Git...",
     "loading_key_mgr": "Chargement du Gestionnaire de Clés...",
     "loading_projects_mgr": "Chargement du Gestionnaire de Projets...",

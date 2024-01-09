@@ -321,6 +321,8 @@
                 App.ipc.send('theme-changed', value.name);
             } else if(name === "languageurl") {
                 App.dataManager.updateLanguageUrl(value);
+            } else if (name == "localization") {
+                App.ipc.send('localization-changed');
             }
             App.configurator.applyPrefAppearance();
         },
@@ -359,6 +361,16 @@
                     mythis.fire('iron-signal', {name: 'openloading'});
                     setTimeout(function() {
                         modal.options = App.utils.getSystemFonts();
+                        mythis.fire('iron-signal', {name: 'closeloading'});
+                        mythis.openModal(modal, event);
+                    }, 500);
+                } else if (setting.name === "localization") {
+                    mythis.set('options', {});
+                    mythis.set('options.body', mythis.translate("localizations_list_load"));
+                    mythis.set('options.loading', true);
+                    mythis.fire('iron-signal', {name: 'openloading'});
+                    setTimeout(function() {
+                        modal.options = App.utils.getLocalizations();
                         mythis.fire('iron-signal', {name: 'closeloading'});
                         mythis.openModal(modal, event);
                     }, 500);

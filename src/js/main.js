@@ -337,6 +337,10 @@ ipcMain.on('theme-loaded', (event, theme) => {
     nativeTheme.themeSource = theme;
 });
 
+ipcMain.on('localization-changed', () => {
+    reloadApplication();
+});
+
 ipcMain.on('show-devtools', () => {
     BrowserWindow.getFocusedWindow().webContents.openDevTools();
 });

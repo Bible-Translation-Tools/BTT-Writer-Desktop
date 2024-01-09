@@ -503,7 +503,25 @@ var utils = {
         var seconds = `${date.getSeconds()}`.padStart(2, '0');
 
         return `${year}${month}${day}${hours}${minutes}${seconds}`;
-    }
+    },
+
+    getLocalizations: function () {
+        var localizationDir = 'i18n';
+        
+        let locnames = utils.getPaths(path.resolve(localizationDir))
+            .map(function (loc) { return path.parse(loc).name });
+
+        var languages = App.dataManager.getTargetLanguages()
+            .filter(function (lang, i) {
+                return locnames.includes(lang.id);
+            });
+
+        var list = languages.map(function (lang) {
+            return {id: lang.id, name: lang.name};
+        });
+
+        return list;
+    },
 };
 
 /**

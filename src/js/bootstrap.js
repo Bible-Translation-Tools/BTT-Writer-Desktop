@@ -40,15 +40,51 @@ process.stdout.write = console.log.bind(console);
     let i18n = null;
     let utils = null;
 
-    // catch startup errors
+    // Load and initialize configurator first, because it's neccessary to get user selected localization language
     try {
         setMsg('Loading path...');
         path = require('path');
         fs = require('fs');
         fse = require('fs-extra');
 
+        setMsg("Loading Configurator...");
+        Configurator = require('../js/configurator').Configurator;
+    } catch(err) {
+        // display error and fail
+        setMsg(err.message);
+        throw new Error(err);
+    }
+
+    // TODO: refactor this so we can just pass an object to the constructor
+    let configurator = (function () {
+        var c = new Configurator();
+
+        c.setStorage(window.localStorage);
+
+        let defaults = require('../config/defaults');
+
+        try {
+            let privateDefaults = require('../config/private.json');
+            c.loadConfig(privateDefaults);
+        } catch (e) {
+            console.info('No private settings.');
+        }
+
+        c.loadConfig(defaults);
+        c.setValue('rootDir', DATA_PATH, {'mutable':false});
+        c.setValue('targetTranslationsDir', path.join(DATA_PATH, 'targetTranslations'), {'mutable':false});
+        c.setValue('tempDir', path.join(DATA_PATH, 'temp'), {'mutable':false});
+        c.setValue('libraryDir', path.join(DATA_PATH, 'library'), {'mutable':false});
+        c.setValue('indexDir', path.join(DATA_PATH, 'index'), {'mutable':false});
+        return c;
+    })();
+
+    // catch startup errors
+    try {
         setMsg('Loading Locale...');
+        var loc = configurator.getUserSetting("localization");
         i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
+        i18n.setLocale(loc.id);
 
         setMsg(i18n.translate("loading_mkdirp"));
         mkdirp = require('mkdirp');
@@ -58,9 +94,6 @@ process.stdout.write = console.log.bind(console);
 
         setMsg(i18n.translate("loading_reporter"));
         Reporter = require('../js/reporter').Reporter;
-
-        setMsg(i18n.translate("loading_config"));
-        Configurator = require('../js/configurator').Configurator;
 
         setMsg(i18n.translate("loading_git_mgr"));
         GitManager = require('../js/gitnative').GitManager;
@@ -100,30 +133,6 @@ process.stdout.write = console.log.bind(console);
         throw new Error(err);
     }
     setMsg(i18n.translate("init_config"));
-
-    // TODO: refactor this so we can just pass an object to the constructor
-    let configurator = (function () {
-        var c = new Configurator();
-
-        c.setStorage(window.localStorage);
-
-        let defaults = require('../config/defaults');
-
-        try {
-            let privateDefaults = require('../config/private.json');
-            c.loadConfig(privateDefaults);
-        } catch (e) {
-            console.info('No private settings.');
-        }
-
-        c.loadConfig(defaults);
-        c.setValue('rootDir', DATA_PATH, {'mutable':false});
-        c.setValue('targetTranslationsDir', path.join(DATA_PATH, 'targetTranslations'), {'mutable':false});
-        c.setValue('tempDir', path.join(DATA_PATH, 'temp'), {'mutable':false});
-        c.setValue('libraryDir', path.join(DATA_PATH, 'library'), {'mutable':false});
-        c.setValue('indexDir', path.join(DATA_PATH, 'index'), {'mutable':false});
-        return c;
-    })();
 
     let reporter = new Reporter({
         logPath: path.join(configurator.getValue('rootDir'), 'log.txt'),

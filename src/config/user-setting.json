@@ -1,5 +1,14 @@
 [
     {
+        "name": "localization",
+        "mainText": "localization_maintext",
+        "value": {"id": "en", "name": "English"},
+        "options": [],
+        "group": "gen_group",
+        "enabled": true,
+        "visible": true
+    },
+    {
         "name": "glmode",
         "mainText": "glmode_maintext",
         "helpText": "glmode_helptext",

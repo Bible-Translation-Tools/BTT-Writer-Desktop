@@ -44,6 +44,7 @@
     "refresh_settings_label": "Refresh Settings",
     "refresh_settings_text": "Update user options to the most current",
     "indexsqliteurl_label": "Index.sqlite URL",
+    "localization_maintext": "Interface Language",
 
     "__folder1": "ts-dialogs",
 
@@ -496,6 +497,7 @@
     "suite_changed": "Server Suite Changed",
     "suite_changed_suite": "Please close and restart the application.",
     "font_list_update": "Updating Font List. Please wait...",
+    "localizations_list_load": "Loading languages. Please wait...",
 
     "__folder11": "ts-translate",
     "__folder12": "ts-chunk-mode",
@@ -690,7 +692,6 @@
     "loading_mkdirp": "Loading mkdirp...",
     "loading_db": "Loading Database...",
     "loading_reporter": "Loading Reporter...",
-    "loading_config": "Loading Configurator...",
     "loading_git_mgr": "Loading Git Manager...",
     "loading_key_mgr": "Loading Key Manager...",
     "loading_projects_mgr": "Loading Projects Manager...",
