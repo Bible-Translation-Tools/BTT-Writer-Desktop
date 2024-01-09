@@ -507,35 +507,27 @@ var utils = {
 
     getLocalizations: function () {
         var list;
-        var localizationDir;
+        var localizationDirs = ["./i18n", "./resources/app/i18n"];
 
-        try {
-            var rootDir = fs.readdirSync(".");
-            for (const item of rootDir) {
-                if (item === "i18n") {
-                    localizationDir = "i18n";
-                    break;
-                }
-            }
+        var localeFiles = localizationDirs
+            .map(dir => utils.getPaths(path.resolve(dir)))
+            .flat()
 
-            let locnames = utils.getPaths(path.resolve(localizationDir))
-                .map(function (loc) { return path.parse(loc).name });
+        var locales = localeFiles.map(function(file) {
+            return path.parse(file).name;
+        })
 
-            var languages = App.dataManager.getTargetLanguages()
-                .filter(function (lang, i) {
-                    return locnames.includes(lang.id);
-                });
-
-            list = languages.map(function (lang) {
-                return { id: lang.id, name: lang.name };
+        var languages = App.dataManager.getTargetLanguages()
+            .filter(function (lang, i) {
+                return locales.includes(lang.id);
             });
-        } catch (err) {
-            console.log("Localization directory not found. Using default values.");
-            list = [{id: "en", name: "English"}];
-        }
+
+        var list = languages.map(function (lang) {
+            return {id: lang.id, name: lang.name};
+        });
 
         return list;
-    },
+    }
 };
 
 /**
