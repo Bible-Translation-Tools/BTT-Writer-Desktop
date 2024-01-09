@@ -772,5 +772,28 @@
     "paste": "Coller",
     "select_all": "Tout sélectionner",
     "view": "Voir",
-    "toggle_dev_tools": "Basculer les outils du développeur"
+    "toggle_dev_tools": "Basculer les outils du développeur",
+
+    "__file90": "migrator.js",
+    
+    "unable_migrate_project": "Impossible de migrer le projet {0}",
+    "__unable_migrate_project": "{0} - project name",
+
+    "migrated_projects": "Projets migrés",
+    "migrate_project_failed": "Échec de la migration du projet",
+
+    "unsupported_package_version": "Version du paquet non prise en charge: {0}",
+    "__unsupported_package_version": "{0} - package version",
+
+    "archive_not_supported": "L'archive est vide ou n'est pas prise en charge",
+    
+    "migrate_tstudio_archive_failed": "Échec de la migration de l'archive tstudio: {0}",
+    "__migrate_tstudio_archive_failed": "{0} - error details",
+
+    "__file91": "projects.js",
+    "project_dir_doesnt_exist": "Le répertoire du projet n'existe pas",
+    "unable_delete_file": "Impossible de supprimer le fichier pour le moment.",
+
+    "__file92": "user.js",
+    "delete_token_error": "Erreur lors de la suppression du jeton à distance ! Veuillez le supprimer manuellement."
 }

@@ -782,7 +782,7 @@
     "migrated_projects": "Migrated projects",
     "migrate_project_failed": "Failed to migrate project",
 
-    "unsupported_package_version": "Unsupported package version {0}",
+    "unsupported_package_version": "Unsupported package version: {0}",
     "__unsupported_package_version": "{0} - package version",
 
     "archive_not_supported": "The archive is empty or not supported",
