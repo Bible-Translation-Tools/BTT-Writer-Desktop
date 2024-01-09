@@ -507,16 +507,17 @@ var utils = {
 
     getLocalizations: function () {
         var list;
-        var rootDir = fs.readdirSync(".");
         var localizationDir;
-        for (const item of rootDir) {
-            if (item === "i18n") {
-                localizationDir = "i18n";
-                break;
-            }
-        }
 
         try {
+            var rootDir = fs.readdirSync(".");
+            for (const item of rootDir) {
+                if (item === "i18n") {
+                    localizationDir = "i18n";
+                    break;
+                }
+            }
+
             let locnames = utils.getPaths(path.resolve(localizationDir))
                 .map(function (loc) { return path.parse(loc).name });
 
