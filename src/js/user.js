@@ -44,6 +44,7 @@ function UserManager(auth, server) {
      * However, the endpoint is available for usage.
      */
     const deleteAccessToken = function (user) {
+        var mythis = this;
         if (user.tokenId && (user.token || user.password)) {
             const userAuth = {
                 username: user.username,
@@ -54,7 +55,7 @@ function UserManager(auth, server) {
             return apiRequest(path, userAuth, null, 'DELETE')
                 .then(res => {
                     if (res.status != 204) {
-                        console.error("Error when deleting token remotely! Please manually delete it.", res);
+                        console.error(mythis.translate("delete_token_error"), res);
                     }
                 });
         } else {
@@ -216,7 +217,11 @@ function UserManager(auth, server) {
                         return {repo: repo.full_name, user: user, project: project};
                     });
                 });
-        }
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
     };
 }

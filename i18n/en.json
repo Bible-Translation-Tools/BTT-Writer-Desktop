@@ -756,5 +756,44 @@
 
     "__file87": "reload-screen.html",
     "reloading": "Reloading",
-    "please_wait": "Please wait..."
+    "please_wait": "Please wait...",
+
+    "__file88": "academy-screen.html",
+    "creating_academy_window": "Creating Academy window...",
+
+    "__file89": "main.js",
+    "application": "Application",
+    "about_application": "About Application",
+    "quit": "Quit",
+    "undo": "Undo",
+    "redo": "Redo",
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "select_all": "Select All",
+    "view": "View",
+    "toggle_dev_tools": "Toggle Developer Tools",
+
+    "__file90": "migrator.js",
+    
+    "unable_migrate_project": "Unable to migrate project {0}",
+    "__unable_migrate_project": "{0} - project name",
+
+    "migrated_projects": "Migrated projects",
+    "migrate_project_failed": "Failed to migrate project",
+
+    "unsupported_package_version": "Unsupported package version {0}",
+    "__unsupported_package_version": "{0} - package version",
+
+    "archive_not_supported": "The archive is empty or not supported",
+    
+    "migrate_tstudio_archive_failed": "Failed to migrate tstudio archive: {0}",
+    "__migrate_tstudio_archive_failed": "{0} - error details",
+
+    "__file91": "projects.js",
+    "project_dir_doesnt_exist": "Project directory does not exist",
+    "unable_delete_file": "Unable to delete file at this time.",
+
+    "__file92": "user.js",
+    "delete_token_error": "Error when deleting token remotely! Please manually delete it."
 }

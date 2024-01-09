@@ -17,10 +17,12 @@
 
     <script>
     (function () {
+        var path = require('path');
+        var i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
         var ipcRenderer = require('electron').ipcRenderer;
         var splash = document.getElementById('splash');
 
-        splash.content = {title: "translationAcademy", subtitle: "", message: "Creating Academy window..."};
+        splash.content = {title: "translationAcademy", subtitle: "", message: i18n.translate("creating_academy_window")};
 
         ipcRenderer.on('loading-status', function (event, status) {
             splash.updateMessage(status);

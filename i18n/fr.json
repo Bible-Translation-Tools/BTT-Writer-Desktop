@@ -756,5 +756,21 @@
 
     "__file87": "reload-screen.html",
     "reloading": "Rechargement",
-    "please_wait": "Veuillez patienter..."
+    "please_wait": "Veuillez patienter...",
+
+    "__file88": "academy-screen.html",
+    "creating_academy_window": "Création d'une fenêtre Académie...",
+
+    "__file89": "main.js",
+    "application": "L'application",
+    "about_application": "À propos de l'application",
+    "quit": "Quitter",
+    "undo": "Annuler",
+    "redo": "Refaire",
+    "cut": "Couper",
+    "copy": "Copier",
+    "paste": "Coller",
+    "select_all": "Tout sélectionner",
+    "view": "Voir",
+    "toggle_dev_tools": "Basculer les outils du développeur"
 }
