@@ -617,6 +617,12 @@
     "loading_project_error": "An error occurred while trying to load this project",
     "load_project_failed": "Project Load Failed",
     "loading_source": "Loading source. Please wait...",
+    "saving_chunk_error": "Error saving chunk",
+    "checking_changes": "Checking for Changes...",
+    "clean_project_error": "Error cleaning project",
+    "save_manifest_error": "Error saving target manifest",
+    "commit_project_error": "Error committing project",
+    "backup_translation_error": "Error backing up translation",
 
     "removing_invalid_source": "Removing invalid source: {0}",
     "__removing_invalid_source": "{0} - source name",

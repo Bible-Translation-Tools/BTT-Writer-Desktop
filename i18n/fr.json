@@ -617,6 +617,12 @@
     "loading_project_error": "Une erreur s'est produite lors du chargement de ce projet",
     "load_project_failed": "Échec du chargement du projet",
     "loading_source": "Chargement de la source. Veuillez patienter...",
+    "saving_chunk_error": "Erreur lors de l'enregistrement d'un morceau",
+    "checking_changes": "Vérification des changements...",
+    "clean_project_error": "Projet de nettoyage des erreurs",
+    "save_manifest_error": "Erreur d'enregistrement du manifeste cible",
+    "commit_project_error": "Erreur de validation du projet",
+    "backup_translation_error": "Erreur de sauvegarde de la traduction",
 
     "removing_invalid_source": "Suppression d'une source invalide: {0}",
     "__removing_invalid_source": "{0} - source name",

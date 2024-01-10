@@ -1433,6 +1433,8 @@
       ready: function() {
           var mythis = this;
 
+          mythis.set('message', mythis.translate("idle"));
+
           return App.gitManager.verifyGit()
               .then(function (version) {
                   App.ipc.send('loading-status', mythis.translate("get_user_settings"));

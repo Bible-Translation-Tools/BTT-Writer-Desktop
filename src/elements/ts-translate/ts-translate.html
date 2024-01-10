@@ -415,11 +415,11 @@
                 var chunk = allchunks[data];
                 return App.projectsManager.saveTargetChunk(chunk, projectmeta)
                     .catch(function (err) {
-                        App.reporter.logError(err, 'Error saving chunk');
+                        App.reporter.logError(err, mythis.translate("saving_chunk_error"));
                     });
             };
 
-            mythis.set('message', "Checking for Changes...");
+            mythis.set('message', mythis.translate("checking_changes"));
 
             return Promise.resolve(true)
                 .then(function () {
@@ -431,7 +431,7 @@
                                 mythis.set('saveoptions.chunks', []);
                                 return App.projectsManager.cleanProject(allchunks, projectmeta)
                                     .catch(function (err) {
-                                        App.reporter.logError(err, 'Error cleaning project');
+                                        App.reporter.logError(err, mythis.translate("clean_project_error"));
                                     });
                             });
                     } else {
@@ -447,7 +447,7 @@
                                 return Promise.resolve(true);
                             })
                             .catch(function (err) {
-                                App.reporter.logError(err, 'Error saving target manifest');
+                                App.reporter.logError(err, mythis.translate("save_manifest_error"));
                             });
                     } else {
                         return Promise.resolve(true);
@@ -457,7 +457,7 @@
                     if (changes) {
                         return App.projectsManager.commitProject(projectmeta, mythis.currentuser)
                             .catch(function (err) {
-                                App.reporter.logError(err, 'Error committing project');
+                                App.reporter.logError(err, mythis.translate("commit_project_error"));
                             });
                     } else {
                         return Promise.resolve(true);
@@ -477,7 +477,7 @@
                                 mythis.set('options.loading', false);
                                 mythis.fire('iron-signal', {name: 'openloading'});
                                 mythis.set('saveoptions.backup', false);
-                                App.reporter.logError(err, 'Error backing up translation');
+                                App.reporter.logError(err, mythis.translate("backup_translation_error"));
                             });
                     } else {
                         return Promise.resolve(true);
