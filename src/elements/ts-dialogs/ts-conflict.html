@@ -48,7 +48,7 @@
             <h2>{{translate("project_change")}}</h2>
         </div>
         <div id="body">
-            <p>{{translate("change_warning1")}} <span>[[currentproject.projectmeta.project.name]]</span> {{translate("change_warning2")}} <span>[[currentproject.projectmeta.target_language.name]]</span> {{translate("change_warning3")}}</p>
+            <p>{{translate("change_warning", currentproject.projectmeta.project.name, currentproject.projectmeta.target_language.name)}}</p>
         </div>
         <div id="footer">
             <paper-button dialog-dismiss>{{translate("no")}}</paper-button>
