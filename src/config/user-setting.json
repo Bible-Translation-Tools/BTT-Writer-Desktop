@@ -29,8 +29,8 @@
     {
         "name": "colortheme",
         "mainText": "colortheme_maintext",
-        "value": {"name": "theme_system"},
-        "options": [{"name": "theme_light"}, {"name": "theme_dark"}, {"name": "theme_system"}],
+        "value": {"name": "system"},
+        "options": [{"name": "light"}, {"name": "dark"}, {"name": "system"}],
         "group": "gen_group",
         "enabled": true,
         "visible": true
@@ -65,8 +65,8 @@
     {
         "name": "targetsize",
         "mainText": "targetsize_maintext",
-        "value": {"name": "size_normal"},
-        "options": [{"name": "size_small"}, {"name": "size_normal"}, {"name": "size_large"}],
+        "value": {"name": "normal"},
+        "options": [{"name": "small"}, {"name": "normal"}, {"name": "large"}],
         "group": "gen_group",
         "enabled": true,
         "visible": true
@@ -74,8 +74,8 @@
     {
         "name": "sourcesize",
         "mainText": "sourcesize_maintext",
-        "value": {"name": "size_normal"},
-        "options": [{"name": "size_small"}, {"name": "size_normal"}, {"name": "size_large"}],
+        "value": {"name": "normal"},
+        "options": [{"name": "small"}, {"name": "normal"}, {"name": "large"}],
         "group": "gen_group",
         "enabled": true,
         "visible": true

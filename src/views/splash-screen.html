@@ -31,7 +31,7 @@
             const theme = configurator.getUserSetting("colortheme").name;
 
             const loc = configurator.getUserSetting("localization");
-            i18n.setLocale(loc.id);
+            if (loc) i18n.setLocale(loc.id);
 
             const splash = document.getElementById('splash');
             const versiontext = i18n.translate("version_title", pack.version);
