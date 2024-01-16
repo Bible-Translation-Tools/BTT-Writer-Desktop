@@ -50,9 +50,8 @@
 
     "__file1": "ts-conflict.html",
     "project_change": "Project Change Detected",
-    "change_warning1": "There are changes to your translation of",
-    "change_warning2": "in",
-    "change_warning3": "on your account. Would you like to import those changes now?",
+    "change_warning": "There are changes to your translation of {0} in {1} on your account. Would you like to import those changes now?",
+    "__change_warning": "{0} - project name, {1} - language name",
 
     "__file2": "ts-container-confirm.html",
     "source_exists": "Source Already Exists",
