@@ -17,7 +17,7 @@ Ceci est un résumé lisible par l'homme (et non pas un substitut) de la licence
 ### Vous êtes libre de :
 
 - **Partager** — copier et redistribuer le matériel dans n'importe quel support ou format
-- **Adapt** — remix, transform, and build upon the material for any purpose, even commercially.
+- **Adapter** — remixer, transformer et créer à partir du matériel pour toute utilisation, y compris commerciale.
 
 Le concédant ne peut pas révoquer ces libertés tant que vous respectez les termes de la licence.
 
