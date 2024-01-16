@@ -1,43 +1,43 @@
 # unfoldingWord | Open Bible Stories
 
-## an unrestricted visual mini-Bible in any language
+## une mini-Bible visuelle illimitée dans n'importe quelle langue
 
-http\://openbiblestories.com
+http\://openbiblestories.com/deed.fr
 
 unfoldingWord Open Bible Stories, v. 4
 
-Created by Distant Shores Media (http\://distantshores.org) and the Door43 world missions community (http\://door43.org).
+Crée par Distant Shores Media (http\://distantshores.org) et la communauté missionnaire mondiale Door43 (http\://door43.org).
 
-# License
+# Licence
 
-## Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+## Licence Creative Commons Attribution-ShareAlike 4.0 International(CCBY-SA4.0)
 
-This is a human-readable summary of (and not a substitute for) the full license found at http\://creativecommons.org/licenses/by-sa/4.0/.
+Ceci est un résumé lisible par l'homme (et non pas un substitut) de la licence complète trouvée à http\://creativecommons.org/licenses/by-sa/4.0/.
 
-### You are free to:
+### Vous êtes libre de :
 
-- **Share** — copy and redistribute the material in any medium or format
-- **Adapt** — remix, transform, and build upon the material
+- **Partager** — copier et redistribuer le matériel dans n'importe quel support ou format
+- **Adapter** — remixer, transformer et construire sur le matériau
 
-for any purpose, even commercially.
+pour n'importe quel but, même commercialement.
 
-The licensor cannot revoke these freedoms as long as you follow the license terms.
+Le concédant ne peut pas révoquer ces libertés tant que vous respectez les termes de la licence.
 
-### Under the following conditions:
+### Toutes les conditions suivantes:
 
-- **Attribution** — You must attribute the work as follows: "Original work available at https\://door43.org/." Attribution statements in derivative works should not in any way suggest that we endorse you or your use of this work.
-- **ShareAlike** — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+- **Attribution** — Vous devez attribuer le travail comme suit : "Travail original disponible sur https\://door43.org/." Les déclarations d'attribution dans les travaux dérivés ne devraient en aucun cas suggérer que nous vous avalisons ou que vous utilisiez ce travail.
+- **ShareAlike** — Si vous remixez, transformez ou construisez sur le matériel, vous devez distribuer vos contributions sous la même licence que l'original.
 
-**No additional restrictions** — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
+**Aucune restriction supplémentaire** — Vous ne pouvez pas appliquer de conditions légales ou de mesures technologiques qui empêchent légalement les autres de faire quoi que ce soit que la licence le permet.
 
-### Notices:
+### Avis:
 
-You do not have to comply with the license for elements of the material in the public domain or where your use is permitted by an applicable exception or limitation.
+Vous n'êtes pas tenu de vous conformer à la licence pour les éléments du matériel dans le domaine public ou lorsque votre utilisation est autorisée par une exception ou limitation applicable.
 
-No warranties are given. The license may not give you all of the permissions necessary for your intended use. For example, other rights such as publicity, privacy, or moral rights may limit how you use the material.
+Aucune garantie n'est donnée. La licence peut ne pas vous donner toutes les autorisations nécessaires à votre utilisation prévue. Par exemple, d'autres droits tels que la publicité, la vie privée ou les droits moraux peuvent limiter la façon dont vous utilisez le matériel.
 
-Use of trademarks: unfoldingWord is a trademark of Distant Shores Media and may not be included on any derivative works created from this content. Unaltered content from http\://unfoldingword.org must include the unfoldingWord logo when distributed to others. But if you alter the content in any way, you must remove the unfoldingWord logo before distributing your work.
+Utilisation des marques de commerce : unfoldingWord est une marque déposée de Distant Shores Media et ne peut être incluse sur aucun des travaux dérivés créés à partir de ce contenu. Le contenu non modifié de http\://unfoldingword.org doit inclure le logo unfoldingWord lorsqu'il est distribué à d'autres. Mais si vous modifiez le contenu de quelque manière que ce soit, vous devez supprimer le logo unfoldingWord avant de distribuer votre travail.
 
-Attribution of artwork: All images used in these stories are © Sweet Publishing (www\.sweetpublishing.com) and are made available under a Creative Commons Attribution-Share Alike License (http\://creativecommons.org/licenses/by-sa/3.0).
+Attribution des illustrations : Toutes les images utilisées dans ces histoires sont © Sweet Publishing (www\.sweetpublishing.com) et sont disponibles sous une licence Creative Commons Attribution - Partage dans les Mêmes Conditions (http\://creativecommons.org/licenses/by-sa/3.0/deed.fr).
 
-This PDF was generated using Prince (https\://www\.princexml.com/).
+Ce PDF a été généré à l'aide de Prince (https\://www\.princexml.com/).
