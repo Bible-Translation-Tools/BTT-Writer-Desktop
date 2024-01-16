@@ -1,32 +1,32 @@
-## Creative Commons Attribution-ShareAlike 4.0 International
+## Attribution - Partage dans les Mêmes Conditions 4.0 International
 
-### Human-Readable Summary
+### Résumé lisible par l'homme
 
-The Creative Commons Attribution-Share Alike 4.0  International  License is available at
+La licence Creative Commons Paternité-Partage des Conditions Initiales à l'Identique 4.0 est disponible à
 http\://creativecommons.org/licenses/by-sa/4.0/.
 
-#### This is a human-readable summary of (and not a substitute for) the License.
+#### Ceci est un résumé lisible par l'homme (et pas un substitut) de la licence.
 
-### You are free to:
+### Vous êtes libre de :
 
-- **Share** — copy and redistribute the material in any medium or  format.
+- **Partager** — copier et redistribuer le matériel dans n'importe quel support ou format.
 
-- **Adapt** — remix, transform, and build upon the material for any purpose, even commercially.
+- **Adaptation** — remixer, transformer et construire sur le matériel pour n'importe quel but, même commercialement.
 
-  The licensor cannot revoke these freedoms  as long as  you follow the license terms.
+  Le concédant ne peut pas révoquer ces libertés tant que vous respectez les termes de la licence.
 
-### Under the following terms:
+### Aux termes suivants:
 
-- **Attribution** —You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+- **Attribution** — Vous devez donner un crédit approprié, fournir un lien vers la licence et indiquer si des changements ont été apportés. Vous pouvez indiquer ces informations de n’importe quelle façon raisonnable, sans pourtant suggérer que le concédant de licence vous soutient ou soutient la façon dont vous avez utilisé son œuvre.
 
-- **ShareAlike** — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+- **ShareAlike** — Si vous remixez, transformez ou construisez sur le matériel, vous devez distribuer vos contributions sous la même licence que l'original.
 
-- **No additional restrictions** — You may not apply legal terms or technological measures that legally restrict others from doing anything the license  permits.
+- **Aucune restriction supplémentaire** — Vous ne pouvez pas appliquer de conditions légales ou de mesures technologiques qui empêchent légalement les autres de faire quoi que ce soit que la licence le permet.
 
-### Notices:
+### Avis:
 
-- You do not have to comply with the license for elements of the material in the public domain or where your use is permitted by an applicable exception or limitation.
+- Vous n'êtes pas tenu de vous conformer à la licence pour les éléments du matériel dans le domaine public ou lorsque votre utilisation est autorisée par une exception ou limitation applicable.
 
-- No warranties are given. The license may not give you all of the permissions necessary for your intended use. For example, other rights such as publicity, privacy, or moral rights may limit how you use the material.
+- Aucune garantie n'est donnée. La licence peut ne pas vous donner toutes les autorisations nécessaires à votre utilisation prévue. Par exemple, d'autres droits tels que la publicité, la vie privée ou les droits moraux peuvent limiter la façon dont vous utilisez le matériel.
 
-This PDF was generated using Prince (https\://www\.princexml.com/).
+Ce PDF a été généré à l'aide de Prince (https\://www\.princexml.com/).
