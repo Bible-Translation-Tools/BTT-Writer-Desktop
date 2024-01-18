@@ -63,6 +63,31 @@ function UserManager(auth, server) {
         }
     }
 
+        /* Delete the corresponding token on server (for server account)
+     *
+     * Note: the gogs-client api currently does not support DELETE token method.
+     * However, the endpoint is available for usage.
+     */
+        const createScopedToken = function (tokenStub, user) {
+            if (user.username && user.password) {
+                const userAuth = {
+                    username: user.username,
+                    password: user.password
+                }
+                let apiRequest = requester(apiUrl);
+                let path = `users/${user.username}/tokens`;
+                return apiRequest(path, userAuth, {name: tokenStub, scopes: ['write:user,write:repository']}, 'POST')
+                    .then(res => {
+                        if (res.status != 201) {
+                            console.error("Error creating token.", res);
+                        }
+                    });
+            } else {
+                // local account
+                return Promise.resolve();
+            }
+        }
+
     const fetchRepoExhaustively = async function (uid, query, limit) {
         limit = limit || MAX_PAGE_SIZE;
         let page = 1;
@@ -95,7 +120,7 @@ function UserManager(auth, server) {
         createAccount: function (user) {
             return api.createUser(user, auth, true)
                 .then(function(updatedUser) {
-                    return api.createToken(tokenStub, user)
+                    return createScopedToken(tokenStub, user)
                         .then(function(token) {
                             updatedUser.token = token.sha1;
                             return updatedUser;
@@ -118,9 +143,9 @@ function UserManager(auth, server) {
                                 tokenId: token.id
                             }
                             return deleteAccessToken(usr)
-                                    .then(() => api.createToken(tokenStub, userObj));
+                                    .then(() => createScopedToken(tokenStub, userObj));
                         } else {
-                            return api.createToken(tokenStub, userObj);
+                            return createScopedToken(tokenStub, userObj);
                         }
                     })
                     .then(function (token) { 
