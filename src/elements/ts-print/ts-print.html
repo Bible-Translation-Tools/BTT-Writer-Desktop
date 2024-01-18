@@ -188,24 +188,16 @@
         },
 
         rendertext: function () {
-            var path = require('path');
-            var imagePath = path.join(App.configurator.getValue('rootdir'), 'images', 'obs');
             var chunks = this.currentproject.chunks;
             var options = this.currentproject.printoptions;
-            var filename = this.currentproject.projectmeta.project.id === "obs" ? "OBS_LICENSE.md" : "LICENSE.md";
             var book = chunks[0].transcontent || chunks[0].srccontent;
             var resource = chunks[0].projectmeta.target_language.name + ": " + chunks[0].projectmeta.resource.name;
             var pagetitle = chunks[0].projectmeta.target_language.name + " - " + book;
 
-            this.$.licenseholder.markdown = App.printManager.getLicense(filename);
+            this.$.licenseholder.markdown = App.printManager.getLicense("LICENSE.md");
             this.$.resource.innerHTML = resource;
             this.$.title.innerHTML = book;
-            if (this.currentproject.projectmeta.project.id === "obs") {
-                this.$.licenseholder.classList.add('obs');
-                this.$.textholder.innerHTML = App.renderer.renderObsPrintPreview(chunks, options, imagePath);
-            } else {
-                this.$.textholder.innerHTML = App.renderer.renderPrintPreview(chunks, options, pagetitle);
-            }
+            this.$.textholder.innerHTML = App.renderer.renderPrintPreview(chunks, options, pagetitle);
         },
 
         createtitle: function (backto) {
