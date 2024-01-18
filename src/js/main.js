@@ -327,13 +327,13 @@ ipcMain.on('ta-loading-done', function () {
 });
 
 ipcMain.on('theme-changed', (event, theme) => {
-    theme = theme.replace(/.*?(system|light|dark)/, "$1").toLowerCase();
+    theme = theme.replace(/.*?(system|light|dark)/i, "$1").toLowerCase();
     nativeTheme.themeSource = theme;
     reloadApplication();
 });
 
 ipcMain.on('theme-loaded', (event, theme) => {
-    theme = theme.replace(/.*?(system|light|dark)/, "$1").toLowerCase();
+    theme = theme.replace(/.*?(system|light|dark)/i, "$1").toLowerCase();
     nativeTheme.themeSource = theme;
 });
 

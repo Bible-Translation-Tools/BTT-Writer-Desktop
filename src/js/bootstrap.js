@@ -84,7 +84,7 @@ process.stdout.write = console.log.bind(console);
         setMsg('Loading Locale...');
         var loc = configurator.getUserSetting("localization");
         i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
-        i18n.setLocale(loc.id);
+        if (loc) i18n.setLocale(loc.id);
 
         setMsg(i18n.translate("loading_mkdirp"));
         mkdirp = require('mkdirp');
