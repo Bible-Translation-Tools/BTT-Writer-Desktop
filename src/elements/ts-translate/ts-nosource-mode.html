@@ -111,7 +111,7 @@
         <div id="contain">
             <div id="header">
                 <paper-material id="top" elevation="1">
-                    <span>{{translate("project")}}: <span>[[projectmeta.project.name]]</span> - <span>[[projectmeta.target_language.name]]</span></span>
+                    <span>{{translate("project")}}: <span>[[translateBook(projectmeta.project.id)]]</span> - <span>[[projectmeta.target_language.name]]</span></span>
                     <iron-icon class="click iconimage" src="../ts-icons/uw-tab-small.png" on-tap="openmodal"></iron-icon>
                 </paper-material>
                 <paper-material id="bottom" elevation="1">
@@ -173,6 +173,10 @@
 
         openmodal: function () {
             this.fire('iron-signal', {name: 'opensource'});
+        },
+
+        translateBook: function(slug) {
+            return this.translate(`book_${slug}`);
         },
 
         translate: function (key, ...args) {

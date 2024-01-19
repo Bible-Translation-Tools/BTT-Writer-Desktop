@@ -1161,6 +1161,7 @@
             var refaddon = projectmeta.target_language.name;
             var resource = projectmeta.resource.id;
             var name = projectmeta.project.name;
+            var id = projectmeta.project.id;
             var chapterid = frame.chapter;
             var chapternum = parseInt(chapterid) || 1;
             var frameid = frame.chunk;
@@ -1191,9 +1192,11 @@
                     chapterref = mythis.translate("project_title");
                     chunkref = mythis.translate("project_title");
                 } else if (frameid === "title") {
+                    name = mythis.translate(`book_${id}`);
                     chapterref = mythis.translate("project_chapter_title", name, chapternum);
                     chunkref = mythis.translate("project_chapter_title", name, chapternum);
                 } else {
+                    name = mythis.translate(`book_${id}`);
                     chapterref = name + " " + chapternum;
                     chunkref = name + " " + chapternum + ":" + verses[0] + "–" + verses[verses.length-1];
                 }

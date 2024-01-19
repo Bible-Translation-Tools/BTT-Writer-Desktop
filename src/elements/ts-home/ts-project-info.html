@@ -96,10 +96,10 @@
     <template>
 
         <div id="header">
-            <h2><span>[[currentproject.projectmeta.project.name]]</span> — <span>[[currentproject.projectmeta.target_language.name]]</span></h2>
+            <h2><span>[[translateBook(currentproject.projectmeta.project.id)]]</span> — <span>[[currentproject.projectmeta.target_language.name]]</span></h2>
         </div>
         <div id="info">
-            <p>{{translate("project")}}: <strong><span>[[currentproject.projectmeta.project.name]]</span> (<span>[[currentproject.projectmeta.project.id]]</span>)</strong></p>
+            <p>{{translate("project")}}: <strong><span>[[translateBook(currentproject.projectmeta.project.id)]]</span> (<span>[[currentproject.projectmeta.project.id]]</span>)</strong></p>
             <p>{{translate("target_language")}}: <strong><span>[[currentproject.projectmeta.target_language.name]]</span> (<span>[[currentproject.projectmeta.target_language.id]]</span>)</strong><span class="link" on-tap="changelanguage">{{translate("change")}}</span></p>
             <p class$="[[idclass(currentproject.projectmeta.resource.id)]]">{{translate("resource_type")}}: <strong><span>[[currentproject.projectmeta.resource.id]]</span></strong><span class="link" on-tap="openresource">{{translate("change")}}</span></p>
             <p>{{translate("progress")}}: <strong><span>[[currentproject.projectmeta.completion]]</span>%</strong></p>
@@ -183,6 +183,10 @@
 
         opendelete: function () {
             this.fire('opendelete');
+        },
+
+        translateBook: function(slug) {
+            return this.translate(`book_${slug}`);
         },
 
         translate: function (key, ...args) {

@@ -121,12 +121,12 @@
               <iron-icon icon="chevron-right"></iron-icon>
               <span class="click" on-tap="toleveltwo"><span>[[choices.leveltwo.name]]</span><span class="code book">(<span>[[choices.leveltwo.slug]]</span>)</span></span>
               <iron-icon icon="chevron-right"></iron-icon>
-              <span><em>Choose Source(s)</em></span>
+              <span><em>{{translate("choose_sources")}}</em></span>
           </div>
           <div id="toolbar">
-              <paper-checkbox id="select" on-change="selectAll">Select All</paper-checkbox>
-              <paper-checkbox id="unselect" on-change="unselectAll">Unselect All</paper-checkbox>
-              <paper-button raised id="confirm" on-tap="download">Download</paper-button>
+              <paper-checkbox id="select" on-change="selectAll">{{translate("select_all")}}</paper-checkbox>
+              <paper-checkbox id="unselect" on-change="unselectAll">{{translate("unselect_all")}}</paper-checkbox>
+              <paper-button raised id="confirm" on-tap="download">{{translate("download")}}</paper-button>
           </div>
           <iron-list id="list" items="[[resultslist]]" as="item">
               <template>
@@ -135,7 +135,7 @@
                           <paper-checkbox class$="[[checkboxclass(item.success)]]" checked="{{item.selected}}" on-change="setBoxes"></paper-checkbox>
                           <iron-icon class$="[[doneclass(item.success)]]" icon="done"></iron-icon>
                           <iron-icon class$="[[warningclass(item.failure)]]" icon="report" on-tap="displayError"></iron-icon>
-                          <span class="lang">[[item.project.name]]</span>
+                          <span class="lang">[[translateBook(item.project.slug)]]</span>
                           <span class="code lang">(<span>[[item.project.slug]]</span>)</span>
                           <span class="book">[[item.language.name]]</span>
                           <span class="code book">(<span>[[item.language.slug]]</span>)</span>
@@ -212,7 +212,7 @@
           var completed = 0;
 
           mythis.set('options', {});
-          mythis.set('options.body', "Downloading Source Texts. Please wait...");
+          mythis.set('options.body', mythis.translate("downloading_source"));
           mythis.set('options.loading', true);
           mythis.set('options.progress', true);
           mythis.set('options.value', 0);
@@ -262,7 +262,7 @@
 
               return promises
                   .then(function () {
-                      var title = "Download Complete";
+                      var title = mythis.translate("download_complete");
                       var passmessage = "";
                       var failmessage = "";
                       var passed = results.filter(function (item) {
@@ -273,17 +273,15 @@
                       });
 
                       if (failed.length === results.length) {
-                          title = "Download Failed";
+                          title = mythis.translate("download_failed");
                       }
-                      if (passed.length === 1) {
-                          passmessage = "1 Source Text has been successfully downloaded.";
-                      } else if (passed.length > 1) {
-                          passmessage = passed.length + " Source Texts have been successfully downloaded.";
+
+                      if (passed.length > 0) {
+                        passmessage = mythis.translate("source_text_downloaded", passed.length);
                       }
-                      if (failed.length === 1) {
-                          failmessage = "1 download attempt has failed.";
-                      } else if (failed.length > 1) {
-                          failmessage = failed.length + " download attempts have failed.";
+
+                      if (failed.length > 0) {
+                        failmessage = mythis.translate("download_attempt_failed", failed.length);
                       }
 
                       results.forEach(function (item) {
@@ -315,7 +313,7 @@
           var errmsg = event.model.item.errmsg;
 
           this.set('options', {});
-          this.set('options.title', "Download Failed");
+          this.set('options.title', this.translate("download_failed"));
           this.set('options.body', errmsg);
           this.set('options.loading', false);
           this.fire('iron-signal', {name: 'openloading'});
@@ -440,6 +438,14 @@
               this.set('resultslist', this.sortList(translations));
               this.setBoxes();
           }
+      },
+
+      translateBook: function(slug) {
+          return this.translate(`book_${slug}`);
+      },
+
+      translate: function (key, ...args) {
+          return App.locale.translate(key, ...args);
       },
 
       ready: function() {

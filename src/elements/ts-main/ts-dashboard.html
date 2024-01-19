@@ -1269,7 +1269,7 @@
       sortProjects: function (list) {
           var mythis = this;
           var sorted = App.projectsManager.sortProjectList(list);
-
+          
           return Promise.resolve(true)
               .then(function () {
                   mythis.set('projectlist', sorted);

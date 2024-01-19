@@ -87,7 +87,7 @@
               <template>
                   <div class="row" on-tap="store">
                       <iron-icon class="small" src$="[[checkicon(project.category_slug)]]"></iron-icon>
-                      <span>[[project.name]]</span>
+                      <span>[[translateBook(project.slug)]]</span>
                   </div>
               </template>
           </iron-list>
@@ -150,6 +150,10 @@
 
       tolang: function () {
           this.set('selected', 0);
+      },
+
+      translateBook: function(slug) {
+          return this.translate(`book_${slug}`);
       },
 
       translate: function (key, ...args) {

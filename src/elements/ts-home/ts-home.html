@@ -264,7 +264,7 @@
                             <div class="row">
                                 <div class="left" on-tap="openproject">
                                     <span class="smallspan"><iron-icon class="icon" src$="[[checkicon(project)]]"></iron-icon></span>
-                                    <span class="bigspan">[[project.project.name]]</span>
+                                    <span class="bigspan">[[translateBook(project.project.id)]]</span>
                                     <span class="medspan smalltext"><span>[[project.type.name]]</span><span class$="[[typeclass(project.resource.id)]]">[[project.resource.id]]</span></span>
                                     <span class="smalltext bigspan">[[project.target_language.name]]</span>
                                     <span class="smallspan"><ts-completion-icon percent="[[project.completion]]"></ts-completion-icon></span>
@@ -513,6 +513,10 @@
                     sort2.selected = 1;
                 }
             }
+        },
+
+        translateBook: function(slug) {
+            return this.translate(`book_${slug}`);
         },
 
         translate: function (key, ...args) {

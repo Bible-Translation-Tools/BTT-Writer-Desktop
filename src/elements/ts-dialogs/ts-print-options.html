@@ -60,7 +60,7 @@
 
         <div id="header">
             <h2>{{translate("print_head")}}</h2>
-            <h2><span>[[currentproject.projectmeta.project.name]]</span> - <span>[[currentproject.projectmeta.target_language.name]]</span></h2>
+            <h2><span>[[translateBook(currentproject.projectmeta.project.id)]]</span> - <span>[[currentproject.projectmeta.target_language.name]]</span></h2>
         </div>
         <div id="body">
             <div id="image"><paper-checkbox id="imagebox"></paper-checkbox><span>{{translate("with_images")}}</span></div>
@@ -129,6 +129,10 @@
 
             this.set('options', options);
             this.fire('openpreview');
+        },
+
+        translateBook: function(slug) {
+            return this.translate(`book_${slug}`);
         },
 
         translate: function (key, ...args) {

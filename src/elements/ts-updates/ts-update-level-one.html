@@ -94,9 +94,9 @@
 
       <div id="main" class$="[[choices.radio]]">
           <div id="header">
-              <input is="iron-input" id="input" class="lang" bind-value="{{query}}" on-input="updateList" placeholder="Choose a language">
+              <input is="iron-input" id="input" class="lang" bind-value="{{query}}" on-input="updateList" placeholder="{{translate('choose_language')}}">
               <iron-icon class="lang click" icon="search" on-tap="focussearch"></iron-icon>
-              <span class="book"><em>Choose a Category</em></span>
+              <span class="book"><em>{{translate("choose_category")}}</em></span>
           </div>
           <iron-list id="list" items="[[levelonelist]]" as="item">
               <template>
@@ -209,6 +209,7 @@
       },
 
       updateList: function () {
+          var mythis = this;
           var translations = _.cloneDeep(this.translations);
           var temparray = [];
 
@@ -220,15 +221,19 @@
           } else {
               _.forEach(_.groupBy(translations, 'project.category_slug'), function (data, category) {
                   if (category === "bible-ot") {
-                      temparray.push({name: "Old Testament", slug: category, sort: 1});
+                      temparray.push({name: mythis.translate("old_testament"), slug: category, sort: 1});
                   } else if (category === "bible-nt") {
-                      temparray.push({name: "New Testament", slug: category, sort: 2});
+                      temparray.push({name: mythis.translate("new_testament"), slug: category, sort: 2});
                   } else if (category === "other") {
-                      temparray.push({name: "Other", slug: category, sort: 3});
+                      temparray.push({name: mythis.translate("other_project"), slug: category, sort: 3});
                   }
               });
               this.set('levelonelist', this.sortByCat(temparray));
           }
+      },
+
+      translate: function (key, ...args) {
+          return App.locale.translate(key, ...args);
       },
 
       ready: function () {

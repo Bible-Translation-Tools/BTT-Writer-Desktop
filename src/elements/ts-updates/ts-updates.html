@@ -49,7 +49,7 @@
             justify-content: flex-start;
             align-items: center;
             min-height: 45px;
-            width: 300px;
+            min-width: 400px;
         }
 
         paper-radio-button {
@@ -70,14 +70,14 @@
         <div id="header">
             <div class="title">
                 <iron-icon class="click" icon="arrow-back" on-tap="gohome"></iron-icon>
-                <span class="click" on-tap="gohome">Home</span>
+                <span class="click" on-tap="gohome">{{translate("home")}}</span>
                 <iron-icon icon="chevron-right"></iron-icon>
-                <span>Source Texts</span>
+                <span>{{translate("source_texts")}}</span>
             </div>
             <div>
                 <paper-radio-group selected="{{choices.radio}}" on-iron-select="onRadioSet">
-                    <paper-radio-button name="bylang">By Language</paper-radio-button>
-                    <paper-radio-button name="bybook">By Book</paper-radio-button>
+                    <paper-radio-button name="bylang">{{translate("sort_by_language")}}</paper-radio-button>
+                    <paper-radio-button name="bybook">{{translate("sort_by_book")}}</paper-radio-button>
                 </paper-radio-group>
             </div>
             <div class="title">
@@ -177,6 +177,10 @@
         gohome: function () {
             this.set('selected', 0);
             this.set('route', "home");
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
         ready: function() {
