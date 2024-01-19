@@ -484,12 +484,9 @@
                   .then(function () {
                       var after = App.dataManager.getMetrics();
                       var diff = after.resource_count_level3 - before.resource_count_level3;
-                      var msg = diff + mythis.translate('new_sources_available');
+                      var msg = mythis.translate('new_sources_available', diff);
                       if (diff < 1) {
                           msg = mythis.translate('no_sources_available');
-                      }
-                      if (diff === 1) {
-                          msg = mythis.translate('one_source_available');
                       }
                       mythis.set('route', 'updates');
                       mythis.showMessage(mythis.translate('update_complete'), msg);

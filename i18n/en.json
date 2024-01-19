@@ -330,9 +330,10 @@
     "feedback_failed4": "An error occurred while sending feedback",
     "token_error": "You are not set up with a token to send feedback.",
 
-    "new_sources_available": " new Source Texts are available to be downloaded.",
+    "new_sources_available": "{0} new Source Text(s) is(are) available to be downloaded.",
+    "__new_sources_available": "{0} - number of sources",
+    
     "no_sources_available": "No new Source Texts have been added.",
-    "one_source_available": "One new Source Text is available to be downloaded.",
     "tstudio_files": "Tstudio Files",
     "project_export1": "Project File Complete",
     "project_export2": "Your project has been successfully saved.",

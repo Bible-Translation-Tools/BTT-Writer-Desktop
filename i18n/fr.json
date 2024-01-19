@@ -330,9 +330,10 @@
     "feedback_failed4": "Une erreur lors de la transmission de réaction",
     "token_error": "Vous n'avez pas de jeton pour transmettre les réactions.",
 
-    "new_sources_available": " textes sources nouveaux sont disponible pour téléchargement.",
+    "new_sources_available": "{0} nouveau(x) texte(s) source(s) est(sont) disponible(s) pour être téléchargé(s).",
+    "__new_sources_available": "{0} - number of sources",
+
     "no_sources_available": "Il n'y a pas de nouveaux textes sources.",
-    "one_source_available": "Il y a une texte source disponible à télécharger.",
     "tstudio_files": "Fichiers Tstudio",
     "project_export1": "Fichier Projet Complet",
     "project_export2": "Votre projet est bien sauvegardé",
