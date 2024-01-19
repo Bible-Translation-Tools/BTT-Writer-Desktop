@@ -123,6 +123,8 @@
     "download_source_text": "Choisissez les sources à télécharger après la mise à jour de la liste",
     "update_targets": "Actualiser la liste des Langues Cibles disponibles",
     "update_targets_text": "Ajoutera de nouvelles langues cibles à la liste disponible",
+    "download_index_file": "Télécharger le nouveau fichier index.sqlite",
+    "download_index_file_text": "Télécharge un nouveau fichier index.sqlite et le place dans le répertoire de l'application.",
 
     "__folder2": "ts-home",
     "__file11": "ts-completion-icon.html",

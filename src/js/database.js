@@ -40,7 +40,7 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                     const reader = response.body.getReader();
                     const writer = fs.createWriteStream(libraryPath);
                     let bytesDone = 0;
-                    const total = parseInt(response.headers.get('Content-Length' || '0'));
+                    const total = parseInt(response.headers.get('Content-Length') || 0);
 
                     while (true) {
                         const result = await reader.read();
