@@ -332,7 +332,7 @@
     "feedback_failed4": "Une erreur lors de la transmission de réaction",
     "token_error": "Vous n'avez pas de jeton pour transmettre les réactions.",
 
-    "new_sources_available": "{0} nouveau(x) texte(s) source(s) est(sont) disponible(s) pour être téléchargé(s).",
+    "new_sources_available": "Nouveau texte source, disponible au téléchargement: {0}.",
     "__new_sources_available": "{0} - number of sources",
 
     "no_sources_available": "Il n'y a pas de nouveaux textes sources.",
@@ -684,10 +684,10 @@
     "choose_sources": "Choisir la (les) source(s)",
     "unselect_all": "Désélectionner tout",
 
-    "source_text_downloaded": "{0} Le(s) texte(s) source(s) a(ont) été téléchargé(s) avec succès.",
+    "source_text_downloaded": "Le texte source a été téléchargé avec succès: {0}.",
     "__source_text_downloaded": "{0} - number of source texts",
 
-    "download_attempt_failed": "{0} tentative(s) de téléchargement échouée(s)",
+    "download_attempt_failed": "Échec des tentatives de téléchargement: ({0}).",
     "__download_attempt_failed": "{0} - number of failed download attempts",
 
     "__file79": "ts-updates.html",

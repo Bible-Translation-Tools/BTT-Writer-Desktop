@@ -332,7 +332,7 @@
     "feedback_failed4": "An error occurred while sending feedback",
     "token_error": "You are not set up with a token to send feedback.",
 
-    "new_sources_available": "{0} new Source Text(s) is(are) available to be downloaded.",
+    "new_sources_available": "New Source Text(s) available to be downloaded: {0}.",
     "__new_sources_available": "{0} - number of sources",
     
     "no_sources_available": "No new Source Texts have been added.",
@@ -684,10 +684,10 @@
     "choose_sources": "Choose Source(s)",
     "unselect_all": "Unselect All",
     
-    "source_text_downloaded": "{0} Source Text(s) has been successfully downloaded.",
+    "source_text_downloaded": "Source Text(s) successfully downloaded: {0}.",
     "__source_text_downloaded": "{0} - number of source texts",
 
-    "download_attempt_failed": "{0} download attempt(s) has failed",
+    "download_attempt_failed": "Failed download attempts: ({0}).",
     "__download_attempt_failed": "{0} - number of failed download attempts",
     
     "__file79": "ts-updates.html",
