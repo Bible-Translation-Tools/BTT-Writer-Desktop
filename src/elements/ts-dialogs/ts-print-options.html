@@ -132,7 +132,7 @@
         },
 
         translateBook: function(slug) {
-            return this.translate(`book_${slug}`);
+            return slug ? this.translate(`book_${slug}`): "";
         },
 
         translate: function (key, ...args) {
