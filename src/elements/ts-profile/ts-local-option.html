@@ -83,7 +83,7 @@
                 <p>{{translate("local_profile_text")}}</p>
             </div>
             <div class="body">
-                <input is="iron-input" bind-value="{{newinfo.full_name}}" placeholder="{{translate('local_user_prompt')}}">
+                <input is="iron-input" bind-value="{{newinfo.full_name}}" on-keydown="keyinput" placeholder="{{translate('local_user_prompt')}}">
             </div>
             <div class="buttons">
                 <paper-button class="nofill" on-tap="gotologin">{{translate("local_server_prompt")}}</paper-button>

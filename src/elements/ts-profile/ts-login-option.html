@@ -83,8 +83,8 @@
                 <p><iron-icon icon="notification:wifi"></iron-icon>{{translate("internet_warning")}}</p>
             </div>
             <div class="body">
-                <input is="iron-input" bind-value="{{newinfo.username}}" placeholder="{{translate('username_label')}}">
-                <input is="iron-input" bind-value="{{newinfo.password}}" placeholder="{{translate('password_label')}}" type="password">
+                <input is="iron-input" bind-value="{{newinfo.username}}" placeholder="{{translate('username_label')}}" on-keydown="keyinput">
+                <input is="iron-input" bind-value="{{newinfo.password}}" placeholder="{{translate('password_label')}}" type="password" on-keydown="keyinput">
             </div>
             <div class="buttons">
                 <paper-button class="nofill" on-tap="gotocreate">{{translate("create_new_account_label")}}</paper-button>
