@@ -283,9 +283,11 @@
     "upload_failed": "Upload Failed",
     "updates": "keys for updates",
     "updating_target_status": "Updating List of Target Languages. This may take a while. Please wait...",
-    "number_target_updates": " Target languages have been added.",
+    
+    "number_target_updates": "Target languages added: ({0})",
+    "__number_target_updates": "{0} - number of languages",
+
     "no_target_updates": "No Target Languages have been added.",
-    "one_target_update": "1 Target Language has been added.",
     "update_complete": "Update Complete",
     "update_error": "An error occurred while updating",
     "connection_error": "Unable to connect to server",

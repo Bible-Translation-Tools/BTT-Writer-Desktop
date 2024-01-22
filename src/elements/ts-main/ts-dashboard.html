@@ -433,12 +433,9 @@
                   .then(function () {
                       var after = App.dataManager.getMetrics();
                       var diff = after.target_language_count - before.target_language_count;
-                      var msg = diff + mythis.translate('number_target_updates');
+                      var msg = mythis.translate("number_target_updates", diff);
                       if (diff < 1) {
                           msg = mythis.translate("no_target_updates");
-                      }
-                      if (diff === 1) {
-                          msg = mythis.translate("one_target_update");
                       }
                       mythis.showMessage(mythis.translate("update_complete"), msg);
                   })
