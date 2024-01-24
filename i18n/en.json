@@ -372,9 +372,12 @@
     "get_resource_containers": "Opening resource containers...",
     "update_project_list": "Updating Project List...",
     "make_backups": "Creating Auto Backups...",
-
     "something_broke": "Something broke.",
     "startup_error": "Error on startup",
+    "upload_complete": "Upload Complete",
+    "project_uploaded_to": "Your project has been uploaded to:",
+    "cannot_upload_whithout_account": "Cannot upload without connecting to a server account.",
+    "upload_project_error": "An error occurred while trying to upload your project.",
 
     "__file29": "ts-splash.html",
 

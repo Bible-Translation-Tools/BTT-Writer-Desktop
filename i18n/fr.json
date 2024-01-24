@@ -372,9 +372,12 @@
     "get_resource_containers": "Ouverture des conteneurs de ressources...",
     "update_project_list": "Mise à jour de la liste des Projets...",
     "make_backups": "Creation de Sauveguarde Automatique...",
-
     "something_broke": "Quelque chose ne va pas.",
     "startup_error": "Erreur lors du démarrage",
+    "upload_complete": "Téléchargement complet",
+    "project_uploaded_to": "Votre projet a été téléchargé sur:",
+    "cannot_upload_whithout_account": "Impossible de télécharger sans se connecter à un compte serveur.",
+    "upload_project_error": "Une erreur s'est produite lors du téléchargement de votre projet.",
 
     "__file29": "ts-splash.html",
 

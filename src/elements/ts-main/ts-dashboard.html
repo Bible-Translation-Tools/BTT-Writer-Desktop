@@ -1012,8 +1012,8 @@
                   var server = App.configurator.getUserSetting("readerserver");
                   var url = server + "/" + fullname;
 
-                  mythis.set('options.title', "Upload Complete");
-                  mythis.set('options.body', "Your project has been uploaded to:");
+                  mythis.set('options.title', mythis.translate("upload_complete"));
+                  mythis.set('options.body', mythis.translate("project_uploaded_to"));
                   mythis.set('options.link', url);
                   mythis.set('options.showlink', true);
                   mythis.set('options.loading', false);
@@ -1029,11 +1029,11 @@
                   var errmessage = "";
 
                   if (err.syscall === "getaddrinfo") {
-                      errmessage = "Unable to connect to server";
+                      errmessage = mythis.translate("connection_error");
                   } else if (err.status === 401) {
-                      errmessage = "Cannot upload without connecting to a server account.";
+                      errmessage = mythis.translate("cannot_upload_whithout_account");
                   } else {
-                      errmessage = err.data || err.stderr || "An error occurred while trying to upload your project.";
+                      errmessage = err.data || err.stderr || mythis.translate("upload_project_error");
                   }
 
                   if (typeof errmessage === 'string' && errmessage.includes("rejected because the remote contains work")) {
