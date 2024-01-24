@@ -101,7 +101,8 @@ function PrintManager(configurator) {
         },
 
         getLicense: function (filename) {
-            return fs.readFileSync(path.join(srcDir, 'assets', filename), 'utf8');
+            var locale = App.locale.getLocale().code;
+            return fs.readFileSync(path.join(srcDir, 'assets', 'licenses', locale, filename), 'utf8');
         },
 
         translate: function (key, ...args) {
