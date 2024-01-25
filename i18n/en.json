@@ -345,8 +345,8 @@
     "project_export4": "Your project has been successfully exported to a file.",
 
     "project_failed1": "File Failed",
-    "project_failed2": "An error occurred while trying to save your project",
-    "project_failed3": "An error occurred while trying to export your project",
+    "project_failed2": "An error occurred while trying to save your project.",
+    "project_failed3": "An error occurred while trying to export your project.",
     "project_failed4": "Export Failed",
 
     "download_images": "Downloading Images. Please wait...",

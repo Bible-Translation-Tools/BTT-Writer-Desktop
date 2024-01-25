@@ -345,8 +345,8 @@
     "project_export4": "Votre projet est bien exporté en fichier.",
 
     "project_failed1": "Fichier Echoué",
-    "project_failed2": "Une erreur lors du sauvegard du projet",
-    "project_failed3": "Une erreur lors de l'export du projet",
+    "project_failed2": "Une erreur lors du sauvegard du projet.",
+    "project_failed3": "Une erreur lors de l'export du projet.",
     "project_failed4": "Exportation Echoué",
 
     "download_images": "En cours de télécharger les images. Veuillez patienter...",
