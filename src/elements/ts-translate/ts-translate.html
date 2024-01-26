@@ -36,11 +36,14 @@
             right: 0;
             margin: auto;
             background-color: var(--popup-background-color);
+            width: fit-content;
+            height: fit-content;
+            max-width: 750px;
+            max-height: 550px;
+            padding: 10px;
         }
 
         .checklistpopup {
-            width: 350px;
-            height: 225px;
             text-align: center;
             color: var(--primary-text-color);
         }
@@ -57,6 +60,7 @@
             display: flex;
             justify-content: center;
             color: var(--secondary-text-color);
+            gap: 20px;
         }
 
         .checklistpopup .buttons paper-button:hover {
@@ -64,8 +68,6 @@
         }
 
         #editpopup {
-            width: 350px;
-            height: 175px;
             text-align: center;
             color: var(--primary-text-color);
         }
@@ -74,6 +76,7 @@
             display: flex;
             justify-content: center;
             color: var(--secondary-text-color);
+            gap: 20px;
         }
 
         #editpopup .buttons paper-button:hover {
@@ -81,8 +84,6 @@
         }
 
         #sourcepopup {
-            height: 500px;
-            max-width: 750px;
             display: flex;
         }
 
@@ -92,8 +93,6 @@
         }
 
         #nodatapopup {
-            width: 300px;
-            height: 175px;
             text-align: center;
             color: var(--primary-text-color);
         }
@@ -102,6 +101,7 @@
             display: flex;
             justify-content: center;
             color: var(--secondary-text-color);
+            gap: 20px;
         }
 
         #nodatapopup .buttons paper-button:hover {
@@ -109,8 +109,6 @@
         }
 
         #note {
-            width: 350px;
-            height: 250px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;

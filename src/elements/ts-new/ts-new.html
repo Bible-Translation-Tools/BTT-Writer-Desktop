@@ -60,6 +60,11 @@
             right: 0;
             margin: auto;
             background: var(--background-color);
+            width: fit-content;
+            height: fit-content;
+            max-width: 750px;
+            max-height: 550px;
+            padding: 10px;
         }
 
         .popup * {
@@ -92,6 +97,7 @@
             justify-content: flex-end;
             padding: 0 50px;
             color: var(--secondary-text-color);
+            gap: 20px;
         }
 
         .popup .buttons paper-button:hover {
@@ -99,15 +105,11 @@
         }
 
         #confirmimport {
-            width: 400px;
-            height: 200px;
             display: flex;
             flex-direction: column;
         }
 
         #confirmchange {
-            width: 450px;
-            height: 200px;
             display: flex;
             flex-direction: column;
         }

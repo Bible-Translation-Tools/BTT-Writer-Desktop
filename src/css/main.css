@@ -40,6 +40,9 @@ html, body {
     a, a:visited {
         color: #80D8FF;
     }
+    a:hover {
+        color: #ffffff;
+    }
     body {
         background-color: #1C1C1C;
     }
@@ -48,6 +51,9 @@ html, body {
 @media (prefers-color-scheme: light) {
     a, a:visited {
         color: #00B0FF;
+    }
+    a:hover {
+        color: #001e51;
     }
     body {
         background-color: #EFEFEF;

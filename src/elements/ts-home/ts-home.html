@@ -159,27 +159,23 @@
             right: 0;
             margin: auto;
             background-color: var(--popup-background-color);
+            width: fit-content;
+            height: fit-content;
+            max-width: 750px;
+            max-height: 550px;
+            padding: 10px;
         }
 
         .buttons {
             display: flex;
             justify-content: flex-end;
             padding: 0 50px;
+            gap: 20px;
             color: var(--secondary-text-color);
         }
 
         .buttons paper-button:hover {
             color: var(--accent-color);
-        }
-
-        #info {
-            width: 400px;
-            height: 420px;
-        }
-
-        #delete {
-            width: 450px;
-            height: 175px;
         }
 
         #delete iron-icon {
@@ -190,19 +186,9 @@
             font-size: 110%;
         }
 
-        #resource {
-            width: 300px;
-            height: 300px;
-        }
-
         #resource * {
             margin: 0;
             padding: 0;
-        }
-
-        #confirmchange {
-            width: 450px;
-            height: 200px;
         }
 
         .space {

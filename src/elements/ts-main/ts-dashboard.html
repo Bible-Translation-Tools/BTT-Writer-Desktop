@@ -27,7 +27,6 @@
 <link rel="import" href="../ts-legal/ts-statement.html">
 <link rel="import" href="../ts-legal/ts-guidelines.html">
 <link rel="import" href="../ts-legal/ts-software.html">
-<link rel="import" href="../ts-legal/ts-attribution.html">
 
 <dom-module id="ts-dashboard">
 
@@ -73,6 +72,11 @@
           right: 0;
           margin: auto;
           background-color: var(--popup-background-color);
+          width: fit-content;
+          height: fit-content;
+          max-width: 750px;
+          max-height: 550px;
+          padding: 20px;
       }
 
       .popup * {
@@ -84,61 +88,6 @@
           width: 95%;
           height: 95%;
           overflow-y: auto;
-      }
-
-      #feedback {
-          width: 500px;
-          height: 250px;
-      }
-
-      #import {
-          width: 480px;
-          height: 440px;
-      }
-
-      #export {
-          width: 480px;
-          height: 440px;
-      }
-
-      #update {
-          width: 480px;
-          height: 480px;
-      }
-
-      #repo {
-          width: 500px;
-          height: 500px;
-      }
-
-      #loading {
-          width: 320px;
-          height: 220px;
-      }
-
-      #wideloading {
-          width: 450px;
-          height: 220px;
-      }
-
-      #print {
-          width: 480px;
-          height: 360px;
-      }
-
-      #conflict {
-          width: 450px;
-          height: 200px;
-      }
-
-      #importconfirm {
-          width: 450px;
-          height: 210px;
-      }
-
-      #containerconfirm {
-          width: 450px;
-          height: 175px;
       }
 
       .hide {
@@ -222,10 +171,6 @@
           <ts-software></ts-software>
       </paper-dialog>
 
-      <paper-dialog id="attribution" class="popup legal" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-          <ts-attribution></ts-attribution>
-      </paper-dialog>
-
       <paper-dialog id="conflict" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
           <ts-conflict currentproject="[[currentproject]]" importdata="{{importdata}}" currentuser="[[currentuser]]" on-startrepoimport="startRepoImport"></ts-conflict>
       </paper-dialog>
@@ -246,7 +191,6 @@
       <iron-signals on-iron-signal-openguidelines="openGuidelines"></iron-signals>
       <iron-signals on-iron-signal-openstatement="openStatement"></iron-signals>
       <iron-signals on-iron-signal-opensoftware="openSoftware"></iron-signals>
-      <iron-signals on-iron-signal-openattribution="openAttribution"></iron-signals>
       <iron-signals on-iron-signal-changeproject="changeProject"></iron-signals>
       <iron-signals on-iron-signal-deleteproject="deleteProject"></iron-signals>
       <iron-signals on-iron-signal-openupdate="openUpdate"></iron-signals>
@@ -325,14 +269,6 @@
 
       openSoftware: function () {
           var legal = this.$.software;
-          legal.open();
-          setTimeout(function () {
-              legal.scrollTop = 0;
-          }, 250);
-      },
-
-      openAttribution: function () {
-          var legal = this.$.attribution;
           legal.open();
           setTimeout(function () {
               legal.scrollTop = 0;

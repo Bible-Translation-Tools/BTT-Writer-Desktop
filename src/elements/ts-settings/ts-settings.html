@@ -277,8 +277,6 @@
                 this.fire('iron-signal', {name: 'openstatement'});
             } else if (name === "software") {
                 this.fire('iron-signal', {name: 'opensoftware'});
-            } else if (name === "attribution") {
-                this.fire('iron-signal', {name: 'openattribution'});
             } else if (typeof value === 'boolean') {
                 var path = 'settings.' + event.target.dataGroup + '.list.' + event.target.dataList + '.value';
                 this.set(path, !value);

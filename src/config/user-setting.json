@@ -145,14 +145,6 @@
         "visible": true
     },
     {
-        "name": "attribution",
-        "mainText": "attribution_label",
-        "value": "",
-        "group": "legal_group",
-        "enabled": true,
-        "visible": true
-    },
-    {
         "name": "serversuite",
         "mainText": "server_suite_maintext",
         "value": {"name": "WACS"},

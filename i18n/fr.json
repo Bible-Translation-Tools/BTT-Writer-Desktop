@@ -74,6 +74,7 @@
     "feedback": "Réaction",
     "internet_warning": "On va utiliser votre reseau internet",
     "describe_problem": "Expliquez le problème que vous rencontrez",
+    "send": "Envoyer",
 
     "__file5": "ts-import-confirm.html",
     "project_exists_2": "Ce projet existe déjà sur l'appareil. Comment preferez-vous proceder?",

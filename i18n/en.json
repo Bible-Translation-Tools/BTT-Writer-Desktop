@@ -74,6 +74,7 @@
     "feedback": "Feedback",
     "internet_warning": "This will use your internet connection",
     "describe_problem": "Describe the problem you are experiencing",
+    "send": "Send",
 
     "__file5": "ts-import-confirm.html",
     "project_exists_2": "This project already exists locally. How would you like to proceed?",
