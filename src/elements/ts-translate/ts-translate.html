@@ -197,6 +197,7 @@
                 <p class$="[[versecheck(currentproject.projectmeta)]]">{{translate("chunk_checklist_option1")}}</p>
                 <p>{{translate("chunk_checklist_option2")}}</p>
                 <p class$="[[standardcheck(currentproject.projectmeta)]]">{{translate("chunk_checklist_option3")}}</p>
+
             </div>
             <div class="buttons">
                 <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
@@ -215,6 +216,20 @@
             <div class="buttons">
                 <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
                 <paper-button dialog-confirm on-tap="closeprojectchecklist">{{translate("confirm")}}</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="projectchecklistpopup" class="checklistpopup popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
+            <h2>Project Checklist</h2>
+            <div>
+                <p class="spaced">Are you sure you're Done with this project?</p>
+                <p class$="[[versecheck(currentproject.projectmeta)]]">I have placed the verses correctly</p>
+                <p>I have reviewed the words and meanings</p>
+                <p class$="[[standardcheck(currentproject.projectmeta)]]">I have reviewed the translationQuestions</p>
+            </div>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm on-tap="closeprojectchecklist">Confirm</paper-button>
             </div>
         </paper-dialog>
 
@@ -1610,6 +1625,7 @@
         translate: function (key, ...args) {
             return App.locale.translate(key, ...args);
         },
+
 
         ready: function() {
             var mythis = this;
