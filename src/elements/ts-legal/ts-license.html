@@ -33,43 +33,43 @@
     <template>
 
         <div id="content">
-            <h1>{{locale.license_head}}</h1>
-            <h2>{{locale.license_head2}}</h2>
+            <h1>{{translate("license_head")}}</h1>
+            <h2>{{translate("license_head2")}}</h2>
             <p>
-                {{locale.license_redirect}} <br/>
-                <a href="{{locale.license_url}}">{{locale.license_url}}</a>.
+                {{translate("license_redirect")}} <br/>
+                <a href="{{translate('license_url')}}">{{translate("license_url")}}</a>.
             </p>
-            <h3>{{locale.human_readable}}</h3>
+            <h3>{{translate("human_readable")}}</h3>
 
-            <h3>{{locale.free_to}}</h3>
+            <h3>{{translate("free_to")}}</h3>
             <ul>
-                <li><strong>{{locale.share_label}}</strong> - {{locale.share_text}}</li>
-                <li><strong>{{locale.adapt_label}}</strong> - {{locale.adapt_text}}</li>
+                <li><strong>{{translate("share_label")}}</strong> - {{translate("share_text")}}</li>
+                <li><strong>{{translate("adapt_label")}}</strong> - {{translate("adapt_text")}}</li>
             </ul>
-            <p class="indent">{{locale.no_revoking}}</p>
+            <p class="indent">{{translate("no_revoking")}}</p>
 
-            <h3>{{locale.terms_follow}}</h3>
+            <h3>{{translate("terms_follow")}}</h3>
             <ul>
                 <li>
-                    <strong>{{locale.attribution_label}}</strong> - {{locale.attribution_text}}
+                    <strong>{{translate("attribution_label")}}</strong> - {{translate("attribution_text")}}
                 </li>
                 <li>
-                    <strong>{{locale.sharealike_label}}</strong> - {{locale.sharealike_text}}
+                    <strong>{{translate("sharealike_label")}}</strong> - {{translate("sharealike_text")}}
                 </li>
-                <li><strong>{{locale.no_restrictions_label}}</strong> - {{locale.no_restrictions_text}}
+                <li><strong>{{translate("no_restrictions_label")}}</strong> - {{translate("no_restrictions_text")}}
                 </li>
             </ul>
 
-            <h3>{{locale.notice_label}}</h3>
+            <h3>{{translate("notice_label")}}</h3>
             <ul>
-                <li>{{locale.public_domain_text}}
+                <li>{{translate("public_domain_text")}}
                 </li>
-                <li>{{locale.no_warranty}}
+                <li>{{translate("no_warranty")}}
                 </li>
             </ul>
         </div>
         <div id="buttons">
-            <paper-button dialog-dismiss>{{locale.close}}</paper-button>
+            <paper-button dialog-dismiss>{{translate("close")}}</paper-button>
         </div>
 
     </template>
@@ -82,17 +82,15 @@
         is: 'ts-license',
 
         properties: {
-            locale: {
-              type: Object,
-              value: {}
-            }
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
         ready: function() {
             var shell = require('electron').shell;
             var links = this.$.content.getElementsByTagName('a');
-
-            this.set('locale', App.locale.dictionary);
 
             for (var i = 0; i < links.length; i++) {
                 links[i].addEventListener('click', function (event) {

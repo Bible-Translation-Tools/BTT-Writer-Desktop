@@ -111,15 +111,15 @@
         <div id="contain">
             <div id="header">
                 <paper-material id="top" elevation="1">
-                    <span>Project: <span>[[projectmeta.project.name]]</span> - <span>[[projectmeta.target_language.name]]</span></span>
+                    <span>{{translate("project")}}: <span>[[translateBook(projectmeta.project.id)]]</span> - <span>[[projectmeta.target_language.name]]</span></span>
                     <iron-icon class="click iconimage" src="../ts-icons/uw-tab-small.png" on-tap="openmodal"></iron-icon>
                 </paper-material>
                 <paper-material id="bottom" elevation="1">
                 </paper-material>
             </div>
             <div id="body">
-                <p>{{locale.choose_source}}</p>
-                <iron-icon class="click.iconimage" src="../ts-icons/uw-tab-large.png" on-tap="openmodal"></iron-icon>
+                <p>{{translate("choose_source")}}</p>
+                <iron-icon class="click iconimage" src="../ts-icons/uw-tab-large.png" on-tap="openmodal"></iron-icon>
             </div>
         </div>
 
@@ -139,10 +139,6 @@
 
         properties: {
             projectmeta: {
-                type: Object,
-                value: {}
-            },
-            locale: {
                 type: Object,
                 value: {}
             }
@@ -179,8 +175,15 @@
             this.fire('iron-signal', {name: 'opensource'});
         },
 
+        translateBook: function(slug) {
+            return this.translate(`book_${slug}`);
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function() {
-            this.set('locale', App.locale.dictionary);
         }
 
     });

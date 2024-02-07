@@ -78,23 +78,26 @@
     <template>
 
         <div id="header">
-            <h2>{{locale.update_head}}</h2>
-            <span><iron-icon icon="notification:wifi"></iron-icon>{{locale.update_head2}}</span>
-            <span>{{locale.update_head3}}</span>
+            <h2>{{translate("update_head")}}</h2>
+            <span><iron-icon icon="notification:wifi"></iron-icon>{{translate("update_head2")}}</span>
+            <span>{{translate("update_head3")}}</span>
         </div>
         <div id="body">
             <div class="option" on-tap="source">
-                <span class="optiontitle">{{locale.update_source_list}}<iron-icon class="icon" icon="info" title="{{locale.update_source_list_text}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("update_source_list")}}<iron-icon class="icon" icon="info" title="{{translate('update_source_list_text')}}"></iron-icon></span>
+            </div>
+            <div class="option" on-tap="index">
+                <span class="optiontitle">{{translate("download_index_file")}}<iron-icon class="icon" icon="info" title="{{translate('download_index_file_text')}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="download">
-                <span class="optiontitle">{{locale.download_source}}<iron-icon class="icon" icon="info" title="{{locale.download_source_text}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("download_source")}}<iron-icon class="icon" icon="info" title="{{translate('download_source_text')}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="language">
-                <span class="optiontitle">{{locale.update_targets}}<iron-icon class="icon" icon="info" title="{{locale.update_targets_text}}"></iron-icon></span>
+                <span class="optiontitle">{{translate("update_targets")}}<iron-icon class="icon" icon="info" title="{{translate('update_targets_text')}}"></iron-icon></span>
             </div>
         </div>
         <div id="footer">
-            <paper-button dialog-dismiss>{{locale.cancel}}</paper-button>
+            <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
         </div>
 
     </template>
@@ -108,10 +111,6 @@
         is: 'ts-update-options',
 
         properties: {
-            locale: {
-              type: Object,
-              value: {}
-            }
         },
 
         language: function () {
@@ -130,10 +129,13 @@
             this.fire('index');
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function () {
             var shell = require('electron').shell;
             var links = this.getElementsByTagName('a');
-            this.set('locale', App.locale.dictionary);
             for (var i = 0; i < links.length; i++) {
                 links[i].addEventListener('click', function (event) {
                     event.preventDefault();

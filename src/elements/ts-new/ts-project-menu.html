@@ -81,7 +81,7 @@
               <iron-icon class="click" icon="arrow-back" on-tap="tolang"></iron-icon>
               <span class="click" on-tap="tolang"><span>[[newdata.language.name]]</span><span class="code">(<span>[[newdata.language.id]]</span>)</span></span>
               <iron-icon icon="chevron-right"></iron-icon>
-              <span><em>Choose a category</em></span>
+              <span><em>{{translate("choose_category")}}</em></span>
           </div>
           <iron-list id="list" items="[[newdata.categorylist]]" as="category">
               <template>
@@ -175,18 +175,21 @@
 
           _.forEach(_.groupBy(projects, 'category_slug'), function (data, category) {
               if (category === "bible-ot") {
-                  temparray.push({name: "Old Testament", sort: 1, data: data});
+                  temparray.push({name: mythis.translate("old_testament"), sort: 1, data: data});
               } else if (category === "bible-nt") {
-                  temparray.push({name: "New Testament", sort: 2, data: data});
+                  temparray.push({name: mythis.translate("new_testament"), sort: 2, data: data});
               } else if (category === "other" && !mythis.importdata.importing) {
-                  temparray.push({name: "Other", sort: 3, data: data});
+                  temparray.push({name: mythis.translate("other_project"), sort: 3, data: data});
               }
           });
           mythis.set('newdata.categorylist', this.sortByCat(temparray));
       },
 
-      ready: function () {
+      translate: function (key, ...args) {
+          return App.locale.translate(key, ...args);
+      },
 
+      ready: function () {
       }
 
   });

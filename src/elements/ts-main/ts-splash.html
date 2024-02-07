@@ -104,8 +104,11 @@
             this.set('content.message', message);
         },
 
-        ready: function () {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function () {
         }
 
     });

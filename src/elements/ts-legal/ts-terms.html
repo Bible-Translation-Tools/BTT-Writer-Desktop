@@ -51,6 +51,7 @@
             display: flex;
             justify-content: space-around;
             color: var(--secondary-text-color);
+            gap: 20px;
         }
 
         .buttons paper-button:hover {
@@ -70,20 +71,20 @@
 
         <div id="header">
             <div id="title">
-                <span>{{locale.terms_title}}</span>
+                <span>{{translate("terms_title")}}</span>
             </div>
         </div>
 
         <div id="body">
             <div id="main">
-                <p>{{locale.terms1}}</p>
-                <paper-button raised on-tap="openlicense">{{locale.license_button}}</paper-button>
-                <paper-button raised on-tap="openguidelines">{{locale.translation_button}}</paper-button>
-                <paper-button raised on-tap="openstatement">{{locale.statement_button}}</paper-button>
+                <p>{{translate("terms1")}}</p>
+                <paper-button raised on-tap="openlicense">{{translate("license_button")}}</paper-button>
+                <paper-button raised on-tap="openguidelines">{{translate("translation_button")}}</paper-button>
+                <paper-button raised on-tap="openstatement">{{translate("statement_button")}}</paper-button>
             </div>
             <div class="buttons">
-                <paper-button on-tap="logout">{{locale.no_button}}</paper-button>
-                <paper-button on-tap="accept">{{locale.agree_button}}</paper-button>
+                <paper-button on-tap="logout">{{translate("no_button")}}</paper-button>
+                <paper-button on-tap="accept">{{translate("agree_button")}}</paper-button>
             </div>
         </div>
 
@@ -114,10 +115,6 @@
                         }
                     }
                 }
-            },
-            locale: {
-              type: Object,
-              value: {}
             }
         },
 
@@ -146,8 +143,11 @@
             this.fire('iron-signal', {name: 'openstatement'});
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function() {
-            this.set('locale', App.locale.dictionary);
         }
 
     });

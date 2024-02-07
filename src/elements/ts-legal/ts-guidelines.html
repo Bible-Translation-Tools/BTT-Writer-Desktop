@@ -32,42 +32,42 @@
     <template>
 
         <div id="content">
-            <h1>{{locale.guidelines_head}}</h1>
+            <h1>{{translate("guidelines_head")}}</h1>
             <p>
-              <strong>{{locale.accurate_label}}</strong>
-              <br/>{{locale.accurate_text}}
+              <strong>{{translate("accurate_label")}}</strong>
+              <br/>{{translate("accurate_text")}}
               <ol>
-                <li>{{locale.accurate1}}</li>
-                <li>{{locale.accurate2}}</li>
-                <li>{{locale.accurate3}}</li>
-                <li>{{locale.accurate4}}</li>
+                <li>{{translate("accurate1")}}</li>
+                <li>{{translate("accurate2")}}</li>
+                <li>{{translate("accurate3")}}</li>
+                <li>{{translate("accurate4")}}</li>
               </ol>
               <br/>
-              <strong>{{locale.clear_label}}</strong>
-              <br/>{{locale.clear_text}}
+              <strong>{{translate("clear_label")}}</strong>
+              <br/>{{translate("clear_text")}}
               <ol>
-                  <li>{{locale.clear1}}</li>
-                  <li>{{locale.clear2}}</li>
-                  <li>{{locale.clear3}}</li>
+                  <li>{{translate("clear1")}}</li>
+                  <li>{{translate("clear2")}}</li>
+                  <li>{{translate("clear3")}}</li>
               </ol>
               <br/>
-              <strong>{{locale.natural_label}}</strong>
-              <br/>{{locale.natural_text}}
+              <strong>{{translate("natural_label")}}</strong>
+              <br/>{{translate("natural_text")}}
               <ol>
-                  <li>{{locale.natural1}}</li>
-                  <li>{{locale.natural2}}</li>
-                  <li>{{locale.natural3}}</li>
+                  <li>{{translate("natural1")}}</li>
+                  <li>{{translate("natural2")}}</li>
+                  <li>{{translate("natural3")}}</li>
               </ol>
             </p>
             <br/>
-            <p>{{locale.guideline_tldr}}</p>
+            <p>{{translate("guideline_tldr")}}</p>
             <ol>
-                <li>{{locale.tldr1}}</li>
-                <li>{{locale.tldr2}}</li>
+                <li>{{translate("tldr1")}}</li>
+                <li>{{translate("tldr2")}}</li>
             </ol>
         </div>
         <div id="buttons">
-            <paper-button dialog-dismiss>{{locale.close}}</paper-button>
+            <paper-button dialog-dismiss>{{translate("close")}}</paper-button>
         </div>
 
     </template>
@@ -80,14 +80,13 @@
         is: 'ts-guidelines',
 
         properties: {
-            locale: {
-              type: Object,
-              value: {}
-            }
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
         ready: function() {
-            this.set('locale', App.locale.dictionary);
         }
 
     });

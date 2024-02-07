@@ -403,8 +403,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
 
             var setLicense = function () {
                 var srcDir = path.resolve(path.join(__dirname, '..'));
-                var file = meta.project.id === 'obs' ? 'OBS_LICENSE.md' : 'LICENSE.md';
-                return read(path.join(srcDir, 'assets', file))
+                return read(path.join(srcDir, 'assets', 'LICENSE.md'))
                     .then(function(data) {
                         return write(paths.license, data);
                     });
@@ -596,6 +595,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         deleteTargetTranslation: function (meta) {
+            var mythis = this;
             var paths = utils.makeProjectPaths(targetDir, meta);
             let projectDir = paths.projectDir;
 
@@ -611,15 +611,16 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                     if (exists) {
                         return trash([projectDir]);
                     } else {
-                        throw "Project directory does not exist";
+                        throw mythis.translate("project_dir_doesnt_exist");
                     }
                 })
                 .catch(function (err) {
-                    throw err || "Unable to delete file at this time.";
+                    throw err || mythis.translate("unable_delete_file");
                 });
         },
 
         backupProject: function (projectDir) {
+            var mythis = this;
             const projectName = path.basename(projectDir);
             var autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
             var filePath = path.join(autoBackupDir, `${projectName}_${utils.getDateAndTime()}.zip`);
@@ -627,7 +628,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
             return utils.fileExists(projectDir)
                 .then(function (exists) {
                     if (!exists) {
-                        throw "Project directory does not exist";
+                        throw mythis.translate("project_dir_doesnt_exist");
                     }
                 })
                 .then(function () {
@@ -639,7 +640,11 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                         return filePath;
                     });
                 });
-        }
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
     };
 }
 

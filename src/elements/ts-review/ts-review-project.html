@@ -39,7 +39,7 @@
                 <ts-review-chapter chapter="[[chapter]]"></ts-review-chapter>
             </template>
             <div id="button">
-                <paper-button raised id="next" on-tap="next">{{locale.next}}</paper-button>
+                <paper-button raised id="next" on-tap="next">{{translate("next")}}</paper-button>
             </div>
         </div>
 
@@ -68,10 +68,6 @@
             chapters: {
                 type: Array,
                 value: []
-            },
-            locale: {
-                type: Object,
-                value: {}
             }
         },
 
@@ -98,10 +94,12 @@
         },
 
         createchapters: function () {
+            var mythis = this;
             var transchapters = [];
             var translation = _.cloneDeep(this.currentproject.chunks);
             var projectmeta = this.currentproject.projectmeta;
             var name = projectmeta.project.name;
+            var id = projectmeta.project.id;
             var typeclass = projectmeta.project_type_class;
             var direction = projectmeta.target_language.direction;
 
@@ -137,15 +135,17 @@
             _.forEach(_.groupBy(transdata, function(chunks) {
                 return chunks.chunkmeta.chapterid;
             }), function (data, chap) {
+                name = mythis.translate(`book_${id}`);
                 var chapcomplete = true;
                 var chapter = parseInt(chap) || 0;
                 var reference;
                 if (chap === "front") {
-                    reference = this._lookupLocaleString("project_details");
+                    reference = mythis.translate("project_details");
                 } else if (typeclass === "extant") {
                     reference = name;
                 } else {
-                    reference = name + " " + chapter;
+                    mythis.translate("project_chapter_title", name, chapter);
+                    reference = mythis.translate("project_chapter_title", name, chapter);
                 }
 
                 _.forEach(data, function (chunk) {
@@ -160,7 +160,7 @@
 
             for (i = 0; i < transchapters.length; i++) {
                 if (transchapters[i].start > 1 && transchapters[i].completed === true && transchapters[i-1].completed === true) {
-                    transchapters[i-1].reference = name + " " + transchapters[i-1].start + "–" + transchapters[i].end;
+                    transchapters[i-1].reference = mythis.translate("project_chapter_title", name, `${transchapters[i-1].start}–${transchapters[i].end}`);
                     transchapters[i-1].combined = true;
                     transchapters.splice(i, 1);
                     i--;
@@ -174,16 +174,11 @@
             this.fire('next');
         },
 
-        ready: function() {
-            this.set('locale', App.locale.dictionary);
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
-        _lookupLocaleString: function (keyValue) {
-            let localeText = this.locale[keyValue];
-            if (localeText == undefined) {
-                localeText = keyValue;
-            }
-            return localeText;
+        ready: function() {
         }
 
     });

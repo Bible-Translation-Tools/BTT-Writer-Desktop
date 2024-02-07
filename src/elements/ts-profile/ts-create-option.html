@@ -46,6 +46,7 @@
             display: flex;
             justify-content: flex-end;
             padding: 20px;
+            gap: 20px;
         }
 
         input {
@@ -71,18 +72,18 @@
 
         <div id="content">
             <div class="header">
-                <h2>Server Account Creation</h2>
-                <p><iron-icon icon="notification:wifi"></iron-icon> This will use your internet connection</p>
+                <h2>{{translate("server_account_create")}}</h2>
+                <p><iron-icon icon="notification:wifi"></iron-icon> {{translate("internet_warning")}}</p>
             </div>
             <div class="body">
-                <input is="iron-input" bind-value="{{newinfo.username}}" placeholder="Username">
-                <input is="iron-input" bind-value="{{newinfo.email}}" placeholder="Email">
-                <input is="iron-input" bind-value="{{newinfo.full_name}}" placeholder="Full Name or Pseudonym">
-                <input is="iron-input" bind-value="{{newinfo.password}}" placeholder="Password" type="password">
-                <input is="iron-input" bind-value="{{newinfo.password2}}" placeholder="Verify Password" type="password">
+                <input is="iron-input" bind-value="{{newinfo.username}}" placeholder="{{translate('username_label')}}">
+                <input is="iron-input" bind-value="{{newinfo.email}}" placeholder="{{translate('email_label')}}">
+                <input is="iron-input" bind-value="{{newinfo.full_name}}" placeholder="{{translate('local_user_prompt')}}">
+                <input is="iron-input" bind-value="{{newinfo.password}}" placeholder="{{translate('password_label')}}" type="password">
+                <input is="iron-input" bind-value="{{newinfo.password2}}" placeholder="{{translate('verify_password')}}" type="password">
             </div>
             <div class="buttons">
-                <paper-button raised class="fill" on-tap="create">Submit</paper-button>
+                <paper-button raised class="fill" on-tap="create">{{translate("submit")}}</paper-button>
             </div>
         </div>
 
@@ -117,8 +118,11 @@
             this.fire('create');
         },
 
-        ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function() {
         }
 
     });

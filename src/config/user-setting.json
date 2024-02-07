@@ -1,5 +1,14 @@
 [
     {
+        "name": "localization",
+        "mainText": "localization_maintext",
+        "value": {"id": "en", "name": "English"},
+        "options": [],
+        "group": "gen_group",
+        "enabled": true,
+        "visible": true
+    },
+    {
         "name": "glmode",
         "mainText": "glmode_maintext",
         "helpText": "glmode_helptext",
@@ -13,6 +22,15 @@
         "mainText": "bemode_maintext",
         "helpText": "bemode_helptext",
         "value": true,
+        "group": "gen_group",
+        "enabled": true,
+        "visible": true
+    },
+    {
+        "name": "colortheme",
+        "mainText": "colortheme_maintext",
+        "value": {"name": "system"},
+        "options": [{"name": "light"}, {"name": "dark"}, {"name": "system"}],
         "group": "gen_group",
         "enabled": true,
         "visible": true
@@ -47,8 +65,8 @@
     {
         "name": "targetsize",
         "mainText": "targetsize_maintext",
-        "value": {"name": "size_normal"},
-        "options": [{"name": "size_small"}, {"name": "size_normal"}, {"name": "size_large"}],
+        "value": {"name": "normal"},
+        "options": [{"name": "small"}, {"name": "normal"}, {"name": "large"}],
         "group": "gen_group",
         "enabled": true,
         "visible": true
@@ -56,8 +74,8 @@
     {
         "name": "sourcesize",
         "mainText": "sourcesize_maintext",
-        "value": {"name": "size_normal"},
-        "options": [{"name": "size_small"}, {"name": "size_normal"}, {"name": "size_large"}],
+        "value": {"name": "normal"},
+        "options": [{"name": "small"}, {"name": "normal"}, {"name": "large"}],
         "group": "gen_group",
         "enabled": true,
         "visible": true
@@ -127,14 +145,6 @@
         "visible": true
     },
     {
-        "name": "attribution",
-        "mainText": "attribution_label",
-        "value": "",
-        "group": "legal_group",
-        "enabled": true,
-        "visible": true
-    },
-    {
         "name": "serversuite",
         "mainText": "server_suite_maintext",
         "value": {"name": "WACS"},
@@ -145,14 +155,17 @@
                 "mediaserver": "https://api.bibletranslationtools.org", 
                 "readerserver": "https://read.bibleineverylanguage.org",
                 "createaccounturl": "https://content.bibletranslationtools.org/user/sign_up",
-                "languageurl": "https://langnames.bibleineverylanguage.org/langnames.json"
+                "languageurl": "https://langnames.bibleineverylanguage.org/langnames.json",
+                "indexsqliteurl": "https://writer-resources.bibletranslationtools.org/index.sqlite"
             },
             {
                 "name": "DCS",
                 "dataserver": "https://git.door43.org",
                 "mediaserver": "https://api.unfoldingword.org",
                 "readerserver": "https://door43.org/u",
-                "createaccounturl": "https://git.door43.org/user/sign_up"
+                "createaccounturl": "https://git.door43.org/user/sign_up",
+                "languageurl": "https://td.unfoldingword.org/exports/langnames.json",
+                "indexsqliteurl": "https://writer-resources.bibletranslationtools.org/index.sqlite"
             }
         ],
         "group": "advanced_group",
@@ -205,10 +218,19 @@
         "visible": true
     },
     {
+        "name": "indexsqliteurl",
+        "mainText": "indexsqliteurl_label",
+        "value": "https://writer-resources.bibletranslationtools.org/index.sqlite",
+        "default": "https://writer-resources.bibletranslationtools.org/index.sqlite",
+        "group": "advanced_group",
+        "enabled": true,
+        "visible": true
+    },
+    {
         "name": "logginglevel",
         "mainText": "logging_level_label",
-        "value": "Warnings",
-        "options": ["information_level", "warning_level", "error_level"],
+        "value": {"name": "warning_level"},
+        "options": [{"name": "information_level"}, {"name": "warning_level"}, {"name": "error_level"}],
         "group": "advanced_group",
         "enabled": true,
         "visible": false
@@ -223,8 +245,8 @@
     },
     {
         "name": "refreshsettings",
-        "mainText": "Refresh Settings",
-        "helpText": "Update user options to the most current",
+        "mainText": "refresh_settings_label",
+        "helpText": "refresh_settings_text",
         "group": "advanced_group",
         "enabled": true,
         "visible": false

@@ -59,7 +59,7 @@ function ExportManager(configurator, git) {
                     return utils.fs.mkdirs(backupDir);
                 })
                 .catch(function () {
-                    throw "Backup location not found. Attach external drive or change backup location in settings.";
+                    throw mythis.translate("backup_location_not_found");
                 })
                 .then(function () {
                     return Promise.all(promises);
@@ -73,7 +73,7 @@ function ExportManager(configurator, git) {
 
             return utils.fs.mkdirs(autoBackupDir)
                 .catch(function () {
-                    throw "Backup location not found. Attach external drive or change backup location in settings.";
+                    throw mythis.translate("backup_location_not_found");
                 })
                 .then(function () {
                     return mythis.backupTranslation(meta, filePath);
@@ -81,6 +81,7 @@ function ExportManager(configurator, git) {
         },
 
         exportTranslation: function (translation, meta, filePath, mediaServer) {
+            var mythis = this;
             return new Promise(function(resolve, reject) {
                 if (meta.project_type_class === "standard") {
 
@@ -169,9 +170,12 @@ function ExportManager(configurator, git) {
                                     content += "\\c " + chunk.chunkmeta.chapter + "\n";
                                     currentChapter = chunk.chunkmeta.chapter;
                                 }
-                                if (chunk.chunkmeta.frame === 0 && chunk.transcontent) {
-                                    // Write chapter label to \cl marker
-                                    content += "\\cl " + chunk.transcontent + "\n";
+                                if (chunk.chunkmeta.frame === 0) {
+                                    if (chunk.transcontent) {
+                                        // Write chapter label to \cl marker
+                                        content += "\\cl " + chunk.transcontent + "\n";
+                                    }
+                                    content += "\\p\n";
                                     return;
                                 }
                                 if (chunk.transcontent) {
@@ -199,14 +203,18 @@ function ExportManager(configurator, git) {
                         });
 
                     } else {
-                        reject("We do not support exporting this project format yet");
+                        reject(mythis.translate("project_export_format_not_supported"));
                     }
                 } else {
                     // TODO: support exporting other target translation types if needed e.g. notes, words, questions
-                    reject('We do not support exporting this project type yet');
+                    reject(mythis.translate("project_export_type_not_supported"));
                 }
             });
-        }
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
     };
 }
 

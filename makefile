@@ -70,3 +70,7 @@ release-win:
 release-linux:
 	# Creates Linux executable
 	docker run --rm --volume $(RELEASE_DIR):/app/release $(IMAGE_LABEL) bash -c "gulp build --linux && gulp release"
+
+release-osx:
+	# Creates MacOs executable
+	docker run --rm --volume $(RELEASE_DIR):/app/release $(IMAGE_LABEL) bash -c "gulp build --osx && gulp release"

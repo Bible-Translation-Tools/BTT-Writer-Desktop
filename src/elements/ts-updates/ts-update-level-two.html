@@ -90,8 +90,8 @@
               <iron-icon class="click" icon="arrow-back" on-tap="tolevelone"></iron-icon>
               <span class="click" on-tap="tolevelone"><span>[[choices.levelone.name]]</span><span class="code lang">(<span>[[choices.levelone.slug]]</span>)</span></span>
               <iron-icon icon="chevron-right"></iron-icon>
-              <span class="lang"><em>Choose a Category</em></span>
-              <span class="book"><em>Choose a Book</em></span>
+              <span class="lang"><em>{{translate("choose_category")}}</em></span>
+              <span class="book"><em>{{translate("choose_book")}}</em></span>
           </div>
           <iron-list id="list" items="[[leveltwolist]]" as="item">
               <template>
@@ -184,11 +184,11 @@
 
                   _.forEach(_.groupBy(translations, 'project.category_slug'), function (data, category) {
                       if (category === "bible-ot") {
-                          temparray.push({name: "Old Testament", slug: category, sort: 1});
+                          temparray.push({name: mythis.translate("old_testament"), slug: category, sort: 1});
                       } else if (category === "bible-nt") {
-                          temparray.push({name: "New Testament", slug: category, sort: 2});
+                          temparray.push({name: mythis.translate("new_testament"), slug: category, sort: 2});
                       } else if (category === "other") {
-                          temparray.push({name: "Other", slug: category, sort: 3});
+                          temparray.push({name: mythis.translate("other_project"), slug: category, sort: 3});
                       }
                   });
                   this.set('leveltwolist', this.sortList(temparray));
@@ -198,11 +198,17 @@
                   });
 
                   _.forEach(_.groupBy(translations, 'project.slug'), function (data) {
-                      temparray.push(data[0].project);
+                      var project = data[0].project;
+                      project.name = mythis.translate(`book_${project.slug}`);  
+                      temparray.push(project);
                   });
                   this.set('leveltwolist', this.sortList(temparray));
               }
           }
+      },
+
+      translate: function (key, ...args) {
+          return App.locale.translate(key, ...args);
       },
 
       ready: function () {

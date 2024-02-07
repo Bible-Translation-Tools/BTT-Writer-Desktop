@@ -21,7 +21,7 @@
 
     <template>
 
-        <paper-fab icon="add" title="New Project" on-tap="startnew"></paper-fab>
+        <paper-fab icon="add" title="{{translate('new_project')}}" on-tap="startnew"></paper-fab>
 
     </template>
 
@@ -45,8 +45,11 @@
             this.fire('startnew');
         },
 
-        ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function() {
         }
 
     });

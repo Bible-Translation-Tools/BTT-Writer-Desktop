@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>BTT Writer</title>
 
@@ -12,29 +13,37 @@
     <link rel="import" href="../elements/ts-main/app-theme.html">
 
 </head>
+
 <body>
     <ts-splash id="splash"></ts-splash>
 
     <script>
-    (function () {
-        var ipcRenderer = require('electron').ipcRenderer;
-        var splash = document.getElementById('splash');
-        var pack = require('../../package');
-        var versiontext = "Version " + pack.version;
+        (function () {
+            const ipcRenderer = require('electron').ipcRenderer;
 
-        splash.content = {title: "BTT Writer", subtitle: versiontext, message: "Loading main window..."};
+            const pack = require('../../package');
+            const path = require('path');
+            const i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
+            const Configurator = require('../js/configurator').Configurator;
+            
+            const configurator = new Configurator();
+            configurator.setStorage(window.localStorage);
+            const theme = configurator.getUserSetting("colortheme").name;
 
-        const Configurator = require('../js/configurator').Configurator;
-        const configurator = new Configurator();
-        configurator.setStorage(window.localStorage);
-        const theme = configurator.getUserSetting("colortheme").name;
+            const loc = configurator.getUserSetting("localization");
+            if (loc) i18n.setLocale(loc.id);
 
-        ipcRenderer.send('theme-loaded', theme);
+            const splash = document.getElementById('splash');
+            const versiontext = i18n.translate("version_title", pack.version);
+            splash.content = { title: "BTT Writer", subtitle: versiontext, message: i18n.translate("loading_text") };
 
-        ipcRenderer.on('loading-status', function (event, status) {
-            splash.updateMessage(status);
-        });
-    })();
+            ipcRenderer.send('theme-loaded', theme);
+
+            ipcRenderer.on('loading-status', function (event, status) {
+                splash.updateMessage(status);
+            });
+        })();
     </script>
 </body>
+
 </html>

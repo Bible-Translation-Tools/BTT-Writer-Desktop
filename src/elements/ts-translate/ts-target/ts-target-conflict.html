@@ -128,10 +128,10 @@
                 </template>
             </div>
             <div id="footer">
-                <p id="resolve">Resolve Conflict - Click on the version to keep</p>
+                <p id="resolve">{{translate("resolve_conflict_action")}}</p>
                 <div id="buttons" class="hide">
-                    <paper-button id="cancel" on-tap="cancel">Cancel</paper-button>
-                    <paper-button raised id="confirm" on-tap="savechoice">Confirm</paper-button>
+                    <paper-button id="cancel" on-tap="cancel">{{translate("cancel")}}</paper-button>
+                    <paper-button raised id="confirm" on-tap="savechoice">{{translate("confirm")}}</paper-button>
                 </div>
             </div>
         </paper-material>
@@ -163,6 +163,7 @@
         },
 
         displayConflict: function (conflict) {
+            var mythis = this;
             var type = this.chunk.projectmeta.project_type_class;
 
             if (type === "standard") {
@@ -171,8 +172,8 @@
                 var returnstr = "";
 
                 conflict.forEach(function (item) {
-                    returnstr += "Title: " + item.title + "\n";
-                    returnstr += "Body: " + item.body + "\n\n";
+                    returnstr += mythis.translate("resource_title", item.title) + "\n";
+                    returnstr += mythis.translate("resource_body", item.body) + "\n\n";
                 });
 
                 return returnstr.trim();
@@ -234,8 +235,11 @@
             this.fire('setheight');
         },
 
-		ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+		ready: function() {
 		}
 
 	});

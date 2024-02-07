@@ -40,67 +40,20 @@ process.stdout.write = console.log.bind(console);
     let i18n = null;
     let utils = null;
 
-    // catch startup errors
+    // Load and initialize configurator first, because it's neccessary to get user selected localization language
     try {
-
         setMsg('Loading path...');
         path = require('path');
         fs = require('fs');
         fse = require('fs-extra');
 
-        setMsg('Loading mkdirp...');
-        mkdirp = require('mkdirp');
-
-        setMsg('Loading DB...');
-        Db = require('door43-client-fork');
-
-        setMsg('Loading Reporter...');
-        Reporter = require('../js/reporter').Reporter;
-
-        setMsg('Loading Configurator...');
+        setMsg("Loading Configurator...");
         Configurator = require('../js/configurator').Configurator;
-
-        setMsg('Loading Git Manager...');
-        GitManager = require('../js/gitnative').GitManager;
-
-        setMsg('Loading Key Manager...');
-        KeyManager = require('../js/keys').KeyManager;
-
-        setMsg('Loading Projects Manager...');
-        ProjectsManager = require('../js/projects').ProjectsManager;
-
-        setMsg('Loading Migrate Manager...');
-        MigrateManager = require('../js/migrator').MigrateManager;
-
-        setMsg('Loading Data Manager...');
-        DataManager = require('../js/database').DataManager;
-
-        setMsg('Loading User Manager...');
-        UserManager = require('../js/user').UserManager;
-
-        setMsg('Loading Import Manager...');
-        ImportManager = require('../js/importer').ImportManager;
-
-        setMsg('Loading Export Manager...');
-        ExportManager = require('../js/exporter').ExportManager;
-
-        setMsg('Loading Print Manager...');
-        PrintManager = require('../js/printer').PrintManager;
-
-        setMsg('Loading Renderer...');
-        Renderer = require('../js/render').Renderer;
-
-        setMsg('Loading Locale...');
-        i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
-
-        setMsg('Loading Utils...');
-        utils = require('../js/lib/utils');
-    } catch (err) {
+    } catch(err) {
         // display error and fail
         setMsg(err.message);
         throw new Error(err);
     }
-    setMsg('Initializing configurator...');
 
     // TODO: refactor this so we can just pass an object to the constructor
     let configurator = (function () {
@@ -126,6 +79,61 @@ process.stdout.write = console.log.bind(console);
         return c;
     })();
 
+    // catch startup errors
+    try {
+        setMsg('Loading Locale...');
+        var loc = configurator.getUserSetting("localization");
+        i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
+        if (loc) i18n.setLocale(loc.id);
+
+        setMsg(i18n.translate("loading_mkdirp"));
+        mkdirp = require('mkdirp');
+
+        setMsg(i18n.translate("loading_db"));
+        Db = require('door43-client-fork');
+
+        setMsg(i18n.translate("loading_reporter"));
+        Reporter = require('../js/reporter').Reporter;
+
+        setMsg(i18n.translate("loading_git_mgr"));
+        GitManager = require('../js/gitnative').GitManager;
+
+        setMsg(i18n.translate("loading_key_mgr"));
+        KeyManager = require('../js/keys').KeyManager;
+
+        setMsg(i18n.translate("loading_projects_mgr"));
+        ProjectsManager = require('../js/projects').ProjectsManager;
+
+        setMsg(i18n.translate("loading_migrate_mgr"));
+        MigrateManager = require('../js/migrator').MigrateManager;
+
+        setMsg(i18n.translate("loading_data_mgr"));
+        DataManager = require('../js/database').DataManager;
+
+        setMsg(i18n.translate("loading_user_mgr"));
+        UserManager = require('../js/user').UserManager;
+
+        setMsg(i18n.translate("loading_import_mgr"));
+        ImportManager = require('../js/importer').ImportManager;
+
+        setMsg(i18n.translate("loading_export_mgr"));
+        ExportManager = require('../js/exporter').ExportManager;
+
+        setMsg(i18n.translate("loading_print_mgr"));
+        PrintManager = require('../js/printer').PrintManager;
+
+        setMsg(i18n.translate("loading_renderer"));
+        Renderer = require('../js/render').Renderer;
+
+        setMsg(i18n.translate("loading_utils"));
+        utils = require('../js/lib/utils');
+    } catch (err) {
+        // display error and fail
+        setMsg(err.message);
+        throw new Error(err);
+    }
+    setMsg(i18n.translate("init_config"));
+
     let reporter = new Reporter({
         logPath: path.join(configurator.getValue('rootDir'), 'log.txt'),
         oauthToken: configurator.getValue('github-oauth'),
@@ -150,7 +158,7 @@ process.stdout.write = console.log.bind(console);
         } catch(e) {}
 
         if (!indexstat) {
-            setMsg('Setting up index file...');
+            setMsg(i18n.translate("setting_index_file"));
             mkdirp.sync(libraryDir);
             var content = fs.readFileSync(srcDB);
             fs.writeFileSync(libraryPath, content);
@@ -162,7 +170,7 @@ process.stdout.write = console.log.bind(console);
         return new DataManager(db, resourceDir, srcResource, configurator);
     })();
 
-    setMsg('Initializing modules...');
+    setMsg(i18n.translate("init_modules"));
 
     let gitManager = new GitManager();
 
@@ -268,7 +276,7 @@ process.stdout.write = console.log.bind(console);
     //     });
     // });
 
-    setMsg('Loading UI...');
+    setMsg(i18n.translate("loading_ui"));
 
     window.App = App;
 
