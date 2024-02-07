@@ -51,6 +51,7 @@
             display: flex;
             justify-content: space-around;
             color: var(--secondary-text-color);
+            gap: 20px;
         }
 
         .buttons paper-button:hover {
@@ -70,21 +71,20 @@
 
         <div id="header">
             <div id="title">
-                <span>Terms of Use</span>
+                <span>{{translate("terms_title")}}</span>
             </div>
         </div>
 
         <div id="body">
             <div id="main">
-                <p>By using this app you agree with the statement of faith and translation guidelines and to release your work under
-                the terms of the Creative Commons Attribution-ShareAlike 4.0 International License.</p>
-                <paper-button raised on-tap="openlicense">License Agreement</paper-button>
-                <paper-button raised on-tap="openguidelines">Translation Guidelines</paper-button>
-                <paper-button raised on-tap="openstatement">Statement of Faith</paper-button>
+                <p>{{translate("terms1")}}</p>
+                <paper-button raised on-tap="openlicense">{{translate("license_button")}}</paper-button>
+                <paper-button raised on-tap="openguidelines">{{translate("translation_button")}}</paper-button>
+                <paper-button raised on-tap="openstatement">{{translate("statement_button")}}</paper-button>
             </div>
             <div class="buttons">
-                <paper-button on-tap="logout">No Thanks</paper-button>
-                <paper-button on-tap="accept">I Agree</paper-button>
+                <paper-button on-tap="logout">{{translate("no_button")}}</paper-button>
+                <paper-button on-tap="accept">{{translate("agree_button")}}</paper-button>
             </div>
         </div>
 
@@ -143,8 +143,11 @@
             this.fire('iron-signal', {name: 'openstatement'});
         },
 
-        ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function() {
         }
 
     });

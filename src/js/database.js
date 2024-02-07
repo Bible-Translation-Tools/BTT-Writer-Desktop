@@ -40,7 +40,7 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                     const reader = response.body.getReader();
                     const writer = fs.createWriteStream(libraryPath);
                     let bytesDone = 0;
-                    const total = parseInt(response.headers.get('Content-Length' || '0'));
+                    const total = parseInt(response.headers.get('Content-Length') || 0);
 
                     while (true) {
                         const result = await reader.read();
@@ -198,15 +198,15 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                     return Promise.resolve(true);
                 })
                 .catch(function (err) {
-                    var errmessage = 'Unknown Error while downloading';
+                    var errmessage = mythis.translate("download_unknown_error");
                     if (err.syscall === "getaddrinfo") {
-                        errmessage = "Unable to connect to server";
+                        errmessage = mythis.translate("connection_error");
                     }
                     if (err.syscall === "read") {
-                        errmessage = "Lost connection to server";
+                        errmessage = mythis.translate("read_error");
                     }
                     if (err.status === 404) {
-                        errmessage = "Source not found on server";
+                        errmessage = mythis.translate("source_on_server_not_found");
                     }
                     item.failure = true;
                     item.errmsg = errmessage;
@@ -241,6 +241,7 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
         },
 
         activateContainer: function (language, project, resource) {
+            var mythis = this;
             var container = language + "_" + project + "_" + resource;
             var resourcePath = path.join(resourceDir, container);
             var tempPath = path.join(resourceDir, container + ".tsrc");
@@ -263,7 +264,7 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                                             return Promise.resolve(true);
                                         });
                                 }
-                                return Promise.resolve("Resource container " + container + " does not exist");
+                                return Promise.resolve(mythis.translate("rc_doesnt_exist"));
                             });
                     }
                     return Promise.resolve(true);
@@ -325,6 +326,7 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
         },
 
         getContainerData: function (container) {
+            var mythis = this;
             var frames = this.extractContainer(container);
             var toc = this.parseYaml(container, "toc.yml");
             var sorted = [];
@@ -340,7 +342,7 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                             if (results.length) {
                                 sorted.push(results[0]);
                             } else {
-                                console.log("Cannot find data for:", container, chapter, chunk);
+                                console.log(mythis.translate("cannot_find_data", container, chapter, chunk));
                             }
                         });
                     }
@@ -563,7 +565,11 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
             });
 
             return allchunks;
-        }
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
     };
 }
 

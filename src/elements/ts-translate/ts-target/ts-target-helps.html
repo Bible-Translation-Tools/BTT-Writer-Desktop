@@ -184,7 +184,7 @@
             <div id="content" class="editmode">
                 <template is="dom-if" if="{{!chunk.helpscontent.length}}">
                     <div id="iconbox" class$="[[iconclass(chunk.completed)]]" on-tap="addhelp">
-                        <p>Click to add <span>[[chunk.projectmeta.type.name]]</span></p>
+                        <p>{{translate("click_to_add_resource", chunk.projectmeta.type.name)}}</p>
                         <iron-icon icon="add"></iron-icon>
                     </div>
                 </template>
@@ -209,7 +209,7 @@
                 </template>
             </div>
             <paper-material id="togglebox" elevation="1">
-                <p>Mark chunk as done</p>
+                <p>{{translate("mark_chunk_done")}}</p>
                 <paper-toggle-button id="toggle" on-change="checkdone"></paper-toggle-button>
             </paper-material>
         </div>
@@ -245,10 +245,10 @@
         checktitle: function (type) {
             var text = "";
             if (type === "tn") {
-                text = "reference text";
+                text = this.translate("reference_text");
             }
             if (type === "tq") {
-                text = "Add Question Here";
+                text = this.translate("add_question_here");
             }
             return text;
         },
@@ -256,10 +256,10 @@
         checkbody: function (type) {
             var text = "";
             if (type === "tn") {
-                text = "note text";
+                text = this.translate("note_text");
             }
             if (type === "tq") {
-                text = "Add Answer Here";
+                text = this.translate("add_answer_here");
             }
             return text;
         },
@@ -377,8 +377,11 @@
             }
         },
 
-		ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+		ready: function() {
 		}
 
 	});

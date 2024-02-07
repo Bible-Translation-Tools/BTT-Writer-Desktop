@@ -195,32 +195,34 @@ function scrollAcademyWindow () {
 
 function createAppMenus() {
     // Create the Application's main menu
+    var path = require('path');
+    var i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
     var template = [
         {
-            label: "Application",
+            label: i18n.translate("application"),
             submenu: [
-                { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+                { label: i18n.translate("about_application"), selector: "orderFrontStandardAboutPanel:" },
                 { type: "separator" },
-                { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+                { label: i18n.translate("quit"), accelerator: "Command+Q", click: function() { app.quit(); }}
             ]
         },
         {
-            label: "Edit",
+            label: i18n.translate("edit"),
             submenu: [
-                { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-                { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+                { label: i18n.translate("undo"), accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+                { label: i18n.translate("redo"), accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
                 { type: "separator" },
-                { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-                { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-                { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-                { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+                { label: i18n.translate("cut"), accelerator: "CmdOrCtrl+X", selector: "cut:" },
+                { label: i18n.translate("copy"), accelerator: "CmdOrCtrl+C", selector: "copy:" },
+                { label: i18n.translate("paste"), accelerator: "CmdOrCtrl+V", selector: "paste:" },
+                { label: i18n.translate("select_all"), accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
             ]
         },
         {
-            label: "View",
+            label: i18n.translate("view"),
             submenu: [
                 {
-                    label: "Toggle Developer Tools",
+                    label: i18n.translate("toggle_dev_tools"),
                     accelerator: "Shift+CmdOrCtrl+I",
                     click: function () {
                         var w = BrowserWindow.getFocusedWindow();
@@ -325,12 +327,18 @@ ipcMain.on('ta-loading-done', function () {
 });
 
 ipcMain.on('theme-changed', (event, theme) => {
-    nativeTheme.themeSource = theme.toLowerCase();
+    theme = theme.replace(/.*?(system|light|dark)/i, "$1").toLowerCase();
+    nativeTheme.themeSource = theme;
     reloadApplication();
 });
 
 ipcMain.on('theme-loaded', (event, theme) => {
-    nativeTheme.themeSource = theme.toLowerCase();
+    theme = theme.replace(/.*?(system|light|dark)/i, "$1").toLowerCase();
+    nativeTheme.themeSource = theme;
+});
+
+ipcMain.on('localization-changed', () => {
+    reloadApplication();
 });
 
 ipcMain.on('show-devtools', () => {

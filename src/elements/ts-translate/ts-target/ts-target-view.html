@@ -89,7 +89,7 @@
                 <div id="textholder" class$="[[chunk.projectmeta.target_language.direction]]"></div>
             </div>
             <div id="conflict" class$="[[conflictclass(chunk.conflicts)]]">
-                <paper-button raised class="review" on-tap="gotoreview">Conflict Exists</paper-button>
+                <paper-button raised class="review" on-tap="gotoreview">{{translate("conflict_exists")}}</paper-button>
             </div>
         </paper-material>
 
@@ -137,8 +137,11 @@
             return exists ? 'hide' : 'flex targetfont targetsize';
         },
 
-		ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+		ready: function() {
 		}
 
 	});

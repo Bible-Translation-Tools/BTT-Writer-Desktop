@@ -63,6 +63,7 @@
             background: var(--accent-color);
             color: var(--reverse-text-color);
             text-transform: uppercase;
+            gap: 20px;
         }
 
         .highlight {
@@ -81,14 +82,14 @@
         <div id="header">
             <div id="title">
                 <iron-icon class="click" icon="arrow-back" on-tap="goback"></iron-icon>
-                <span class="click" on-tap="goback">Project</span>
+                <span class="click" on-tap="goback">{{translate("project")}}</span>
                 <iron-icon icon="chevron-right"></iron-icon>
-                <span>Review Project</span>
+                <span>{{translate("review_project")}}</span>
             </div>
             <div id="steps">
-                <paper-button raised class="buttons" on-tap="goproject"><span id="project">Project</span></paper-button>
-                <paper-button raised class="buttons" on-tap="gocontrib"><span id="contrib">Contributors</span></paper-button>
-                <paper-button raised class="buttons" on-tap="goexport"><span>Upload/Export</span></paper-button>
+                <paper-button raised class="buttons" on-tap="goproject"><span id="project">{{translate("project")}}</span></paper-button>
+                <paper-button raised class="buttons" on-tap="gocontrib"><span id="contrib">{{translate("contributors")}}</span></paper-button>
+                <paper-button raised class="buttons" on-tap="goexport"><span>{{translate("upload_export")}}</span></paper-button>
             </div>
         </div>
 
@@ -188,8 +189,11 @@
             this.animationConfig.entry.name = 'slide-from-left-animation';
         },
 
-        ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function() {
         }
     });
 

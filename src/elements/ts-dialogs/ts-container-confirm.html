@@ -34,6 +34,7 @@
             padding: 0 50px;
             color: var(--secondary-text-color);
             align-items: center;
+            gap: 20px;
         }
 
         #footer paper-button:hover {
@@ -45,14 +46,14 @@
     <template>
 
         <div id="header">
-            <h2>Source Already Exists</h2>
+            <h2>{{translate("source_exists")}}</h2>
         </div>
         <div id="body">
-            <p>Do you want to overwrite the existing source text?</p>
+            <p>{{translate("source_warning")}}</p>
         </div>
         <div id="footer">
-            <paper-button dialog-dismiss>Cancel</paper-button>
-            <paper-button dialog-confirm on-tap="overwrite">Confirm</paper-button>
+            <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
+            <paper-button dialog-confirm on-tap="overwrite">{{translate("confirm")}}</paper-button>
         </div>
 
     </template>
@@ -66,7 +67,6 @@
         is: 'ts-container-confirm',
 
         properties: {
-
         },
 
         overwrite: function () {
@@ -77,8 +77,11 @@
             }, 500);
         },
 
-        ready: function () {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function () {
         }
 
     });

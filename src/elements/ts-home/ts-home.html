@@ -159,27 +159,23 @@
             right: 0;
             margin: auto;
             background-color: var(--popup-background-color);
+            width: fit-content;
+            height: fit-content;
+            max-width: 750px;
+            max-height: 550px;
+            padding: 10px;
         }
 
         .buttons {
             display: flex;
             justify-content: flex-end;
             padding: 0 50px;
+            gap: 20px;
             color: var(--secondary-text-color);
         }
 
         .buttons paper-button:hover {
             color: var(--accent-color);
-        }
-
-        #info {
-            width: 400px;
-            height: 420px;
-        }
-
-        #delete {
-            width: 450px;
-            height: 175px;
         }
 
         #delete iron-icon {
@@ -190,19 +186,9 @@
             font-size: 110%;
         }
 
-        #resource {
-            width: 300px;
-            height: 300px;
-        }
-
         #resource * {
             margin: 0;
             padding: 0;
-        }
-
-        #confirmchange {
-            width: 450px;
-            height: 200px;
         }
 
         .space {
@@ -225,46 +211,46 @@
 
         <div id="main">
             <div id="header">
-                <span>{{locale.home_title}}</span>
+                <span>{{translate("home_title")}}</span>
             </div>
             <div id="body">
                 <template is="dom-if" if="{{!projectlist.length}}">
                     <div id="welcome">
-                        <p>{{locale.welcome}}</p>
-                        <p>{{locale.home_welcome1}}</p>
-                        <p>{{locale.home_welcome2}}</p>
+                        <p>{{translate("welcome")}}</p>
+                        <p>{{translate("home_welcome1")}}</p>
+                        <p>{{translate("home_welcome2")}}</p>
                     </div>
-                    <paper-button raised id="start" on-tap="startnew">{{locale.start_new_project}}</paper-button>
+                    <paper-button raised id="start" on-tap="startnew">{{translate("start_new_project")}}</paper-button>
                 </template>
                 <template is="dom-if" if="{{projectlist.length}}">
                     <div id="sort">
-                        <paper-dropdown-menu id="sortorder" label="Columns To Sort By">
+                        <paper-dropdown-menu id="sortorder" label="{{translate('columns1')}}">
                             <paper-listbox id="sort1" class="dropdown-content">
-                                <paper-item on-tap="sortproj">Project then Language</paper-item>
-                                <paper-item on-tap="sortlang">Language then Project</paper-item>
-                                <paper-item on-tap="sortprog">Progress then Project</paper-item>
+                                <paper-item on-tap="sortproj">{{translate("sort1")}}</paper-item>
+                                <paper-item on-tap="sortlang">{{translate("sort2")}}</paper-item>
+                                <paper-item on-tap="sortprog">{{translate("sort3")}}</paper-item>
                             </paper-listbox>
                         </paper-dropdown-menu>
-                        <paper-dropdown-menu id="projectsort" label="Sort Project Column By">
+                        <paper-dropdown-menu id="projectsort" label="{{translate('columns2')}}">
                             <paper-listbox id="sort2" class="dropdown-content">
-                                <paper-item on-tap="sortbible">Bible Order</paper-item>
-                                <paper-item on-tap="sortalpha">Alphabetical Order</paper-item>
+                                <paper-item on-tap="sortbible">{{translate("bible_order")}}</paper-item>
+                                <paper-item on-tap="sortalpha">{{translate("abc_order")}}</paper-item>
                             </paper-listbox>
                         </paper-dropdown-menu>
                     </div>
                     <div id="headings" class="smalltext">
                         <span class="smallspan"></span>
-                        <span class="bigspan">{{locale.project}}</span>
-                        <span class="medspan">{{locale.type}}</span>
-                        <span class="bigspan">{{locale.language}}</span>
-                        <span class="smallspan">{{locale.progress}}</span>
+                        <span class="bigspan">{{translate("project")}}</span>
+                        <span class="medspan">{{translate("type")}}</span>
+                        <span class="bigspan">{{translate("language")}}</span>
+                        <span class="smallspan">{{translate("progress")}}</span>
                     </div>
                     <div id="list">
                         <template is="dom-repeat" items="{{projectlist}}" as="project">
                             <div class="row">
                                 <div class="left" on-tap="openproject">
                                     <span class="smallspan"><iron-icon class="icon" src$="[[checkicon(project)]]"></iron-icon></span>
-                                    <span class="bigspan">[[project.project.name]]</span>
+                                    <span class="bigspan">[[translateBook(project.project.id)]]</span>
                                     <span class="medspan smalltext"><span>[[project.type.name]]</span><span class$="[[typeclass(project.resource.id)]]">[[project.resource.id]]</span></span>
                                     <span class="smalltext bigspan">[[project.target_language.name]]</span>
                                     <span class="smallspan"><ts-completion-icon percent="[[project.completion]]"></ts-completion-icon></span>
@@ -282,24 +268,24 @@
         </paper-dialog>
 
         <paper-dialog id="delete" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-            <h2><iron-icon icon="delete"></iron-icon>{{locale.delete}}</h2>
+            <h2><iron-icon icon="delete"></iron-icon>{{translate("delete")}}</h2>
             <div>
-                <p>{{locale.confirm_delete_translation}}</p>
+                <p>{{translate("confirm_delete_translation")}}</p>
             </div>
             <div class="buttons">
-                <paper-button on-tap="closedelete">Cancel</paper-button>
-                <paper-button on-tap="deleteproject">{{locale.confirm}}</paper-button>
+                <paper-button on-tap="closedelete">{{translate("cancel")}}</paper-button>
+                <paper-button on-tap="deleteproject">{{translate("confirm")}}</paper-button>
             </div>
         </paper-dialog>
 
         <paper-dialog id="confirmchange" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-            <h2>File already exists</h2>
+            <h2>{{translate("file_exists")}}</h2>
             <div>
-                <p>This project already exists.  If you continue with this change, the two projects will be merged together.</p>
+                <p>{{translate("merge_warning")}}</p>
             </div>
             <div class="buttons">
-                <paper-button on-tap="cancelconfirm">Cancel</paper-button>
-                <paper-button on-tap="firechange">Continue</paper-button>
+                <paper-button on-tap="cancelconfirm">{{translate("cancel")}}</paper-button>
+                <paper-button on-tap="firechange">{{translate("continue")}}</paper-button>
             </div>
         </paper-dialog>
 
@@ -345,10 +331,6 @@
                 notify: true
             },
             changedata: {
-                type: Object,
-                value: {}
-            },
-            locale: {
                 type: Object,
                 value: {}
             },
@@ -519,8 +501,15 @@
             }
         },
 
+        translateBook: function(slug) {
+            return this.translate(`book_${slug}`);
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function() {
-            this.set('locale', App.locale.dictionary);
         }
 
     });

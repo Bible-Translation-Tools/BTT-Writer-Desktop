@@ -74,27 +74,27 @@
     <template>
 
         <div id="header">
-            <h2>Upload/Export Options</h2>
+            <h2>{{translate("upload_options")}}</h2>
         </div>
         <div id="body">
             <div class="option" on-tap="upload">
-                <span class="optiontitle">Upload to Server<iron-icon class="icon" icon="info" title="Uploads project to your account - content will then be available to be downloaded by other translators, merged with other projects, or used as an online backup"></iron-icon></span>
+                <span class="optiontitle">{{translate("to_server")}}<iron-icon class="icon" icon="info" title="{{translate('to_server_text')}}"></iron-icon></span>
             </div>
             <div class$="[[checkusfmclass(currentproject.projectmeta.project_type_class, currentproject.projectmeta.format, currentproject.projectmeta.source_translations)]]" on-tap="checkusfm">
-                <span class="optiontitle">Export to USFM File<iron-icon class="icon" icon="info" title="Creates a .usfm file of your project"></iron-icon></span>
+                <span class="optiontitle">{{translate("to_usfm")}}<iron-icon class="icon" icon="info" title="{{translate('to_usfm_text')}}"></iron-icon></span>
             </div>
             <div class$="[[checkmarkdownclass(currentproject.projectmeta.project_type_class, currentproject.projectmeta.format, currentproject.projectmeta.source_translations)]]" on-tap="checkusfm">
-                <span class="optiontitle">Export to Text Files<iron-icon class="icon" icon="info" title="Creates a .zip file of your project"></iron-icon></span>
+                <span class="optiontitle">{{translate("to_text")}}<iron-icon class="icon" icon="info" title="{{translate('to_text_text')}}"></iron-icon></span>
             </div>
             <div class$="[[checkprintclass(currentproject.projectmeta.project_type_class, currentproject.projectmeta.source_translations)]]" on-tap="checkprint">
-                <span class="optiontitle">Export to PDF File<iron-icon class="icon" icon="info" title="Creates a .pdf file of your project"></iron-icon></span>
+                <span class="optiontitle">{{translate("to_pdf")}}<iron-icon class="icon" icon="info" title="{{translate('to_pdf_text')}}"></iron-icon></span>
             </div>
             <div class="option" on-tap="project">
-                <span class="optiontitle">Export Project File<iron-icon class="icon" icon="info" title="Creates a copy of your project file"></iron-icon></span>
+                <span class="optiontitle">{{translate("to_project")}}<iron-icon class="icon" icon="info" title="{{translate('to_project_text')}}"></iron-icon></span>
             </div>
         </div>
         <div id="footer">
-            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
         </div>
 
     </template>
@@ -142,6 +142,10 @@
             this.fire('checkusfm');
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function () {
             var shell = require('electron').shell;
             var links = this.$.header.getElementsByTagName('a');
@@ -150,7 +154,7 @@
                     event.preventDefault();
                     shell.openExternal(this.href);
                 });
-            }
+            };
         }
 
     });

@@ -33,7 +33,7 @@
 
         #input {
             height: 30px;
-            width: 130px;
+            width: 250px;
             margin: 0 10px;
             font-size: 110%;
             font-style: italic;
@@ -68,16 +68,16 @@
 	<template>
 
         <div id="body">
-            <span>Search in: </span>
+            <span>{{translate("search_in")}} </span>
             <paper-radio-group selected="{{selected}}" on-iron-select="activesearch">
-                <paper-radio-button name="source">Source</paper-radio-button>
-                <paper-radio-button name="target">Target</paper-radio-button>
+                <paper-radio-button name="source">{{translate("source")}}</paper-radio-button>
+                <paper-radio-button name="target">{{translate("target")}}</paper-radio-button>
             </paper-radio-group>
-            <input is="iron-input" id="input" bind-value="{{query}}" on-input="activesearch" placeholder="Search for text">
+            <input is="iron-input" id="input" bind-value="{{query}}" on-input="activesearch" placeholder="{{translate('search_text')}}">
             <div id="results" class$="[[resultsclass(query)]]">
                 <iron-icon class="click" icon="arrow-downward" on-tap="next"></iron-icon>
                 <iron-icon class="click" icon="arrow-upward" on-tap="previous"></iron-icon>
-                <span><span>Found in <span>[[results.forward.length]]</span> chunks.</span></span>
+                <span>{{translate("found_in_chunks", results.forward.length)}}</span>
             </div>
         </div>
         <div id="footer">
@@ -212,8 +212,11 @@
             this.fire('previous');
         },
 
-		ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+		ready: function() {
 		}
 
 	});

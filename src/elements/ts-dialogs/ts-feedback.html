@@ -1,6 +1,6 @@
 
 <link rel="import" href="../../components/paper-button/paper-button.html">
-<link rel="import" href="../../components/iron-input/iron-input.html">
+<link rel="import" href="../../components/iron-autogrow-textarea/iron-autogrow-textarea.html">
 <link rel="import" href="../../components/iron-icons/iron-icons.html">
 <link rel="import" href="../../components/iron-icons/notification-icons.html">
 
@@ -32,17 +32,19 @@
             display: flex;
             justify-content: flex-end;
             margin: 10px 50px;
+            gap: 20px;
         }
 
         #footer paper-button:hover {
             color: var(--accent-color);
         }
 
-        input {
-            border: none;
+        #feedback {
             font-size: 120%;
             padding: 10px;
             color: var(--secondary-text-color);
+            width: 500px;
+            height: 200px;
         }
 
     </style>
@@ -50,15 +52,15 @@
     <template>
 
         <div id="header">
-            <h2>Feedback</h2>
-            <p><iron-icon icon="notification:wifi"></iron-icon> This will use your internet connection</p>
+            <h2>{{translate("feedback")}}</h2>
+            <p><iron-icon icon="notification:wifi"></iron-icon> {{translate("internet_warning")}}</p>
         </div>
         <div id="body">
-            <input is="iron-input" bind-value="{{feedback}}" placeholder="Describe the problem you are experiencing">
+            <iron-autogrow-textarea id="feedback" bind-value="{{feedback}}" placeholder="{{translate('describe_problem')}}">
         </div>
         <div id="footer">
-            <paper-button on-tap="close">Cancel</paper-button>
-            <paper-button on-tap="send">Confirm</paper-button>
+            <paper-button on-tap="close">{{translate("cancel")}}</paper-button>
+            <paper-button on-tap="send">{{translate("send")}}</paper-button>
         </div>
 
     </template>
@@ -87,8 +89,11 @@
             this.fire('send');
         },
 
-        ready: function () {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function () {
         }
 
     });

@@ -11,7 +11,6 @@
 
         :host {
             background: var(--primary-color);
-            color: white;
             min-width: 50px;
             align-self: stretch;
             display: flex;
@@ -44,7 +43,8 @@
 
         paper-menu {
             --paper-menu-selected-item: {
-                font-weight: normal;
+                 font-weight: normal;
+
             };
             background-color: var(--popup-background-color);
         }
@@ -66,12 +66,12 @@
         <paper-menu-button id="menu" horizontal-offset="10" vertical-offset="10" vertical-align="bottom">
             <iron-icon id="menuicon" class="dropdown-trigger" icon="more-vert"></iron-icon>
             <paper-menu class="dropdown-content">
-                <paper-item on-tap="update"><iron-icon class="smallicon" icon="maps:local-library"></iron-icon>Update</paper-item>
-                <paper-item on-tap="importmenu"><iron-icon class="smallicon" icon="file-download"></iron-icon>Import</paper-item>
-                <paper-item on-tap="academy"><iron-icon class="smallicon" icon="book"></iron-icon>translationAcademy</paper-item>
-                <paper-item on-tap="feedback"><iron-icon class="smallicon" icon="announcement"></iron-icon>Feedback</paper-item>
-                <paper-item on-tap="logout"><iron-icon class="smallicon" icon="perm-identity"></iron-icon>Logout</paper-item>
-                <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>Settings</paper-item>
+                <paper-item on-tap="update"><iron-icon class="smallicon" icon="maps:local-library"></iron-icon>{{translate("update")}}</paper-item>
+                <paper-item on-tap="importmenu"><iron-icon class="smallicon" icon="file-download"></iron-icon>{{translate("import")}}</paper-item>
+                <paper-item on-tap="academy"><iron-icon class="smallicon" icon="book"></iron-icon>{{translate("translationAcademy")}}</paper-item>
+                <paper-item on-tap="feedback"><iron-icon class="smallicon" icon="announcement"></iron-icon>{{translate("feedback")}}</paper-item>
+                <paper-item on-tap="logout"><iron-icon class="smallicon" icon="perm-identity"></iron-icon>{{translate("logout")}}</paper-item>
+                <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>{{translate("settings")}}</paper-item>
             </paper-menu>
         </paper-menu-button>
     </template>
@@ -126,8 +126,11 @@
             App.ipc.send('open-academy', "");
         },
 
-        ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function() {
         }
 
     });

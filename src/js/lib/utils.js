@@ -226,12 +226,12 @@ var utils = {
 
             list.forEach(function (l) {
                 p = p.then(visit.bind(null, l))
-                     .catch(function (err) {
+                    .catch(function (err) {
                         return fail(err, l);
-                     })
-                     .then(function (result) {
-                         results.push(result);
-                     });
+                    })
+                    .then(function (result) {
+                        results.push(result);
+                    });
             });
 
             return p.then(function () {
@@ -433,9 +433,9 @@ var utils = {
                 return false;
             }
         });
-        
+
         list = _.compact(list);
-        
+
         list = list.sort(function (a, b) {
             if (a.name.toLowerCase() > b.name.toLowerCase()) {
                 return 1;
@@ -503,6 +503,30 @@ var utils = {
         var seconds = `${date.getSeconds()}`.padStart(2, '0');
 
         return `${year}${month}${day}${hours}${minutes}${seconds}`;
+    },
+
+    getLocalizations: function () {
+        var list;
+        var localizationDirs = ["./i18n", "./resources/app/i18n"];
+
+        var localeFiles = localizationDirs
+            .map(dir => utils.getPaths(path.resolve(dir)))
+            .flat()
+
+        var locales = localeFiles.map(function(file) {
+            return path.parse(file).name;
+        })
+
+        var languages = App.dataManager.getTargetLanguages()
+            .filter(function (lang, i) {
+                return locales.includes(lang.id);
+            });
+
+        var list = languages.map(function (lang) {
+            return {id: lang.id, name: lang.name};
+        });
+
+        return list;
     }
 };
 
@@ -510,7 +534,7 @@ var utils = {
  * See note on 'promisify' function for example usage.
  */
 utils.fs = utils.promisifyAll(fse);
-utils.lodash = utils.guardAll(_);    
+utils.lodash = utils.guardAll(_);
 utils.fs.chmodr = utils.promisify(chmodr);
 
 utils.fs.mover = function (src, dest) {

@@ -60,6 +60,11 @@
             right: 0;
             margin: auto;
             background: var(--background-color);
+            width: fit-content;
+            height: fit-content;
+            max-width: 750px;
+            max-height: 550px;
+            padding: 10px;
         }
 
         .popup * {
@@ -92,6 +97,7 @@
             justify-content: flex-end;
             padding: 0 50px;
             color: var(--secondary-text-color);
+            gap: 20px;
         }
 
         .popup .buttons paper-button:hover {
@@ -99,15 +105,11 @@
         }
 
         #confirmimport {
-            width: 400px;
-            height: 200px;
             display: flex;
             flex-direction: column;
         }
 
         #confirmchange {
-            width: 450px;
-            height: 200px;
             display: flex;
             flex-direction: column;
         }
@@ -123,7 +125,7 @@
         <div id="header">
             <div id="title">
                 <iron-icon class="click" icon="arrow-back" on-tap="gohome"></iron-icon>
-                <span class="click" on-tap="gohome">Home</span>
+                <span class="click" on-tap="gohome">{{translate("home")}}</span>
                 <iron-icon icon="chevron-right"></iron-icon>
                 <span>[[createtitle(route)]]</span>
             </div>
@@ -138,27 +140,27 @@
 
         <paper-dialog id="confirmimport" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
             <div class="header">
-                <h2>Overwrite?</h2>
+                <h2>{{translate("overwrite_title")}}</h2>
             </div>
             <div class="body">
-                <p>This target translation already exists. Overwrite?</p>
+                <p>{{translate("overwrite_query")}}</p>
             </div>
             <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button on-tap="startimport">Confirm</paper-button>
+                <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
+                <paper-button on-tap="startimport">{{translate("confirm")}}</paper-button>
             </div>
         </paper-dialog>
 
         <paper-dialog id="confirmchange" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
             <div class="header">
-                <h2>File already exists</h2>
+                <h2>{{file_exists}}</h2>
             </div>
             <div class="body">
-                <p>This project already exists.  If you continue with this change, the two projects will be merged together.</p>
+                <p>{{translate("merge_warning")}}</p>
             </div>
             <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button on-tap="firechange">Continue</paper-button>
+                <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
+                <paper-button on-tap="firechange">{{translate("continue")}}</paper-button>
             </div>
         </paper-dialog>
 
@@ -252,11 +254,11 @@
             var title = "";
             if (route === "new") {
                 if (this.importdata.importing) {
-                    title = "Import Project";
+                    title = this.translate("import_project");
                 } else if (this.changedata.changing) {
-                    title = "Change Language";
+                    title = this.translate("change_language");
                 } else {
-                    title = "New Project";
+                    title = this.translate("new_project");
                 }
             }
             return title;
@@ -275,7 +277,7 @@
             var projectarray = this.projectlist;
 
             mythis.set('options', {});
-            mythis.set('options.body', "Creating project. Please wait...");
+            mythis.set('options.body', mythis.translate("create_project_status"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
@@ -294,8 +296,8 @@
             var newprojectmeta = App.projectsManager.updateManifestToMeta(newprojectmanifest);
 
             if (newprojectmeta === null) {
-                mythis.set('options.title', "Unknown Error");
-                mythis.set('options.body', "The project information is corrupt");
+                mythis.set('options.title', mythis.translate("unknown_error"));
+                mythis.set('options.body', mythis.translate("project_info_corrupt_error"));
                 mythis.set('options.loading', false);
                 return;
             }
@@ -312,8 +314,8 @@
                         mythis.$.confirmimport.open();
                         return;
                     } else {
-                        mythis.set('options.title', "Duplicate Found");
-                        mythis.set('options.body', "This project already exists");
+                        mythis.set('options.title', mythis.translate("duplicate_found_error"));
+                        mythis.set('options.body', mythis.translate("project_exists"));
                         mythis.set('options.loading', false);
                         return;
                     }
@@ -321,8 +323,8 @@
             }
 
             if (!typedata.allowed) {
-                mythis.set('options.title', "No Translation");
-                mythis.set('options.body', "Cannot start this project until a standard translation project exists");
+                mythis.set('options.title', mythis.translate("no_translation"));
+                mythis.set('options.body', mythis.translate("project_doesnt_exist_error"));
                 mythis.set('options.loading', false);
                 return;
             }
@@ -362,8 +364,11 @@
             this.set('route', "home");
         },
 
-        ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function() {
         }
 
     });

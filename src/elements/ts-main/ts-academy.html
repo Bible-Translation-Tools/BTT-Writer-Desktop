@@ -35,16 +35,16 @@
             left: 0;
             right: 0;
             margin: auto;
+            width: fit-content;
+            height: fit-content;
+            max-width: 750px;
+            max-height: 550px;
+            padding: 10px;
         }
 
         .popup * {
             margin: 0;
             padding: 0;
-        }
-
-        #loading {
-            width: 320px;
-            height: 220px;
         }
 
         img {
@@ -96,12 +96,16 @@
             return chunk === "title" && chapter !== "front" ? chapter : '';
         },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
         ready: function() {
             var mythis = this;
             var shell = require('electron').shell;
             var path = require('path');
 
-            App.ipc.send('loading-status', 'Loading Academy data...');
+            App.ipc.send('loading-status', mythis.translate("loading_academy"));
             mythis.set('academy', App.dataManager.getAllTa());
             var dataserver = App.configurator.getUserSetting('dataserver');
 

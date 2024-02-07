@@ -107,21 +107,21 @@
             </template>
             <paper-material id="new" elevation="1">
                 <div>
-                    <input is="iron-input" bind-value="{{newinfo.name}}" on-input="onInput" placeholder="Name or Pseudonym">
+                    <input is="iron-input" bind-value="{{newinfo.name}}" on-input="onInput" placeholder="{{translate('name_or_pseudonym')}}">
                 </div>
                 <div id="agree">
                     <paper-checkbox id="check"></paper-checkbox>
-                    <div>This person has agreed with the Statement of Faith and Translation Guidelines and agrees to release his/her work on this project under the terms of the Creative Commons Attribution-ShareAlike 4.0 International License</div>
+                    <div>{{translate("contributor_agreed_prompt")}}</div>
                 </div>
                 <div id="links">
-                    <span class="link" on-tap="openlicense">License Agreement</span>
-                    <span class="link" on-tap="openstatement">Statement of Faith</span>
-                    <span class="link" on-tap="openguidelines">Translation Guidelines</span>
+                    <span class="link" on-tap="openlicense">{{translate("license_button")}}</span>
+                    <span class="link" on-tap="openstatement">{{translate("statement_button")}}</span>
+                    <span class="link" on-tap="openguidelines">{{translate("translation_button")}}</span>
                 </div>
             </paper-material>
             <div id="buttons">
-                <paper-button raised id="add" on-tap="addnew">Add Contributor</paper-button>
-                <paper-button raised id="next" on-tap="next">Next</paper-button>
+                <paper-button raised id="add" on-tap="addnew">{{translate("add_contributor")}}</paper-button>
+                <paper-button raised id="next" on-tap="next">{{translate("next")}}</paper-button>
             </div>
         </div>
 
@@ -186,14 +186,14 @@
 
             if (!name) {
                 mythis.set('options', {});
-                mythis.set('options.title', "Missing Info");
-                mythis.set('options.body', "Must enter a contributor name");
+                mythis.set('options.title', mythis.translate("contrib_missing_info"));
+                mythis.set('options.body', mythis.translate("contrib_must_enter_name"));
                 mythis.set('options.loading', false);
                 mythis.fire('iron-signal', {name: 'openloading'});
             } else if (!check) {
                 mythis.set('options', {});
-                mythis.set('options.title', "No Agreement");
-                mythis.set('options.body', "Must agree to terms");
+                mythis.set('options.title', mythis.translate("contrib_no_agreement"));
+                mythis.set('options.body', mythis.translate("contrib_must_agree"));
                 mythis.set('options.loading', false);
                 mythis.fire('iron-signal', {name: 'openloading'});
             } else {
@@ -231,8 +231,11 @@
             this.fire('iron-signal', {name: 'openstatement'});
         },
 
-        ready: function() {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function() {
         }
 
     });

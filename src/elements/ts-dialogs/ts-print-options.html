@@ -48,6 +48,7 @@
             color: var(--secondary-text-color);
             border-top: 1px solid var(--border-color);
             font-size: 120%;
+            gap: 20px;
         }
 
         #footer paper-button:hover {
@@ -59,20 +60,20 @@
     <template>
 
         <div id="header">
-            <h2>Print/Export to PDF Options</h2>
-            <h2><span>[[currentproject.projectmeta.project.name]]</span> - <span>[[currentproject.projectmeta.target_language.name]]</span></h2>
+            <h2>{{translate("print_head")}}</h2>
+            <h2><span>[[translateBook(currentproject.projectmeta.project.id)]]</span> - <span>[[currentproject.projectmeta.target_language.name]]</span></h2>
         </div>
         <div id="body">
-            <div id="image"><paper-checkbox id="imagebox"></paper-checkbox><span>Include images</span></div>
-            <div><paper-checkbox id="chunkbox" checked="true"></paper-checkbox><span>Include incomplete chunks</span></div>
-            <div><paper-checkbox id="doublespacebox"></paper-checkbox><span>Double space text</span></div>
-            <div><paper-checkbox id="justifybox"></paper-checkbox><span>Fully justify text</span></div>
-            <div id="page"><paper-checkbox id="pagebox"></paper-checkbox><span>New page for each chapter</span></div>
-            <div id="title"><paper-checkbox id="pagetitle"></paper-checkbox><span>Language and book title on each page</span></div>
+            <div id="image"><paper-checkbox id="imagebox"></paper-checkbox><span>{{translate("with_images")}}</span></div>
+            <div><paper-checkbox id="chunkbox" checked="true"></paper-checkbox><span>{{translate("with_incomplete")}}</span></div>
+            <div><paper-checkbox id="doublespacebox"></paper-checkbox><span>{{translate("with_double")}}</span></div>
+            <div><paper-checkbox id="justifybox"></paper-checkbox><span>{{translate("with_full")}}</span></div>
+            <div id="page"><paper-checkbox id="pagebox"></paper-checkbox><span>{{translate("with_newpages")}}</span></div>
+            <div id="title"><paper-checkbox id="pagetitle"></paper-checkbox><span>{{translate("with_title")}}</span></div>
         </div>
         <div id="footer">
-            <paper-button dialog-dismiss>Cancel</paper-button>
-            <paper-button on-tap="print">Create Preview</paper-button>
+            <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
+            <paper-button on-tap="print">{{translate("with_preview")}}</paper-button>
         </div>
 
     </template>
@@ -124,15 +125,22 @@
                 doubleSpace: this.$.doublespacebox.checked,
                 justify: this.$.justifybox.checked,
                 newpage: this.$.pagebox.checked,
-                pagetitle: this.$.pagetitle.checked,
+                pagetitle: this.$.pagetitle.checked
             };
 
             this.set('options', options);
             this.fire('openpreview');
         },
 
-        ready: function () {
+        translateBook: function(slug) {
+            return slug ? this.translate(`book_${slug}`): "";
+        },
 
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
+        ready: function () {
         }
 
     });

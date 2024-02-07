@@ -87,18 +87,18 @@
                 </template>
                 <template is="dom-if" if="{{options.progress}}">
                     <paper-progress value="{{options.value}}"></paper-progress>
-                    <span id="progress"><span>{{options.value}}</span>% Complete</span>
+                    <span id="progress">{{translate("percent_complete", options.value)}}</span>
                 </template>
             </template>
         </div>
         <div id="footer">
             <template is="dom-if" if="{{options.loading}}">
                 <template is="dom-if" if="{{options.progress}}">
-                    <paper-button on-tap="reload">Cancel</paper-button>
+                    <paper-button on-tap="reload">{{translate("cancel")}}</paper-button>
                 </template>
             </template>
             <template is="dom-if" if="{{!options.loading}}">
-                <paper-button dialog-dismiss>Close</paper-button>
+                <paper-button dialog-dismiss>{{translate("close")}}</paper-button>
             </template>
         </div>
 
@@ -127,8 +127,11 @@
             App.ipc.send('fire-reload');
         },
 
-        ready: function () {
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
 
+        ready: function () {
         }
 
     });

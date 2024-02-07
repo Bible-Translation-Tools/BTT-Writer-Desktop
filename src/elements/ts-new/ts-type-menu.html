@@ -1,11 +1,9 @@
-
 <link rel="import" href="../../components/iron-icons/iron-icons.html">
 <link rel="import" href="../../components/iron-list/iron-list.html">
 
 <dom-module id="ts-type-menu">
 
     <style>
-
         :host {
             display: flex;
             justify-content: center;
@@ -67,126 +65,133 @@
         .click {
             cursor: pointer;
         }
-
     </style>
 
-  <template>
+    <template>
 
-      <div id="main">
-          <div id="header">
-              <template is="dom-if" if="{{!importdata.importing}}">
-                  <iron-icon class="click" icon="arrow-back" on-tap="tobook"></iron-icon>
-                  <span class="click" on-tap="togroup">[[newdata.category.name]]</span>
-                  <iron-icon icon="chevron-right"></iron-icon>
-                  <span class="click" on-tap="tobook">[[newdata.project.name]]</span>
-                  <iron-icon icon="chevron-right"></iron-icon>
-              </template>
-              <span><em>Choose a type</em></span>
-          </div>
-          <iron-list id="list" items="[[newdata.typelist]]" as="typedata">
-              <template>
-                  <div class$="[[checkclass(typedata.allowed)]]" on-tap="store">
-                      <span>[[typedata.type.name]]</span>
-                      <span>[[typedata.resource.name]]</span>
-                  </div>
-              </template>
-          </iron-list>
-      </div>
+        <div id="main">
+            <div id="header">
+                <template is="dom-if" if="{{!importdata.importing}}">
+                    <iron-icon class="click" icon="arrow-back" on-tap="tobook"></iron-icon>
+                    <span class="click" on-tap="togroup">[[newdata.category.name]]</span>
+                    <iron-icon icon="chevron-right"></iron-icon>
+                    <span class="click" on-tap="tobook">[[newdata.project.name]]</span>
+                    <iron-icon icon="chevron-right"></iron-icon>
+                </template>
+                <span><em>{{translate("choose_type")}}</em></span>
+            </div>
+            <iron-list id="list" items="[[newdata.typelist]]" as="typedata">
+                <template>
+                    <div class$="[[checkclass(typedata.allowed)]]" on-tap="store">
+                        <span>[[translateType(typedata.type.id)]]</span>
+                        <span>[[translateType(typedata.resource.id)]]</span>
+                    </div>
+                </template>
+            </iron-list>
+        </div>
 
-      <iron-signals on-iron-signal-createtypes="createtypes"></iron-signals>
+        <iron-signals on-iron-signal-createtypes="createtypes"></iron-signals>
 
-  </template>
+    </template>
 
 </dom-module>
 
 <script>
 
-  Polymer({
-    is: 'ts-type-menu',
+    Polymer({
+        is: 'ts-type-menu',
 
-      properties: {
-          selected: {
-              type: Number,
-              value: 0,
-              notify: true
-          },
-          newdata: {
-              type: Object,
-              value: {},
-              notify: true
-          },
-          importdata: {
-              type: Object,
-              value: {},
-              notify: true
-          },
-          projectlist: {
-              type: Array,
-              value: []
-          }
-      },
+        properties: {
+            selected: {
+                type: Number,
+                value: 0,
+                notify: true
+            },
+            newdata: {
+                type: Object,
+                value: {},
+                notify: true
+            },
+            importdata: {
+                type: Object,
+                value: {},
+                notify: true
+            },
+            projectlist: {
+                type: Array,
+                value: []
+            }
+        },
 
-      behaviors: [
-          Polymer.IronResizableBehavior
-      ],
+        behaviors: [
+            Polymer.IronResizableBehavior
+        ],
 
-      createtypes: function () {
-          var projectid = this.newdata.project.slug;
-          var typearray = [];
-          var language = this.newdata.language;
-          var projectarray = this.projectlist;
-          var standardexists = false;
+        createtypes: function () {
+            var mythis = this;
+            var projectid = this.newdata.project.slug;
+            var typearray = [];
+            var language = this.newdata.language;
+            var projectarray = this.projectlist;
+            var standardexists = false;
 
-          for (var i = 0; i < projectarray.length; i++) {
-              if (projectarray[i].project.id === projectid && projectarray[i].target_language.id === language.id && projectarray[i].type.id === "text") {
-                  standardexists = true;
-              }
-          }
+            for (var i = 0; i < projectarray.length; i++) {
+                if (projectarray[i].project.id === projectid && projectarray[i].target_language.id === language.id && projectarray[i].type.id === "text") {
+                    standardexists = true;
+                }
+            }
 
-          if (projectid === "obs") {
-              typearray.push({type: {id: "text", name: "Text"}, resource: {id: "obs", name: "Open Bible Stories"}, format: "markdown", allowed: true});
-          } else {
-              typearray.push({type: {id: "text", name: "Text"}, resource: {id: "ulb", name: "Unlocked Literal Bible"}, format: "usfm", allowed: true});
-              typearray.push({type: {id: "text", name: "Text"}, resource: {id: "udb", name: "Unlocked Dynamic Bible"}, format: "usfm", allowed: true});
-          }
-          if (!this.importdata.importing) {
-              typearray.push({type: {id: "tn", name: "Notes"}, resource: {id: "", name: ""}, format: "markdown", allowed: standardexists});
-              typearray.push({type: {id: "tq", name: "Questions"}, resource: {id: "", name: ""}, format: "markdown", allowed: standardexists});
-              for (i = 0; i < typearray.length; i++) {
-                  var unique_id = language.id + "_" + projectid + "_" + typearray[i].type.id;
-                  if (typearray[i].resource.id !== "") {
-                      unique_id += "_" + typearray[i].resource.id;
-                  }
-                  for (var k = 0; k < projectarray.length; k++) {
-                      if (projectarray[k].unique_id === unique_id) {
-                          typearray[i].allowed = false;
-                      }
-                  }
-              }
-          }
-          this.set('newdata.typelist', typearray);
-      },
+            if (projectid === "obs") {
+                typearray.push({ type: { id: "text", name: "Text" }, resource: { id: "obs", name: "Open Bible Stories" }, format: "markdown", allowed: true });
+            } else {
+                typearray.push({ type: { id: "text", name: "Text" }, resource: { id: "ulb", name: "Unlocked Literal Bible" }, format: "usfm", allowed: true });
+                typearray.push({ type: { id: "text", name: "Text" }, resource: { id: "udb", name: "Unlocked Dynamic Bible" }, format: "usfm", allowed: true });
+            }
+            if (!this.importdata.importing) {
+                typearray.push({ type: { id: "tn", name: "Notes" }, resource: { id: "", name: "" }, format: "markdown", allowed: standardexists });
+                typearray.push({ type: { id: "tq", name: "Questions" }, resource: { id: "", name: "" }, format: "markdown", allowed: standardexists });
+                for (i = 0; i < typearray.length; i++) {
+                    var unique_id = language.id + "_" + projectid + "_" + typearray[i].type.id;
+                    if (typearray[i].resource.id !== "") {
+                        unique_id += "_" + typearray[i].resource.id;
+                    }
+                    for (var k = 0; k < projectarray.length; k++) {
+                        if (projectarray[k].unique_id === unique_id) {
+                            typearray[i].allowed = false;
+                        }
+                    }
+                }
+            }
+            this.set('newdata.typelist', typearray);
+        },
 
-      checkclass: function (allowed) {
-          return allowed ? 'row' : 'row unavailable';
-      },
+        checkclass: function (allowed) {
+            return allowed ? 'row' : 'row unavailable';
+        },
 
-      store: function(e) {
-          this.set('newdata.typedata', e.model.typedata);
-          this.fire('create');
-      },
+        store: function (e) {
+            this.set('newdata.typedata', e.model.typedata);
+            this.fire('create');
+        },
 
-      togroup: function () {
-          this.set('selected', 1);
-      },
+        togroup: function () {
+            this.set('selected', 1);
+        },
 
-      tobook: function () {
-          this.set('selected', 2);
-      },
+        tobook: function () {
+            this.set('selected', 2);
+        },
 
-    ready: function() {
+        translateType: function (id) {
+            return id ? this.translate(`${id}_type`) : "";
+        },
 
-    }
-  });
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
+
+        ready: function () {
+        }
+    });
 
 </script>

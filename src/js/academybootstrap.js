@@ -72,6 +72,10 @@ process.stdout.write = console.log.bind(console);
         return new DataManager(db, resourceDir, srcResource);
     })();
 
+    var loc = configurator.getUserSetting("localization");
+    i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
+    i18n.setLocale(loc.id);
+
     var App = {
         appName: 'BTT Writer',
 

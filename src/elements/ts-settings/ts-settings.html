@@ -105,18 +105,18 @@
                 <iron-icon class="click" icon="arrow-back" on-tap="goback"></iron-icon>
                 <span class="click" on-tap="goback">[[createtitle(backto)]]</span>
                 <iron-icon icon="chevron-right"></iron-icon>
-                <span>Settings</span>
+                <span>{{translate("settings")}}</span>
             </div>
         </div>
         <div class="body">
             <template is="dom-repeat" items="[[settings]]" index-as="group">
-                <div class="setting-group-header">{{_capitalize(item.group)}}</div>
+                <div class="setting-group-header">{{translate(item.group)}}</div>
                 <div class="setting-group-body">
                     <template is="dom-repeat" items="{{item.list}}" as="setting" index-as="list">
                         <template is="dom-if" if="{{_isVisible(setting.visible)}}">
                             <div id="{{setting.name}}" class="setting-group-item" on-tap="_runTapHandler" data-enabled={{_isEnabled(setting.enabled)}} data-group="[[group]]" data-list="[[list]]">
                                 <div class="setting-text avoid-clicks">
-                                    <div class="main-text">{{setting.mainText}}</div>
+                                    <div class="main-text">{{translate(setting.mainText)}}</div>
                                     <div class="help-text">{{_computeHelpText(setting.*)}}</div>
                                 </div>
                                 <template is="dom-if" if="{{_isBoolean(setting.value)}}">
@@ -193,11 +193,10 @@
         },
 
         ready: function () {
-
         },
 
         createtitle: function (backto) {
-            return backto === "translate" ? "Project" : "Home";
+            return backto === "translate" ? this.translate("project") : this.translate("home");
         },
 
         load: function () {
@@ -240,12 +239,17 @@
 
         _computeHelpText: function (setting) {
             var text;
-            if (typeof setting.base.value === "number" && setting.base.helpText) {
-                text = setting.base.helpText.replace("<int>", setting.base.value);
+            let helpText = setting.base.helpText ? this.translate(setting.base.helpText) : null;
+            if (typeof setting.base.value === "number" && helpText) {
+                text = helpText.replace("<int>", setting.base.value);
             } else {
-                text = setting.base.helpText || setting.base.value.name || setting.base.value || setting.base.nullText;
+                text = this.translate(helpText || setting.base.value.name || setting.base.value || setting.base.nullText);
             }
             return text;
+        },
+
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
         },
 
         _isBoolean: function (value) {
@@ -273,8 +277,6 @@
                 this.fire('iron-signal', {name: 'openstatement'});
             } else if (name === "software") {
                 this.fire('iron-signal', {name: 'opensoftware'});
-            } else if (name === "attribution") {
-                this.fire('iron-signal', {name: 'openattribution'});
             } else if (typeof value === 'boolean') {
                 var path = 'settings.' + event.target.dataGroup + '.list.' + event.target.dataList + '.value';
                 this.set(path, !value);
@@ -312,11 +314,13 @@
                 // Notify user that the app needs to be restarted.
                 // TODO This bypasses Polymer to call the ts-dashboard.showMessage() function.  Is there a better way?
                 var dashboard = document.querySelector('ts-dashboard')
-                dashboard.showMessage("Server Suite Changed", "Please close and restart the application.")
-            } else if(name == "colortheme") {
+                dashboard.showMessage(this.translate("suite_changed"), this.translate("suite_changed_suite"))
+            } else if(name === "colortheme") {
                 App.ipc.send('theme-changed', value.name);
-            } else if(name == "languageurl") {
+            } else if(name === "languageurl") {
                 App.dataManager.updateLanguageUrl(value);
+            } else if (name == "localization") {
+                App.ipc.send('localization-changed');
             }
             App.configurator.applyPrefAppearance();
         },
@@ -342,7 +346,7 @@
             var setting = event.model.setting;
             modal.id = "setting-modal";
             modal.style.display = 'block';
-            modal.heading = setting.mainText;
+            modal.heading = this.translate(setting.mainText);
             // The following assignments will determine what kind of interface the modal
             // will have (Edit for text, select for selected.)
             if (setting.options) {
@@ -350,11 +354,21 @@
                 modal.selected = setting.value;
                 if (setting.name === "targetfont" || setting.name === "sourcefont") {
                     mythis.set('options', {});
-                    mythis.set('options.body', "Updating Font List. Please wait...");
+                    mythis.set('options.body', mythis.translate("font_list_update"));
                     mythis.set('options.loading', true);
                     mythis.fire('iron-signal', {name: 'openloading'});
                     setTimeout(function() {
                         modal.options = App.utils.getSystemFonts();
+                        mythis.fire('iron-signal', {name: 'closeloading'});
+                        mythis.openModal(modal, event);
+                    }, 500);
+                } else if (setting.name === "localization") {
+                    mythis.set('options', {});
+                    mythis.set('options.body', mythis.translate("localizations_list_load"));
+                    mythis.set('options.loading', true);
+                    mythis.fire('iron-signal', {name: 'openloading'});
+                    setTimeout(function() {
+                        modal.options = App.utils.getLocalizations();
                         mythis.fire('iron-signal', {name: 'closeloading'});
                         mythis.openModal(modal, event);
                     }, 500);
