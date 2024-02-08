@@ -3,7 +3,7 @@
 ### Résumé lisible par l'homme
 
 La licence Creative Commons Paternité-Partage des Conditions Initiales à l'Identique 4.0 est disponible à
-http://creativecommons.org/licenses/by-sa/4.0/.
+http\://creativecommons.org/licenses/by-sa/4.0/.
 
 #### Ceci est un résumé lisible par l'homme (et pas un substitut) de la licence.
 
@@ -29,4 +29,4 @@ http://creativecommons.org/licenses/by-sa/4.0/.
 
 - Aucune garantie n'est donnée. Il se peut que la licence ne vous donne pas toutes les permissions nécessaires pour votre utilisation. Par exemple, certains droits comme les droits moraux, le droit des données personnelles et le droit à l'image sont susceptibles de limiter votre utilisation.
 
-Ce PDF a été généré à l'aide de Prince (https://www.princexml.com/).
+Ce PDF a été généré à l'aide de Prince (https\://www\.princexml.com/).
