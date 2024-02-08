@@ -231,7 +231,7 @@
         "mainText": "Index.sqlite URL",
         "value": "https://writer-resources.bibletranslationtools.org/index.sqlite",
         "default": "https://writer-resources.bibletranslationtools.org/index.sqlite",
-        "group": "advanced",
+        "group": "advanced_group",
         "enabled": true,
         "visible": true
     },
