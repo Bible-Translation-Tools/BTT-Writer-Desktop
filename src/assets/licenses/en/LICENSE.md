@@ -4,7 +4,7 @@
   
 
 The Creative Commons Attribution-Share Alike 4.0  International  License is available at
-<http://creativecommons.org/licenses/by-sa/4.0/>.
+[http://creativecommons.org/licenses/by-sa/4.0/](http://creativecommons.org/licenses/by-sa/4.0/).
 
 #### This is a human-readable summary of (and not a substitute for) the License.
   
@@ -35,4 +35,4 @@ The Creative Commons Attribution-Share Alike 4.0  International  License is avai
 
   
 
-This PDF was generated using Prince (<https://www.princexml.com/>).
+This PDF was generated using Prince ([https://www.princexml.com/](https://www.princexml.com/)).
