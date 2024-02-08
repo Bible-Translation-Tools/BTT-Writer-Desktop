@@ -3,7 +3,7 @@
 ### Human-Readable Summary
 
 The Creative Commons Attribution-Share Alike 4.0  International  License is available at
-http\://creativecommons.org/licenses/by-sa/4.0/.
+[http://creativecommons.org/licenses/by-sa/4.0/](http://creativecommons.org/licenses/by-sa/4.0/).
 
 #### This is a human-readable summary of (and not a substitute for) the License.
 
@@ -29,4 +29,4 @@ http\://creativecommons.org/licenses/by-sa/4.0/.
 
 - No warranties are given. The license may not give you all of the permissions necessary for your intended use. For example, other rights such as publicity, privacy, or moral rights may limit how you use the material.
 
-This PDF was generated using Prince (https\://www\.princexml.com/).
+This PDF was generated using Prince ([https://www.princexml.com/](https://www.princexml.com/)).
