@@ -507,7 +507,11 @@ var utils = {
 
     getLocalizations: function () {
         var list;
-        var localizationDirs = ["./i18n", "./resources/app/i18n"];
+        var localizationDirs = [
+            "./i18n", 
+            "./resources/app/i18n", 
+            "./Resources/app/i18n"
+        ];
 
         var localeFiles = localizationDirs
             .map(dir => utils.getPaths(path.resolve(dir)))
