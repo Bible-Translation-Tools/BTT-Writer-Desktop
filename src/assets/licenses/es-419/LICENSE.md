@@ -1,6 +1,6 @@
 ## Creative Commons Attribution-ShareAlike 4.0 International
 
-### Human-Readable Summary
+### Resumen Legible por Humanos
 
 The Creative Commons Attribution-Share Alike 4.0  International  License is available at
 [http://creativecommons.org/licenses/by-sa/4.0/](http://creativecommons.org/licenses/by-sa/4.0/).
