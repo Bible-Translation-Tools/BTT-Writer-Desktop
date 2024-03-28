@@ -1,11 +1,12 @@
 [Desktop Entry]
 
 Type=Application
-Version=1.1.7
+Version=1.3.1
 Name=BTT Writer
 Comment=Desktop version of BTT Writer
+StartupWMClass=BTT-Writer
 Path=/opt/BTT-Writer
-Exec=/opt/BTT-Writer  # This needs to be a dynamic absolute path to the executable file
-Icon=/opt/BTT-Writer/resources/app/icons/icon-big.png  # This needs to be a dynamic absolute path to the icon image
+Exec=/opt/BTT-Writer
+Icon=/opt/BTT-Writer/resources/app/icons/icon-big.png
 Terminal=false
 Categories=Translation;Languages;
