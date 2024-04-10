@@ -9,7 +9,7 @@
     "glmode_maintext": "Mode de Langue Portaille",
     "glmode_helptext": "Montrer d'autres options pour les langues de portailles.",
     "bemode_maintext": "Mode de Brouillon Aveugle",
-    "bemode_helptext": "Montrer traduction sans aussi montrer le texte source.",
+    "bemode_helptext": "Afficher l'option du mode de traduction qui permet la rédaction en aveugle (le projet sera rechargé s'il est modifié)",
     "colortheme_maintext": "Thème de couleur",
     "colortheme_helptext": "Set the color theme",
     "light": "Lumière",
