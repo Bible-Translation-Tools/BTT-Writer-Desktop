@@ -1,32 +1,32 @@
-## Creative Commons Attribution-ShareAlike 4.0 International
+## creative Commons-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 
-### Human-Readable Summary
+### Resumo legível por humanos
 
-The Creative Commons Attribution-Share Alike 4.0  International  License is available at
+A Licença Internacional Creative Commons Atribuição-CompartilhaIgual 4.0 está disponível em
 [http://creativecommons.org/licenses/by-sa/4.0/](http://creativecommons.org/licenses/by-sa/4.0/).
 
-#### This is a human-readable summary of (and not a substitute for) the License.
+#### Este é um resumo legível (e não um substituto) da Licença.
 
-### You are free to:
+### Você é livre para:
 
-- **Share** — copy and redistribute the material in any medium or  format.
+- **Compartilhar** — Copiar e redistribuir o material em qualquer meio ou formato.
 
-- **Adapt** — remix, transform, and build upon the material for any purpose, even commercially.
+- **Adaptar** — refazer, transformar e construir em cima do material para qualquer finalidade, até mesmo comercial.
 
-  The licensor cannot revoke these freedoms  as long as  you follow the license terms.
+  O licenciante não pode revogar essas liberdades desde que você siga os termos da licença.
 
-### Under the following terms:
+### Nos seguintes termos:
 
-- **Attribution** —You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+- **Atribuição** — Você deve fornecer o devido crédito, disponibilizar um link para a licença e indicar se foram feitas alterações. Você pode fazê-lo de forma adequada, mas sem sugerir, em nenhum momento, que o licenciante o apoia ou aprova o seu uso.
 
-- **ShareAlike** — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+- \*\*Se você refizer, transformar ou desenvolver o material, deverá distribuir suas contribuições sob a mesma licença do original.
 
-- **No additional restrictions** — You may not apply legal terms or technological measures that legally restrict others from doing anything the license  permits.
+- **Sem restrições adicionais** — Você não pode aplicar termos legais ou medidas tecnológicas que restrinjam legalmente outras pessoas de fazerem qualquer coisa que a licença permita.
 
-### Notices:
+### Avisos:
 
-- You do not have to comply with the license for elements of the material in the public domain or where your use is permitted by an applicable exception or limitation.
+- Você não precisa cumprir a licença para elementos do material de domínio público ou onde seu uso for permitido por uma exceção, ou limitação aplicável.
 
-- No warranties are given. The license may not give you all of the permissions necessary for your intended use. For example, other rights such as publicity, privacy, or moral rights may limit how you use the material.
+- Não são dadas garantias. A licença pode não lhe dar todas as permissões necessárias para a sua utilização pretendida. Por exemplo, outros direitos como publicidade, privacidade ou direitos morais podem limitar como você usa o material.
 
-This PDF was generated using Prince ([https://www.princexml.com/](https://www.princexml.com/)).
+Este PDF foi gerado usando o Prince ([https://www.princexml.com/](https://www.princexml.com/)).
