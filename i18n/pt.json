@@ -686,7 +686,7 @@
     "__file90": "migrator.js",
     "unable_migrate_project": "Não é possível migrar o projeto {0}",
     "__unable_migrate_project": "{0} - project name",
-    "migrated_projects": "Migrated projects",
+    "migrated_projects": "Projetos migrados",
     "migrate_project_failed": "Falha ao migrar projeto",
     "unsupported_package_version": "Versão do pacote não suportada: {0}",
     "__unsupported_package_version": "{0} - package version",
