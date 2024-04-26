@@ -97,7 +97,7 @@
             	<template is="dom-if" if="{{selected}}">
 	            	<paper-radio-group selected="[[selected]]">
 		                <template is="dom-repeat" items="[[options]]" as="option">
-	                        <paper-radio-button name$="[[option]]" data-value$="{{option}}" class="row" on-tap="selectOption" checked$="{{_checkSelected(selected,option)}}">[[translate(option.name)]]</paper-radio-button>
+	                        <paper-radio-button name$="[[option]]" data-value$="{{option}}" class="row" on-tap="selectOption" checked$="{{_checkSelected(selected,option)}}">[[computeOptionText(option,translatable)]]</paper-radio-button>
 		                </template>
 	                </paper-radio-group>
                 </template>
@@ -181,7 +181,11 @@
 
         confirm: function () {
             this.fire('setting-confirm');
-        }
+        },
+
+        computeOptionText: function (option, translatable) {
+            return translatable ? this.translate(option.name) : option.name;
+        },
     });
 
 </script>

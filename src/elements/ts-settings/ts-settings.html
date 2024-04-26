@@ -117,7 +117,7 @@
                             <div id="{{setting.name}}" class="setting-group-item" on-tap="_runTapHandler" data-enabled={{_isEnabled(setting.enabled)}} data-group="[[group]]" data-list="[[list]]">
                                 <div class="setting-text avoid-clicks">
                                     <div class="main-text">{{translate(setting.mainText)}}</div>
-                                    <div class="help-text">{{_computeHelpText(setting.*)}}</div>
+                                    <div class="help-text">{{_computeHelpText(setting)}}</div>
                                 </div>
                                 <template is="dom-if" if="{{_isBoolean(setting.value)}}">
                                     <div class="setting-checkbox avoid-clicks">
@@ -238,12 +238,14 @@
         },
 
         _computeHelpText: function (setting) {
-            var text;
-            let helpText = setting.base.helpText ? this.translate(setting.base.helpText) : null;
-            if (typeof setting.base.value === "number" && helpText) {
-                text = helpText.replace("<int>", setting.base.value);
+            let text;
+            let helpText = setting.helpText ? this.translate(setting.helpText) : null;
+            if (typeof setting.value === "number" && helpText) {
+                text = helpText.replace("<int>", setting.value);
             } else {
-                text = this.translate(helpText || setting.base.value.name || setting.base.value || setting.base.nullText);
+                const translatable = setting.translatable || false;
+                const translated = translatable ? this.translate(setting.value.name || setting.value) : null;
+                text = helpText || translated || setting.value.name || setting.value;
             }
             return text;
         },
@@ -352,6 +354,7 @@
             if (setting.options) {
                 modal.options = setting.options;
                 modal.selected = setting.value;
+                modal.translatable = setting.translatable || false;
                 if (setting.name === "targetfont" || setting.name === "sourcefont") {
                     mythis.set('options', {});
                     mythis.set('options.body', mythis.translate("font_list_update"));
