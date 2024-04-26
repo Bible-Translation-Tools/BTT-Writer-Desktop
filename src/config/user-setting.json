@@ -230,15 +230,6 @@
         "visible": true
     },
     {
-        "name": "indexsqliteurl",
-        "mainText": "indexsqliteurl_label",
-        "value": "https://writer-resources.bibletranslationtools.org/index.sqlite",
-        "default": "https://writer-resources.bibletranslationtools.org/index.sqlite",
-        "group": "advanced_group",
-        "enabled": true,
-        "visible": true
-    },
-    {
         "name": "logginglevel",
         "mainText": "logging_level_label",
         "value": {"name": "warning_level"},
