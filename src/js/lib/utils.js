@@ -507,19 +507,13 @@ var utils = {
 
     getLocalizations: function () {
         var list;
-        var localizationDirs = [
-            "./i18n", 
-            "./resources/app/i18n", 
-            "./Resources/app/i18n"
-        ];
+        var localizationDir = path.join(utils.getAppDir(), "i18n");
 
-        var localeFiles = localizationDirs
-            .map(dir => utils.getPaths(path.resolve(dir)))
-            .flat()
+        var localeFiles = utils.getPaths(localizationDir);
 
         var locales = localeFiles.map(function(file) {
             return path.parse(file).name;
-        })
+        });
 
         var languages = App.dataManager.getTargetLanguages()
             .filter(function (lang, i) {
@@ -531,6 +525,14 @@ var utils = {
         });
 
         return list;
+    },
+
+    getAppDir: function () {
+        let appDir = __dirname
+        while(!fs.existsSync(path.join(appDir, 'package.json'))) {
+            appDir = path.join(appDir, '..')
+        }
+        return appDir
     }
 };
 
