@@ -640,7 +640,7 @@
     "__file83": "database.js",
     "download_unknown_error": "Erro Desconhecido ao baixar",
     "source_on_server_not_found": "Fonte não encontrada no servidor",
-    "rc_doesnt_exist": "container de recurso {0} não existe",
+    "rc_doesnt_exist": "Contêiner de recurso {0} não existe",
     "__rc_doesnt_exist": "{0} - resource container id",
     "__file84": "exporter.js",
     "backup_location_not_found": "Local de cópia de segurança não encontrado. Conecte um disco externo ou altere o local de cópia de segurança nas configurações.",
