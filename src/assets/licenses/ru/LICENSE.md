@@ -1,32 +1,32 @@
-## Creative Commons Attribution-ShareAlike 4.0 International
+## Creative Commons Attribution-ShareAlike 4.0 Международная лицензия
 
-### Human-Readable Summary
+### Человеко-читаемая сводка
 
-The Creative Commons Attribution-Share Alike 4.0  International  License is available at
+Лицензия Creative Commons Attribution-Share Alike 4.0 International доступна по ссылке
 [http://creativecommons.org/licenses/by-sa/4.0/](http://creativecommons.org/licenses/by-sa/4.0/).
 
-#### This is a human-readable summary of (and not a substitute for) the License.
+#### Это удобочитаемая сводка (а не замена) лицензии.
 
-### You are free to:
+### Вы свободны:
 
-- **Share** — copy and redistribute the material in any medium or  format.
+- **Поделиться** — копировать и распространять материал в любой среде или формате.
 
-- **Adapt** — remix, transform, and build upon the material for any purpose, even commercially.
+- **Адаптировать** — ремикшировать, изменять и дополнять материал для любых целей, включая коммерческие.
 
-  The licensor cannot revoke these freedoms  as long as  you follow the license terms.
+  Лицензиар не может отозвать эти свободы, при условии соблюдения вами условий лицензии.
 
-### Under the following terms:
+### На следующих условиях:
 
-- **Attribution** —You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+- **Авторство** — Вы должны указать соответствующее авторство, предоставить ссылку на лицензию и указать, если были сделаны изменения. Вы можете это делать любым разумным способом, но не таким образом, который предполагает, что лицензиар одобряет вас или ваше использование.
 
-- **ShareAlike** — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+- **Распространение** — Если вы ремиксируете, изменяете или создаете на основе этого материала, вы должны распространять свои работы на условиях той же лицензии, что и оригинал.
 
-- **No additional restrictions** — You may not apply legal terms or technological measures that legally restrict others from doing anything the license  permits.
+- **Без дополнительных ограничений** — Вы не можете применять юридические условия или технические меры, которые законно ограничивают других в действиях, разрешенных лицензией.
 
-### Notices:
+### Примечания:
 
-- You do not have to comply with the license for elements of the material in the public domain or where your use is permitted by an applicable exception or limitation.
+- Вам не нужно соблюдать условия лицензии для элементов материала, которые находятся в общественном достоянии или когда ваше использование разрешено применимым исключением или ограничением.
 
-- No warranties are given. The license may not give you all of the permissions necessary for your intended use. For example, other rights such as publicity, privacy, or moral rights may limit how you use the material.
+- Никаких гарантий не предоставляется. Лицензия может не предоставлять вам всех необходимых разрешений для вашего предполагаемого использования. Например, другие права, такие как права на публичность, на личную жизнь или моральные права, могут ограничивать ваше использование материала.
 
-This PDF was generated using Prince ([https://www.princexml.com/](https://www.princexml.com/)).
+Этот PDF был создан с использованием Prince ([https://www.princexml.com/](https://www.princexml.com/)).
