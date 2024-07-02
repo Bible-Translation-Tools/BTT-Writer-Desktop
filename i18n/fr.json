@@ -6,11 +6,10 @@
     "about_group": "À propos",
     "legal_group": "Légalités",
     "advanced_group": "Avancé",
-
     "glmode_maintext": "Mode de Langue Portaille",
     "glmode_helptext": "Montrer d'autres options pour les langues de portailles.",
     "bemode_maintext": "Mode de Brouillon Aveugle",
-    "bemode_helptext": "Montrer traduction sans aussi montrer le texte source.",
+    "bemode_helptext": "Afficher l'option du mode de traduction qui permet la rédaction en aveugle (le projet sera rechargé s'il est modifié)",
     "colortheme_maintext": "Thème de couleur",
     "colortheme_helptext": "Set the color theme",
     "light": "Lumière",
@@ -45,18 +44,14 @@
     "refresh_settings_text": "Mettre les paramètres au plus courrant",
     "indexsqliteurl_label": "Index.sqlite URL",
     "localization_maintext": "Langue de l'interface",
-
     "__folder1": "ts-dialogs",
-
     "__file1": "ts-conflict.html",
     "project_change": "Changement du Projet Détecté",
     "change_warning": "Des modifications ont été apportées à votre traduction de {0} en {1} sur votre compte. Souhaitez-vous importer ces modifications maintenant?",
     "__change_warning": "{0} - project name, {1} - language name",
-
     "__file2": "ts-container-confirm.html",
     "source_exists": "Source Existe Déjà",
     "source_warning": "Voulez vous écraser le texte source existant?",
-
     "__file3": "ts-export-options.html",
     "upload_options": "Parametres de Téléchargement/Exportation",
     "to_server": "Télécharger sur serveur",
@@ -69,18 +64,15 @@
     "to_pdf_text": "Crée un fichier .pdf de votre projet",
     "to_project": "Exporter en Fichier Projet",
     "to_project_text": "Crée une copie de votre projet",
-
     "__file4": "ts-feedback.html",
     "feedback": "Réaction",
     "internet_warning": "On va utiliser votre reseau internet",
     "describe_problem": "Expliquez le problème que vous rencontrez",
     "send": "Envoyer",
-
     "__file5": "ts-import-confirm.html",
     "project_exists_2": "Ce projet existe déjà sur l'appareil. Comment preferez-vous proceder?",
     "merge": "Fusionnez les Projets",
     "overwrite": "Ecrasez le Projet sur cet appareil",
-
     "__file6": "ts-import-options.html",
     "import_options_title": "Options d'Importation",
     "server_import_1": "Importer depuis le Serveur",
@@ -91,14 +83,10 @@
     "usfm_import_2": "Doit avoir l'extension .usfm ou .txt",
     "source_import_1": "Importer Texte Source",
     "source_import_2": "Doit être en format de Resource Container",
-
     "__file7": "ts-loading.html",
-
     "percent_complete": "{0}% Complet",
     "__percent_complete": "{0} - completion percentage",
-
     "close": "Fermer",
-
     "__file8": "ts-print-options.html",
     "print_head": "Options d'impression/exportation au format PDF",
     "with_images": "Inclure des images",
@@ -108,12 +96,10 @@
     "with_newpages": "Nouvelle page pour chaque chapitre",
     "with_preview": "Créer un aperçu",
     "with_title": "Langue et titre du livre à chaque page",
-
     "__file9": "ts-repo-search.html",
     "username": "Nom d'Utilisateur",
     "book_language": "Livre ou Langue",
     "projectname": "Nom du Projet",
-
     "__file10": "ts-update-options.html",
     "update_head": "Options de mise à jour",
     "update_head2": "Ces options nécessitent toutes une connexion Internet",
@@ -124,48 +110,38 @@
     "download_source_text": "Choisissez les sources à télécharger après la mise à jour de la liste",
     "update_targets": "Actualiser la liste des Langues Cibles disponibles",
     "update_targets_text": "Ajoutera de nouvelles langues cibles à la liste disponible",
-    "download_index_file": "Télécharger le nouveau fichier index.sqlite",
+    "download_index_file": "Téléchargez le nouveau fichier index .sqlite",
     "download_index_file_text": "Télécharge un nouveau fichier index.sqlite et le place dans le répertoire de l'application.",
-
     "__folder2": "ts-home",
     "__file11": "ts-completion-icon.html",
-
     "__file12": "ts-home.html",
-    "app_name": "BTT Writer (test)",
+    "app_name": "BTT Writer",
     "home_title": "Vos Projets de Traduction",
     "welcome": "Bienvenu(e)!",
     "home_welcome1": "Voici votre écran d'accueil. Quand vous auriez de projets de traduction sur cet appareil, ils apparaisseront ici.",
     "home_welcome2": "Vous pouvez créer un nouveau projet n'importe quand en cliquant sur le bouton bleu en haut-droit.",
     "start_new_project": "Créer un nouveau projet",
-
     "columns1": "Trier les Colonnes Par",
     "sort1": "Projet Avant Langue",
     "sort2": "Langue Avant Projet",
     "sort3": "Progres Avant Projet",
-
     "columns2": "Trier la Colonne des Projets Par",
     "bible_order": "Ordre Biblique",
     "abc_order": "Ordre Alphabétique",
-
     "details": "detailles",
-
     "project": "Projet",
     "type": "Genre",
     "language": "Langue",
     "progress": "Progres",
-
     "delete": "Effacer",
     "confirm_delete_translation": "Vous allez éliminer difinitivement la traduction. Continuez?",
     "cancel": "Annuler",
     "confirm": "Vérifier",
-
     "file_exists": "Fichier existe déjà",
     "merge_warning": "Ce projet existe déjà. Si vous continuez avec ce changement, le deux projets seront fusionnés.",
     "continue": "Continuez",
-
     "__file13": "ts-home-sidebar.html",
     "__file14": "ts-new-project-button.html",
-
     "__file15": "ts-project-info.html",
     "target_language": "Langue Cible",
     "translators": "Traducteurs",
@@ -178,14 +154,11 @@
     "upload_export": "Télécharger/Exporter",
     "resource_type": "Type de ressource",
     "change": "Changer",
-
     "__file16": "ts-resource-options.html",
     "resource_options": "Options de ressources",
-
     "__folder3": "ts-icons",
     "__file17": "ts-icons.html",
     "__folder4": "ts-legal",
-
     "__file18": "ts-attribution.html",
     "obs_title": "unfoldingWord | Open Bible Stories",
     "obs_subtitle": "une mini-Bible visuelle illimitée dans n'importe quelle langue",
@@ -193,7 +166,6 @@
     "obs_description": "Crée par Distant Shores Media (<a href=\"http://distantshores.org\">http://distantshores.org</a>) et la communauté missionnaire mondiale Door43 (<a href=\"http://door43.org\">http://door43.org</a>).",
     "obs_trademark_use": "Utilisation des marques: unfoldingWord est une marque déposée de Distant Shores Media et ne peut être inclus dans aucune œuvre dérivée créée à partir de ce contenu.\nContenu non modifié de <a href=\"http://unfoldingword.org\">http://unfoldingword.org</a> doit inclure le <strong>unfoldingWord</strong> logo lorsqu'il est distribué à d'autres.\nMais si vous modifiez le contenu de quelque manière que ce soit, vous devez supprimer le <strong>unfoldingWord</strong> logo avant de diffuser votre travail.",
     "obs_artwork": "Attribution des illustrations : Toutes les images utilisées dans ces histoires sont © Sweet Publishing (<a href=\"https://sweetpublishing.com/\">www.sweetpublishing.com</a>) et sont disponibles \nsous une licence Creative Commons Attribution - Partage dans les Mêmes Conditions (<a href=\"http://creativecommons.org/licenses/by-sa/3.0\">http://creativecommons.org/licenses/by-sa/3.0/deed.fr</a>).",
-
     "__file19": "ts-guidelines.html",
     "guidelines_head": "Directives de Traduction",
     "accurate_label": "Exacte",
@@ -215,7 +187,6 @@
     "guideline_tldr": "Nous pensons qu'une traduction a la plus grande probabilité d'être de bonne qualité lorsqu'après avoir appliqué les directives ci-dessus, les éléments suivants sont achevés :",
     "tldr1": "Il est testé et approuvé par les croyants de la communauté linguistique et leurs responsables religieux.",
     "tldr2": "Des révisions et des améliorations continues sont apportées.",
-
     "__file20": "ts-license.html",
     "license_head": "Attribution - Partage dans les Mêmes Conditions 4.0 International",
     "license_head2": "Résumé lisible par l'homme",
@@ -238,7 +209,6 @@
     "notice_label": "Avis:",
     "public_domain_text": "Vous n'êtes pas tenu de vous conformer à la licence pour les éléments du matériel dans le domaine public ou lorsque votre utilisation est autorisée par une exception ou limitation applicable.",
     "no_warranty": "Aucune garantie n'est donnée. La licence peut ne pas vous accorder toutes les autorisations nécessaires à l'utilisation que vous souhaitez en faire. Par exemple, d'autres droits tels que la publicité, la vie privée ou les droits moraux peuvent limiter la façon dont vous utilisez le matériel.",
-
     "__file21": "ts-software.html",
     "license_explanation": "Les licenses suivantes s'appliquent aux emballages de code et des biblioteques utilisés dans cette appli.",
     "license_type": "Sorte de License",
@@ -253,7 +223,6 @@
     "statement4": "La mort de Christ remplace les pécheurs et pourvoit à la purification de ceux qui croient.",
     "statement5": "Par la grâce de Dieu, par la foi, l'homme reçoit le salut comme un don gratuit à cause de la mort et de la résurrection de Jésus.",
     "statement6": "La résurrection de tous – les sauvés pour la vie éternelle et les perdus pour le châtiment éternel.",
-
     "__file23": "ts-terms.html",
     "terms_title": "Conditions d'Utilisation",
     "terms1": "En utilisant cette application, vous acceptez la déclaration de foi et les directives de traduction et de publier votre travail selon les termes de la licence internationale Creative Commons Attribution-ShareAlike 4.0.",
@@ -262,17 +231,13 @@
     "statement_button": "Déclaration de Foi",
     "no_button": "Non Merci",
     "agree_button": "D'Accord",
-
     "__folder5": "ts-main",
     "__file24": "app-theme.html",
     "__file25": "ts-academy.html",
     "loading_academy": "Chargement des données de l'Académie...",
-
     "__file26": "ts-academy-titlebar.html",
-
     "__file27": "ts-app-titlebar.html",
     "currentuser": "Utilisateur Actuel:",
-
     "__file28": "ts-dashboard.html",
     "conflicts": "Conflits de Blocs",
     "single_chunk_conflict_message": " Il y a 1 bloc qui contient un nouveau conflit qui demande votre attention.",
@@ -284,10 +249,8 @@
     "upload_failed": "Échec du téléchargement",
     "updates": "clées pour mise-à-jours",
     "updating_target_status": "Mise à jour de la liste des Langues Cibles. Cela peut prendre un peu de temps. Veuillez patienter...",
-    
     "number_target_updates": "Langues Cibles ont été ajoutées: ({0})",
     "__number_target_updates": "{0} - number of languages",
-    
     "no_target_updates": "Aucune Langue Cible n'a été ajoutée.",
     "update_complete": "Mise à Jour Complète",
     "update_error": "Une erreur s'est produite lors de la mise à jour",
@@ -322,10 +285,8 @@
     "exporting_project_status": "En cours d'exporter le projet. Veuillez patienter...",
     "updating_index_file_status": "Mise à jour du fichier index.sqlite de la bibliothèque. Cela peut prendre un certain temps. Veuillez patienter...",
     "download_index_file_error": "Une erreur s'est produite lors du téléchargement du fichier index.sqlite.",
-
     "read_file_error": "Une erreur s'est produite lors de la lecture du fichier: {0}",
     "__read_file_error": "{0} - file name",
-
     "sending_feedback_status": "En cours d'envoyer la réaction. Veuillez patienter...",
     "feedback_sent": "Réaction Transmise",
     "feedback_sent2": "Votre réaction est bien transmise.",
@@ -334,40 +295,31 @@
     "feedback_failed3": "Impossible de trasmettre la réaction. Veuillez essayer encore.",
     "feedback_failed4": "Une erreur lors de la transmission de réaction",
     "token_error": "Vous n'avez pas de jeton pour transmettre les réactions.",
-
     "new_sources_available": "Nouveau texte source, disponible au téléchargement: {0}.",
     "__new_sources_available": "{0} - number of sources",
-
     "no_sources_available": "Il n'y a pas de nouveaux textes sources.",
     "tstudio_files": "Fichiers Tstudio",
     "project_export1": "Fichier Projet Complet",
     "project_export2": "Votre projet est bien sauvegardé",
     "project_export3": "Projet Exporté",
     "project_export4": "Votre projet est bien exporté en fichier.",
-
     "project_failed1": "Fichier Echoué",
     "project_failed2": "Une erreur lors du sauvegard du projet.",
     "project_failed3": "Une erreur lors de l'export du projet.",
     "project_failed4": "Exportation Echoué",
-
     "download_images": "En cours de télécharger les images. Veuillez patienter...",
     "download_images_error": "Une erreur s'est produit lors du téléchargement des images",
     "extract_images": "En cours d'extraire les images. Veuillez patienter...",
     "print_preview": "En cours de générer l'impression. Veuillez patienter...",
     "download_failed": "Téléchargement échoué",
     "download_complete": "Téléchargement complet",
-
     "conflicts_exist": "Il y a de Conflits",
     "conflicts_request": "Il faut resoudre tout conflit avant d'exporter en USFM.",
-
     "zip_format": "Fichiers Zip",
     "usfm_format": "Fichiers USFM",
-
     "index_update_status": "Mise à Jour des Indices",
     "project_migration_status": "Migration des Projets en Cours...",
-
     "git_version": "Version de git",
-
     "get_user_settings": "Récupération de Paramètres d'Utilisateur...",
     "get_project_list": "Récupération de la Liste des Projets...",
     "get_resource_containers": "Ouverture des conteneurs de ressources...",
@@ -379,18 +331,14 @@
     "project_uploaded_to": "Votre projet a été téléchargé sur:",
     "cannot_upload_whithout_account": "Impossible de télécharger sans se connecter à un compte serveur.",
     "upload_project_error": "Une erreur s'est produite lors du téléchargement de votre projet.",
-
     "__file29": "ts-splash.html",
-
     "__folder6": "ts-new",
     "__file30": "ts-book-menu.html",
     "choose_project": "Choisir un projet",
-
     "__file31": "ts-language-menu.html",
     "import_project": "Importer un Projet",
     "change_language": "Changer de Langue",
     "choose_target_language": "Choisir de langue cible",
-
     "__file32": "ts-new.html",
     "new_project": "Projet Nouveau",
     "overwrite_title": "Écraser?",
@@ -402,13 +350,11 @@
     "project_exists": "Ce projet existe déjà",
     "no_translation": "Absence de traduction",
     "project_doesnt_exist_error": "Impossible de lancer ce projet tant qu'un projet de traduction standard n'existe pas.",
-
     "__file33": "ts-project-menu.html",
     "choose_category": "Choisir une catégorie",
     "old_testament": "Ancien Testament",
     "new_testament": "Nouveau Testament",
     "other_project": "Autres",
-
     "__file34": "ts-type-menu.html",
     "choose_type": "Choisir un type",
     "text_type": "Texte",
@@ -418,7 +364,6 @@
     "tn_type": "Notes",
     "tw_type": "Mots",
     "tq_type": "Questions",
-
     "__folder7": "ts-print",
     "__file35": "ts-print.html",
     "print_preview_title": "Aperçu avant impression",
@@ -428,30 +373,25 @@
     "project_saved_pdf": "Votre projet a été enregistré avec succès au format PDF.",
     "save_project_error": "Une erreur s'est produite lors de l'enregistrement de votre projet",
     "print_failed": "Échec de l'impression",
-
     "pdf_generated_by": "PDF générés par {0}",
     "__pdf_generated_by": "{0} - link to Prince library",
-
     "__folder8": "ts-profile",
     "__file36": "ts-create-option.html",
     "server_account_create": "Création d'un compte serveur",
     "email_label": "Email",
     "verify_password": "Vérifier le mot de passe",
     "submit": "Soumettre",
-
     "__file37": "ts-local-option.html",
     "local_profile_h": "Profil d'Utilisateur Local",
     "local_profile_text": "Tapez votre nom complet ou un pseudonyme. Ce nom sera ajouté à la liste des contributeurs pour tous les projets sur lesquels vous travaillez. Ce nom sera visible aux autres.",
     "local_user_prompt": "Nom Complet ou Pseudonyme",
     "local_server_prompt": "Connecter avec Compte Serveur",
-
     "__file38": "ts-login-option.html",
     "server_login_h": "Connexion Serveur",
     "username_label": "Nom d'Utilisateur",
     "password_label": "Mot de Passe",
     "create_new_account_label": "Créer Nouvelle Compte",
     "login_button": "Connecter",
-
     "__file39": "ts-options-menu.html",
     "option_setup": "Configurer votre profil d'utilisateur avec une des options ci-dessous",
     "server_login": "Connectez-vous à votre compte serveur",
@@ -460,7 +400,6 @@
     "server_login_create_alt": "Utilisez cette option si vous n'avez pas de compte mais que vous souhaitez télécharger",
     "local_login": "Créer un profil d'utilisateur local",
     "local_login_alt": "Utilisez cette option si vous n'avez pas de compte et ne souhaitez pas télécharger",
-
     "__file40": "ts-profile.html",
     "user_profile_label": "Profil d'Utilisateur",
     "verifying_login": "Vérification d'autorisation ...",
@@ -471,9 +410,7 @@
     "login_failed": "Echec d'Autorisation",
     "complete_fields": "Remplissez tous les champs",
     "incomplete_data": "Données Incompletes",
-
     "__file41": "ts-profile-sidebar.html",
-
     "__folder9": "ts-review",
     "__file42": "ts-review-chapter.html",
     "__file43": "ts-review-chunk.html",
@@ -485,7 +422,6 @@
     "contrib_must_enter_name": "Doit saisir un nom de contributeur",
     "contrib_no_agreement": "Absence d'accord",
     "contrib_must_agree": "Doit accepter les conditions",
-
     "__file45": "ts-review.html",
     "review_project": "Verification du Projet",
     "_project": "depuis ts-home.html",
@@ -494,7 +430,6 @@
     "__file46": "ts-review-project.html",
     "project_details": "Détails du Projet",
     "next": "Suivant",
-
     "__folder10": "ts-settings",
     "__file47": [
         "ts-setting-modal.html",
@@ -507,7 +442,6 @@
     "suite_changed_suite": "Veuillez fermer et redemarrer le logiciel.",
     "font_list_update": "En cours de Mettre La Liste des Polices à Jour. Veuillez patienter...",
     "localizations_list_load": "Chargement des langues. Veuillez patienter...",
-
     "__folder11": "ts-translate",
     "__folder12": "ts-chunk-mode",
     "__file49": "ts-chunk-card.html",
@@ -515,13 +449,11 @@
     "__folder13": "ts-conflict-mode",
     "__file51": "ts-conflict-card.html",
     "__file52": "ts-conflict-mode.html",
-
     "__file53": "ts-nosource-mode.html",
     "choose_source": "Choisir la/les texte(s) source(s) pour commencer la lecture et traduction",
     "requires_internet": "Demande une connexion Internet",
     "updating_source_status": "Mise à jour des données sources. Veuillez patienter...",
     "activating_source": "Activation de cette source. Veuillez patienter...",
-
     "__folder14": "ts-read-mode",
     "__file54": "ts-read-card.html",
     "__file55": "ts-read-mode.html",
@@ -529,12 +461,10 @@
     "__file56": "ts-resource-card.html",
     "__file57": "ts-resource-data.html",
     "click_display_text": "Cliquez pour afficher le texte",
-
     "__file58": "ts-resource-display.html",
     "see_also": "Voir aussi:",
     "examples": "Exemples:",
     "words_index": "Index des mots",
-
     "__folder16": "ts-review-mode",
     "__file59": "ts-review-card.html",
     "__file60": "ts-review-mode.html",
@@ -543,55 +473,40 @@
     "source": "Source",
     "target": "Cible",
     "search_text": "Recherche de texte",
-
     "found_in_chunks": "Trouvé en {0} morceaux.",
     "__found_in_chunks": "{0} - number of chunks",
-
     "__folder17": "ts-source",
     "__file62": "ts-note-marker.html",
     "__file63": "ts-source-card.html",
     "__file64": "ts-source-chunk.html",
-
     "__file65": "ts-source-modal.html",
     "choose_source_placeholder": "Choisir la traduction source",
     "download": "Télécharger",
-
     "selected_max": "Sélectionnée(s) (maximum: {0})",
     "__selected_max": "{0} - maximum number of sources",
-
     "available": "Disponible",
     "available_online": "Disponible en ligne",
     "downloading_source": "Téléchargement des données sources. Veuillez patienter...",
     "exit_to_update": "Quitter pour mettre à jour la liste des textes sources",
-
     "__file66": "ts-source-tab.html",
-
     "__folder18": "ts-target",
     "__file67": "ts-target-conflict.html",
-
     "resource_title": "Titre: {0}",
     "__resource_title": "{0} - resource title content",
-
     "resource_body": "Corps: {0}",
     "__resource_body": "{0} - resource body content",
-
     "resolve_conflict_action": "Résoudre le conflit - Cliquer sur la version à conserver",
-
     "__file68": "ts-target-edit.html",
     "conflict_exists": "Le conflit existe",
     "conflict_exists_warning": "Il y a un conflit qui doit être résolu avant de traduire ou de créer des notes pour ces versets. Vous pouvez vous rendre dans le projet connexe pour examiner et résoudre le conflit.",
-
     "__file69": "ts-target-helps.html",
-
     "click_to_add_resource": "Cliquer pour ajouter des {0}",
     "__click_to_add_resource": "{0} - resource name",
-
     "mark_chunk_done": "Marquer le morceau comme terminé",
     "add_question_here": "Ajouter une question ici",
     "add_answer_here": "Ajouter une réponse ici",
     "reference_text": "Texte de référence",
     "note_text": "Texte de la note",
-
     "__file70": "ts-target-review.html",
     "__file71": "ts-target-view.html",
     "__file72": "ts-target-words.html",
@@ -599,7 +514,6 @@
     "translate_title_here": "Traduire le titre ici",
     "translate_definition_here": "Traduire la définition ici",
     "translate_text_here": "Traduire le texte ici",
-
     "__file73": "ts-verse-marker.html",
     "__file74": "ts-translate.html",
     "loading_project": "En cours de charger le projet",
@@ -632,35 +546,27 @@
     "save_manifest_error": "Erreur d'enregistrement du manifeste cible",
     "commit_project_error": "Erreur de validation du projet",
     "backup_translation_error": "Erreur de sauvegarde de la traduction",
-
     "removing_invalid_source": "Suppression d'une source invalide: {0}",
     "__removing_invalid_source": "{0} - source name",
-
     "cannot_find_data": "Impossible de trouver les données pour: {0}, {1}, {2}",
     "__cannot_find_data": "{0} - chapter number, {1} - chunk number, {2} - frame word",
-
     "resource_notes": "Notes",
     "resource_words": "Mots",
     "resource_questions": "Questions",
     "project_title": "Titre du projet",
     "story_title": "Titre de l'article",
     "story_reference": "Référence de l'article",
-
     "story_chunk_title": "{0}: {1}",
     "__story_chunk_title": "{0} - chunk title, {1} - frame number",
-
     "project_chapter_title": "{0} {1} Titre",
     "__project_chapter_title": "{0} - book name, {1} - chapter number",
-
     "closing_project_status": "Clôture du projet. Veuillez patienter...",
     "loading_review_status": "Chargement de la page d'évaluation. Veuillez patienter...",
     "project_empty": "Projet Vide",
     "project_nothing_to_review": "Ce projet n'a rien à voir avec la révision",
     "result": "Résultat",
-
     "chunks_marked_done_result": "{0} morceaux sur {1} marqués comme faits",
     "__chunks_marked_done_result": "{0} - quantity of chunks marked as done, {1} - total chunks number",
-
     "__file75": "ts-translate-sidebar.html",
     "home": "Acceuil",
     "project_review": "Révision de Projet",
@@ -680,7 +586,6 @@
     "previous_chunk": "Morceau Précédent",
     "next_word": "Mot Suivant",
     "next_chunk": "Morceau Suivant",
-
     "__folder19": "ts-updates",
     "__file76": "ts-update-level-one.html",
     "choose_language": "Choisir une langue",
@@ -689,25 +594,19 @@
     "__file78": "ts-update-results.html",
     "choose_sources": "Choisir la (les) source(s)",
     "unselect_all": "Désélectionner tout",
-
     "source_text_downloaded": "Le texte source a été téléchargé avec succès: {0}.",
     "__source_text_downloaded": "{0} - number of source texts",
-
     "download_attempt_failed": "Échec des tentatives de téléchargement: ({0}).",
     "__download_attempt_failed": "{0} - number of failed download attempts",
-
     "__file79": "ts-updates.html",
     "sort_by_language": "Par langue",
     "sort_by_book": "Par livre",
     "source_texts": "Textes sources",
-
     "__folder20": "views",
     "__file80": "splash-screen.html",
     "loading_text": "Charchement de la fenêtre principale...",
-    
     "version_title": "Version {0}",
     "__version_title": "{0} - version number",
-
     "status": "Situation",
     "idle": "Inactif",
     "update": "Actualiser",
@@ -715,7 +614,6 @@
     "translationAcademy": "translationAcademy",
     "logout": "Se Déconnecter",
     "settings": "Parametres",
-
     "__folder21": "js",
     "__file81": "bootstrap.js",
     "loading_mkdirp": "Chargement de la mkdirp...",
@@ -736,61 +634,43 @@
     "init_modules": "Initialisation des modules...",
     "loading_ui": "Chargement de l'iu...",
     "setting_index_file": "Mise en place du fichier d'index...",
-    
     "__file82": "printer.js",
     "write_to_file_failed": "Impossible d'écrire dans le fichier. Il se peut qu'il soit déjà ouvert.",
     "create_file_failed": "Il y a eu un problème lors de la création du fichier.",
-
     "__file83": "database.js",
     "download_unknown_error": "Erreur inconnue lors du téléchargement",
     "source_on_server_not_found": "Source non trouvée sur le serveur",
-
     "rc_doesnt_exist": "Le conteneur de ressources {0} n'existe pas",
     "__rc_doesnt_exist": "{0} - resource container id",
-
     "__file84": "exporter.js",
     "backup_location_not_found": "L'emplacement de la sauvegarde n'a pas été trouvé. Attachez un disque externe ou modifiez l'emplacement de la sauvegarde dans les paramètres.",
     "project_export_format_not_supported": "Nous ne prenons pas encore en charge l'exportation de ce format de projet.",
     "project_export_type_not_supported": "Nous ne pouvons pas encore exporter ce type de projet.",
-
     "__file85": "gitnative.js",
-    
     "git_ver_outdated": "Votre version de Git n'est pas à jour. Nous avons détecté la version {0}, mais l'application a besoin d'au moins la version {1} pour fonctionner.",
     "__git_ver_outdated": "{0} - current git version, {1} - minimum git version",
-
     "git_not_installed": "Git n'est pas installé. Il est nécessaire pour exécuter BTT-Writer Desktop.",
     "git_initialized": "Git est initialisé",
     "files_committed": "Files are committed",
-    
     "projects_merge_error": "Erreur lors de la fusion des projets: {0}",
     "__projects_merge_error": "{0} - projects list",
-
     "merge_finished": "Fusion terminée",
-
     "starting_push": "Démarrage de la poussée vers le serveur...\n {0}",
     "__starting_push": "{0} - push message",
-
     "files_pushed": "Les fichiers sont poussés",
     "project_cloned": "Projet cloné",
-
     "__file86": "importer.js",
     "could_not_restore_project": "Could not restore this project",
-    
     "extract_file_error": "Erreur lors de l'extraction du fichier: {0}",
     "__extract_file_error": "{0} - error details",
-
     "parse_file_error": "Erreur d'analyse du fichier: {0}",
     "__parse_file_error": "{0} - error details",
-
     "not_valid_usfm_file": "Il ne s'agit pas d'un fichier USFM valide.",
-
     "__file87": "reload-screen.html",
     "reloading": "Rechargement",
     "please_wait": "Veuillez patienter...",
-
     "__file88": "academy-screen.html",
     "creating_academy_window": "Création d'une fenêtre Académie...",
-
     "__file89": "main.js",
     "application": "L'application",
     "about_application": "À propos de l'application",
@@ -803,30 +683,21 @@
     "select_all": "Tout sélectionner",
     "view": "Voir",
     "toggle_dev_tools": "Basculer les outils du développeur",
-
     "__file90": "migrator.js",
-    
     "unable_migrate_project": "Impossible de migrer le projet {0}",
     "__unable_migrate_project": "{0} - project name",
-
     "migrated_projects": "Projets migrés",
     "migrate_project_failed": "Échec de la migration du projet",
-
     "unsupported_package_version": "Version du paquet non prise en charge: {0}",
     "__unsupported_package_version": "{0} - package version",
-
     "archive_not_supported": "L'archive est vide ou n'est pas prise en charge",
-    
     "migrate_tstudio_archive_failed": "Échec de la migration de l'archive tstudio: {0}",
     "__migrate_tstudio_archive_failed": "{0} - error details",
-
     "__file91": "projects.js",
     "project_dir_doesnt_exist": "Le répertoire du projet n'existe pas",
     "unable_delete_file": "Impossible de supprimer le fichier pour le moment.",
-
     "__file92": "user.js",
     "delete_token_error": "Erreur lors de la suppression du jeton à distance ! Veuillez le supprimer manuellement.",
-
     "__book_names": "book names",
     "book_gen": "Genèse",
     "book_exo": "Exode",
