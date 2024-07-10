@@ -945,20 +945,26 @@
                   return App.gitManager.push(user, paths.projectDir, repo).then(App.utils.ret(repo.full_name));
               })
               .then(function (fullname) {
-                  var server = App.configurator.getUserSetting("readerserver");
-                  var url = server + "/" + fullname;
+                  var readServer = App.configurator.getUserSetting("readerserver");
+                  var readUrl = readServer + "/" + fullname;
+                  var dataServer = App.configurator.getUserSetting("dataserver");
+                  var dataUrl = dataServer + "/" + fullname;
 
                   mythis.set('options.title', mythis.translate("upload_complete"));
                   mythis.set('options.body', mythis.translate("project_uploaded_to"));
-                  mythis.set('options.link', url);
+                  mythis.set('options.readlink', readUrl);
+                  mythis.set('options.datalink', dataUrl);
                   mythis.set('options.showlink', true);
                   mythis.set('options.loading', false);
-                  var link = loading.getElementsByClassName("url");
-                  link[0].addEventListener('click', function clicker (event) {
-                      event.preventDefault();
-                      shell.openExternal(url);
-                      link[0].removeEventListener('click', clicker);
-                  });
+                  var links = loading.querySelectorAll(".url");
+
+                  links.forEach((link) => {
+                    link.addEventListener('click', function clicker (event) {
+                        event.preventDefault();
+                        shell.openExternal(link.textContent);
+                        // link.removeEventListener('click', clicker);
+                    });
+                  })
               })
               .catch(function (err) {
                   err = err || '';
