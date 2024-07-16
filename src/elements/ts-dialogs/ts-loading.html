@@ -28,7 +28,6 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow-y: auto;
             padding: 10px 20px;
             text-align: center;
             font-size: 130%;
@@ -71,6 +70,10 @@
             display: none;
         }
 
+        .copyIcon {
+            cursor: pointer;
+        }
+
     </style>
 
     <template>
@@ -80,7 +83,10 @@
         </div>
         <div id="body">
             <span>{{options.body}}</span>
-            <span class$="[[linkclass(options.showlink)]]">{{options.link}}</span>
+            <div class$="[[linkclass(options.showlink)]]">
+                <span class="url">{{options.datalink}}</span>
+                <iron-icon class="smallicon copyIcon" icon="content-copy" on-tap="copyUrl" data-url$="[[options.datalink]]"></iron-icon>
+            </div>
             <template is="dom-if" if="{{options.loading}}">
                 <template is="dom-if" if="{{!options.progress}}">
                     <paper-progress indeterminate="true"></paper-progress>
@@ -99,6 +105,9 @@
             </template>
             <template is="dom-if" if="{{!options.loading}}">
                 <paper-button dialog-dismiss>{{translate("close")}}</paper-button>
+            </template>
+            <template is="dom-if" if="{{options.showlink}}">
+                <paper-button on-tap="readOnWeb" data-url$="[[options.readlink]]">{{translate("read_on_web")}}</paper-button>
             </template>
         </div>
 
@@ -120,11 +129,23 @@
         },
 
         linkclass: function (showlink) {
-            return showlink ? 'url' : 'hide';
+            return showlink ? 'link' : 'hide';
         },
 
         reload: function () {
             App.ipc.send('fire-reload');
+        },
+
+        readOnWeb: function (event) {
+            var shell = require('electron').shell;
+            const url = event.target.dataset.url;
+            shell.openExternal(url);
+        },
+
+        copyUrl: function (event) {
+            const { clipboard } = require('electron');
+            const url = event.target.dataset.url;
+            clipboard.writeText(url);
         },
 
         translate: function (key, ...args) {
