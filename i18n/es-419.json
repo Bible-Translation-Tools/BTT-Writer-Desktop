@@ -87,6 +87,7 @@
     "percent_complete": "{0}% Complete",
     "__percent_complete": "{0} - completion percentage",
     "close": "Close",
+    "read_on_web": "Read on Web",
     "__file8": "ts-print-options.html",
     "print_head": "Print/Export to PDF Options",
     "with_images": "Include images",
