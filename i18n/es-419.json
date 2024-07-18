@@ -253,7 +253,7 @@
     "number_target_updates": "Lenguas de destino añadidas: ({0})",
     "__number_target_updates": "{0} - number of languages",
     "no_target_updates": "No se ha añadido ninguna Lengua de Destino.",
-    "update_complete": "Actualización completa",
+    "update_complete": "Actualización Completada",
     "update_error": "Se ha producido un error al actualizar",
     "connection_error": "No es posible conectarse al servidor",
     "read_error": "Se perdió la conexión con el servidor",
