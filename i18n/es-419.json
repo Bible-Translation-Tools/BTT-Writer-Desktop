@@ -258,7 +258,7 @@
     "connection_error": "No es posible conectarse al servidor",
     "read_error": "Se perdió la conexión con el servidor",
     "update_failed": "Falló la Actualización",
-    "source_update_status": "Actualización de la Lista de Textos Fuente. Esto puede tardar un poco. Por favor, espere ...",
+    "source_update_status": "Actualizando la Lista de Textos Fuente. Esto puede tardar un poco. Por favor, espere ...",
     "source_loading_status": "Cargando textos de fuente. Por favor espere...",
     "deleting_project_status": "Eliminando proyecto. Por favor espere...",
     "project_deleted1": "Proyecto Eliminado",
