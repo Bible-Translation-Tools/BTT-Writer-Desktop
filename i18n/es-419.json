@@ -60,7 +60,7 @@
     "to_usfm_text": "Crea un archivo .usfm de tu proyecto",
     "to_text": "Exportar a archivos de texto",
     "to_text_text": "Crea un archivo .zip de tu proyecto",
-    "to_pdf": "Export to PDF File",
+    "to_pdf": "Exportar a PDF",
     "to_pdf_text": "Creates a .pdf file of your project",
     "to_project": "Export to Project File",
     "to_project_text": "Creates a copy of your project file",
