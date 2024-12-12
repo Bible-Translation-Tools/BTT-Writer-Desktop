@@ -6,7 +6,7 @@
     "about_group": "درباره",
     "legal_group": "حقوقى",
     "advanced_group": "پىشرفته",
-    "glmode_maintext": "Gateway Language Mode",
+    "glmode_maintext": "شروع متن اصلى",
     "glmode_helptext": "Display additional translation options for gateway languages",
     "bemode_maintext": "Blind Edit Mode",
     "bemode_helptext": "Display translation mode option that allows for blind drafting (Project will re-load if changed)",
