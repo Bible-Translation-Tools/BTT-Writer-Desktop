@@ -47,7 +47,7 @@
     "__folder1": "ts-dialogs",
     "__file1": "ts-conflict.html",
     "project_change": "شناسایی تغییر برنامه",
-    "change_warning": "ترجمه حساب شما از (0) به (1) تعییر کرده است. آیا میخواهیذ این تغییر را وارد کنید?",
+    "change_warning": "ترجمه حساب شما از (0) به (1) تعییر کرده است. آیا میخواهیذ این تغییر را وارد کنید؟",
     "__change_warning": "{0} - project name, {1} - language name",
     "__file2": "ts-container-confirm.html",
     "source_exists": "منبع وجود دارد",
