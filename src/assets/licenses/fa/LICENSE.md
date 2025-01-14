@@ -1,15 +1,14 @@
-## Creative Commons Attribution-ShareAlike 4.0 International
+## کری‌یتیو کامونز اتریبیوشن شر الایک ۴ اینترنشنال
 
-### Human-Readable Summary
+### هیومن- ریدبل سامری
 
-The Creative Commons Attribution-Share Alike 4.0  International  License is available at
-[http://creativecommons.org/licenses/by-sa/4.0/](http://creativecommons.org/licenses/by-sa/4.0/).
+مجوز در لینک موجود است [http://creativecommons.org/licenses/by-sa/4.0/](http://creativecommons.org/licenses/by-sa/4.0/).
 
-#### This is a human-readable summary of (and not a substitute for) the License.
+#### این مچوز هیومن- ریدبل سامری است.
 
-### You are free to:
+### شما می‌توانید:
 
-- **Share** — copy and redistribute the material in any medium or  format.
+- به اشتراک بگذارید - مطالب را به هرشکل و فرمتی کپی و منتشر کنید.
 
 - **Adapt** — remix, transform, and build upon the material for any purpose, even commercially.
 
