@@ -16,16 +16,16 @@
 
 ### تحت این شرایط:
 
-- **Attribution** —You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+- **انتساب**- شما باید بدرستی قدردانی کنید و لینک مجوز را بگذارید و بگویید که آیا تغییراتی داده‌اید. شما این کار را به هرشکل مناسبی می‌توانید انجام دهید، اما نباید طوری بگویید که گویا مجوزدهنده شما یا کارشما را تایید کرده است.
 
-- **ShareAlike** — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+- **اشتراک یکسان**- اگر شما مطالب را ترکیب، تبدیل و یا تکمیل کرده‌اید، باید کارهای خود را تحت همان مجوز اصلی منتشر و توزیع کنید.
 
-- **No additional restrictions** — You may not apply legal terms or technological measures that legally restrict others from doing anything the license  permits.
+- **بدون محدودیت اضافی**- شما نباید شرایظ حقوقی یا مقررات فنی بگذارید که استفاده دیگران از مجوز را محدود کند.
 
-### Notices:
+### نکته‌ها:
 
-- You do not have to comply with the license for elements of the material in the public domain or where your use is permitted by an applicable exception or limitation.
+- شما برای مطالبی که درحوزه عمومی است یا تحت شرایط استثنایی یا محدودیت‌های موجود به شما اجازه استفاده داده شده لازم نیست مجوز را رعایت کنید.
 
-- No warranties are given. The license may not give you all of the permissions necessary for your intended use. For example, other rights such as publicity, privacy, or moral rights may limit how you use the material.
+- هیچ تضمینی داده نمی‌شود. مجوز ممکن است تمام اختیارات لازم برای کار مورد نظرتان را به شما ندهد. برای مثال حقوق دیگر مانند تبلیغات، حریم خصوصی یا حقوق اخلاقی استفاده شما از مطالب را محدود کند.
 
-This PDF was generated using Prince ([https://www.princexml.com/](https://www.princexml.com/)).
+این پی دی اف با استفاده از این برنامه ساخته شده است Prince ([https://www.princexml.com/])
