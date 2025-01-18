@@ -10,11 +10,11 @@
 
 - به اشتراک بگذارید - مطالب را به هرشکل و فرمتی کپی و منتشر کنید.
 
-- **Adapt** — remix, transform, and build upon the material for any purpose, even commercially.
+- اقتباس کنید- مطالب را برای هر منظور، حتی برای مصارف تجاری، ترکیب، تبدیل و تکمیل کنید.
 
-  The licensor cannot revoke these freedoms  as long as  you follow the license terms.
+  مجوز دهنده تا زمانی که شما شرایط  مجوز را رعایت می‌کنید نمی‌تواند این آزادی عمل را از شما بگیرد.
 
-### Under the following terms:
+### تحت این شرایط:
 
 - **Attribution** —You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
 
