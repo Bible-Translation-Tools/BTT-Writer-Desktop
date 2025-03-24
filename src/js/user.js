@@ -1,8 +1,8 @@
 'use strict';
 
 var _ = require('lodash'),
-    Gogs = require('gogs-client'),
-    requester = require('gogs-client/lib/request'),
+    Gogs = require('gogs-client-fork'),
+    requester = require('gogs-client-fork/lib/request'),
     os = require('os'),
     utils = require('../js/lib/utils');
 
@@ -15,11 +15,12 @@ function UserManager(auth, server) {
     const MAX_PAGE_SIZE = 50;
 
     const tokenStub = {
-        name: `btt-writer-desktop_${os.hostname()}_${process.platform}__${utils.getMachineIdSync()}`
+        name: `btt-writer-desktop_${os.hostname()}_${process.platform}__${utils.getMachineIdSync()}`,
+        scopes: ["write:user","write:repository"]
     }
 
     const fetchRepoRecursively = function (uid, query, limit, page, resultList) {
-        /* 
+        /*
          *  due to inadequate parameter (@page) in gogs client api searchRepos(),
          *  this parameter-embedded tweak is temporarily provided to make use of the client api.
          */
@@ -31,7 +32,7 @@ function UserManager(auth, server) {
                     return resultList;
                 } else {
                     // collect result from current page
-                    let newList = resultList.concat(repos); 
+                    let newList = resultList.concat(repos);
                     return fetchRepoRecursively(uid, query, limit, page + 1, newList) // recursive call to get next page
                 }
             });
@@ -108,14 +109,16 @@ function UserManager(auth, server) {
             return api.getUser(userObj).then(function (user) {
                 return api.listTokens(userObj)
                     .then(function (tokens) {
-                        return _.find(tokens, tokenStub);
+                        return _.find(tokens, (token) => {
+                            return token.name === tokenStub.name
+                        });
                     })
                     .then(function (token) {
                         // delete existing token on server
                         if (token) {
-                            let usr = { 
-                                username: userObj.username, 
-                                password: userObj.password, 
+                            let usr = {
+                                username: userObj.username,
+                                password: userObj.password,
                                 tokenId: token.id
                             }
                             return deleteAccessToken(usr)
@@ -124,7 +127,7 @@ function UserManager(auth, server) {
                             return api.createToken(tokenStub, userObj);
                         }
                     })
-                    .then(function (token) { 
+                    .then(function (token) {
                         user.tokenId = token.id;
                         user.token = token.sha1;
                         return user;
