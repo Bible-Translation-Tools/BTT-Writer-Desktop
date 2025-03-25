@@ -19,7 +19,7 @@ cat package.json | jq --arg variable "$ENVVER" '.version = $variable' > package.
 sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
 iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
 npm install
-patch --forward --reject-file=- node_modules/gogs-client-fork/lib/request.js < gogs-client-lib-request.diff || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
+#patch --forward --reject-file=- node_modules/gogs-client-fork/lib/request.js < gogs-client-lib-request.diff || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
 npm install gulp -g
 npm install bower -g
 npm test
