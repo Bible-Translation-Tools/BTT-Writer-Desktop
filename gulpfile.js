@@ -8,7 +8,7 @@ const gulp = require('gulp'),
     mocha = require('gulp-mocha'),
     rimraf = require('rimraf'),
     argv = require('yargs').argv,
-    packager = require('electron-packager'),
+    packager = require('@electron/packager'),
     replace = require('gulp-replace'),
     path = require('path'),
     mkdirp = require('mkdirp'),
@@ -78,7 +78,7 @@ function build(done) {
     });
 
     packager({
-        'arch': ['ia32', 'x64'],
+        'arch': ['ia32', 'x64', 'universal'],
         'platform': platforms,
         'dir': '.',
         'ignore': function (name) {
