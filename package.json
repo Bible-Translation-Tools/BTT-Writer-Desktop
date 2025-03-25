@@ -46,7 +46,7 @@
     "rimraf": "2.5.4",
     "sql.js": "0.3.2",
     "tar": "2.2.1",
-    "trash": "9.0.0",
+    "trash": "7.2.0",
     "untildify": "2.1.0"
   },
   "devDependencies": {
