@@ -27,19 +27,19 @@ sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
 iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
 npm install
 #patch --forward --reject-file=- node_modules/gogs-client-fork/lib/request.js < gogs-client-lib-request.diff || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
-npm install gulp -g
-npm install bower -g
+#npm install gulp -g
+#npm install bower -g
 npm test
 wget --no-verbose "https://btt-writer-resources.s3.amazonaws.com/resource_containers.zip"
 if [ -f resource_containers.zip ]; then rm -r ./src/index; fi
 unzip -qq resource_containers.zip -d ./src/index/
 test -f src/index/index.sqlite
 test -d src/index/resource_containers
-bower install
+npx bower install
 test -d src/components
-gulp prince
+npx gulp prince
 test -d src/prince
-gulp build --win
-gulp build --linux
-gulp build --osx
-gulp release
+npx gulp build --win
+npx gulp build --linux
+npx gulp build --osx
+npx gulp release

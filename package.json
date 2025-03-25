@@ -21,7 +21,7 @@
     ]
   },
   "dependencies": {
-    "adm-zip": "0.4.7",
+    "adm-zip": "0.5.16",
     "archiver": "5.3.1",
     "async": "1.4.2",
     "chmodr": "1.0.2",
@@ -46,14 +46,14 @@
     "rimraf": "2.5.4",
     "sql.js": "0.3.2",
     "tar": "2.2.1",
-    "trash": "3.4.1",
+    "trash": "9.0.0",
     "untildify": "2.1.0"
   },
   "devDependencies": {
-    "bower": "1.8.8",
+    "bower": "1.8.14",
     "electron": "21.3.0",
     "@electron/packager": "^18.3.6",
-    "gulp": "4.0.0",
+    "gulp": "5.0.0",
     "gulp-mocha": "3.0.0",
     "gulp-replace": "0.5.4",
     "jest": "14.1.0",

@@ -93,7 +93,10 @@ function build(done) {
         },
         'out': BUILD_DIR,
         'app-version': p.version,
-        'icon': './icons/icon'
+        'icon': './icons/icon',
+        'osxUniversal': {
+            'x64ArchFiles': '*'
+        }
     }).then(() => done())
     .catch(err => {
         console.log(err)
