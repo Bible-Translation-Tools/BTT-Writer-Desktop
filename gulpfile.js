@@ -201,9 +201,9 @@ function release(done){
                     }
                     break;
                 case 'darwin':
-                    if (fs.existsSync(BUILD_DIR + 'BTT-Writer-darwin-x64/')) {
+                    if (fs.existsSync(BUILD_DIR + 'BTT-Writer-darwin-universal/')) {
                         promises.push(new Promise(function (os, resolve, reject) {
-                            var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-osx-x64.zip`;
+                            var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-osx-universal.zip`;
                             try {
                                 var output = fs.createWriteStream(dest);
                                 output.on('close', function () {
@@ -216,7 +216,7 @@ function release(done){
                                 var archive = archiver.create('zip');
                                 archive.on('error', reject);
                                 archive.pipe(output);
-                                archive.directory(BUILD_DIR + 'BTT-Writer-darwin-x64/BTT-Writer.app/', 'BTT-Writer.app');
+                                archive.directory(BUILD_DIR + 'BTT-Writer-darwin-universal/BTT-Writer.app/', 'BTT-Writer.app');
                                 archive.finalize();
                             } catch (e) {
                                 console.error(e);
