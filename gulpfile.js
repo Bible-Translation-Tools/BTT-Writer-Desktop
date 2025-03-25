@@ -95,7 +95,10 @@ function build(done) {
         'app-version': p.version,
         'icon': './icons/icon'
     }).then(() => done())
-    .catch(_ => done());
+    .catch(err => {
+        console.log(err)
+        done()
+    });
 }
 
 // pass parameters like: gulp build --win --osx --linux
@@ -146,6 +149,7 @@ function release(done){
         // TRICKY: the iss script cannot take the .exe extension on the file name
         var file = `BTT-Writer-${p.version}-win-x${arch}`;
         var cmd = `iscc scripts/win_installer.iss /DArch=${arch == '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${p.version} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
+        console.log(cmd);
         return new Promise(function(resolve, reject) {
             exec(cmd, function(err, stdout, stderr) {
                 if(err) {
