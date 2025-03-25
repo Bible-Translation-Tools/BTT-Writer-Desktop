@@ -4,9 +4,12 @@ set -x
 
 #sudo add-apt-repository --yes ppa:ubuntu-wine/ppa
 sudo dpkg --add-architecture i386
+sudo mkdir -pm755 /etc/apt/keyrings
+sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
 sudo add-apt-repository --yes ppa:arx/release
 sudo apt-get update -d
-sudo apt-get install -y -q innoextract wine32 wine64 software-properties-common
+sudo apt-get install -y -q --install-recommends innoextract winehq-stable software-properties-common
 wine --version
 innoextract --version
 
