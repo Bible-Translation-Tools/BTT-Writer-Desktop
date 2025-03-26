@@ -13,7 +13,7 @@ The Creative Commons Attribution-Share Alike 4.0  International  License is avai
 
 - **Adaptar** — remezclar, transformar y construir sobre el material para cualquier propósito, incluso comercialmente.
 
-  El licenciante no puede revocar estas libertades mientras usted siga los términos de la licencia.
+   El licenciante no puede revocar estas libertades mientras usted siga los términos de la licencia.
 
 ### Bajo los siguientes términos:
 
@@ -25,7 +25,7 @@ The Creative Commons Attribution-Share Alike 4.0  International  License is avai
 
 ### Avisos:
 
-- You do not have to comply with the license for elements of the material in the public domain or where your use is permitted by an applicable exception or limitation.
+- Usted no tiene que cumplir con la licencia de elementos del material en el dominio público o donde su uso está permitido por una excepción o limitación aplicable.
 
 - No se ofrece ninguna garantía. Es posible que la licencia no le conceda todos los permisos necesarios para el uso previsto. Por ejemplo, otros derechos como la publicidad, la privacidad o los derechos morales pueden limitar el uso que usted hace del material.
 
