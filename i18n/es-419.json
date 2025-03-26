@@ -34,7 +34,7 @@
     "reader_server_label": "Servidor de Lectura",
     "logging_level_label": "Nivel de Registro",
     "information_level": "Información",
-    "warning_level": "Advertencia",
+    "warning_level": "Advertencias",
     "error_level": "Errores",
     "developer_tools": "Herramientas para desarrolladores",
     "developer_tools_label": "Abrir las herramientas de desarrollador",
