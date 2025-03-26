@@ -17,11 +17,11 @@ The Creative Commons Attribution-Share Alike 4.0  International  License is avai
 
 ### Bajo los siguientes términos:
 
-- **Atribución** —Debe otorgar el crédito correspondiente, proporcionar un enlace a la licencia e indicar si se realizaron cambios. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+- **Atribución** —Debe otorgar el crédito correspondiente, proporcionar un enlace a la licencia e indicar si se realizaron cambios. Puede hacerlo de cualquier forma razonable, pero no de una manera que sugiera que el licenciante le respalda a usted o a su uso.
 
 - **ShareAlike** — Si remezclas, transformas o creas a partir del material, debes distribuir tus contribuciones bajo la misma licencia que el original.
 
-- **No additional restrictions** — You may not apply legal terms or technological measures that legally restrict others from doing anything the license  permits.
+- **Sin restricciones adicionales** — Usted no puede aplicar términos legales o medidas tecnológicas que restrinjan legalmente a otros de hacer cualquier cosa que la licencia permita.
 
 ### Avisos:
 
