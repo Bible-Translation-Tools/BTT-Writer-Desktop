@@ -19,7 +19,7 @@ La licencia Atribución/Reconocimiento-CompartirIgual 4.0 Internacional de Creat
 
 - **Atribución** —Debe otorgar el crédito correspondiente, proporcionar un enlace a la licencia e indicar si se realizaron cambios. Puede hacerlo de cualquier forma razonable, pero no de una manera que sugiera que el licenciante le respalda a usted o a su uso.
 
-- **ShareAlike** — Si remezclas, transformas o creas a partir del material, debes distribuir tus contribuciones bajo la misma licencia que el original.
+- **Comparte un me gusta** — Si remezclas, transformas o creas a partir del material, debes distribuir tus contribuciones bajo la misma licencia que el original.
 
 - **Sin restricciones adicionales** — Usted no puede aplicar términos legales o medidas tecnológicas que restrinjan legalmente a otros de hacer cualquier cosa que la licencia permita.
 
