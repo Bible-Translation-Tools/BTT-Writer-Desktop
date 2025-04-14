@@ -13,7 +13,7 @@ La licence Creative Commons Paternité-Partage des Conditions Initiales à l'Ide
 
 - **Adapter** — remixer, transformer et créer à partir du matériel pour toute utilisation, y compris commerciale.
 
-  L'Offrant ne peut retirer les autorisations concédées par la licence tant que vous appliquez les termes de cette licence.
+   L'Offrant ne peut retirer les autorisations concédées par la licence tant que vous appliquez les termes de cette licence.
 
 ### Selon les conditions suivantes:
 
