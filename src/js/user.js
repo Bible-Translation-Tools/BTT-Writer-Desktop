@@ -10,7 +10,7 @@ var _ = require('lodash'),
 function UserManager(auth, server) {
 
     const apiUrl = server + '/api/v1';
-    const api = new Gogs(apiUrl);
+    const api = new Gogs(apiUrl, "btt-writer-desktop");
 
     const MAX_PAGE_SIZE = 50;
 
