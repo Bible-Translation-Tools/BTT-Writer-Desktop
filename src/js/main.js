@@ -20,6 +20,8 @@ if (!gotTheLock) {
     return;
 }
 
+const userAgent = 'btt-writer-desktop'
+
 app.setPath('userData', (function (dataDir) {
     var base = process.env.LOCALAPPDATA ||
         (process.platform == 'darwin'
@@ -54,7 +56,7 @@ function createMainSplash() {
 
     //splashScreen.webContents.openDevTools();
 
-    splashScreen.loadURL('file://' + __dirname + '/../views/splash-screen.html');
+    splashScreen.loadURL('file://' + __dirname + '/../views/splash-screen.html', { userAgent });
 
     splashScreen.on('closed', function() {
         splashScreen = null;
@@ -79,7 +81,7 @@ function createAcademySplash() {
 
     //splashScreen.webContents.openDevTools();
 
-    splashScreen.loadURL('file://' + __dirname + '/../views/academy-screen.html');
+    splashScreen.loadURL('file://' + __dirname + '/../views/academy-screen.html', { userAgent });
 
     splashScreen.on('closed', function() {
         splashScreen = null;
@@ -104,7 +106,7 @@ function createReloadSplash() {
 
     //splashScreen.webContents.openDevTools();
 
-    splashScreen.loadURL('file://' + __dirname + '/../views/reload-screen.html');
+    splashScreen.loadURL('file://' + __dirname + '/../views/reload-screen.html', { userAgent });
 
     splashScreen.on('closed', function() {
         splashScreen = null;
@@ -135,12 +137,7 @@ function createMainWindow () {
 
     // mainWindow.webContents.openDevTools();
 
-    mainWindow.loadURL(
-        'file://' + __dirname + '/../views/index.html',
-        {
-            userAgent: "btt-writer-desktop"
-        }
-    );
+    mainWindow.loadURL('file://' + __dirname + '/../views/index.html', { userAgent });
 
     mainWindow.on('closed', function() {
         mainWindow = null;
@@ -177,7 +174,7 @@ function createAcademyWindow () {
 
     //academyWindow.webContents.openDevTools();
 
-    academyWindow.loadURL('file://' + __dirname + '/../views/academy.html');
+    academyWindow.loadURL('file://' + __dirname + '/../views/academy.html', { userAgent });
 
     academyWindow.on('closed', function() {
         academyWindow = null;
