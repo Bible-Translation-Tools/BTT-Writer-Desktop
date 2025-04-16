@@ -135,7 +135,12 @@ function createMainWindow () {
 
     // mainWindow.webContents.openDevTools();
 
-    mainWindow.loadURL('file://' + __dirname + '/../views/index.html');
+    mainWindow.loadURL(
+        'file://' + __dirname + '/../views/index.html',
+        {
+            userAgent: "btt-writer-desktop"
+        }
+    );
 
     mainWindow.on('closed', function() {
         mainWindow = null;
