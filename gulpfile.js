@@ -8,7 +8,7 @@ const gulp = require('gulp'),
     mocha = require('gulp-mocha'),
     rimraf = require('rimraf'),
     argv = require('yargs').argv,
-    packager = require('electron-packager'),
+    packager = require('@electron/packager'),
     replace = require('gulp-replace'),
     path = require('path'),
     mkdirp = require('mkdirp'),
@@ -78,7 +78,7 @@ function build(done) {
     });
 
     packager({
-        'arch': ['ia32', 'x64'],
+        'arch': ['ia32', 'x64', 'universal'],
         'platform': platforms,
         'dir': '.',
         'ignore': function (name) {
@@ -93,9 +93,15 @@ function build(done) {
         },
         'out': BUILD_DIR,
         'app-version': p.version,
-        'icon': './icons/icon'
+        'icon': './icons/icon',
+        'osxUniversal': {
+            'x64ArchFiles': '*'
+        }
     }).then(() => done())
-    .catch(_ => done());
+    .catch(err => {
+        console.log(err)
+        done()
+    });
 }
 
 // pass parameters like: gulp build --win --osx --linux
@@ -146,6 +152,7 @@ function release(done){
         // TRICKY: the iss script cannot take the .exe extension on the file name
         var file = `BTT-Writer-${p.version}-win-x${arch}`;
         var cmd = `iscc scripts/win_installer.iss /DArch=${arch == '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${p.version} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
+        console.log(cmd);
         return new Promise(function(resolve, reject) {
             exec(cmd, function(err, stdout, stderr) {
                 if(err) {
@@ -194,9 +201,9 @@ function release(done){
                     }
                     break;
                 case 'darwin':
-                    if (fs.existsSync(BUILD_DIR + 'BTT-Writer-darwin-x64/')) {
+                    if (fs.existsSync(BUILD_DIR + 'BTT-Writer-darwin-universal/')) {
                         promises.push(new Promise(function (os, resolve, reject) {
-                            var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-osx-x64.zip`;
+                            var dest = `${RELEASE_DIR}BTT-Writer-${p.version}-osx-universal.zip`;
                             try {
                                 var output = fs.createWriteStream(dest);
                                 output.on('close', function () {
@@ -209,7 +216,7 @@ function release(done){
                                 var archive = archiver.create('zip');
                                 archive.on('error', reject);
                                 archive.pipe(output);
-                                archive.directory(BUILD_DIR + 'BTT-Writer-darwin-x64/BTT-Writer.app/', 'BTT-Writer.app');
+                                archive.directory(BUILD_DIR + 'BTT-Writer-darwin-universal/BTT-Writer.app/', 'BTT-Writer.app');
                                 archive.finalize();
                             } catch (e) {
                                 console.error(e);

@@ -26,13 +26,13 @@ function install(dir, os) {
     let url = '';
 
     if(os === 'win') {
-        url = 'http://www.princexml.com/download/prince-11-win32.zip';
+        url = 'http://www.princexml.com/download/prince-16-win32.zip';
         tempfile += ".zip";
     } else if(os === 'osx') {
-        url = 'http://www.princexml.com/download/prince-11-macosx.tar.gz';
-        tempfile += ".tar.gz";
+        url = 'https://www.princexml.com/download/prince-16-macos.zip';
+        tempfile += ".zip";
     } else if(os === 'linux') {
-        url = 'http://www.princexml.com/download/prince-11-linux-generic-x86_64.tar.gz';
+        url = 'http://www.princexml.com/download/prince-16-linux-generic-x86_64.tar.gz';
         tempfile += ".tar.gz";
     } else {
         return Promise.reject('Missing or invalid os parameter');
@@ -43,9 +43,9 @@ function install(dir, os) {
             fs.writeFileSync(tempfile, data, { encoding: null });
 
             if(/\.zip$/.test(tempfile)) {
-                return extractZipball(tempfile, destdir, 1);
+                return extractZipball(tempfile, destdir);
             } else if(/\.tar\.gz/.test(tempfile)) {
-                return extractTarball(tempfile, destdir, 1);
+                return extractTarball(tempfile, destdir);
             } else {
                 return Promise.reject('Unknown file extension on ' + tempfile);
             }
@@ -90,6 +90,7 @@ function install(dir, os) {
             // cleanup
             console.log('Prince has been installed for ' + os);
             fs.unlinkSync(tempfile);
+            makeBinExecutable(destdir, os);
             return Promise.resolve();
         })
         .catch(function(err) {
@@ -98,7 +99,6 @@ function install(dir, os) {
             fs.unlinkSync(tempfile);
             return Promise.reject(err);
         });
-
 }
 
 /**
@@ -133,6 +133,16 @@ function extractTarball (tarball, destdir, stripdirs) {
             .on("error", function (error) { reject(error); })
             .on("end", function () { resolve(); });
     });
+}
+
+function makeBinExecutable(destdir, os) {
+    try {
+        if (os === 'osx' || os === 'linux') {
+            fs.chmodSync(`${destdir}/lib/prince/bin/prince`, 0o755);
+        }
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 /**

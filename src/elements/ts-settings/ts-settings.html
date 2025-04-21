@@ -308,15 +308,15 @@
 
                 this.set('settings', App.configurator.refreshUserSetting());
                 this.saveSettings();
-                // Lgout user.
+                
+                // Logout user.
                 const user = App.configurator.getValue('userdata');
                 this.fire('iron-signal', {name: 'updateuser', data: {}});
                 App.userManager.logout(user);
                 App.keyManager.destroyKeys();
-                // Notify user that the app needs to be restarted.
-                // TODO This bypasses Polymer to call the ts-dashboard.showMessage() function.  Is there a better way?
-                var dashboard = document.querySelector('ts-dashboard')
-                dashboard.showMessage(this.translate("suite_changed"), this.translate("suite_changed_suite"))
+                
+                // Restart the app.
+                App.ipc.send('fire-reload');
             } else if(name === "colortheme") {
                 App.ipc.send('theme-changed', value.name);
             } else if(name === "languageurl") {
