@@ -46,8 +46,8 @@
     "indexsqliteurl_label": "Index.sqlite URL",
     "localization_maintext": "Interface Language",
     "tmurl_label": "Translation Manual URL",
-    "enable_web_links": "Enable Web Links",
-    "enable_web_links_label": "Allow to open web links in browser (requires internet)",
+    "enable_web_links": "Enable TM Links",
+    "enable_web_links_label": "Open Translation Manual links in browser (requires internet)",
 
     "__folder1": "ts-dialogs",
 
