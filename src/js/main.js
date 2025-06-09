@@ -1,7 +1,5 @@
 'use strict';
 
-const { Configurator } = require('./configurator');
-
 var electron = require('electron'),
     Menu = electron.Menu,
     dialog = electron.dialog,
@@ -35,8 +33,6 @@ app.setPath('userData', (function (dataDir) {
 // be closed automatically when the JavaScript object is garbage collected.
 let splashScreen;
 let mainWindow;
-let academyWindow;
-let scrollToId;
 
 function createMainSplash() {
     splashScreen = new BrowserWindow({
@@ -57,31 +53,6 @@ function createMainSplash() {
     //splashScreen.webContents.openDevTools();
 
     splashScreen.loadURL('file://' + __dirname + '/../views/splash-screen.html', { userAgent });
-
-    splashScreen.on('closed', function() {
-        splashScreen = null;
-    });
-}
-
-function createAcademySplash() {
-    splashScreen = new BrowserWindow({
-        width: 400,
-        height: 170,
-        resizable: false,
-        autoHideMenuBar: true,
-        frame: false,
-        center: true,
-        show: false,
-        title: 'BTT Writer',
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-        }
-    });
-
-    //splashScreen.webContents.openDevTools();
-
-    splashScreen.loadURL('file://' + __dirname + '/../views/academy-screen.html', { userAgent });
 
     splashScreen.on('closed', function() {
         splashScreen = null;
@@ -150,49 +121,6 @@ function createMainWindow () {
     mainWindow.on('unmaximize', function () {
         mainWindow.webContents.send('unmaximize');
     });
-}
-
-function createAcademyWindow () {
-
-    academyWindow = new BrowserWindow({
-        width: 950,
-        height: 660,
-        minWidth: 950,
-        minHeight: 580,
-        useContentSize: true,
-        center: true,
-        title: app.getName(),
-        backgroundColor: '#00796B',
-        autoHideMenuBar: true,
-        show: false,
-        frame: false,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-        }
-    });
-
-    //academyWindow.webContents.openDevTools();
-
-    academyWindow.loadURL('file://' + __dirname + '/../views/academy.html', { userAgent });
-
-    academyWindow.on('closed', function() {
-        academyWindow = null;
-    });
-
-    academyWindow.on('maximize', function () {
-        academyWindow.webContents.send('maximize');
-    });
-
-    academyWindow.on('unmaximize', function () {
-        academyWindow.webContents.send('unmaximize');
-    });
-}
-
-function scrollAcademyWindow () {
-    if (scrollToId) {
-        academyWindow.webContents.send('academy-scroll', scrollToId);
-    }
 }
 
 function createAppMenus() {
@@ -266,31 +194,6 @@ ipcMain.on('main-window', function (event, arg) {
     }
 });
 
-ipcMain.on('academy-window', function (event, arg) {
-    if (typeof academyWindow[arg] === 'function') {
-        let ret = academyWindow[arg]();
-        event.returnValue = !!ret;
-    } else if (academyWindow[arg]) {
-        event.returnValue = academyWindow[arg];
-    } else {
-        event.returnValue = null;
-    }
-});
-
-ipcMain.on('open-academy', function (event, id) {
-    scrollToId = id;
-    if (academyWindow) {
-        academyWindow.show();
-        scrollAcademyWindow();
-    } else {
-        createAcademySplash();
-        setTimeout(function () {
-            splashScreen.show();
-            createAcademyWindow();
-        }, 500);
-    }
-});
-
 ipcMain.on('fire-reload', function () {
     reloadApplication();
 });
@@ -320,14 +223,6 @@ ipcMain.on('main-loading-done', function () {
     }
 });
 
-ipcMain.on('ta-loading-done', function () {
-    if (splashScreen && academyWindow) {
-        academyWindow.show();
-        splashScreen.close();
-        scrollAcademyWindow();
-    }
-});
-
 ipcMain.on('theme-changed', (event, theme) => {
     theme = theme.replace(/.*?(system|light|dark)/i, "$1").toLowerCase();
     nativeTheme.themeSource = theme;
@@ -345,6 +240,10 @@ ipcMain.on('localization-changed', () => {
 
 ipcMain.on('show-devtools', () => {
     BrowserWindow.getFocusedWindow().webContents.openDevTools();
+});
+
+ipcMain.on('open-manual', function (event, url) {
+    void electron.shell.openExternal(url);
 });
 
 app.on('ready', function () {
@@ -375,7 +274,9 @@ app.on('activate', function () {
 app.on('second-instance', function () {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
-        if (mainWindow.isMinimized()) mainWindow.restore()
-        mainWindow.focus()
+        if (mainWindow.isMinimized()) {
+            mainWindow.restore();
+        }
+        mainWindow.focus();
     }
-})
+});

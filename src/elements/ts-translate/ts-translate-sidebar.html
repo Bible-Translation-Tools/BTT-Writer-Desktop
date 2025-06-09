@@ -146,7 +146,6 @@
                     <paper-item on-tap="goreview"><iron-icon class="smallicon" icon="done-all"></iron-icon>{{translate("project_review")}}</paper-item>
                     <paper-item on-tap="goexport"><iron-icon class="smallicon" icon="file-upload"></iron-icon>{{translate("upload_export")}}</paper-item>
                     <paper-item on-tap="goprint" class$="[[printclass(currentproject.projectmeta.project_type_class, currentproject.projectmeta.source_translations)]]"><iron-icon class="smallicon" icon="print"></iron-icon>{{translate("print")}}</paper-item>
-                    <paper-item on-tap="goacademy"><iron-icon class="smallicon" icon="book"></iron-icon>{{translate("translationAcademy")}}</paper-item>
                     <paper-item on-tap="gofeedback"><iron-icon class="smallicon" icon="announcement"></iron-icon>{{translate("feedback")}}</paper-item>
                     <paper-item on-tap="gosearch" class$="[[searchclass(currentproject.projectmeta.project_type_class, selected)]]"><iron-icon class="smallicon" icon="search"></iron-icon>{{translate("search")}}</paper-item>
                     <paper-item on-tap="projectdone"><iron-icon class="smallicon" icon="check"></iron-icon>{{translate("mark_chunks_done")}}</paper-item>
@@ -418,11 +417,6 @@
         goprint: function () {
             this.$.menu.close();
             this.fire('goprint');
-        },
-
-        goacademy: function () {
-            this.$.menu.close();
-            App.ipc.send('open-academy', "");
         },
 
         gohome: function () {

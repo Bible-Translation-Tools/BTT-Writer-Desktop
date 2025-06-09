@@ -230,6 +230,24 @@
         "visible": true
     },
     {
+        "name": "tmurl",
+        "mainText": "tmurl_label",
+        "value": "https://read.bibleineverylanguage.org/WA-Catalog/en_tm",
+        "default": "https://read.bibleineverylanguage.org/WA-Catalog/en_tm",
+        "group": "advanced_group",
+        "enabled": true,
+        "visible": true
+    },
+    {
+        "name": "enable_web_links",
+        "mainText": "enable_web_links",
+        "helpText": "enable_web_links_label",
+        "value": false,
+        "group": "advanced_group",
+        "enabled": true,
+        "visible": true
+    },
+    {
         "name": "logginglevel",
         "mainText": "logging_level_label",
         "value": {"name": "warning_level"},

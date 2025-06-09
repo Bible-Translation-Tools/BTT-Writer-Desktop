@@ -169,7 +169,8 @@
                 content = "";
             } else {
                 this.set('allwords', clear);
-                content = App.renderer.renderResource(data, module);
+                const webLinksEnabled = App.configurator.getUserSetting("enable_web_links");
+                content = App.renderer.renderResource(data, webLinksEnabled, module);
             }
 
             textholder.innerHTML = content;
@@ -178,14 +179,20 @@
         },
 
         setLinks: function () {
-            var mythis = this;
-            var talinks = this.$.body.getElementsByClassName("talink");
-            var biblelinks = this.$.body.getElementsByClassName("biblelink");
+            let i;
+            const mythis = this;
+            const tmlinks = this.$.body.getElementsByClassName("tmlink");
+            const biblelinks = this.$.body.getElementsByClassName("biblelink");
 
-            for (var i = 0; i < talinks.length; i++) {
-                talinks[i].addEventListener('click', function (event) {
+            const baseUrl = App.configurator.getUserSetting("tmurl");
+
+            for (i = 0; i < tmlinks.length; i++) {
+                tmlinks[i].addEventListener('click', function (event) {
                     event.preventDefault();
-                    App.ipc.send('open-academy', this.id);
+                    const section = this.dataset.section;
+                    const slug = this.dataset.slug;
+                    const url = `${baseUrl}?section=${section}#${slug}`;
+                    App.ipc.send('open-manual', url);
                 });
             }
 

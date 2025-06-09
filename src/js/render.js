@@ -378,51 +378,60 @@ function Renderer() {
             return toc + text + enddiv;
         },
 
-        renderResource: function (data, module) {
+        renderResource: function (data, linksEnabled, module) {
             var starth2 = "\<h2 class='style-scope " + module + "'\>";
             var endh2 = "\<\/h2\>";
             var startdiv = "\<div class='style-scope " + module + "'\>";
             var enddiv = "\<\/div\>";
 
-            return starth2 + data.title + endh2 + startdiv + this.renderResourceLinks(data.body, module) + enddiv;
+            return starth2 + data.title + endh2 + startdiv + this.renderResourceLinks(data.body, linksEnabled, module) + enddiv;
         },
 
-        renderResourceLinks: function (text, module) {
-            var talinktest = new RegExp(/(\[\[:en:ta)(:[^:]*:[^:]*:)([^:\]]*)(\]\])/);
-            var biblelinktest = new RegExp(/(\[\[:en:bible)(:[^:]*:)(\w*:\d*:\d*)(\|[^\]]*\]\])/);
-            var linkname;
-            var starta;
-            var enda = "\<\/a\>";
+        renderResourceLinks: function (text, linksEnabled, module) {
+            const tmLinkTest = new RegExp(/\[\[:en:ta:([^:]*):([^:]*):([^:\]]*)]]/);
+            const bibleLinkTest = new RegExp(/(\[\[:en:bible)(:[^:]*:)(\w*:\d*:\d*)(\|[^\]]*]])/);
+            let linkSlug;
+            let startLink;
+            const enda = "\<\/a\>";
 
-            while (talinktest.test(text)) {
-                linkname = talinktest.exec(text)[3];
-                starta = "\<a href='" + linkname + "' class='style-scope talink " + module + "' id='" + linkname.replace(/_/g, "-") + "'\>";
+            while (tmLinkTest.test(text)) {
+                const linkSection = tmLinkTest.exec(text)[2];
+                linkSlug = tmLinkTest.exec(text)[3];
 
-                text = text.replace(talinktest, starta + linkname + enda);
+                const linkName = this.translate("translation_manual", `${linkSection}/${linkSlug}`);
+                let target;
+
+                if (linksEnabled) {
+                    target = `<a class="style-scope link tmlink ${module}" data-section="${linkSection}" data-slug="${linkSlug}">${linkName}</a>`;
+                } else {
+                    target = linkName;
+                }
+
+                text = text.replace(tmLinkTest, target);
             }
 
-            while (biblelinktest.test(text)) {
-                linkname = biblelinktest.exec(text)[3];
-                var chapter = parseInt(linkname.split(":")[1]);
-                var verse = parseInt(linkname.split(":")[2]);
+            while (bibleLinkTest.test(text)) {
+                linkSlug = bibleLinkTest.exec(text)[3];
+                const chapter = parseInt(linkSlug.split(":")[1]);
+                const verse = parseInt(linkSlug.split(":")[2]);
 
-                starta = "\<a href='" + linkname + "' class='style-scope biblelink " + module + "' id='" + chapter + ":" + verse + "'\>";
+                startLink = "\<a href='" + linkSlug + "' class='style-scope link biblelink " + module + "' id='" + chapter + ":" + verse + "'\>";
 
-                text = text.replace(biblelinktest, starta + chapter + ":" + verse + enda);
+                text = text.replace(bibleLinkTest, startLink + chapter + ":" + verse + enda);
             }
-        
-            text = this.removeHrefPaths(text) // remove relative resource path to avoid crashing when clicked
+
+            text = this.removeHrefPaths(text); // remove relative resource path to avoid crashing when clicked
 
             return text;
         },
 
         removeHrefPaths: function(text) {
-            const hrefRegex = new RegExp(/\s*href=\".*?\"/);
+            const hrefRegex = new RegExp(/\s*href=".*?"/);
             while (hrefRegex.test(text)) {
                 text = text.replace(hrefRegex, '');
             }
             return text;
-        },    
+        },
 
         validateVerseMarkers: function (text, verses) {
             var returnstr = text.trim();
@@ -528,8 +537,10 @@ function Renderer() {
                 }
             }
             return returnstr;
-        }
-
+        },
+        translate: function (key, ...args) {
+            return App.locale.translate(key, ...args);
+        },
     };
 }
 
