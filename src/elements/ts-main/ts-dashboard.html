@@ -325,7 +325,8 @@
 
       showErrorMessage: function (title, defaultBody, err) {
           App.reporter.logError(err, title, 1);
-          this.showMessage(title, defaultBody);
+          const message = typeof defaultBody === 'string' ? defaultBody : JSON.stringify(defaultBody, null, 2);
+          this.showMessage(title, message);
       },
 
       showConflictsMessage: function (title, body, conflicts) {
@@ -381,14 +382,15 @@
                       mythis.showMessage(mythis.translate("update_complete"), msg);
                   })
                   .catch(function (err) {
-                      var errmessage = mythis.translate("update_error");
+                      let errorMessage;
                       if (err.syscall === "getaddrinfo") {
-                          errmessage = mythis.translate("connection_error");
+                          errorMessage = mythis.translate("connection_error");
+                      } else if (err.syscall === "read") {
+                          errorMessage = mythis.translate("read_error");
+                      } else {
+                          errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("update_error");
                       }
-                      if (err.syscall === "read") {
-                          errmessage = mythis.translate("read_error");
-                      }
-                      mythis.showErrorMessage(mythis.translate("update_failed"), errmessage, err);
+                      mythis.showErrorMessage(mythis.translate("update_failed"), errorMessage, err);
                   });
           }, 500);
       },
@@ -430,14 +432,15 @@
                       mythis.showMessage(mythis.translate('update_complete'), msg);
                   })
                   .catch(function (err) {
-                      var errmessage = mythis.translate('update_error');
+                      let errorMessage;
                       if (err.syscall === "getaddrinfo") {
-                          errmessage = mythis.translate("connection_error");
+                          errorMessage = mythis.translate("connection_error");
+                      } else if (err.syscall === "read") {
+                          errorMessage = mythis.translate("read_error");
+                      } else {
+                          errorMessage = err.data?.message || err.message || err.stderr || mythis.translate('update_error');
                       }
-                      if (err.syscall === "read") {
-                          errmessage = mythis.translate("read_error");
-                      }
-                      mythis.showErrorMessage(mythis.translate("update_failed"), errmessage, err);
+                      mythis.showErrorMessage(mythis.translate("update_failed"), errorMessage, err);
                   });
           }, 500);
       },
@@ -685,13 +688,15 @@
                       }))
                   })
                   .catch(function(err) {
-                      var errmessage = mythis.translate('import_failed2');
+                      let errorMessage;
 
                       if (err.includes(mythis.translate("extraction_error"))) {
-                          errmessage = err;
+                          errorMessage = err;
+                      } else {
+                          errorMessage = err.data?.message || err.message || err.stderr || mythis.translate('import_failed2');
                       }
 
-                      mythis.showErrorMessage(mythis.translate('import_failed1'), errmessage, err);
+                      mythis.showErrorMessage(mythis.translate('import_failed1'), errorMessage, err);
 
                       return mythis.clearTempDir();
                   });
@@ -972,21 +977,21 @@
               })
               .catch(function (err) {
                   err = err || '';
-                  var errmessage = "";
+                  let errorMessage;
 
                   if (err.syscall === "getaddrinfo") {
-                      errmessage = mythis.translate("connection_error");
+                      errorMessage = mythis.translate("connection_error");
                   } else if (err.status === 401) {
-                      errmessage = mythis.translate("cannot_upload_whithout_account");
+                      errorMessage = mythis.translate("cannot_upload_whithout_account");
                   } else {
-                      errmessage = err.data || err.stderr || mythis.translate("upload_project_error");
+                      errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("upload_project_error");
                   }
 
-                  if (typeof errmessage === 'string' && errmessage.includes("rejected because the remote contains work")) {
+                  if (typeof errorMessage === 'string' && errorMessage.includes("rejected because the remote contains work")) {
                       loading.close();
                       mythis.$.conflict.open();
                   } else {
-                      mythis.showErrorMessage(mythis.translate("upload_failed"), errmessage, err);
+                      mythis.showErrorMessage(mythis.translate("upload_failed"), errorMessage, err);
                   }
               });
       },
@@ -1070,11 +1075,8 @@
                       }, 500);
                   })
                   .catch(function(err){
-                      var errmessage = mythis.translate("download_images_error");
-                      if(err !== null) {
-                          errmessage = err;
-                      }
-                      mythis.showErrorMessage(mythis.translate("download_failed"), errmessage, err);
+                      let errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("download_images_error");
+                      mythis.showErrorMessage(mythis.translate("download_failed"), errorMessage, err);
                   });
           }, 500);
       },
@@ -1123,11 +1125,8 @@
                       mythis.showMessage(mythis.translate("project_export3"), mythis.translate("project_export4"));
                   })
                   .catch(function (err) {
-                      var errmessage = mythis.translate("project_failed3");
-                      if(err !== null) {
-                          errmessage = err;
-                      }
-                      mythis.showErrorMessage(mythis.translate("project_failed4"), errmessage, err);
+                      let errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("project_failed3");
+                      mythis.showErrorMessage(mythis.translate("project_failed4"), errorMessage, err);
                   });
           }, 500);
       },
@@ -1166,14 +1165,15 @@
                       }
                   })
                   .catch(function (err) {
-                      var errmessage = mythis.translate("feedback_failed4");
+                      let errorMessage;
                       if (err.syscall === "getaddrinfo") {
-                          errmessage = mythis.translate("connection_error");
+                          errorMessage = mythis.translate("connection_error");
+                      } else if (err.syscall === "read") {
+                          errorMessage = mythis.translate("read_error");
+                      } else {
+                          errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("feedback_failed4");
                       }
-                      if (err.syscall === "read") {
-                          errmessage = mythis.translate("read_error");
-                      }
-                      mythis.showErrorMessage(mythis.translate("feedback_failed"), errmessage, err);
+                      mythis.showErrorMessage(mythis.translate("feedback_failed"), errorMessage, err);
                   });
           } else {
               mythis.showErrorMessage(mythis.translate('feedback_failed'), mythis.translate("token_error"), null);
@@ -1413,16 +1413,18 @@
                   }
               })
               .catch(function (err) {
-                  var msg = mythis.translate("something_broke");
+                  let errorMessage;
                   err && err.stack && App.reporter.logError(err.stack, mythis.translate("startup_error"));
 
                   if (err && typeof err === 'string') {
-                      msg = err;
+                      errorMessage = err;
                   } else if (err && err.toString() !== '[object Object]') {
-                      msg = err.toString();
+                      errorMessage = err.toString();
+                  } else {
+                      errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("something_broke");
                   }
 
-                  mythis.showErrorMessage(mythis.translate("startup_error"), msg, err);
+                  mythis.showErrorMessage(mythis.translate("startup_error"), errorMessage, err);
                   App.ipc.send('main-loading-done');
                   mythis.$.home.setsortfields();
               });
