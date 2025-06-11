@@ -127,6 +127,9 @@ process.stdout.write = console.log.bind(console);
 
         setMsg(i18n.translate("loading_utils"));
         utils = require('../js/lib/utils');
+
+        const spellcheckEnabled = configurator.getUserSetting("enable_spell_checking");
+        ipcRenderer.send('update-spellcheck', spellcheckEnabled);
     } catch (err) {
         // display error and fail
         setMsg(err.message);
