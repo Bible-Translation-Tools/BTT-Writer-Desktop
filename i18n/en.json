@@ -45,6 +45,9 @@
     "refresh_settings_text": "Update user options to the most current",
     "indexsqliteurl_label": "Index.sqlite URL",
     "localization_maintext": "Interface Language",
+    "tmurl_label": "Translation Manual URL",
+    "enable_web_links": "Enable TM Links",
+    "enable_web_links_label": "Open Translation Manual links in browser (requires internet)",
 
     "__folder1": "ts-dialogs",
 
@@ -266,10 +269,6 @@
 
     "__folder5": "ts-main",
     "__file24": "app-theme.html",
-    "__file25": "ts-academy.html",
-    "loading_academy": "Loading Academy data...",
-
-    "__file26": "ts-academy-titlebar.html",
 
     "__file27": "ts-app-titlebar.html",
     "currentuser": "Current User:",
@@ -285,7 +284,7 @@
     "upload_failed": "Upload Failed",
     "updates": "keys for updates",
     "updating_target_status": "Updating List of Target Languages. This may take a while. Please wait...",
-    
+
     "number_target_updates": "Target languages added: ({0})",
     "__number_target_updates": "{0} - number of languages",
 
@@ -338,7 +337,7 @@
 
     "new_sources_available": "New Source Text(s) available to be downloaded: {0}.",
     "__new_sources_available": "{0} - number of sources",
-    
+
     "no_sources_available": "No new Source Texts have been added.",
     "tstudio_files": "Tstudio Files",
     "project_export1": "Project File Complete",
@@ -409,7 +408,7 @@
     "old_testament": "Old Testament",
     "new_testament": "New Testament",
     "other_project": "Other",
-    
+
     "__file34": "ts-type-menu.html",
     "choose_type": "Choose a type",
     "text_type": "Text",
@@ -690,13 +689,13 @@
     "__file78": "ts-update-results.html",
     "choose_sources": "Choose Source(s)",
     "unselect_all": "Unselect All",
-    
+
     "source_text_downloaded": "Source Text(s) successfully downloaded: {0}.",
     "__source_text_downloaded": "{0} - number of source texts",
 
     "download_attempt_failed": "Failed download attempts: ({0}).",
     "__download_attempt_failed": "{0} - number of failed download attempts",
-    
+
     "__file79": "ts-updates.html",
     "sort_by_language": "By Language",
     "sort_by_book": "By Book",
@@ -705,7 +704,7 @@
     "__folder20": "views",
     "__file80": "splash-screen.html",
     "loading_text": "Loading main window...",
-    
+
     "version_title": "Version {0}",
     "__version_title": "{0} - version number",
 
@@ -713,7 +712,6 @@
     "idle": "Idle",
     "update": "Update",
     "import": "Import",
-    "translationAcademy": "translationAcademy",
     "logout": "Logout",
     "settings": "Settings",
 
@@ -737,7 +735,7 @@
     "init_modules": "Initializing modules...",
     "loading_ui": "Loading UI...",
     "setting_index_file": "Setting up index file...",
-    
+
     "__file82": "printer.js",
     "write_to_file_failed": "Cannot write to file. It may already be open.",
     "create_file_failed": "There was a problem creating the file.",
@@ -755,19 +753,19 @@
     "project_export_type_not_supported": "We do not support exporting this project type yet",
 
     "__file85": "gitnative.js",
-    
+
     "git_ver_outdated": "Your version of Git is out of date. We detected {0}, but the app needs at least version {1} in order to run.",
     "__git_ver_outdated": "{0} - current git version, {1} - minimum git version",
 
     "git_not_installed": "Git is not installed. It is required to run BTT-Writer Desktop.",
     "git_initialized": "Git is initialized",
     "files_committed": "Files are committed",
-    
+
     "projects_merge_error": "Error while merging projects: {0}",
     "__projects_merge_error": "{0} - projects list",
 
     "merge_finished": "Finished merging",
-    
+
     "starting_push": "Starting push to server...\n {0}",
     "__starting_push": "{0} - push message",
 
@@ -776,21 +774,18 @@
 
     "__file86": "importer.js",
     "could_not_restore_project": "Could not restore this project",
-    
+
     "extract_file_error": "Error while extracting file: {0}",
     "__extract_file_error": "{0} - error details",
 
     "parse_file_error": "Error occurred parsing file: {0}",
     "__parse_file_error": "{0} - error details",
-    
+
     "not_valid_usfm_file": "This is not a valid USFM file.",
 
     "__file87": "reload-screen.html",
     "reloading": "Reloading",
     "please_wait": "Please wait...",
-
-    "__file88": "academy-screen.html",
-    "creating_academy_window": "Creating Academy window...",
 
     "__file89": "main.js",
     "application": "Application",
@@ -806,7 +801,7 @@
     "toggle_dev_tools": "Toggle Developer Tools",
 
     "__file90": "migrator.js",
-    
+
     "unable_migrate_project": "Unable to migrate project {0}",
     "__unable_migrate_project": "{0} - project name",
 
@@ -817,7 +812,7 @@
     "__unsupported_package_version": "{0} - package version",
 
     "archive_not_supported": "The archive is empty or not supported",
-    
+
     "migrate_tstudio_archive_failed": "Failed to migrate tstudio archive: {0}",
     "__migrate_tstudio_archive_failed": "{0} - error details",
 
@@ -827,6 +822,10 @@
 
     "__file92": "user.js",
     "delete_token_error": "Error when deleting token remotely! Please manually delete it.",
+
+    "__file93": "render.js",
+    "translation_manual": "Translation Manual: {0}",
+    "__translation_manual": "{0} - translation manual resource",
 
     "__book_names": "book names",
     "book_gen": "Genesis",

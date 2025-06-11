@@ -119,8 +119,7 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                         text: 'Text',
                         tn: 'Notes',
                         tq: 'Questions',
-                        tw: 'Words',
-                        ta: 'Academy'
+                        tw: 'Words'
                     };
                     if (_.has(manifest, 'project.type')) {
                         delete manifest.project.type;
@@ -270,10 +269,6 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                     if (manifest.project.id === "tw") {
                         manifest.project.id = "bible";
                         manifest.project.name = "translationWords";
-                    }
-                    if (manifest.project.id === "ta") {
-                        manifest.project.id = "vol1";
-                        manifest.project.name = "translationAcademy Vol 1";
                     }
                     let unique_id = manifest.target_language.id + "_" + manifest.project.id + "_" + manifest.type.id;
                     if (manifest.resource.id !== "") {

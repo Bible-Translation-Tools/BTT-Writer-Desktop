@@ -62,7 +62,7 @@
   },
   "engines": {
     "electron": "21.3.0",
-    "node": "16.16.0"
+    "node": "^16.0.0"
   },
   "scripts": {
     "start": "electron src/js/main.js --no-sandbox",

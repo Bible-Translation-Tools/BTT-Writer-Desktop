@@ -68,7 +68,6 @@
             <paper-menu class="dropdown-content">
                 <paper-item on-tap="update"><iron-icon class="smallicon" icon="maps:local-library"></iron-icon>{{translate("update")}}</paper-item>
                 <paper-item on-tap="importmenu"><iron-icon class="smallicon" icon="file-download"></iron-icon>{{translate("import")}}</paper-item>
-                <paper-item on-tap="academy"><iron-icon class="smallicon" icon="book"></iron-icon>{{translate("translationAcademy")}}</paper-item>
                 <paper-item on-tap="feedback"><iron-icon class="smallicon" icon="announcement"></iron-icon>{{translate("feedback")}}</paper-item>
                 <paper-item on-tap="logout"><iron-icon class="smallicon" icon="perm-identity"></iron-icon>{{translate("logout")}}</paper-item>
                 <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>{{translate("settings")}}</paper-item>
@@ -119,11 +118,6 @@
         update: function() {
             this.$.menu.close();
             this.fire('iron-signal', {name: 'openupdate'});
-        },
-
-        academy: function () {
-            this.$.menu.close();
-            App.ipc.send('open-academy', "");
         },
 
         translate: function (key, ...args) {

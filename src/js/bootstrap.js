@@ -190,10 +190,6 @@ process.stdout.write = console.log.bind(console);
             return this._window('main-window');
         },
 
-        get academyWindow () {
-            return this._window('academy-window');
-        },
-
         _window: function (windowName) {
             var ipc = ipcRenderer,
                 send = ipc.sendSync.bind(ipc, windowName);
