@@ -18,13 +18,13 @@ if (!gotTheLock) {
     return;
 }
 
-const userAgent = 'btt-writer-desktop'
+const userAgent = 'btt-writer-desktop';
 
 app.setPath('userData', (function (dataDir) {
     var base = process.env.LOCALAPPDATA ||
-        (process.platform == 'darwin'
-            ? path.join(process.env.HOME, 'Library', 'Application Support')
-            : path.join(process.env.HOME, '.config'));
+        (process.platform === 'darwin' ?
+            path.join(process.env.HOME, 'Library', 'Application Support') :
+            path.join(process.env.HOME, '.config'));
 
     return path.join(base, dataDir);
 })('BTT-Writer'));
@@ -244,6 +244,12 @@ ipcMain.on('show-devtools', () => {
 
 ipcMain.on('open-manual', function (event, url) {
     void electron.shell.openExternal(url);
+});
+
+ipcMain.on('update-spellcheck', function(event, enabled) {
+    if (mainWindow) {
+        mainWindow.webContents.session.setSpellCheckerEnabled(enabled);
+    }
 });
 
 app.on('ready', function () {
