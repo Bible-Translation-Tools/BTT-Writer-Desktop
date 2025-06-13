@@ -13,7 +13,7 @@ A Licença Internacional Creative Commons Atribuição-CompartilhaIgual 4.0 est�
 
 - **Adaptar** — refazer, transformar e construir em cima do material para qualquer finalidade, até mesmo comercial.
 
-  O licenciante não pode revogar essas liberdades desde que você siga os termos da licença.
+   O licenciante não pode revogar essas liberdades desde que você siga os termos da licença.
 
 ### Nos seguintes termos:
 
