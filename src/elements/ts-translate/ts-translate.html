@@ -484,9 +484,13 @@
                                 return Promise.resolve(true);
                             })
                             .catch(function (err) {
+                                let errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("backup_translation_error");
+                                if (typeof err !== "string") {
+                                    errorMessage = JSON.stringify(errorMessage, null, 2);
+                                }
                                 mythis.set('options', {});
                                 mythis.set('options.title', mythis.translate("autobackup_failed"));
-                                mythis.set('options.body', err);
+                                mythis.set('options.body', errorMessage);
                                 mythis.set('options.loading', false);
                                 mythis.fire('iron-signal', {name: 'openloading'});
                                 mythis.set('saveoptions.backup', false);
@@ -813,13 +817,13 @@
                         })
                         .catch(function(err) {
                             App.reporter.logError(err);
-                            var errmessage = mythis.translate("loading_project_error");
-                            if(err !== null) {
-                                errmessage = err;
+                            let errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("loading_project_error");
+                            if (typeof errorMessage !== "string") {
+                                errorMessage = JSON.stringify(errorMessage, null, 2);
                             }
                             mythis.set('route', 'home');
                             mythis.set('options.title', mythis.translate("load_project_failed"));
-                            mythis.set('options.body', errmessage);
+                            mythis.set('options.body', errorMessage);
                             mythis.set('options.loading', false);
                         });
                 }, 500);
