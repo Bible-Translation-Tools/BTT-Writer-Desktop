@@ -200,13 +200,14 @@
                     const textholder = this.$.textholder;
                     const text = this.chunk.transcontent;
                     const module = "ts-target-edit";
-                    const startp = "\<p class='style-scope highlight " + module + "'\>";
-                    const endp = "\<\/p\>";
                     const msg = this.translate("conflict_exists_warning");
 
                     if (completed || typeclass !== "standard") {
                         if (text.includes("<<<<<")) {
-                            textholder.innerHTML = startp + msg + endp;
+                            const span = document.createElement("span");
+                            span.className = `style-scope highlight ${module}`;
+                            span.textContent = msg;
+                            textholder.replaceChildren(span);
                         } else {
                             textholder.innerHTML = App.renderer.renderTargetWithVerses(text, module);
                         }

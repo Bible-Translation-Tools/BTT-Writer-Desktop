@@ -159,12 +159,10 @@
                     const completed = this.chunk.completed;
                     const text = _.cloneDeep(this.chunk.transcontent);
                     const module = "ts-target-review";
-                    let returnstr = "";
                     const search = this.searchoptions;
-                    const startspan = "\<span class='style-scope ts-target-review searchhighlight'\>";
-                    const endspan = "\<\/span\>";
                     const searcharray = App.renderer.replaceEscapes(search.text).split(" ");
                     let regexstr = "(\<span[^>]*>[^<]*)(" + searcharray[0] + ")";
+                    let returnstr = "";
 
                     for (let i = 1; i < searcharray.length; i++) {
                         regexstr += "(<\/span> *<span[^>]*>)(" + searcharray[i] + ")";
@@ -183,13 +181,17 @@
                             mythis.review();
                         }
 
+                        const span = document.createElement("span");
+                        span.className = "style-scope ts-target-review searchhighlight";
+
                         if (completed || searcharray.length === 1) {
                             const regex2 = new RegExp(App.renderer.replaceEscapes(search.text) + "(?!([^<]*>)|(\\d*<\/sup))", "gi");
                             const matches = _.unique(returnstr.match(regex2)) || [];
 
                             matches.forEach(function (match) {
                                 const result = new RegExp(App.renderer.replaceEscapes(match) + "(?!([^<]*>)|(\\d*<\/sup))", "g");
-                                returnstr = returnstr.replace(result, startspan + match + endspan);
+                                span.textContent = match.toString();
+                                returnstr = returnstr.replace(result, span.outerHTML);
                             });
                         } else {
                             const regex = new RegExp(regexstr, "gi");
@@ -197,7 +199,8 @@
 
                             matches2.forEach(function (match) {
                                 const result = new RegExp(match, "g");
-                                returnstr = returnstr.replace(result, startspan + match + endspan);
+                                span.textContent = match.toString();
+                                returnstr = returnstr.replace(result, span.outerHTML);
                             });
                         }
                     }

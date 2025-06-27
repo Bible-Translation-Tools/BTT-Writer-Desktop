@@ -468,15 +468,15 @@ function Renderer() {
             const verses = chunk.chunkmeta.verses;
             const chap = chunk.chunkmeta.chapter;
             const linearray = this.replaceParagraphs(chunk.transcontent).split("\n");
-            const startp = `<p class="style-scope ${module}">`;
+            const startdiv = `<div class="style-scope ${module}">`;
             let returnstr = "";
-            let prestr = startp;
+            let prestr = startdiv;
             const used = [];
             let noteindex = 0;
 
             for (let j = 0; j < linearray.length; j++) {
                 if (j !== 0) {
-                    returnstr += startp;
+                    returnstr += startdiv;
                 }
                 if (linearray[j] === "") {
                     returnstr += "&nbsp";
@@ -486,9 +486,13 @@ function Renderer() {
                         if (wordarray[i] === "\\v") {
                             const verse = parseInt(wordarray[i + 1]);
                             if (verses.indexOf(verse) >= 0 && used.indexOf(verse) === -1) {
-                                returnstr += `<ts-verse-marker id="c${chap}v${verse}" `;
-                                returnstr += `draggable="true" class="markers" verse="${verse}">`;
-                                returnstr += `</ts-verse-marker>`;
+                                const marker = document.createElement("ts-verse-marker");
+                                marker.id = `c${chap}v${verse}`;
+                                marker.draggable = true;
+                                marker.classList.add("markers");
+                                marker.setAttribute("verse", verse.toString());
+                                returnstr += marker.outerHTML;
+
                                 used.push(verse);
                             }
                             i++;
@@ -505,17 +509,24 @@ function Renderer() {
                             returnstr += this.markerToFootnote(footnote, chunk.index, noteindex);
                             noteindex++;
                         } else {
-                            returnstr += `<span class="targets style-scope ${module}">${wordarray[i]}</span> `;
+                            const span = document.createElement("span");
+                            span.className = `targets style-scope ${module}`;
+                            span.textContent = wordarray[i];
+                            returnstr += `${span.outerHTML} `;
                         }
                     }
                 }
-                returnstr += `</p>`;
+                returnstr += `</div>`;
             }
             for (let i = 0; i < verses.length; i++) {
                 if (used.indexOf(verses[i]) === -1) {
-                    prestr += `<ts-verse-marker id="c${chap}v${verses[i]}" `;
-                    prestr += `draggable="true" class="markers" verse="${verses[i]}">`;
-                    prestr += `</ts-verse-marker>`;
+                    const preMarker = document.createElement("ts-verse-marker");
+                    preMarker.id = `c${chap}v${verses[i]}`;
+                    preMarker.draggable = true;
+                    preMarker.classList.add("markers");
+                    preMarker.setAttribute("verse", verses[i]);
+
+                    prestr += preMarker.outerHTML;
                 }
             }
             return prestr + returnstr;
@@ -598,22 +609,19 @@ function Renderer() {
                 }
             } while (match);
 
-            let footnoteStart, footnoteEnd;
+            let footnote;
             if (readonly) {
-                footnoteStart = `<ts-note-marker `;
-                footnoteEnd = `</ts-note-marker>`;
+                footnote = document.createElement("ts-note-marker");
             } else {
-                footnoteStart = `<ts-target-note-marker `;
-                footnoteEnd = `</ts-target-note-marker>`;
+                footnote = document.createElement("ts-target-note-marker");
+                footnote.contentEditable = "false";
+                footnote.classList.add("targets");
+                footnote.setAttribute("chunkindex", chunkIndex);
+                footnote.setAttribute("noteindex", noteIndex);
             }
+            footnote.setAttribute("text", note);
 
-            let footnote = `${footnoteStart} contenteditable="false" class="targets" `;
-            footnote += `text="${note}" `;
-            footnote += `chunkindex="${chunkIndex}" `;
-            footnote += `noteindex="${noteIndex}">`;
-            footnote += footnoteEnd;
-
-            return footnote;
+            return footnote.outerHTML;
         },
 
         footnotesToMarkers: function (text) {
