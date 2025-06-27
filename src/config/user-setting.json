@@ -251,7 +251,7 @@
         "name": "enable_spell_checking",
         "mainText": "enable_spell_checking",
         "helpText": "enable_spell_checking_label",
-        "value": true,
+        "value": false,
         "group": "advanced_group",
         "enabled": true,
         "visible": true
