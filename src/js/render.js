@@ -1,24 +1,24 @@
 'use strict';
 
-var path = require('path');
+const path = require('path');
 
 function Renderer() {
 
     return {
 
         convertVerseMarkers: function (text) {
-            var expression = new RegExp(/(\s*<verse[^<>\"]*\")(\d+-?\d*)(\"[^<>]*>)/);
-            var verses = [];
+            const expression = new RegExp(/(\s*<verse[^<>"]*")(\d+-?\d*)("[^<>]*>)/);
+            const verses = [];
 
             while (expression.test(text)) {
-                var versestr = expression.exec(text)[2];
+                const versestr = expression.exec(text)[2];
 
                 if (versestr.indexOf("-") < 0) {
                     verses.push(parseInt(versestr));
                 } else {
-                    var firstnum = parseInt(versestr.substring(0, versestr.search("-")));
-                    var lastnum = parseInt(versestr.substring(versestr.search("-") + 1));
-                    for (var j = firstnum; j <= lastnum; j++) {
+                    const firstnum = parseInt(versestr.substring(0, versestr.search("-")));
+                    const lastnum = parseInt(versestr.substring(versestr.search("-") + 1));
+                    for (let j = firstnum; j <= lastnum; j++) {
                         verses.push(j);
                     }
                 }
@@ -28,15 +28,15 @@ function Renderer() {
         },
 
         convertNoteMarkers: function (text) {
-            var expression = new RegExp(/(<note[^<>]*>)([^]+?)(<\/note>)/);
+            const expression = new RegExp(/(<note[^<>]*>)([^]+?)(<\/note>)/);
 
             while (expression.test(text)) {
-                var notestr = expression.exec(text)[2];
-                var tagtest = new RegExp(/<[^<>]*>/g);
-                var quotetest = new RegExp(/(<char[^<>]*fqa">)([^]+?)(<\/char>)/);
+                let notestr = expression.exec(text)[2];
+                const tagtest = new RegExp(/<[^<>]*>/g);
+                const quotetest = new RegExp(/(<char[^<>]*fqa">)([^]+?)(<\/char>)/);
 
                 while (quotetest.test(notestr)) {
-                    var quotestr = quotetest.exec(notestr)[2].trim();
+                    const quotestr = quotetest.exec(notestr)[2].trim();
 
                     notestr = notestr.replace(quotetest, '"' + quotestr + '" ');
                 }
@@ -44,7 +44,7 @@ function Renderer() {
                 notestr = notestr.replace(tagtest, "");
                 notestr = notestr.replace(/'/g, '&apos;');
 
-                var marker = "\<ts-note-marker text='" + notestr + "'\>\<\/ts-note-marker\>";
+                const marker = "<ts-note-marker text='" + notestr + "'><ts-note-marker>";
 
                 text = text.replace(expression, marker);
             }
@@ -434,15 +434,15 @@ function Renderer() {
         },
 
         validateVerseMarkers: function (text, verses) {
-            var returnstr = text.trim();
-            var used = [];
-            var addon = "";
-            var versetest = new RegExp(/\s*\\v\s*(\d+)\s*/);
-            var cleantest = new RegExp(/\\fv/g);
+            let returnstr = text.trim();
+            const used = [];
+            let addon = "";
+            const versetest = new RegExp(/\s*\\v\s*(\d+)\s*/);
+            const cleantest = new RegExp(/\\fv/g);
 
             while (versetest.test(returnstr)) {
-                var versenum = parseInt(versetest.exec(returnstr)[1]);
-                var replace = " ";
+                const versenum = parseInt(versetest.exec(returnstr)[1]);
+                let replace = " ";
 
                 if (verses.indexOf(versenum) >= 0 && used.indexOf(versenum) === -1) {
                     replace = " \\fv " + versenum + " ";
@@ -454,7 +454,7 @@ function Renderer() {
             returnstr = returnstr.replace(cleantest, "\\v");
 
             if (returnstr) {
-                for (var k = 0; k < verses.length; k++) {
+                for (let k = 0; k < verses.length; k++) {
                     if (used.indexOf(verses[k]) < 0) {
                         addon += "\\v " + verses[k] + " ";
                     }
@@ -465,69 +465,82 @@ function Renderer() {
         },
 
         markersToBalloons: function (chunk, module) {
-            var verses = chunk.chunkmeta.verses;
-            var chap = chunk.chunkmeta.chapter;
-            var linearray = this.replaceParagraphs(chunk.transcontent).split("\n");
-            var vmstr1 = "\<ts-verse-marker id='c";
-            var vmstr2 = "v";
-            var vmstr3 = "' draggable='true' class='markers' verse='";
-            var vmstr4 = "'\>\<\/ts-verse-marker\>";
-            var textstr1 = "\<span class='targets style-scope " + module + "'\>";
-            var textstr2 = "\<\/span\> ";
-            var startp = "\<p class='style-scope " + module + "'\>";
-            var endp = "\<\/p\>";
-            var returnstr = "";
-            var prestr = startp;
-            var used = [];
+            const verses = chunk.chunkmeta.verses;
+            const chap = chunk.chunkmeta.chapter;
+            const linearray = this.replaceParagraphs(chunk.transcontent).split("\n");
+            const startp = `<p class="style-scope ${module}">`;
+            let returnstr = "";
+            let prestr = startp;
+            const used = [];
+            let noteindex = 0;
 
-            for (var j = 0; j < linearray.length; j++) {
+            for (let j = 0; j < linearray.length; j++) {
                 if (j !== 0) {
                     returnstr += startp;
                 }
                 if (linearray[j] === "") {
                     returnstr += "&nbsp";
                 } else {
-                    var wordarray = linearray[j].split(" ");
-                    for (var i = 0; i < wordarray.length; i++) {
+                    const wordarray = linearray[j].split(/\s/);
+                    for (let i = 0; i < wordarray.length; i++) {
                         if (wordarray[i] === "\\v") {
-                            var verse = parseInt(wordarray[i+1]);
+                            const verse = parseInt(wordarray[i + 1]);
                             if (verses.indexOf(verse) >= 0 && used.indexOf(verse) === -1) {
-                                returnstr += vmstr1 + chap + vmstr2 + verse + vmstr3 + verse + vmstr4;
+                                returnstr += `<ts-verse-marker id="c${chap}v${verse}" `;
+                                returnstr += `draggable="true" class="markers" verse="${verse}">`;
+                                returnstr += `</ts-verse-marker>`;
                                 used.push(verse);
                             }
                             i++;
+                        } else if (wordarray[i] === "\\f") {
+                            let footnote = "";
+
+                            for (let k = i; k < wordarray.length; k++) {
+                                footnote += `${wordarray[k]} `;
+                                if (wordarray[k] === "\\f*") {
+                                    break;
+                                }
+                                i++;
+                            }
+                            returnstr += this.markerToFootnote(footnote, chunk.index, noteindex);
+                            noteindex++;
                         } else {
-                            returnstr += textstr1 + wordarray[i] + textstr2;
+                            returnstr += `<span class="targets style-scope ${module}">${wordarray[i]}</span> `;
                         }
                     }
                 }
-                returnstr += endp;
+                returnstr += `</p>`;
             }
-            for (i = 0; i < verses.length; i++) {
+            for (let i = 0; i < verses.length; i++) {
                 if (used.indexOf(verses[i]) === -1) {
-                    prestr += vmstr1 + chap + vmstr2 + verses[i] + vmstr3 + verses[i] + vmstr4;
+                    prestr += `<ts-verse-marker id="c${chap}v${verses[i]}" `;
+                    prestr += `draggable="true" class="markers" verse="${verses[i]}">`;
+                    prestr += `</ts-verse-marker>`;
                 }
             }
             return prestr + returnstr;
         },
 
         balloonsToMarkers: function (paragraphs) {
-            var returnstr = "";
+            let returnstr = "";
 
-            for (var j = 0; j < paragraphs.length; j++) {
-                var children = paragraphs[j].children;
+            for (let j = 0; j < paragraphs.length; j++) {
+                const children = paragraphs[j].children;
                 if (!children.length) {
                     returnstr += "\n";
                 } else {
-                    for (var i = 0; i < children.length; i++) {
-                        var type = children[i].nodeName;
+                    for (let i = 0; i < children.length; i++) {
+                        const type = children[i].nodeName;
 
                         if (type === "TS-VERSE-MARKER") {
-                            var versenum = children[i].verse;
-                            returnstr += "\\v " + versenum + " ";
+                            const versenum = children[i].verse;
+                            returnstr += `\\v ${versenum} `;
+                        } else if (type === "TS-TARGET-NOTE-MARKER") {
+                            const text = children[i].text;
+                            returnstr += `\\f + \\ft ${text.trim()} \\f* `;
                         } else {
-                            var text = children[i].textContent;
-                            returnstr += text + " ";
+                            const text = children[i].textContent;
+                            returnstr += `${text} `;
                         }
                     }
                     returnstr = returnstr.trim();
@@ -538,6 +551,90 @@ function Renderer() {
             }
             return returnstr;
         },
+
+        validateFootnotes: function (text) {
+            let returnstr = text.trim();
+            const notetest = new RegExp(/\s*(\\f)(\s\S\s[\s\S]+?\\f\*)\s*/);
+            const cleantest = new RegExp(/\\ftest/g);
+
+            while (notetest.test(returnstr)) {
+                const marker = notetest.exec(returnstr)[1];
+                const body = notetest.exec(returnstr)[2];
+                const result = ` ${marker}test${body} `;
+
+                returnstr = returnstr.replace(notetest, result);
+            }
+
+            returnstr = returnstr.replace(cleantest, "\\f");
+
+            return returnstr.trim();
+        },
+
+        markersToFootnotes: function (text, chunkIndex, readonly) {
+            const noteRegex = new RegExp(/\\f\s(\S)\s([\s\S]+?)\\f\*/);
+            let noteIndex = 0;
+
+            while (noteRegex.test(text)) {
+                const match = noteRegex.exec(text);
+
+                const marker = this.markerToFootnote(match[0], chunkIndex, noteIndex, readonly);
+                text = text.replace(noteRegex, marker);
+                noteIndex++;
+            }
+
+            return text;
+        },
+
+        markerToFootnote: function (marker, chunkIndex, noteIndex, readonly) {
+            readonly = readonly || false;
+            const charRegex = new RegExp(/\\(f[^*\s]+)\s([^\\]+)(?:\\f\1\*)?/g);
+            let match;
+            let note = "";
+
+            do {
+                match = charRegex.exec(marker);
+                if (match) {
+                    note += match[2];
+                }
+            } while (match);
+
+            let footnoteStart, footnoteEnd;
+            if (readonly) {
+                footnoteStart = `<ts-note-marker `;
+                footnoteEnd = `</ts-note-marker>`;
+            } else {
+                footnoteStart = `<ts-target-note-marker `;
+                footnoteEnd = `</ts-target-note-marker>`;
+            }
+
+            let footnote = `${footnoteStart} contenteditable="false" class="targets" `;
+            footnote += `text="${note}" `;
+            footnote += `chunkindex="${chunkIndex}" `;
+            footnote += `noteindex="${noteIndex}">`;
+            footnote += footnoteEnd;
+
+            return footnote;
+        },
+
+        footnotesToMarkers: function (text) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, "text/html");
+            const body = doc.body;
+            let result = "";
+            for (let elm of body.childNodes) {
+                if (elm instanceof Text) {
+                    result += elm.textContent;
+                } else if (elm instanceof HTMLElement) {
+                    if (elm.tagName === "TS-TARGET-NOTE-MARKER" && elm.attributes["text"]) {
+                        const noteText = elm.attributes["text"].textContent.trim();
+                        const footnote = `\\f + \\ft ${noteText} \\f*`;
+                        result += footnote;
+                    }
+                }
+            }
+            return result;
+        },
+
         translate: function (key, ...args) {
             return App.locale.translate(key, ...args);
         },

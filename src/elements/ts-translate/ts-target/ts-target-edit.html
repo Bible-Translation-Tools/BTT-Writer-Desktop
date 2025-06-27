@@ -1,12 +1,13 @@
-
 <link rel="import" href="../../../components/paper-material/paper-material.html">
 <link rel="import" href="../../../components/iron-icon/iron-icon.html">
 <link rel="import" href="../../../components/iron-autogrow-textarea/iron-autogrow-textarea.html">
 <link rel="import" href="../../../components/paper-button/paper-button.html">
 
+<link href="./ts-target-note-marker.html" rel="import">
+
 <dom-module id="ts-target-edit">
 
-	<style>
+    <style>
 
         :host {
             flex: auto;
@@ -22,7 +23,7 @@
             border-radius: 3px;
         }
 
-		#heading {
+        #heading {
             color: var(--secondary-text-color);
             display: flex;
             justify-content: space-between;
@@ -33,13 +34,13 @@
             border-bottom: 1px solid var(--note-card-pink);
             letter-spacing: 1px;
             padding: 0 16px;
-		}
+        }
 
         #content {
             margin-top: 24px;
-			padding: 0 16px;
+            padding: 0 16px;
             flex: auto;
-		}
+        }
 
         #content.editmode {
             background-size: 100% 32px;
@@ -48,13 +49,13 @@
         }
 
         #content iron-autogrow-textarea {
-			line-height: 2;
+            line-height: 2;
             border: none;
-			margin: 0;
+            margin: 0;
             width: 100%;
-		}
+        }
 
-        #textholder {
+        #textholder, #textbox {
             width: 100%;
         }
 
@@ -101,40 +102,50 @@
             display: flex;
         }
 
-	</style>
+    </style>
 
-	<template>
+    <template>
 
         <paper-material elevation="1">
             <div id="heading">
+                <iron-icon icon="note-add" on-mousedown="saveCaretPosition" on-tap="addNote"></iron-icon>
                 <div>
                     <span>[[chunk.chunkmeta.chunkref]]</span><span>[[chunk.chunkmeta.refaddon]]</span>
                 </div>
-                <iron-icon icon="done" on-tap="review"></iron-icon>
+                <iron-icon icon="done" on-tap="onReview"></iron-icon>
             </div>
-            <div id="content" class$="[[noconflictclass(chunk.conflicts.exists, chunk.projectmeta.project_type_class)]]">
-                <iron-autogrow-textarea id="textbox" class$="[[chunk.projectmeta.target_language.direction]]" on-change="change" value="[[chunk.transcontent]]" on-input="input"></iron-autogrow-textarea>
+            <div class$="[[noConflictClass(chunk.conflicts.exists, chunk.projectmeta.project_type_class)]]"
+                 id="content">
+                <div class$="[[chunk.projectmeta.target_language.direction]]" contenteditable="true" id="textbox"
+                     on-blur="onChange"
+                     on-input="onInput"></div>
                 <div id="textholder" class$="[[chunk.projectmeta.target_language.direction]]"></div>
             </div>
-            <div id="conflict" class$="[[conflictclass(chunk.conflicts.exists, chunk.projectmeta.project_type_class)]]">
-                <paper-button raised class="review" on-tap="gotoreview">{{translate("conflict_exists")}}</paper-button>
+            <div class$="[[conflictClass(chunk.conflicts.exists, chunk.projectmeta.project_type_class)]]" id="conflict">
+                <paper-button class="review" on-tap="goToReview" raised>{{translate("conflict_exists")}}</paper-button>
             </div>
         </paper-material>
 
-	</template>
+        <iron-signals on-iron-signal-onsavenote="onSaveNote"></iron-signals>
+        <iron-signals on-iron-signal-oncancelnote="onCancelNote"></iron-signals>
+        <iron-signals on-iron-signal-ondeletenote="onDeleteNote"></iron-signals>
+
+    </template>
 
 </dom-module>
 
 <script>
 
-	Polymer({
+    Polymer({
 
-		is: 'ts-target-edit',
+        is: 'ts-target-edit',
 
-		properties: {
+        properties: {
             chunk: {
                 type: Object,
-                value: function () { return {}; },
+                value: function () {
+                    return {};
+                },
                 notify: true
             },
             searchoptions: {
@@ -142,30 +153,34 @@
                 value: {},
                 notify: true
             },
-            timer: {
-                type: Number
+            timer: Number,
+            noteeditoropen: Boolean,
+            caretposition: Number,
+            done: {
+                type: Boolean,
+                value: false
             }
-		},
+        },
 
         observers: [
-            'rendertext(chunk.transcontent, chunk.completed)'
+            'renderText(chunk.transcontent, chunk.completed)'
         ],
 
         focustextbox: function () {
-            this.$.textbox.textarea.focus();
+            this.$.textbox.focus();
         },
 
-        gotoreview: function () {
-            var index = this.chunk.index;
-            var chapter = this.chunk.chunkmeta.chapter;
+        goToReview: function () {
+            const index = this.chunk.index;
+            const chapter = this.chunk.chunkmeta.chapter;
             this.fire('iron-signal', {name: 'gotoreview', data: {index: index, chapter: chapter}});
         },
 
-        conflictclass: function (exists, type) {
+        conflictClass: function (exists, type) {
             return exists && type === "standard" ? 'flex' : 'hide';
         },
 
-        noconflictclass: function (exists, type) {
+        noConflictClass: function (exists, type) {
             if (exists && type === "standard") {
                 return 'hide';
             } else if (type === "standard") {
@@ -175,19 +190,19 @@
             }
         },
 
-        rendertext: function () {
+        renderText: function () {
             setTimeout(function () {
-                if(this.chunk && this.chunk.srccontent && this.chunk.projectmeta.project_type_class !== "extant") {
-                    var completed = this.chunk.completed;
-                    var typeclass = this.chunk.projectmeta.project_type_class;
-                    var contentbox = this.$.content;
-                    var textbox = this.$.textbox;
-                    var textholder = this.$.textholder;
-                    var text = this.chunk.transcontent;
-                    var module = "ts-target-edit";
-                    var startp = "\<p class='style-scope highlight " + module + "'\>";
-                    var endp = "\<\/p\>";
-                    var msg = this.translate("conflict_exists_warning");
+                if (this.chunk && this.chunk.srccontent && this.chunk.projectmeta.project_type_class !== "extant") {
+                    const completed = this.chunk.completed;
+                    const typeclass = this.chunk.projectmeta.project_type_class;
+                    const contentbox = this.$.content;
+                    const textbox = this.$.textbox;
+                    const textholder = this.$.textholder;
+                    const text = this.chunk.transcontent;
+                    const module = "ts-target-edit";
+                    const startp = "\<p class='style-scope highlight " + module + "'\>";
+                    const endp = "\<\/p\>";
+                    const msg = this.translate("conflict_exists_warning");
 
                     if (completed || typeclass !== "standard") {
                         if (text.includes("<<<<<")) {
@@ -202,51 +217,168 @@
                         textholder.classList.add("hide");
                         textbox.classList.remove("hide");
                         contentbox.classList.add("editmode");
+
+                        const wasActive = document.activeElement === textbox;
+                        if (wasActive) this.saveCaretPosition();
+
+                        textbox.innerHTML = App.renderer.markersToFootnotes(text, this.chunk.index);
+
+                        // Restore cursor position after editing text
+                        if (wasActive && this.caretposition) {
+                            requestAnimationFrame(() => {
+                                textbox.focus();
+                                this.restoreCaretPosition();
+                            });
+                        }
                     }
                 }
             }.bind(this), 1);
         },
 
-        change: function (event) {
-            var verses = this.chunk.chunkmeta.verses;
-            var text = event.target.value;
-            var result = App.renderer.validateVerseMarkers(text, verses);
+        onChange: function (event) {
+            this.processContent(event.target.innerHTML);
 
-            this.set('chunk.transcontent', result);
-            this.$.textbox.value = result;
-            this.fire('iron-signal', {name: 'savechunk', data: {chunk: this.chunk}});
             if (this.searchoptions.text && this.searchoptions.type === "target") {
                 this.fire('iron-signal', {name: 'passivesearch'});
             }
         },
 
-        review: function () {
-            var id = this.chunk.chunkmeta.chapterid + "-" + this.chunk.chunkmeta.frameid;
+        onReview: function () {
+            const id = this.chunk.chunkmeta.chapterid + "-" + this.chunk.chunkmeta.frameid;
             this.set('chunk.state.review', true);
             this.fire('setheight');
             this.fire('iron-signal', {name: 'updatestate', data: {id: id, mode: "review", value: true}});
         },
 
-        input: function (event) {
-            var mythis = this;
-            var text = event.target.value;
+        onInput: function (event) {
+            this.saveChunk(event.target.innerHTML);
+        },
 
+        saveChunk: function (content) {
+            const mythis = this;
             mythis.fire('setheight');
             clearTimeout(mythis.timer);
 
-            mythis.timer = setTimeout(function() {
-                mythis.set('chunk.transcontent', text);
+            mythis.timer = setTimeout(function () {
+                mythis.set('chunk.transcontent', App.renderer.footnotesToMarkers(content));
                 mythis.fire('iron-signal', {name: 'savechunk', data: {chunk: mythis.chunk}});
             }, 300);
+        },
+
+        processContent: function (content) {
+            const verses = this.chunk.chunkmeta.verses;
+            let result = App.renderer.validateVerseMarkers(content, verses);
+            result = App.renderer.footnotesToMarkers(result);
+            result = App.renderer.validateFootnotes(result);
+
+            this.saveChunk(result);
+        },
+
+        addNote: function () {
+            this.set('noteeditoropen', true);
+            this.fire('iron-signal', {name: 'opennoteeditor'});
+        },
+
+        onSaveNote: function (event, data) {
+            if (!this.noteeditoropen) {
+                if (data.chunkindex === this.chunk.index) {
+                    this.updateExistingNote(data);
+                }
+                return;
+            }
+
+            this.$.textbox.focus();
+
+            setTimeout(() => {
+                this.restoreCaretPosition();
+                this.insertTextAtCaret(` \\f + \\ft ${data.text.replace(/[\n\r\t]/gm, "")} \\f* `);
+                this.set('noteeditoropen', false);
+                this.processContent(this.$.textbox.innerHTML);
+            }, 10);
+        },
+
+        onCancelNote: function () {
+            this.set('noteeditoropen', false);
+        },
+
+        onDeleteNote: function (event, data) {
+            if (data.chunkindex !== this.chunk.index) return;
+
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(this.$.textbox.innerHTML, "text/html");
+            const note = doc.querySelector(`ts-target-note-marker[noteindex="${data.noteindex}"]`);
+
+            if (note) {
+                note.remove();
+                this.processContent(doc.body.innerHTML);
+            }
+        },
+
+        updateExistingNote: function (data) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(this.$.textbox.innerHTML, "text/html");
+            const note = doc.querySelector(`ts-target-note-marker[noteindex="${data.noteindex}"]`);
+
+            if (note) {
+                note.setAttribute("text", data.text.replace(/[\n\r\t]/gm, ""));
+                this.processContent(doc.body.innerHTML);
+            }
+        },
+
+        insertTextAtCaret: function (text) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            const range = selection.getRangeAt(0);
+            const textNode = document.createTextNode(text);
+
+            range.deleteContents();
+            range.insertNode(textNode);
+            range.setStartAfter(textNode);
+            range.collapse(true);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+        },
+
+        saveCaretPosition: function () {
+            const sel = window.getSelection();
+            if (!sel.rangeCount) return;
+
+            const range = sel.getRangeAt(0);
+            const pre = range.cloneRange();
+            pre.selectNodeContents(this.$.textbox);
+            pre.setEnd(range.startContainer, range.startOffset);
+
+            this.set("caretposition", pre.toString().length);
+        },
+
+        restoreCaretPosition: function () {
+            if (this.caretposition === undefined) return;
+
+            const walker = document.createTreeWalker(this.$.textbox, NodeFilter.SHOW_TEXT);
+            let offset = 0, node;
+
+            while (node = walker.nextNode()) {
+                const len = node.textContent.length;
+                if (offset + len >= this.caretposition) {
+                    const range = document.createRange();
+                    range.setStart(node, this.caretposition - offset);
+                    range.collapse(true);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                    return;
+                }
+                offset += len;
+            }
         },
 
         translate: function (key, ...args) {
             return App.locale.translate(key, ...args);
         },
 
-		ready: function() {
-		}
-
-	});
+        ready: function () {
+        }
+    });
 
 </script>

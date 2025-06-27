@@ -1,0 +1,83 @@
+
+<link rel="import" href="../../../components/iron-icons/iron-icons.html">
+
+<dom-module id="ts-target-note-marker">
+
+	<style>
+
+        :host {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        #contain {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        iron-icon {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        :host.highlight iron-icon {
+            fill: var(--accent-color);
+        }
+
+	</style>
+
+	<template>
+
+        <div id="contain">
+            &#x2063;<iron-icon icon="description" on-tap="opennote"></iron-icon>&#x2063;
+        </div>
+
+	</template>
+
+</dom-module>
+
+<script>
+
+	Polymer({
+
+		is: 'ts-target-note-marker',
+
+		properties: {
+            text: {
+                type: String,
+                value: ""
+            },
+            chunkindex: {
+                type: Number
+            },
+            noteindex: {
+                type: Number
+            },
+            opened: {
+                type: Boolean,
+                value: false
+            }
+		},
+
+        opennote: function () {
+            this.fire('iron-signal', {
+                name: 'opennote',
+                data: {
+                    text: this.text,
+                    chunkindex: this.chunkindex,
+                    noteindex: this.noteindex,
+                    target: true
+                }
+            });
+        },
+
+		ready: function() {
+		}
+
+	});
+
+</script>
