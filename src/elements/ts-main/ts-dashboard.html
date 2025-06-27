@@ -106,7 +106,7 @@
   </style>
 
   <template>
-    
+
       <ts-app-titlebar currentuser="[[currentuser]]"></ts-app-titlebar>
       <neon-animated-pages attr-for-selected="data-route" selected="{{route}}">
           <ts-home data-route="home" route="{{route}}" currentproject="{{currentproject}}" projectlist="{{projectlist}}" importdata="{{importdata}}" id="home"></ts-home>
@@ -198,6 +198,7 @@
       <iron-signals on-iron-signal-closeloading="closeLoading"></iron-signals>
       <iron-signals on-iron-signal-updatesourcelist="updateSourceList"></iron-signals>
       <iron-signals on-iron-signal-showmessage="openMessagePopup"></iron-signals>
+      <iron-signals on-iron-signal-updatespellchecking="updateSpellChecking"></iron-signals>
 
   </template>
 
@@ -273,6 +274,10 @@
           setTimeout(function () {
               legal.scrollTop = 0;
           }, 250);
+      },
+
+      updateSpellChecking: function (event, enabled) {
+          App.ipc.send('update-spellcheck', enabled);
       },
 
       updateUser: function (event, data) {
@@ -1204,7 +1209,7 @@
       sortProjects: function (list) {
           var mythis = this;
           var sorted = App.projectsManager.sortProjectList(list);
-          
+
           return Promise.resolve(true)
               .then(function () {
                   mythis.set('projectlist', sorted);
@@ -1357,7 +1362,7 @@
 
           const languageUrl = App.configurator.getUserSetting('languageurl');
           App.dataManager.updateLanguageUrl(languageUrl);
-          
+
           App.configurator.applyPrefAppearance();
       },
 

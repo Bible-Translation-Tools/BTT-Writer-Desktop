@@ -286,6 +286,8 @@
                 if (name === "bemode") {
                     this.set('reload', true);
                     this.fire('iron-signal', {name: 'updatebemode'});
+                } else if (name === "enable_spell_checking") {
+                    this.fire('iron-signal', {name: 'updatespellchecking', data: !value});
                 }
             } else {
                 this.openSettingModal(event);
@@ -308,13 +310,13 @@
 
                 this.set('settings', App.configurator.refreshUserSetting());
                 this.saveSettings();
-                
+
                 // Logout user.
                 const user = App.configurator.getValue('userdata');
                 this.fire('iron-signal', {name: 'updateuser', data: {}});
                 App.userManager.logout(user);
                 App.keyManager.destroyKeys();
-                
+
                 // Restart the app.
                 App.ipc.send('fire-reload');
             } else if(name === "colortheme") {
