@@ -52,7 +52,7 @@
             width: 100%;
         }
 
-        #textholder p {
+        #textholder div {
 		    line-height: 2;
 			margin: 0;
             color: var(--primary-text-color);
@@ -170,8 +170,8 @@
                     regexstr += "([^<]*<\/span>)(?! *<\/span>)";
 
                     if (completed) {
-                        returnstr = App.renderer.markersToFootnotes(text, this.chunk.index);
-                        returnstr = App.renderer.renderTargetWithVerses(returnstr, module);
+                        returnstr = App.renderer.renderTargetWithVerses(text, module);
+                        returnstr = App.renderer.markersToFootnotes(returnstr, this.chunk.index);
                     } else {
                         returnstr = App.renderer.markersToBalloons(mythis.chunk, module);
                     }
