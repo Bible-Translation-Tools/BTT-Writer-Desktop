@@ -108,13 +108,13 @@
             color: var(--accent-color);
         }
 
-        #note {
+        #note, #deletenotepopup {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        #noteheader {
+        #noteheader, #deletenoteheader {
             flex: 0 0 50px;
             display: flex;
             align-items: center;
@@ -123,14 +123,14 @@
             padding: 0 30px;
         }
 
-        #notebody {
+        #notebody, #deletenotebody {
             flex: 0 0 110px;
             overflow-y: auto;
             margin: 0;
             padding: 20px 30px;
         }
 
-        #notefooter {
+        #notefooter, #deletenotefooter {
             flex: 0 0 50px;
             display: flex;
             justify-content: flex-end;
@@ -142,6 +142,10 @@
 
         #notefooter paper-button:hover {
             color: var(--accent-color);
+        }
+
+        #notefooter .separator {
+            flex: 1;
         }
 
         #resourcedisplay.hide {
@@ -251,8 +255,20 @@
             <div id="notebody"></div>
             <div id="notefooter">
                 <paper-button dialog-confirm on-tap="editnote" class$="[[buttonclass(notestatus.target)]]">{{translate("edit")}}</paper-button>
-                <paper-button dialog-confirm on-tap="deletenote" class$="[[buttonclass(notestatus.target)]]">{{translate("delete")}}</paper-button>
+                <div class="separator"></div>
+                <paper-button dialog-confirm on-tap="deletenoteconfirm" class$="[[buttonclass(notestatus.target)]]">{{translate("delete")}}</paper-button>
                 <paper-button dialog-dismiss>{{translate("dismiss")}}</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="deletenotepopup" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
+            <div id="deletenoteheader">
+                <h2>{{translate("delete_footnote_confirm")}}</h2>
+            </div>
+            <div id="deletenotebody"></div>
+            <div class="deletenotefooter">
+                <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
+                <paper-button dialog-confirm on-tap="deletenote">{{translate("delete")}}</paper-button>
             </div>
         </paper-dialog>
 
@@ -579,6 +595,11 @@
                     text: mythis.notestatus.text
                 }
             });
+        },
+
+        deletenoteconfirm: function () {
+            this.$.deletenotepopup.open();
+            this.$.deletenotebody.innerHTML = this.notestatus.text;
         },
 
         deletenote: function () {

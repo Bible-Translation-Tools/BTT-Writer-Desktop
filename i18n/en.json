@@ -620,6 +620,7 @@
     "footnote": "Footnote",
     "add_footnote": "Add Footnote",
     "enter_footnote": "Enter footnote",
+    "delete_footnote_confirm": "Are you sure you want to delete footnote?",
     "autobackup_failed": "Auto Backup Failed",
     "changes_saved": "Changes Saved",
     "no_changes_found": "No Changes Found",
