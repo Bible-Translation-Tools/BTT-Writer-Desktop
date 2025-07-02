@@ -140,12 +140,19 @@
             color: var(--secondary-text-color);
         }
 
-        #notefooter paper-button:hover {
+        #notefooter paper-button:hover, #deletenotefooter paper-button:hover {
             color: var(--accent-color);
         }
 
         #notefooter .separator {
             flex: 1;
+        }
+
+        #noteeditor .buttons {
+            display: flex;
+            justify-content: flex-end;
+            color: var(--secondary-text-color);
+            gap: 20px;
         }
 
         #resourcedisplay.hide {
@@ -266,7 +273,7 @@
                 <h2>{{translate("delete_footnote_confirm")}}</h2>
             </div>
             <div id="deletenotebody"></div>
-            <div class="deletenotefooter">
+            <div id="deletenotefooter">
                 <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
                 <paper-button dialog-confirm on-tap="deletenote">{{translate("delete")}}</paper-button>
             </div>
@@ -589,33 +596,54 @@
 
         editnote: function () {
             const mythis = this;
-            mythis.fire('iron-signal', {
-                name: 'opennoteeditor',
-                data: {
-                    text: mythis.notestatus.text
-                }
-            });
+
+            if (mythis.notestatus) {
+                mythis.fire('iron-signal', {
+                    name: 'opennoteeditor',
+                    data: {
+                        text: mythis.notestatus.text
+                    }
+                });
+            } else {
+                const title = mythis.translate("footnote_error");
+                const message = mythis.translate("footnote_status_lost");
+                mythis.fire('iron-signal', {name: 'showmessage', data: {title, message}});
+            }
         },
 
         deletenoteconfirm: function () {
-            this.$.deletenotepopup.open();
-            this.$.deletenotebody.innerHTML = this.notestatus.text;
+            if (this.notestatus) {
+                this.$.deletenotepopup.open();
+                this.$.deletenotebody.innerHTML = this.notestatus.text;
+            } else {
+                const title = this.translate("footnote_error");
+                const message = this.translate("footnote_status_lost");
+                this.fire('iron-signal', {name: 'showmessage', data: {title, message}});
+            }
         },
 
         deletenote: function () {
             const mythis = this;
-            mythis.fire('iron-signal', {
-                name: 'ondeletenote',
-                data: {
-                    chunkindex: mythis.notestatus?.chunkindex,
-                    noteindex: mythis.notestatus?.noteindex,
-                }
-            });
-            mythis.set("notestatus", null);
+
+            if (mythis.notestatus) {
+                mythis.fire('iron-signal', {
+                    name: 'ondeletenote',
+                    data: {
+                        chunkindex: mythis.notestatus.chunkindex,
+                        noteindex: mythis.notestatus.noteindex,
+                    }
+                });
+                mythis.set("notestatus", null);
+            } else {
+                const title = mythis.translate("footnote_error");
+                const message = mythis.translate("footnote_status_lost");
+                mythis.fire('iron-signal', {name: 'showmessage', data: {title, message}});
+            }
         },
 
         cancelnote: function () {
             this.fire('iron-signal', {name: 'oncancelnote'});
+            this.set("notestatus", null);
         },
 
         openchecklist: function (event, data) {
