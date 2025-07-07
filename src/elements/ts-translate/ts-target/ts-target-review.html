@@ -6,6 +6,7 @@
 <link rel="import" href="../../../components/iron-signals/iron-signals.html">
 
 <link rel="import" href="./ts-verse-marker.html">
+<link rel="import" href="./ts-target-note-marker.html">
 
 <dom-module id="ts-target-review">
 
@@ -51,7 +52,7 @@
             width: 100%;
         }
 
-        #textholder p {
+        #textholder div {
 		    line-height: 2;
 			margin: 0;
             color: var(--primary-text-color);
@@ -154,47 +155,52 @@
         rendertext: function () {
             setTimeout(function () {
                 if (this.chunk && this.chunk.srccontent && this.chunk.projectmeta.project_type_class === "standard") {
-                    var mythis = this;
-                    var completed = this.chunk.completed;
-                    var text = _.cloneDeep(this.chunk.transcontent);
-                    var module = "ts-target-review";
-                    var returnstr = "";
-                    var search = this.searchoptions;
-                    var startspan = "\<span class='style-scope ts-target-review searchhighlight'\>";
-                    var endspan = "\<\/span\>";
-                    var searcharray = App.renderer.replaceEscapes(search.text).split(" ");
-                    var regexstr = "(\<span[^>]*>[^<]*)(" + searcharray[0] + ")";
+                    const mythis = this;
+                    const completed = this.chunk.completed;
+                    const text = _.cloneDeep(this.chunk.transcontent);
+                    const module = "ts-target-review";
+                    const search = this.searchoptions;
+                    const searcharray = App.renderer.replaceEscapes(search.text).split(" ");
+                    let regexstr = "(\<span[^>]*>[^<]*)(" + searcharray[0] + ")";
+                    let returnstr = "";
 
-                    for (var i = 1; i < searcharray.length; i++) {
+                    for (let i = 1; i < searcharray.length; i++) {
                         regexstr += "(<\/span> *<span[^>]*>)(" + searcharray[i] + ")";
                     }
                     regexstr += "([^<]*<\/span>)(?! *<\/span>)";
 
                     if (completed) {
                         returnstr = App.renderer.renderTargetWithVerses(text, module);
+                        returnstr = App.renderer.markersToFootnotes(returnstr, this.chunk.index);
                     } else {
                         returnstr = App.renderer.markersToBalloons(mythis.chunk, module);
                     }
+
                     if (search.text && search.on && search.type === "target") {
                         if (!search.passive) {
                             mythis.review();
                         }
 
+                        const span = document.createElement("span");
+                        span.className = "style-scope ts-target-review searchhighlight";
+
                         if (completed || searcharray.length === 1) {
-                            var regex2 = new RegExp(App.renderer.replaceEscapes(search.text) + "(?!([^<]*>)|(\\d*<\/sup))", "gi");
-                            var matches = _.unique(returnstr.match(regex2)) || [];
+                            const regex2 = new RegExp(App.renderer.replaceEscapes(search.text) + "(?!([^<]*>)|(\\d*<\/sup))", "gi");
+                            const matches = _.unique(returnstr.match(regex2)) || [];
 
                             matches.forEach(function (match) {
-                                var result = new RegExp(App.renderer.replaceEscapes(match) + "(?!([^<]*>)|(\\d*<\/sup))", "g");
-                                returnstr = returnstr.replace(result, startspan + match + endspan);
+                                const result = new RegExp(App.renderer.replaceEscapes(match) + "(?!([^<]*>)|(\\d*<\/sup))", "g");
+                                span.textContent = match.toString();
+                                returnstr = returnstr.replace(result, span.outerHTML);
                             });
                         } else {
-                            var regex = new RegExp(regexstr, "gi");
-                            var matches2 = _.unique(returnstr.match(regex)) || [];
+                            const regex = new RegExp(regexstr, "gi");
+                            const matches2 = _.unique(returnstr.match(regex)) || [];
 
                             matches2.forEach(function (match) {
-                                var result = new RegExp(match, "g");
-                                returnstr = returnstr.replace(result, startspan + match + endspan);
+                                const result = new RegExp(match, "g");
+                                span.textContent = match.toString();
+                                returnstr = returnstr.replace(result, span.outerHTML);
                             });
                         }
                     }
@@ -207,11 +213,11 @@
         },
 
         addDragListeners: function () {
-            var mythis = this;
-            var markers = this.querySelectorAll(".markers");
-            var targets = this.querySelectorAll(".targets");
+            const mythis = this;
+            const markers = this.querySelectorAll(".markers");
+            const targets = this.querySelectorAll(".targets");
 
-            for (var j = 0; j < markers.length; j++) {
+            for (let j = 0; j < markers.length; j++) {
                 markers[j].addEventListener("dragstart", function (event) {
                     event.dataTransfer.setData("text", event.target.id);
                     mythis.set('searchoptions.on', false);
@@ -221,27 +227,24 @@
                 });
             }
 
-            for (var i = 0; i < targets.length; i++) {
+            for (let i = 0; i < targets.length; i++) {
                 targets[i].addEventListener("dragover", function (event) {
                     event.preventDefault();
                 });
                 targets[i].addEventListener("dragenter", function (event) {
-                    var target = event.target;
-                    target.classList.add("highlight");
+                    this.classList.add("highlight");
                 });
                 targets[i].addEventListener("dragleave", function (event) {
-                    var target = event.target;
-                    target.classList.remove("highlight");
+                    this.classList.remove("highlight");
                 });
                 targets[i].addEventListener("drop", function (event) {
                     event.preventDefault();
-                    var dragid = event.dataTransfer.getData("text");
-                    var dragelement = document.getElementById(dragid);
-                    var targetelement = event.target;
-                    var parentelement = targetelement.parentNode;
+                    const dragid = event.dataTransfer.getData("text");
+                    const dragelement = document.getElementById(dragid);
+                    const parentelement = this.parentNode;
 
-                    targetelement.classList.remove("highlight");
-                    parentelement.insertBefore(dragelement, targetelement);
+                    this.classList.remove("highlight");
+                    parentelement.insertBefore(dragelement, this);
                     mythis.savemarkers();
                     mythis.fire('setheight');
                 });
@@ -249,14 +252,13 @@
         },
 
         savemarkers: function () {
-            var textholder = this.querySelector("#textholder");
-            var paragraphs = textholder.children;
+            const textholder = this.querySelector("#textholder");
+            const paragraphs = textholder.children;
 
             if (this.chunk.projectmeta.project.id !== "obs") {
                 this.set('chunk.transcontent', App.renderer.balloonsToMarkers(paragraphs));
                 this.fire('iron-signal', {name: 'savechunk', data: {chunk: this.chunk}});
             }
-
         },
 
         completechunk: function (event, data) {

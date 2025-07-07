@@ -1,24 +1,24 @@
 'use strict';
 
-var path = require('path');
+const path = require('path');
 
 function Renderer() {
 
     return {
 
         convertVerseMarkers: function (text) {
-            var expression = new RegExp(/(\s*<verse[^<>\"]*\")(\d+-?\d*)(\"[^<>]*>)/);
-            var verses = [];
+            const expression = new RegExp(/(\s*<verse[^<>"]*")(\d+-?\d*)("[^<>]*>)/);
+            const verses = [];
 
             while (expression.test(text)) {
-                var versestr = expression.exec(text)[2];
+                const versestr = expression.exec(text)[2];
 
                 if (versestr.indexOf("-") < 0) {
                     verses.push(parseInt(versestr));
                 } else {
-                    var firstnum = parseInt(versestr.substring(0, versestr.search("-")));
-                    var lastnum = parseInt(versestr.substring(versestr.search("-") + 1));
-                    for (var j = firstnum; j <= lastnum; j++) {
+                    const firstnum = parseInt(versestr.substring(0, versestr.search("-")));
+                    const lastnum = parseInt(versestr.substring(versestr.search("-") + 1));
+                    for (let j = firstnum; j <= lastnum; j++) {
                         verses.push(j);
                     }
                 }
@@ -28,15 +28,15 @@ function Renderer() {
         },
 
         convertNoteMarkers: function (text) {
-            var expression = new RegExp(/(<note[^<>]*>)([^]+?)(<\/note>)/);
+            const expression = new RegExp(/(<note[^<>]*>)([^]+?)(<\/note>)/);
 
             while (expression.test(text)) {
-                var notestr = expression.exec(text)[2];
-                var tagtest = new RegExp(/<[^<>]*>/g);
-                var quotetest = new RegExp(/(<char[^<>]*fqa">)([^]+?)(<\/char>)/);
+                let notestr = expression.exec(text)[2];
+                const tagtest = new RegExp(/<[^<>]*>/g);
+                const quotetest = new RegExp(/(<char[^<>]*fqa">)([^]+?)(<\/char>)/);
 
                 while (quotetest.test(notestr)) {
-                    var quotestr = quotetest.exec(notestr)[2].trim();
+                    const quotestr = quotetest.exec(notestr)[2].trim();
 
                     notestr = notestr.replace(quotetest, '"' + quotestr + '" ');
                 }
@@ -44,7 +44,7 @@ function Renderer() {
                 notestr = notestr.replace(tagtest, "");
                 notestr = notestr.replace(/'/g, '&apos;');
 
-                var marker = "\<ts-note-marker text='" + notestr + "'\>\<\/ts-note-marker\>";
+                const marker = "<ts-note-marker text='" + notestr + "'><ts-note-marker>";
 
                 text = text.replace(expression, marker);
             }
@@ -52,7 +52,7 @@ function Renderer() {
         },
 
         removeParaTags: function (text) {
-            var test = new RegExp(/<\/?para[^<>]*>/g);
+            const test = new RegExp(/<\/?para[^<>]*>/g);
 
             text = text.replace(test, "");
 
@@ -60,7 +60,7 @@ function Renderer() {
         },
 
         removeCharTags: function (text) {
-            var test = new RegExp(/<\/?char[^<>]*>/g);
+            const test = new RegExp(/<\/?char[^<>]*>/g);
 
             text = text.replace(test, "");
 
@@ -68,10 +68,10 @@ function Renderer() {
         },
 
         migrateMarkers: function (text) {
-            var vtest = new RegExp(/ ?[\\\/]v ?(?=\d)/g);
-            var ctest = new RegExp(/ ?[\\\/]c ?(?=\d)/g);
-            var vreplace = " \\v ";
-            var creplace = "\\c ";
+            const vtest = new RegExp(/ ?[\\\/]v ?(?=\d)/g);
+            const ctest = new RegExp(/ ?[\\\/]c ?(?=\d)/g);
+            const vreplace = " \\v ";
+            const creplace = "\\c ";
 
             text = text.replace(vtest, vreplace);
             text = text.replace(ctest, creplace);
@@ -80,41 +80,47 @@ function Renderer() {
         },
 
         removeChapterMarkers: function (text) {
-            var expression = new RegExp(/\\c \d+\s+/g);
+            const expression = new RegExp(/\\c \d+\s+/g);
 
             return text.replace(expression, "");
         },
 
         renderSuperscriptVerses: function (text) {
-            var expression = new RegExp(/(\\v )(\d+-?\d*)(\s+)/);
+            const expression = new RegExp(/(\\v )(\d+-?\d*)(\s+)/);
 
             while (expression.test(text)) {
-                var versestr = expression.exec(text)[2];
+                const versestr = expression.exec(text)[2];
 
-                text = text.replace(expression, "\<sup\>" + versestr + "\<\/sup\>");
+                text = text.replace(expression, `<sup>${versestr}</sup>`);
             }
 
             return text.trim();
         },
 
         renderParagraphs: function (text, module) {
-            var expression = new RegExp(/([^>\n]*)([\n])/);
-            var startp = "\<p class='style-scope " + module + "'\>";
-            var endp = "\<\/p\>";
+            const expression = new RegExp(/([^>\n]*)(\n)/);
+            const container = document.createElement('div');
 
             text = text + "\n";
 
             while (expression.test(text)) {
-                var paragraph = expression.exec(text)[1];
+                let paragraph = expression.exec(text)[1];
 
                 if (!paragraph) {
-                    paragraph = "&nbsp";
+                    paragraph = "&nbsp;";
                 }
 
-                text = text.replace(expression, startp + paragraph + endp);
+                const div = document.createElement('div');
+                div.className = `style-scope ${module}`;
+                div.innerHTML = paragraph;
+
+                container.appendChild(div);
+
+                // Remove the processed part from text
+                text = text.replace(expression, '');
             }
 
-            return text;
+            return container.innerHTML;
         },
 
         renderTargetWithVerses: function (text, module) {
@@ -126,9 +132,9 @@ function Renderer() {
         },
 
         replaceConflictCode: function (text) {
-            var starttest = new RegExp(/<{7} HEAD\n/g);
-            var midtest = new RegExp(/={7}\n/g);
-            var endtest = new RegExp(/>{7} \w{40}\n?/g);
+            const starttest = new RegExp(/<{7} HEAD\n/g);
+            const midtest = new RegExp(/={7}\n/g);
+            const endtest = new RegExp(/>{7} \w{40}\n?/g);
 
             text = text.replace(starttest, "<S>");
             text = text.replace(midtest, "<M>");
@@ -138,13 +144,13 @@ function Renderer() {
         },
 
         parseConflicts: function (text) {
-            var conflicttest = new RegExp(/([^<>]*)(<S>)([^<>]*)(<M>)([^<>]*)(<E>)([^<>]*)/);
-            var optiontest = new RegExp(/(@s@)([^]+?)(@e@)/);
-            var confirmtest = new RegExp(/<(S|M|E)>/);
-            var startmarker = "@s@";
-            var endmarker = "@e@";
-            var exists = false;
-            var conarray = [];
+            const conflicttest = new RegExp(/([^<>]*)(<S>)([^<>]*)(<M>)([^<>]*)(<E>)([^<>]*)/);
+            const optiontest = new RegExp(/(@s@)([^]+?)(@e@)/);
+            const confirmtest = new RegExp(/<([SME])>/);
+            const startmarker = "@s@";
+            const endmarker = "@e@";
+            let exists = false;
+            let conarray = [];
 
             while (conflicttest.test(text)) {
                 var pieces = conflicttest.exec(text);
@@ -171,7 +177,7 @@ function Renderer() {
 
             if (exists) {
                 while (optiontest.test(text)) {
-                    var option = optiontest.exec(text)[2];
+                    const option = optiontest.exec(text)[2];
 
                     conarray.push(option.trim());
                     text = text.replace(optiontest, "");
@@ -189,18 +195,18 @@ function Renderer() {
         },
 
         consolidateHelpsConflict: function (text) {
-            var conflicttest = new RegExp(/^([^<>]*)(<S>)([^<>]*)(<M>)([^<>]*)(<E>)([^]*)/);
-            var confirmtest = new RegExp(/<(S|M|E)>/);
-            var errormsg = [{title: "Conflict Parsing Error", body: "Conflict Parsing Error"}];
-            var start = "<S>";
-            var middle = "<M>";
-            var end = "<E>";
-            var first = "";
-            var second = "";
+            const conflicttest = new RegExp(/^([^<>]*)(<S>)([^<>]*)(<M>)([^<>]*)(<E>)([^]*)/);
+            const confirmtest = new RegExp(/<([SME])>/);
+            const errormsg = [{title: "Conflict Parsing Error", body: "Conflict Parsing Error"}];
+            const start = "<S>";
+            const middle = "<M>";
+            const end = "<E>";
+            let first = "";
+            let second = "";
 
             if (conflicttest.test(text)) {
                 while (conflicttest.test(text)) {
-                    var pieces = conflicttest.exec(text);
+                    const pieces = conflicttest.exec(text);
 
                     first += pieces[1] + pieces[3];
                     second += pieces[1] + pieces[5];
@@ -219,9 +225,9 @@ function Renderer() {
         },
 
         replaceEscapes: function (text) {
-            text = text.replace(/\\/g, "\\\\").replace(/\[/g, "\\[").replace(/\]/g, "\\]").replace(/\^/g, "\\^").replace(/\$/g, "\\$");
+            text = text.replace(/\\/g, "\\\\").replace(/\[/g, "\\[").replace(/]/g, "\\]").replace(/\^/g, "\\^").replace(/\$/g, "\\$");
             text = text.replace(/\(/g, "\\(").replace(/\)/g, "\\)").replace(/\?/g, "\\?").replace(/\./g, "\\.").replace(/\//g, "\\/");
-            text = text.replace(/\+/g, "\\+").replace(/\*/g, "\\*").replace(/\{/g, "\\{").replace(/\}/g, "\\}").replace(/\|/g, "\\|");
+            text = text.replace(/\+/g, "\\+").replace(/\*/g, "\\*").replace(/\{/g, "\\{").replace(/}/g, "\\}").replace(/\|/g, "\\|");
 
             return text;
         },
@@ -231,12 +237,12 @@ function Renderer() {
         },
 
         displayConflicts: function (content) {
-            var conflicts = this.parseConflicts(this.replaceConflictCode(content));
-            var text = "";
+            const conflicts = this.parseConflicts(this.replaceConflictCode(content));
+            let text = "";
 
             if (conflicts.exists) {
                 text += "\n***Start of Conflict***\n";
-                for (var i = 0; i < conflicts.array.length; i++) {
+                for (let i = 0; i < conflicts.array.length; i++) {
                     text += "***Option " + (i +1) + "***\n";
                     text += this.removeChapterMarkers(conflicts.array[i]) + "\n";
                 }
@@ -248,11 +254,11 @@ function Renderer() {
         },
 
         renderPrintPreview: function (chunks, options, pagetitle) {
-            var mythis = this;
-            var module = "ts-print";
-            var startheader = "\<h2 class='style-scope " + module + "'\>";
-            var endheader = "\<\/h2\>";
-            var add = "";
+            const mythis = this;
+            const module = "ts-print";
+            const startheader = "\<h2 class='style-scope " + module + "'\>";
+            const endheader = "\<\/h2\>";
+            let add = "";
             if (options.doubleSpace) {
                 add += "double ";
             }
@@ -262,18 +268,18 @@ function Renderer() {
             if (options.newpage) {
                 add += "break ";
             }
-            var startdiv = "\<div class='style-scope " + add + module + "'\>";
-            var enddiv = "\<\/div\>";
-            var chapters = [];
+            const startdiv = "\<div class='style-scope " + add + module + "'\>";
+            const enddiv = "\<\/div\>";
+            const chapters = [];
 
-            var pagetitle = options.pagetitle ? "\<div class='style-scope page-title centered " + module + "' \>" + pagetitle + "\<\/div\>" : "";
-            var text = "\<div id='startnum' class='style-scope " + module + "'\>";
+            pagetitle = options.pagetitle ? "\<div class='style-scope page-title centered " + module + "' \>" + pagetitle + "\<\/div\>" : "";
+            let text = "\<div id='startnum' class='style-scope " + module + "'\>";
 
             _.forEach(_.groupBy(chunks, function(chunk) {
                 return chunk.chunkmeta.chapter;
             }), function (data, chap) {
-                var content = "";
-                var title = "";
+                let content = "";
+                let title = "";
 
                 _.forEach(data, function (chunk) {
                     if (chunk.chunkmeta.frameid === "title") {
@@ -301,44 +307,44 @@ function Renderer() {
                 }
             });
 
-            var title = !options.newpage ? pagetitle : "";
+            const title = !options.newpage ? pagetitle : "";
 
             return title + text + enddiv;
         },
 
         renderObsPrintPreview: function (chunks, options, imagePath) {
-            var mythis = this;
-            var module = "ts-print";
-            var startheader = "\<h2 class='style-scope " + module + "'\>";
-            var endheader = "\<\/h2\>";
-            var startp = "\<p class='style-scope " + module + "'\>";
-            var endp = "\<\/p\>";
-            var add = "";
+            const mythis = this;
+            const module = "ts-print";
+            const startheader = "\<h2 class='style-scope " + module + "'\>";
+            const endheader = "\<\/h2\>";
+            const startp = "\<p class='style-scope " + module + "'\>";
+            const endp = "\<\/p\>";
+            let add = "";
             if (options.doubleSpace) {
                 add += "double ";
             }
             if (options.justify) {
                 add += "justify ";
             }
-            var startbreakdiv = "\<div class='style-scope break " + add + module + "'\>";
-            var starttocdiv = "\<div class='style-scope double break toc " + module + "'\>";
-            var starttitlediv1 = "\<div id='chap";
-            var starttitlediv2 = "' class='style-scope break titles " + module + "'\>";
-            var startnobreakdiv = "\<div class='style-scope nobreak " + module + "'\>";
-            var enddiv = "\<\/div\>";
-            var chapters = [];
-            var text = "\<div id='startnum' class='style-scope " + module + "'\>";
-            var toc = starttocdiv + startheader + "Table of Contents" + endheader;
-            var startadiv1 = "\<div class='style-scope " + module + "'\>\<a class='style-scope " + module + "' href='#chap";
-            var startadiv2 = "'\>";
-            var endadiv = "\<\/a\>\<\/div\>";
+            const startbreakdiv = "\<div class='style-scope break " + add + module + "'\>";
+            const starttocdiv = "\<div class='style-scope double break toc " + module + "'\>";
+            const starttitlediv1 = "\<div id='chap";
+            const starttitlediv2 = "' class='style-scope break titles " + module + "'\>";
+            const startnobreakdiv = "\<div class='style-scope nobreak " + module + "'\>";
+            const enddiv = "\<\/div\>";
+            const chapters = [];
+            let text = "\<div id='startnum' class='style-scope " + module + "'\>";
+            let toc = starttocdiv + startheader + "Table of Contents" + endheader;
+            const startadiv1 = "\<div class='style-scope " + module + "'\>\<a class='style-scope " + module + "' href='#chap";
+            const startadiv2 = "'\>";
+            const endadiv = "\<\/a\>\<\/div\>";
 
             _.forEach(_.groupBy(chunks, function(chunk) {
                 return chunk.chunkmeta.chapter;
             }), function (data, chap) {
-                var content = "";
-                var title = "";
-                var ref = "";
+                let content = "";
+                let title = "";
+                let ref = "";
 
                 _.forEach(data, function (chunk) {
                     if (chunk.chunkmeta.frameid === "title") {
@@ -350,7 +356,7 @@ function Renderer() {
                     if (chunk.chunkmeta.frame > 0 && chunk.transcontent) {
                         if (options.includeIncompleteFrames || chunk.completed) {
                             if (options.includeImages) {
-                                var image = path.join(imagePath, chunk.projectmeta.resource.id + "-en-" + chunk.chunkmeta.chapterid + "-" + chunk.chunkmeta.frameid + ".jpg");
+                                const image = path.join(imagePath, chunk.projectmeta.resource.id + "-en-" + chunk.chunkmeta.chapterid + "-" + chunk.chunkmeta.frameid + ".jpg");
                                 content += startnobreakdiv + "\<img src='" + image + "'\>";
                                 content += startp + mythis.displayConflicts(chunk.transcontent) + endp + enddiv;
                             } else {
@@ -379,12 +385,18 @@ function Renderer() {
         },
 
         renderResource: function (data, linksEnabled, module) {
-            var starth2 = "\<h2 class='style-scope " + module + "'\>";
-            var endh2 = "\<\/h2\>";
-            var startdiv = "\<div class='style-scope " + module + "'\>";
-            var enddiv = "\<\/div\>";
+            const container = document.createElement('div');
+            const h2 = document.createElement('h2');
+            h2.className = `style-scope ${module}`;
+            h2.textContent = data.title;
+            const div = document.createElement('div');
+            div.className = `style-scope ${module}`;
+            div.innerHTML = this.renderResourceLinks(data.body, linksEnabled, module);
 
-            return starth2 + data.title + endh2 + startdiv + this.renderResourceLinks(data.body, linksEnabled, module) + enddiv;
+            container.appendChild(h2);
+            container.appendChild(div);
+
+            return container.innerHTML;
         },
 
         renderResourceLinks: function (text, linksEnabled, module) {
@@ -434,15 +446,15 @@ function Renderer() {
         },
 
         validateVerseMarkers: function (text, verses) {
-            var returnstr = text.trim();
-            var used = [];
-            var addon = "";
-            var versetest = new RegExp(/\s*\\v\s*(\d+)\s*/);
-            var cleantest = new RegExp(/\\fv/g);
+            let returnstr = text.trim();
+            const used = [];
+            let addon = "";
+            const versetest = new RegExp(/\s*\\v\s*(\d+)\s*/);
+            const cleantest = new RegExp(/\\fv/g);
 
             while (versetest.test(returnstr)) {
-                var versenum = parseInt(versetest.exec(returnstr)[1]);
-                var replace = " ";
+                const versenum = parseInt(versetest.exec(returnstr)[1]);
+                let replace = " ";
 
                 if (verses.indexOf(versenum) >= 0 && used.indexOf(versenum) === -1) {
                     replace = " \\fv " + versenum + " ";
@@ -454,7 +466,7 @@ function Renderer() {
             returnstr = returnstr.replace(cleantest, "\\v");
 
             if (returnstr) {
-                for (var k = 0; k < verses.length; k++) {
+                for (let k = 0; k < verses.length; k++) {
                     if (used.indexOf(verses[k]) < 0) {
                         addon += "\\v " + verses[k] + " ";
                     }
@@ -465,69 +477,125 @@ function Renderer() {
         },
 
         markersToBalloons: function (chunk, module) {
-            var verses = chunk.chunkmeta.verses;
-            var chap = chunk.chunkmeta.chapter;
-            var linearray = this.replaceParagraphs(chunk.transcontent).split("\n");
-            var vmstr1 = "\<ts-verse-marker id='c";
-            var vmstr2 = "v";
-            var vmstr3 = "' draggable='true' class='markers' verse='";
-            var vmstr4 = "'\>\<\/ts-verse-marker\>";
-            var textstr1 = "\<span class='targets style-scope " + module + "'\>";
-            var textstr2 = "\<\/span\> ";
-            var startp = "\<p class='style-scope " + module + "'\>";
-            var endp = "\<\/p\>";
-            var returnstr = "";
-            var prestr = startp;
-            var used = [];
+            const verses = chunk.chunkmeta.verses;
+            const chap = chunk.chunkmeta.chapter;
+            const linearray = this.replaceParagraphs(chunk.transcontent).split("\n");
+            const used = [];
+            let noteindex = 0;
 
-            for (var j = 0; j < linearray.length; j++) {
-                if (j !== 0) {
-                    returnstr += startp;
-                }
+            // Create the container fragment to build the result
+            const fragment = document.createDocumentFragment();
+
+            // Create the prefix div container
+            const prefixDiv = document.createElement("div");
+            prefixDiv.className = `style-scope ${module}`;
+
+            // Process each line
+            for (let j = 0; j < linearray.length; j++) {
+                const lineDiv = document.createElement("div");
+                lineDiv.className = `style-scope ${module}`;
+
                 if (linearray[j] === "") {
-                    returnstr += "&nbsp";
+                    // Add non-breaking space for empty lines
+                    lineDiv.innerHTML = "&nbsp;";
                 } else {
-                    var wordarray = linearray[j].split(" ");
-                    for (var i = 0; i < wordarray.length; i++) {
+                    const wordarray = linearray[j].split(/\s/);
+
+                    for (let i = 0; i < wordarray.length; i++) {
                         if (wordarray[i] === "\\v") {
-                            var verse = parseInt(wordarray[i+1]);
+                            const verse = parseInt(wordarray[i + 1]);
                             if (verses.indexOf(verse) >= 0 && used.indexOf(verse) === -1) {
-                                returnstr += vmstr1 + chap + vmstr2 + verse + vmstr3 + verse + vmstr4;
+                                const marker = document.createElement("ts-verse-marker");
+                                marker.id = `c${chap}v${verse}`;
+                                marker.draggable = true;
+                                marker.classList.add("markers");
+                                marker.setAttribute("verse", verse.toString());
+                                lineDiv.appendChild(marker);
+
                                 used.push(verse);
                             }
                             i++;
+                        } else if (wordarray[i] === "\\f") {
+                            let footnote = "";
+
+                            for (let k = i; k < wordarray.length; k++) {
+                                footnote += `${wordarray[k]} `;
+                                if (wordarray[k] === "\\f*") {
+                                    break;
+                                }
+                                i++;
+                            }
+
+                            const footnoteHtml = this.markerToFootnote(footnote, chunk.index, noteindex);
+                            const tempDiv = document.createElement("div");
+                            tempDiv.innerHTML = footnoteHtml;
+
+                            // Append all child nodes from the temporary div
+                            while (tempDiv.firstChild) {
+                                lineDiv.appendChild(tempDiv.firstChild);
+                            }
+
+                            noteindex++;
                         } else {
-                            returnstr += textstr1 + wordarray[i] + textstr2;
+                            const span = document.createElement("span");
+                            span.className = `targets style-scope ${module}`;
+                            span.textContent = wordarray[i];
+                            lineDiv.appendChild(span);
+
+                            // Add space after the span (except for last word)
+                            if (i < wordarray.length - 1) {
+                                lineDiv.appendChild(document.createTextNode(" "));
+                            }
                         }
                     }
                 }
-                returnstr += endp;
+
+                fragment.appendChild(lineDiv);
             }
-            for (i = 0; i < verses.length; i++) {
+
+            // Add unused verses to the prefix div
+            for (let i = 0; i < verses.length; i++) {
                 if (used.indexOf(verses[i]) === -1) {
-                    prestr += vmstr1 + chap + vmstr2 + verses[i] + vmstr3 + verses[i] + vmstr4;
+                    const preMarker = document.createElement("ts-verse-marker");
+                    preMarker.id = `c${chap}v${verses[i]}`;
+                    preMarker.draggable = true;
+                    preMarker.classList.add("markers");
+                    preMarker.setAttribute("verse", verses[i].toString());
+
+                    prefixDiv.appendChild(preMarker);
                 }
             }
-            return prestr + returnstr;
+
+            // Create final container and combine prefix + content
+            const finalContainer = document.createElement("div");
+            if (prefixDiv.children.length > 0) {
+                finalContainer.appendChild(prefixDiv);
+            }
+            finalContainer.appendChild(fragment);
+
+            return finalContainer.innerHTML;
         },
 
         balloonsToMarkers: function (paragraphs) {
-            var returnstr = "";
+            let returnstr = "";
 
-            for (var j = 0; j < paragraphs.length; j++) {
-                var children = paragraphs[j].children;
+            for (let j = 0; j < paragraphs.length; j++) {
+                const children = paragraphs[j].children;
                 if (!children.length) {
                     returnstr += "\n";
                 } else {
-                    for (var i = 0; i < children.length; i++) {
-                        var type = children[i].nodeName;
+                    for (let i = 0; i < children.length; i++) {
+                        const type = children[i].nodeName;
 
                         if (type === "TS-VERSE-MARKER") {
-                            var versenum = children[i].verse;
-                            returnstr += "\\v " + versenum + " ";
+                            const versenum = children[i].verse;
+                            returnstr += `\\v ${versenum} `;
+                        } else if (type === "TS-TARGET-NOTE-MARKER") {
+                            const text = children[i].text;
+                            returnstr += `\\f + \\ft ${text.trim()} \\f* `;
                         } else {
-                            var text = children[i].textContent;
-                            returnstr += text + " ";
+                            const text = children[i].textContent;
+                            returnstr += `${text} `;
                         }
                     }
                     returnstr = returnstr.trim();
@@ -538,6 +606,87 @@ function Renderer() {
             }
             return returnstr;
         },
+
+        validateFootnotes: function (text) {
+            let returnstr = text.trim();
+            const notetest = new RegExp(/\s*(\\f)(\s\S\s[\s\S]+?\\f\*)\s*/);
+            const cleantest = new RegExp(/\\ftest/g);
+
+            while (notetest.test(returnstr)) {
+                const marker = notetest.exec(returnstr)[1];
+                const body = notetest.exec(returnstr)[2];
+                const result = ` ${marker}test${body} `;
+
+                returnstr = returnstr.replace(notetest, result);
+            }
+
+            returnstr = returnstr.replace(cleantest, "\\f");
+
+            return returnstr.trim();
+        },
+
+        markersToFootnotes: function (text, chunkIndex, readonly) {
+            const noteRegex = new RegExp(/\\f\s(\S)\s([\s\S]+?)\\f\*/);
+            let noteIndex = 0;
+
+            while (noteRegex.test(text)) {
+                const match = noteRegex.exec(text);
+
+                const marker = this.markerToFootnote(match[0], chunkIndex, noteIndex, readonly);
+                text = text.replace(noteRegex, marker);
+                noteIndex++;
+            }
+
+            return text;
+        },
+
+        markerToFootnote: function (marker, chunkIndex, noteIndex, readonly) {
+            readonly = readonly || false;
+            const charRegex = new RegExp(/\\(f[^*\s]+)\s([^\\]+)(?:\\f\1\*)?/g);
+            let match;
+            let note = "";
+
+            do {
+                match = charRegex.exec(marker);
+                if (match) {
+                    note += match[2];
+                }
+            } while (match);
+
+            let footnote;
+            if (readonly) {
+                footnote = document.createElement("ts-note-marker");
+            } else {
+                footnote = document.createElement("ts-target-note-marker");
+                footnote.contentEditable = "false";
+                footnote.classList.add("targets");
+                footnote.setAttribute("chunkindex", chunkIndex);
+                footnote.setAttribute("noteindex", noteIndex);
+            }
+            footnote.setAttribute("text", note);
+
+            return footnote.outerHTML;
+        },
+
+        footnotesToMarkers: function (text) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, "text/html");
+            const body = doc.body;
+            let result = "";
+            for (let elm of body.childNodes) {
+                if (elm instanceof Text) {
+                    result += elm.textContent;
+                } else if (elm instanceof HTMLElement) {
+                    if (elm.tagName === "TS-TARGET-NOTE-MARKER" && elm.attributes["text"]) {
+                        const noteText = elm.attributes["text"].textContent.trim();
+                        const footnote = `\\f + \\ft ${noteText} \\f*`;
+                        result += footnote;
+                    }
+                }
+            }
+            return result;
+        },
+
         translate: function (key, ...args) {
             return App.locale.translate(key, ...args);
         },

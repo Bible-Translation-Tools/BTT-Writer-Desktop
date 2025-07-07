@@ -108,13 +108,13 @@
             color: var(--accent-color);
         }
 
-        #note {
+        #note, #deletenotepopup {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        #noteheader {
+        #noteheader, #deletenoteheader {
             flex: 0 0 50px;
             display: flex;
             align-items: center;
@@ -123,14 +123,14 @@
             padding: 0 30px;
         }
 
-        #notebody {
+        #notebody, #deletenotebody {
             flex: 0 0 110px;
             overflow-y: auto;
             margin: 0;
             padding: 20px 30px;
         }
 
-        #notefooter {
+        #notefooter, #deletenotefooter {
             flex: 0 0 50px;
             display: flex;
             justify-content: flex-end;
@@ -140,8 +140,19 @@
             color: var(--secondary-text-color);
         }
 
-        #notefooter paper-button:hover {
+        #notefooter paper-button:hover, #deletenotefooter paper-button:hover {
             color: var(--accent-color);
+        }
+
+        #notefooter .separator {
+            flex: 1;
+        }
+
+        #noteeditor .buttons {
+            display: flex;
+            justify-content: flex-end;
+            color: var(--secondary-text-color);
+            gap: 20px;
         }
 
         #resourcedisplay.hide {
@@ -172,6 +183,10 @@
 
         .highlight {
             background: var(--highlight-color);
+        }
+
+        .hide {
+            display: none;
         }
 
     </style>
@@ -219,20 +234,6 @@
             </div>
         </paper-dialog>
 
-        <paper-dialog id="projectchecklistpopup" class="checklistpopup popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-            <h2>Project Checklist</h2>
-            <div>
-                <p class="spaced">Are you sure you're Done with this project?</p>
-                <p class$="[[versecheck(currentproject.projectmeta)]]">I have placed the verses correctly</p>
-                <p>I have reviewed the words and meanings</p>
-                <p class$="[[standardcheck(currentproject.projectmeta)]]">I have reviewed the translationQuestions</p>
-            </div>
-            <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm on-tap="closeprojectchecklist">Confirm</paper-button>
-            </div>
-        </paper-dialog>
-
         <paper-dialog id="editpopup" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
             <h2>{{translate("edit_chunk")}}</h2>
             <div>
@@ -260,7 +261,32 @@
             </div>
             <div id="notebody"></div>
             <div id="notefooter">
+                <paper-button dialog-confirm on-tap="editnote" class$="[[buttonclass(notestatus.target)]]">{{translate("edit")}}</paper-button>
+                <div class="separator"></div>
+                <paper-button dialog-confirm on-tap="deletenoteconfirm" class$="[[buttonclass(notestatus.target)]]">{{translate("delete")}}</paper-button>
                 <paper-button dialog-dismiss>{{translate("dismiss")}}</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="deletenotepopup" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
+            <div id="deletenoteheader">
+                <h2>{{translate("delete_footnote_confirm")}}</h2>
+            </div>
+            <div id="deletenotebody"></div>
+            <div id="deletenotefooter">
+                <paper-button dialog-dismiss>{{translate("cancel")}}</paper-button>
+                <paper-button dialog-confirm on-tap="deletenote">{{translate("delete")}}</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="noteeditor" class="noteeditor popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
+            <h2>{{translate("add_footnote")}}</h2>
+            <div>
+                <iron-autogrow-textarea id="notetext" placeholder="{{translate('enter_footnote')}}" autofocus></iron-autogrow-textarea>
+            </div>
+            <div class="buttons">
+                <paper-button dialog-dismiss on-tap="cancelnote">{{translate("cancel")}}</paper-button>
+                <paper-button dialog-confirm on-tap="savenote">{{translate("ok")}}</paper-button>
             </div>
         </paper-dialog>
 
@@ -276,6 +302,7 @@
         <iron-signals on-iron-signal-openedit="openedit"></iron-signals>
         <iron-signals on-iron-signal-opennodata="opennodata"></iron-signals>
         <iron-signals on-iron-signal-opennote="opennote"></iron-signals>
+        <iron-signals on-iron-signal-opennoteeditor="opennoteeditor"></iron-signals>
         <iron-signals on-iron-signal-opensource="opensource"></iron-signals>
         <iron-signals on-iron-signal-savechunk="savechunk"></iron-signals>
         <iron-signals on-iron-signal-savemanifest="savemanifest"></iron-signals>
@@ -354,6 +381,10 @@
                 type: String,
                 value: "Idle",
                 notify: true
+            },
+            notestatus: {
+                type: Object,
+                value: {}
             },
             animationConfig: {
                 value: function () {
@@ -484,9 +515,13 @@
                                 return Promise.resolve(true);
                             })
                             .catch(function (err) {
+                                let errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("backup_translation_error");
+                                if (typeof err !== "string") {
+                                    errorMessage = JSON.stringify(errorMessage, null, 2);
+                                }
                                 mythis.set('options', {});
                                 mythis.set('options.title', mythis.translate("autobackup_failed"));
-                                mythis.set('options.body', err);
+                                mythis.set('options.body', errorMessage);
                                 mythis.set('options.loading', false);
                                 mythis.fire('iron-signal', {name: 'openloading'});
                                 mythis.set('saveoptions.backup', false);
@@ -526,9 +561,89 @@
         },
 
         opennote: function (event, data) {
-            var text = data.text;
+            this.set("notestatus", {
+                chunkindex: data.chunkindex,
+                noteindex: data.noteindex,
+                target: data.target || false,
+                text: data.text,
+            });
+
             this.$.note.open();
-            this.$.notebody.innerHTML = text;
+            this.$.notebody.innerHTML = data.text;
+        },
+
+        opennoteeditor: function (event, data) {
+            this.$.noteeditor.open();
+            this.$.notetext.value = data?.text || "";
+        },
+
+        savenote: function () {
+            const mythis = this;
+            const noteText = (mythis.$.notetext.value || "").trim();
+            if (noteText !== "") {
+                mythis.fire('iron-signal', {
+                    name: 'onsavenote',
+                    data: {
+                        text: noteText,
+                        chunkindex: mythis.notestatus?.chunkindex,
+                        noteindex: mythis.notestatus?.noteindex,
+                    }
+                });
+                mythis.$.notetext.value = "";
+                mythis.set("notestatus", null);
+            }
+        },
+
+        editnote: function () {
+            const mythis = this;
+
+            if (mythis.notestatus) {
+                mythis.fire('iron-signal', {
+                    name: 'opennoteeditor',
+                    data: {
+                        text: mythis.notestatus.text
+                    }
+                });
+            } else {
+                const title = mythis.translate("footnote_error");
+                const message = mythis.translate("footnote_status_lost");
+                mythis.fire('iron-signal', {name: 'showmessage', data: {title, message}});
+            }
+        },
+
+        deletenoteconfirm: function () {
+            if (this.notestatus) {
+                this.$.deletenotepopup.open();
+                this.$.deletenotebody.innerHTML = this.notestatus.text;
+            } else {
+                const title = this.translate("footnote_error");
+                const message = this.translate("footnote_status_lost");
+                this.fire('iron-signal', {name: 'showmessage', data: {title, message}});
+            }
+        },
+
+        deletenote: function () {
+            const mythis = this;
+
+            if (mythis.notestatus) {
+                mythis.fire('iron-signal', {
+                    name: 'ondeletenote',
+                    data: {
+                        chunkindex: mythis.notestatus.chunkindex,
+                        noteindex: mythis.notestatus.noteindex,
+                    }
+                });
+                mythis.set("notestatus", null);
+            } else {
+                const title = mythis.translate("footnote_error");
+                const message = mythis.translate("footnote_status_lost");
+                mythis.fire('iron-signal', {name: 'showmessage', data: {title, message}});
+            }
+        },
+
+        cancelnote: function () {
+            this.fire('iron-signal', {name: 'oncancelnote'});
+            this.set("notestatus", null);
         },
 
         openchecklist: function (event, data) {
@@ -552,11 +667,6 @@
         openedit: function (event, data) {
             this.modestatus.index = data.index;
             this.$.editpopup.open();
-        },
-
-        closeedit: function () {
-            var index = this.modestatus.index;
-            this.fire('iron-signal', {name: 'editchunk', data: {index: index}});
         },
 
         opensource: function () {
@@ -813,13 +923,13 @@
                         })
                         .catch(function(err) {
                             App.reporter.logError(err);
-                            var errmessage = mythis.translate("loading_project_error");
-                            if(err !== null) {
-                                errmessage = err;
+                            let errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("loading_project_error");
+                            if (typeof errorMessage !== "string") {
+                                errorMessage = JSON.stringify(errorMessage, null, 2);
                             }
                             mythis.set('route', 'home');
                             mythis.set('options.title', mythis.translate("load_project_failed"));
-                            mythis.set('options.body', errmessage);
+                            mythis.set('options.body', errorMessage);
                             mythis.set('options.loading', false);
                         });
                 }, 500);
@@ -1255,12 +1365,14 @@
                             conflicts.array[i] = App.renderer.migrateMarkers(conflicts.array[i]);
                             conflicts.array[i] = App.renderer.removeChapterMarkers(conflicts.array[i]);
                             conflicts.array[i] = App.renderer.validateVerseMarkers(conflicts.array[i], verses);
+                            conflicts.array[i] = App.renderer.validateFootnotes(conflicts.array[i]);
                         }
                     } else {
                         transcontent = App.renderer.convertVerseMarkers(transcontent).text;
                         transcontent = App.renderer.migrateMarkers(transcontent);
                         transcontent = App.renderer.removeChapterMarkers(transcontent);
                         transcontent = App.renderer.validateVerseMarkers(transcontent, verses);
+                        transcontent = App.renderer.validateFootnotes(transcontent);
                     }
                 } else {
                     conflicts = App.renderer.parseConflicts(App.renderer.consolidateHelpsConflict(App.renderer.replaceConflictCode(maindata.helpscontent)));
@@ -1620,6 +1732,10 @@
             var title = mythis.translate("result");
             var message = mythis.translate("chunks_marked_done_result", marked, chunks.length);
             mythis.fire('iron-signal', {name: 'showmessage', data: {title, message}});
+        },
+
+        buttonclass: function (target) {
+            return !target ? 'hide' : '';
         },
 
         translate: function (key, ...args) {
