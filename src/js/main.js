@@ -121,6 +121,11 @@ function createMainWindow () {
     mainWindow.on('unmaximize', function () {
         mainWindow.webContents.send('unmaximize');
     });
+
+    mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
+        details.requestHeaders['User-Agent'] = userAgent;
+        callback({ cancel: false, requestHeaders: details.requestHeaders });
+    });
 }
 
 function createAppMenus() {

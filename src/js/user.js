@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash'),
+const _ = require('lodash'),
     Gogs = require('gogs-client-fork'),
     requester = require('gogs-client-fork/lib/request'),
     os = require('os'),
@@ -17,7 +17,7 @@ function UserManager(auth, server) {
     const tokenStub = {
         name: `btt-writer-desktop_${os.hostname()}_${process.platform}__${utils.getMachineIdSync()}`,
         scopes: ["write:user","write:repository"]
-    }
+    };
 
     const fetchRepoRecursively = function (uid, query, limit, page, resultList) {
         /*
@@ -27,13 +27,13 @@ function UserManager(auth, server) {
         return api.searchRepos(`${query}&page=${page}`, uid, limit)
             .then(_.flatten)
             .then(function (repos) {
-                if (repos.length == 0) {
+                if (repos.length === 0) {
                     // no more repos found
                     return resultList;
                 } else {
                     // collect result from current page
                     let newList = resultList.concat(repos);
-                    return fetchRepoRecursively(uid, query, limit, page + 1, newList) // recursive call to get next page
+                    return fetchRepoRecursively(uid, query, limit, page + 1, newList); // recursive call to get next page
                 }
             });
     };
@@ -45,17 +45,17 @@ function UserManager(auth, server) {
      * However, the endpoint is available for usage.
      */
     const deleteAccessToken = function (user) {
-        var mythis = this;
+        const mythis = this;
         if (user.tokenId && (user.token || user.password)) {
             const userAuth = {
                 username: user.username,
                 password: user.password ? user.password : user.token
-            }
+            };
             let apiRequest = requester(apiUrl);
             let path = `users/${user.username}/tokens/${user.tokenId}`;
             return apiRequest(path, userAuth, null, 'DELETE')
                 .then(res => {
-                    if (res.status != 204) {
+                    if (res.status !== 204) {
                         console.error(mythis.translate("delete_token_error"), res);
                     }
                 });
@@ -63,12 +63,12 @@ function UserManager(auth, server) {
             // local account
             return Promise.resolve();
         }
-    }
+    };
 
     const fetchRepoExhaustively = async function (uid, query, limit) {
         limit = limit || MAX_PAGE_SIZE;
+        const repoList = [];
         let page = 1;
-        let repoList = [];
         let hasMore = true;
 
         while (hasMore) {
@@ -110,7 +110,7 @@ function UserManager(auth, server) {
                 return api.listTokens(userObj)
                     .then(function (tokens) {
                         return _.find(tokens, (token) => {
-                            return token.name === tokenStub.name
+                            return token.name === tokenStub.name;
                         });
                     })
                     .then(function (token) {
@@ -120,7 +120,7 @@ function UserManager(auth, server) {
                                 username: userObj.username,
                                 password: userObj.password,
                                 tokenId: token.id
-                            }
+                            };
                             return deleteAccessToken(usr)
                                     .then(() => api.createToken(tokenStub, userObj));
                         } else {
@@ -140,7 +140,7 @@ function UserManager(auth, server) {
         },
 
         register: function (user, deviceId) {
-            var keyStub = {title: 'btt-writer-desktop ' + deviceId};
+            const keyStub = {title: 'btt-writer-desktop ' + deviceId};
             return api.listPublicKeys(user).then(function (keys) {
                 return _.find(keys, keyStub);
             }).then(function (key) {
@@ -152,7 +152,7 @@ function UserManager(auth, server) {
         },
 
         unregister: function (user, deviceId) {
-            var keyStub = {title: 'btt-writer-desktop ' + deviceId};
+            const keyStub = {title: 'btt-writer-desktop ' + deviceId};
             return api.listPublicKeys(user).then(function (keys) {
                 return _.find(keys, keyStub);
             }).then(function (key) {
@@ -177,14 +177,14 @@ function UserManager(auth, server) {
         },
 
         retrieveRepos: function (u, q) {
-            u = u === '*' ? '' : (u || '');
-            q = q === '*' ? '_' : (q || '_');
+            u = u === '*' ? '' : u || '';
+            q = q === '*' ? '_' : q || '_';
 
             let limit = 10;
 
             function searchRepos(user) {
                 var uid = (typeof user === 'object' ? user.id : user) || 0;
-                if (uid == 0) {
+                if (uid === 0) {
                     // search repos by query
                     return api.searchRepos(q, uid, limit);
                 } else {
@@ -195,11 +195,11 @@ function UserManager(auth, server) {
 
             function searchUsers (visit) {
                 return api.searchUsers(u, limit).then(function (users) {
-                    var a = users.map(visit);
+                    const a = users.map(visit);
 
                     a.push(visit(0).then(function (repos) {
                         return repos.filter(function (repo) {
-                            var username = repo.full_name.split('/').shift();
+                            const username = repo.full_name.split('/').shift();
                             return username.includes(u);
                         });
                     }));
@@ -208,15 +208,15 @@ function UserManager(auth, server) {
                 });
             }
 
-            var p = u ? searchUsers(searchRepos) : searchRepos();
+            const p = u ? searchUsers(searchRepos) : searchRepos();
 
             return p.then(_.flatten).then(function (repos) {
                 return _.uniq(repos, 'id');
             })
                 .then(function (repos) {
                     return _.map(repos, function (repo) {
-                        var user = repo.full_name.split("/")[0];
-                        var project = repo.full_name.split("/")[1];
+                        const user = repo.full_name.split("/")[0];
+                        const project = repo.full_name.split("/")[1];
                         return {repo: repo.full_name, user: user, project: project};
                     });
                 });
