@@ -98,7 +98,7 @@ function Renderer() {
         },
 
         renderParagraphs: function (text, module) {
-            const expression = new RegExp(/([^>\n]*)(\n)/);
+            const expression = new RegExp(/([^>\r\n]*)(\r\n|\r|\n)/);
             const container = document.createElement('div');
 
             text = text + "\n";
@@ -132,9 +132,9 @@ function Renderer() {
         },
 
         replaceConflictCode: function (text) {
-            const starttest = new RegExp(/<{7} HEAD\n/g);
-            const midtest = new RegExp(/={7}\n/g);
-            const endtest = new RegExp(/>{7} \w{40}\n?/g);
+            const starttest = new RegExp(/<{7} HEAD(?:\r\n|\r|\n)/g);
+            const midtest = new RegExp(/={7}(?:\r\n|\r|\n)/g);
+            const endtest = new RegExp(/>{7} \w{40}(?:\r\n|\r|\n)?/g);
 
             text = text.replace(starttest, "<S>");
             text = text.replace(midtest, "<M>");
