@@ -8,7 +8,7 @@ A tool to translate the Bible into your own language.
 # Installation
 The [Releases](https://github.com/Bible-Translation-Tools/BTT-Writer-Desktop/releases) have installers for 32-bit and 64-bit **Windows** installations. `git` is bundled with these installers (and is a specific version known to work).
 
-**Linux** users should unzip the release folder and install it as **BTT-Writer** in the `/opt/` directory. The included `BTT-Writer.desktop` file should be copied to the `/usr/share/applications/` directory to be picked up by the OS.
+**Linux** users should unzip the release file and install the folder as **BTT-Writer** in the `/opt/` directory. The included `BTT-Writer.desktop` file should be copied to the `/usr/share/applications/` directory to be picked up by the OS.
 
 **macOS** users can unzip the application and put it where they want it (usually the `/Applications/` directory).
 
