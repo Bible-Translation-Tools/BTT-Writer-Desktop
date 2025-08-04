@@ -44,7 +44,7 @@ function Renderer() {
                 notestr = notestr.replace(tagtest, "");
                 notestr = notestr.replace(/'/g, '&apos;');
 
-                const marker = "<ts-note-marker text='" + notestr + "'><ts-note-marker>";
+                const marker = "<ts-note-marker text='" + notestr + "'></ts-note-marker>";
 
                 text = text.replace(expression, marker);
             }
