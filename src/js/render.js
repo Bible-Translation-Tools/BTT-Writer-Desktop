@@ -681,6 +681,8 @@ function Renderer() {
                         const noteText = elm.attributes["text"].textContent.trim();
                         const footnote = `\\f + \\ft ${noteText} \\f*`;
                         result += footnote;
+                    } else {
+                        result += elm.textContent;
                     }
                 }
             }
