@@ -119,6 +119,8 @@
                  id="content">
                 <div class$="[[chunk.projectmeta.target_language.direction]]" contenteditable="true" id="textbox"
                      on-blur="onChange"
+                     on-paste="onPaste"
+                     on-drop="onDrop"
                      on-input="onInput"></div>
                 <div id="textholder" class$="[[chunk.projectmeta.target_language.direction]]"></div>
             </div>
@@ -164,7 +166,7 @@
         },
 
         observers: [
-            'renderText(chunk.transcontent, chunk.completed)'
+            'renderText(chunk.index, chunk.completed, chunk.state.review)'
         ],
 
         focustextbox: function () {
@@ -220,29 +222,11 @@
                         textbox.classList.remove("hide");
                         contentbox.classList.add("editmode");
 
-                        const wasActive = document.activeElement === textbox;
-                        if (wasActive) this.saveCaretPosition();
-
                         textbox.innerHTML = App.renderer.markersToFootnotes(text, this.chunk.index);
-
-                        // Restore cursor position after editing text
-                        if (wasActive && this.caretposition) {
-                            requestAnimationFrame(() => {
-                                textbox.focus();
-                                this.restoreCaretPosition();
-                            });
-                        }
+                        textbox.innerHTML = App.renderer.paragraphsToBreaks(textbox.innerHTML);
                     }
                 }
             }.bind(this), 1);
-        },
-
-        onChange: function (event) {
-            this.processContent(event.target.innerHTML);
-
-            if (this.searchoptions.text && this.searchoptions.type === "target") {
-                this.fire('iron-signal', {name: 'passivesearch'});
-            }
         },
 
         onReview: function () {
@@ -250,6 +234,29 @@
             this.set('chunk.state.review', true);
             this.fire('setheight');
             this.fire('iron-signal', {name: 'updatestate', data: {id: id, mode: "review", value: true}});
+        },
+
+        onChange: function (event) {
+            event.preventDefault();
+            this.processContent(event.target.innerHTML);
+
+            if (this.searchoptions.text && this.searchoptions.type === "target") {
+                this.fire('iron-signal', {name: 'passivesearch'});
+            }
+        },
+
+        onPaste: function (event) {
+            event.preventDefault();
+            const content = (event.clipboardData || window.clipboardData).getData("text");
+            this.$.textbox.innerHTML = this.$.textbox.innerHTML + content;
+            this.processContent(this.$.textbox.innerHTML);
+        },
+
+        onDrop: function (event) {
+            event.preventDefault();
+            const content = event.dataTransfer.getData('text');
+            this.$.textbox.innerHTML = this.$.textbox.innerHTML + content;
+            this.processContent(this.$.textbox.innerHTML);
         },
 
         onInput: function (event) {
@@ -262,7 +269,7 @@
             clearTimeout(mythis.timer);
 
             mythis.timer = setTimeout(function () {
-                mythis.set('chunk.transcontent', App.renderer.footnotesToMarkers(content));
+                mythis.set('chunk.transcontent', App.renderer.sanitizeHtmlContent(content));
                 mythis.fire('iron-signal', {name: 'savechunk', data: {chunk: mythis.chunk}});
             }, 300);
         },
@@ -270,10 +277,13 @@
         processContent: function (content) {
             const verses = this.chunk.chunkmeta.verses;
             let result = App.renderer.validateVerseMarkers(content, verses);
-            result = App.renderer.footnotesToMarkers(result);
+            result = App.renderer.sanitizeHtmlContent(result);
             result = App.renderer.validateFootnotes(result);
 
             this.saveChunk(result);
+
+            this.$.textbox.innerHTML = App.renderer.markersToFootnotes(result, this.chunk.index);
+            this.$.textbox.innerHTML = App.renderer.paragraphsToBreaks(this.$.textbox.innerHTML);
         },
 
         addNote: function () {
@@ -288,8 +298,6 @@
                 }
                 return;
             }
-
-            this.$.textbox.focus();
 
             setTimeout(() => {
                 this.restoreCaretPosition();
@@ -306,24 +314,18 @@
         onDeleteNote: function (event, data) {
             if (data.chunkindex !== this.chunk.index) return;
 
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(this.$.textbox.innerHTML, "text/html");
-            const note = doc.querySelector(`ts-target-note-marker[noteindex="${data.noteindex}"]`);
-
+            const note = this.$.textbox.querySelector(`ts-target-note-marker[noteindex="${data.noteindex}"]`);
             if (note) {
                 note.remove();
-                this.processContent(doc.body.innerHTML);
+                this.processContent(this.$.textbox.innerHTML);
             }
         },
 
         updateExistingNote: function (data) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(this.$.textbox.innerHTML, "text/html");
-            const note = doc.querySelector(`ts-target-note-marker[noteindex="${data.noteindex}"]`);
-
+            const note = this.$.textbox.querySelector(`ts-target-note-marker[noteindex="${data.noteindex}"]`);
             if (note) {
                 note.setAttribute("text", data.text.replace(/[\n\r\t]/gm, ""));
-                this.processContent(doc.body.innerHTML);
+                this.processContent(this.$.textbox.innerHTML);
             }
         },
 
@@ -357,6 +359,8 @@
 
         restoreCaretPosition: function () {
             if (this.caretposition === undefined) return;
+
+            this.$.textbox.focus();
 
             const walker = document.createTreeWalker(this.$.textbox, NodeFilter.SHOW_TEXT);
             let offset = 0, node;
