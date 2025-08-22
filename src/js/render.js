@@ -233,7 +233,11 @@ function Renderer() {
         },
 
         replaceParagraphs: function (text) {
-            return text.replace(/\\p\W/g, "\n");
+            return text.replace(/\\p\W?/g, "\n");
+        },
+
+        paragraphsToBreaks: function (text) {
+            return text.replace(/\n/g, '<br>').replace(/\\p/g, '<br>');
         },
 
         displayConflicts: function (content) {
@@ -668,25 +672,43 @@ function Renderer() {
             return footnote.outerHTML;
         },
 
-        footnotesToMarkers: function (text) {
+        sanitizeHtmlContent: function (text) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(text, "text/html");
-            const body = doc.body;
-            let result = "";
-            for (let elm of body.childNodes) {
-                if (elm instanceof Text) {
-                    result += elm.textContent;
-                } else if (elm instanceof HTMLElement) {
-                    if (elm.tagName === "TS-TARGET-NOTE-MARKER" && elm.attributes["text"]) {
-                        const noteText = elm.attributes["text"].textContent.trim();
-                        const footnote = `\\f + \\ft ${noteText} \\f*`;
-                        result += footnote;
-                    } else {
-                        result += elm.textContent;
+
+            const BLOCK_TAGS = new Set([
+                'P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
+                'LI', 'BLOCKQUOTE', 'PRE', 'HR', 'TABLE', 'TR'
+            ]);
+
+            function walk(node) {
+                let result = "";
+
+                for (const child of node.childNodes) {
+                    if (child.nodeType === Node.TEXT_NODE) {
+                        result += child.textContent.trim();
+                    }
+                    else if (child.nodeType === Node.ELEMENT_NODE) {
+                        if (BLOCK_TAGS.has(child.tagName) && result.length > 0 && !result.endsWith('\n')) {
+                            result += ' \\p ';
+                        }
+
+                        if (child.tagName === "TS-TARGET-NOTE-MARKER") {
+                            const noteText = (child.getAttribute("text") || "").trim();
+                            if (noteText) {
+                                result += `\\f + \\ft ${noteText} \\f*`;
+                            }
+                        } else if (child.tagName === 'BR') {
+                            result += ' \\p ';
+                        } else {
+                            result += walk(child);
+                        }
                     }
                 }
+                return result;
             }
-            return result;
+
+            return walk(doc.body).trim();
         },
 
         translate: function (key, ...args) {
