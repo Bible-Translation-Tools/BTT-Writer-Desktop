@@ -217,12 +217,14 @@ function Reporter (args) {
     };
 
     _this.sendIssueToGithub = function (issue) {
-        if(!_this.canReportToGithub()) return Promise.reject({message:'Missing credentials'});
+        if(!_this.canReportToGithub()) {
+            return Promise.reject({message:'Missing credentials'});
+        }
 
         let params = {};
         params.title = issue.title;
         params.body = issue.body;
-        params.labels = issue.labels;
+        //params.labels = issue.labels;
         let payload = JSON.stringify(params);
 
         let urlPath = '/repos/' + issue.user + '/' + issue.repo + '/issues';
