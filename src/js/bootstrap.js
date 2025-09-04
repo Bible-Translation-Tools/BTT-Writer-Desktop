@@ -168,7 +168,7 @@ process.stdout.write = console.log.bind(console);
         }
         mkdirp.sync(resourceDir);
 
-        var db = new Db(libraryPath, resourceDir);
+        var db = new Db(libraryPath, resourceDir, { userAgent: navigator.userAgent });
 
         return new DataManager(db, resourceDir, srcResource, configurator);
     })();
