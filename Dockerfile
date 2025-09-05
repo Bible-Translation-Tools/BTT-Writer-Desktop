@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:16.16.0
+FROM node:20
 
 RUN apt update \
  && apt upgrade -y \
@@ -19,9 +19,9 @@ RUN apt install -y software-properties-common
 RUN dpkg --add-architecture i386 && \
     wget -nc https://dl.winehq.org/wine-builds/winehq.key && \
     apt-key add winehq.key && \
-    add-apt-repository 'deb https://dl.winehq.org/wine-builds/debian/ buster main'
+    add-apt-repository 'deb https://dl.winehq.org/wine-builds/debian/ bullseye main'
 RUN apt-get update
-RUN apt-get install -y --install-recommends winehq-stable innoextract
+RUN apt-get install -y --install-recommends wine innoextract
 
 # Install InnoSetup
 COPY scripts/innosetup/iscc /usr/local/bin/iscc
@@ -53,4 +53,4 @@ RUN bower install --allow-root
 
 VOLUME /root
 
-CMD npm start
+CMD ["npm", "start"]
