@@ -27,6 +27,7 @@ src/logs/
 
 *.swp
 package-lock.json
+pnpm-*.yaml
 
 .vscode
 .fleet
