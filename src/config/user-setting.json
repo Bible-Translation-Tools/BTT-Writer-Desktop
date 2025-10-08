@@ -162,6 +162,15 @@
                 "indexsqliteurl": "https://writer-resources.bibletranslationtools.org/index.sqlite"
             },
             {
+                "name": "WACS DEV",
+                "dataserver": "https://content.wacsdev.org",
+                "mediaserver": "https://api-dev.bibletranslationtools.org",
+                "readerserver": "https://read-dev.bibleineverylanguage.org",
+                "createaccounturl": "https://content.wacsdev.org/user/sign_up",
+                "languageurl": "https://langnames.bibleineverylanguage.org/langnames.json",
+                "indexsqliteurl": "https://writer-resources.bibletranslationtools.org/index.sqlite"
+            },
+            {
                 "name": "DCS",
                 "dataserver": "https://git.door43.org",
                 "mediaserver": "https://api.unfoldingword.org",
