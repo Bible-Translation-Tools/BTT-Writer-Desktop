@@ -92,19 +92,20 @@
             padding: 0;
         }
 
-        #nodatapopup {
+        #nodatapopup, #paragraphError {
             text-align: center;
             color: var(--primary-text-color);
         }
 
-        #nodatapopup .buttons {
+        #nodatapopup .buttons, #paragraphError .buttons {
             display: flex;
             justify-content: center;
             color: var(--secondary-text-color);
             gap: 20px;
         }
 
-        #nodatapopup .buttons paper-button:hover {
+        #nodatapopup .buttons paper-button:hover,
+        #paragraphError .buttons paper-button:hover {
             color: var(--accent-color);
         }
 
@@ -255,6 +256,14 @@
             </div>
         </paper-dialog>
 
+        <paper-dialog id="paragraphError" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
+            <h2>{{translate("too_many_paragraphs")}}</h2>
+            <div id="paraError"></div>
+            <div class="buttons">
+                <paper-button dialog-dismiss>{{translate("ok")}}</paper-button>
+            </div>
+        </paper-dialog>
+
         <paper-dialog id="note" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
             <div id="noteheader">
                 <h2>{{translate("footnote")}}</h2>
@@ -296,11 +305,12 @@
 
         <iron-signals on-iron-signal-fromreview="fromreview"></iron-signals>
         <iron-signals on-iron-signal-updatesources="updatesources"></iron-signals>
-        <iron-signals on-iron-signal-loadproject="loadproject"></iron-signals>
+        <iron-signals on-iron-signal-loadproject="loadProject"></iron-signals>
         <iron-signals on-iron-signal-updatecompletion="updatecompletion"></iron-signals>
         <iron-signals on-iron-signal-openchecklist="openchecklist"></iron-signals>
         <iron-signals on-iron-signal-openedit="openedit"></iron-signals>
         <iron-signals on-iron-signal-opennodata="opennodata"></iron-signals>
+        <iron-signals on-iron-signal-openparagrapherror="openParagraphError"></iron-signals>
         <iron-signals on-iron-signal-opennote="opennote"></iron-signals>
         <iron-signals on-iron-signal-opennoteeditor="opennoteeditor"></iron-signals>
         <iron-signals on-iron-signal-opensource="opensource"></iron-signals>
@@ -560,6 +570,16 @@
             this.$.nodatapopup.open();
         },
 
+        openParagraphError: function (event, data) {
+            this.$.paragraphError.open();
+            let text = this.translate("too_many_paragraphs_error", data.src, data.target);
+            text += "<br><br>";
+            text += this.translate("src_paragraphs_count", data.src);
+            text += "<br>";
+            text += this.translate("target_paragraphs_count", data.target);
+            this.$.paraError.innerHTML = text;
+        },
+
         opennote: function (event, data) {
             this.set("notestatus", {
                 chunkindex: data.chunkindex,
@@ -816,121 +836,132 @@
             }
         },
 
-        loadproject: function (event, data) {
-            var mythis = this;
-            var nav = data.nav;
-            var projectmeta = data.projectmeta;
-            var list = this.projectlist;
-            var review = this.$.reviewmode;
+        loadProject: function (event, data) {
+            const myThis = this;
+            const nav = data.nav;
+            const projectMeta = data.projectmeta;
+            const list = this.projectlist;
+            const review = this.$.reviewmode;
 
-            var loadsource = function () {
-                if (projectmeta.project_type_class === "extant") {
-                    mythis.createextantchunks();
-                    mythis.finishLoading(nav, false);
+            const loadSource = function () {
+                if (projectMeta.project_type_class === "extant") {
+                    myThis.createextantchunks();
+                    myThis.finishLoading(nav, false);
                 } else {
-                    mythis.createchunks(nav, false);
+                    myThis.createChunks(nav, false);
                 }
             };
 
-            var loadwords = function () {
-                if (projectmeta.project_type_class !== "extant") {
-                    var wordmeta = false;
-                    for (var i = 0; i < list.length; i++) {
-                        if (list[i].target_language.id === projectmeta.target_language.id && list[i].type.id === "tw") {
-                            wordmeta = list[i];
+            const loadWords = function () {
+                if (projectMeta.project_type_class !== "extant") {
+                    let wordMeta = false;
+                    for (let i = 0; i < list.length; i++) {
+                        if (list[i].target_language.id === projectMeta.target_language.id && list[i].type.id === "tw") {
+                            wordMeta = list[i];
                         }
                     }
-                    if (wordmeta) {
-                        App.projectsManager.loadTargetTranslation(wordmeta)
+                    if (wordMeta) {
+                        App.projectsManager.loadTargetTranslation(wordMeta)
                             .then(function (words) {
-                                mythis.set('currentproject.rawdata.words', words);
-                                loadsource();
+                                myThis.set('currentproject.rawdata.words', words);
+                                loadSource();
                             });
                     } else {
-                        mythis.set('currentproject.rawdata.words', {});
-                        loadsource();
+                        myThis.set('currentproject.rawdata.words', {});
+                        loadSource();
                     }
                 } else {
-                    mythis.set('currentproject.rawdata.words', {});
-                    loadsource();
+                    myThis.set('currentproject.rawdata.words', {});
+                    loadSource();
                 }
             };
 
-            var loaddata2 = function () {
-                if (projectmeta.project_type_class === "helps") {
-                    var secondmeta = false;
-                    for (var i = 0; i < list.length; i++) {
-                        if (list[i].project.id === projectmeta.project.id && list[i].target_language.id === projectmeta.target_language.id && (list[i].resource.id === "ulb" || list[i].resource.id === "obs")) {
-                            secondmeta = list[i];
+            const loadData = function () {
+                if (projectMeta.project_type_class === "helps") {
+                    let i;
+                    let secondMeta = false;
+                    for (i = 0; i < list.length; i++) {
+                        if (list[i].project.id === projectMeta.project.id &&
+                            list[i].target_language.id === projectMeta.target_language.id &&
+                            (list[i].resource.id === "ulb" || list[i].resource.id === "obs")
+                        ) {
+                            secondMeta = list[i];
                         }
                     }
-                    if (!secondmeta) {
+                    if (!secondMeta) {
                         for (i = 0; i < list.length; i++) {
-                            if (list[i].project.id === projectmeta.project.id && list[i].target_language.id === projectmeta.target_language.id && (list[i].resource.id === "udb" || list[i].resource.id === "reg")) {
-                                secondmeta = list[i];
+                            if (list[i].project.id === projectMeta.project.id &&
+                                list[i].target_language.id === projectMeta.target_language.id &&
+                                (list[i].resource.id === "udb" || list[i].resource.id === "reg")
+                            ) {
+                                secondMeta = list[i];
                             }
                         }
                     }
-                    if (secondmeta) {
-                        App.projectsManager.loadTargetTranslation(secondmeta)
-                            .then(function (secondtranslation) {
-                                mythis.set('currentproject.rawdata.second', secondtranslation);
-                                loadwords();
+                    if (secondMeta) {
+                        App.projectsManager.loadTargetTranslation(secondMeta)
+                            .then(function (secondTranslation) {
+                                myThis.set('currentproject.rawdata.second', secondTranslation);
+                                loadWords();
                             });
                     } else {
-                        mythis.set('currentproject.rawdata.second', {});
-                        loadwords();
+                        myThis.set('currentproject.rawdata.second', {});
+                        loadWords();
                     }
                 } else {
-                    mythis.set('currentproject.rawdata.second', {});
-                    loadwords();
+                    myThis.set('currentproject.rawdata.second', {});
+                    loadWords();
                 }
             };
 
-            mythis.set('options', {});
-            mythis.set('options.body', mythis.translate("loading_project"));
-            mythis.set('options.loading', true);
-            mythis.fire('iron-signal', {name: 'openloading'});
+            myThis.set('options', {});
+            myThis.set('options.body', myThis.translate("loading_project"));
+            myThis.set('options.loading', true);
+            myThis.fire('iron-signal', {name: 'openloading'});
 
             setTimeout(function() {
-                mythis.set('currentproject.projectmeta', projectmeta);
-                mythis.set('currentproject.statedata', {});
-                mythis.set('currentproject.rawdata', {});
-                mythis.set('currentproject.conflicts', 0);
-                mythis.fire('iron-signal', {name: 'updatebemode'});
+                myThis.set('currentproject.projectmeta', projectMeta);
+                myThis.set('currentproject.statedata', {});
+                myThis.set('currentproject.rawdata', {});
+                myThis.set('currentproject.conflicts', 0);
+                myThis.fire('iron-signal', {name: 'updatebemode'});
                 review.closesearch();
-                mythis.retrievesource();
+                myThis.retrievesource();
                 if (nav === "translate") {
-                    mythis.route = "translate";
+                    myThis.route = "translate";
                 }
                 setTimeout(function() {
-                    return App.projectsManager.loadTargetTranslation(projectmeta)
+                    return App.projectsManager.loadTargetTranslation(projectMeta)
                         .then(function (translation) {
-                            mythis.set('currentproject.rawdata.main', translation);
-                            if (projectmeta.type.id === "ta") {
-                                throw mythis.translate("translation_academy_projects_error");
+                            myThis.set('currentproject.rawdata.main', translation);
+                            if (projectMeta.type.id === "ta") {
+                                throw myThis.translate("translation_academy_projects_error");
                             }
-                            var source = projectmeta.source_translations[projectmeta.currentsource];
+                            const source = projectMeta.source_translations[projectMeta.currentsource];
 
                             if (source) {
-                                return App.dataManager.activateProjectContainers(source.language_id, projectmeta.project.id, source.resource_id);
+                                return App.dataManager.activateProjectContainers(
+                                    source.language_id,
+                                    projectMeta.project.id,
+                                    source.resource_id
+                                );
                             } else {
                                 return Promise.resolve(true);
                             }
                         })
                         .then(function () {
-                            loaddata2();
+                            loadData();
                         })
                         .catch(function(err) {
                             App.reporter.logError(err);
-                            let errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("loading_project_error");
+                            let errorMessage = err.data?.message || err.message || err.stderr || myThis.translate("loading_project_error");
                             if (typeof errorMessage !== "string") {
                                 errorMessage = JSON.stringify(errorMessage, null, 2);
                             }
-                            mythis.set('route', 'home');
-                            mythis.set('options.title', mythis.translate("load_project_failed"));
-                            mythis.set('options.body', errorMessage);
-                            mythis.set('options.loading', false);
+                            myThis.set('route', 'home');
+                            myThis.set('options.title', myThis.translate("load_project_failed"));
+                            myThis.set('options.body', errorMessage);
+                            myThis.set('options.loading', false);
                         });
                 }, 500);
             }, 500);
@@ -976,7 +1007,7 @@
                 })
                 .then(function (translation) {
                     mythis.set('currentproject.rawdata.main', translation);
-                    mythis.createchunks("reload", full);
+                    mythis.createChunks("reload", full);
                 });
         },
 
@@ -984,7 +1015,7 @@
             if (this.saveoptions.chunks.indexOf(data.chunk.index) < 0) {
                 this.push('saveoptions.chunks', data.chunk.index);
             }
-            this.createchapters();
+            this.createChapters();
         },
 
         savemanifest: function () {
@@ -1017,29 +1048,29 @@
             mythis.changesources(sources, selected);
 
             setTimeout(function() {
-                mythis.createchunks(nav, full);
+                mythis.createChunks(nav, full);
             }, 5000);
         },
 
-        createchunks: function (nav, full) {
-            var projectmeta = this.currentproject.projectmeta;
-            var selected = projectmeta.currentsource;
-            if (selected === null || selected === undefined || !projectmeta.source_translations.length) {
+        createChunks: function (nav, full) {
+            const projectMeta = this.currentproject.projectmeta;
+            let selected = projectMeta.currentsource;
+            if (selected === null || selected === undefined || !projectMeta.source_translations.length) {
                 this.finishLoading(nav, full);
                 return;
             }
-            if (selected >= projectmeta.source_translations.length) {
-                selected = projectmeta.source_translations.length -1;
+            if (selected >= projectMeta.source_translations.length) {
+                selected = projectMeta.source_translations.length -1;
             }
-            var source = projectmeta.source_translations[selected];
-            var container = source.language_id + "_" + source.project_id + "_" + source.resource_id;
-            var frames = App.dataManager.getContainerData(container);
-            var notes = App.dataManager.getSourceNotes(source);
-            var questions = App.dataManager.getSourceQuestions(source);
-            var udb = App.dataManager.getSourceUdb(source);
-            var wordlist = App.dataManager.getSourceWords(source);
-            var chunkarray = [];
-            var title = "";
+            const source = projectMeta.source_translations[selected];
+            const container = source.language_id + "_" + source.project_id + "_" + source.resource_id;
+            const frames = App.dataManager.getContainerData(container);
+            const notes = App.dataManager.getSourceNotes(source);
+            const questions = App.dataManager.getSourceQuestions(source);
+            const udb = App.dataManager.getSourceUdb(source);
+            const wordlist = App.dataManager.getSourceWords(source);
+            const chunkArray = [];
+            let title = "";
 
             if (!frames.length) {
                 this.invalidSource(nav, full);
@@ -1048,100 +1079,121 @@
 
             this.set('currentproject.conflicts', 0);
 
-            for (var i = 0; i < frames.length; i++) {
+            for (let i = 0; i < frames.length; i++) {
                 if (frames[i].chunk === "title") {
                     title = frames[i].content;
                 }
 
-                var sourcedata = App.renderer.convertVerseMarkers(frames[i].content);
-                var resources = this.getFrameResources(source.language_id, frames[i], notes, questions, udb, wordlist, sourcedata.verses);
-                var chunkmeta = this.createFrameMeta(frames[i], projectmeta, sourcedata.verses, title);
-                var chunk = this.getFrameData(chunkmeta, projectmeta);
-                var sourcecontent = App.renderer.convertNoteMarkers(sourcedata.text);
-                sourcecontent = App.renderer.removeParaTags(sourcecontent);
-                sourcecontent = App.renderer.removeCharTags(sourcecontent);
-                chunk.srccontent = App.renderer.renderSuperscriptVerses(sourcecontent);
+                const sourceData = App.renderer.convertVerseMarkers(frames[i].content);
+                const resources = this.getFrameResources(
+                    source.language_id,
+                    frames[i],
+                    notes,
+                    questions,
+                    udb,
+                    wordlist,
+                    sourceData.verses
+                );
+                const chunkMeta = this.createFrameMeta(frames[i], projectMeta, sourceData.verses, title);
+                const chunk = this.getFrameData(chunkMeta, projectMeta);
+
+                const rawsourcecontent = sourceData.text;
+                let sourceContent = App.renderer.convertNoteMarkers(rawsourcecontent);
+                sourceContent = App.renderer.removeParaTags(sourceContent);
+                sourceContent = App.renderer.removeCharTags(sourceContent);
+
+                chunk.rawsourcecontent = rawsourcecontent;
+                chunk.srccontent = App.renderer.renderSuperscriptVerses(sourceContent);
                 chunk.wordcontent = "";
                 chunk.resources = resources;
                 chunk.index = i;
-                chunkarray.push(chunk);
+
+                chunkArray.push(chunk);
             }
-            this.set('currentproject.chunks', chunkarray);
-            this.createchapters();
+            this.set('currentproject.chunks', chunkArray);
+            this.createChapters();
             this.finishLoading(nav, full);
         },
 
         finishLoading: function (nav, full) {
-            var mythis = this;
+            const myThis = this;
 
             if (nav === "translate") {
-                mythis.setmodestate();
-                mythis.checksources();
-                mythis.starttimers();
+                myThis.setmodestate();
+                myThis.checksources();
+                myThis.starttimers();
             } else if (nav === "review") {
-                mythis.goreview();
+                myThis.goreview();
             } else if (nav === "print") {
-                mythis.fire('iron-signal', {name: 'closeloading'});
+                myThis.fire('iron-signal', {name: 'closeloading'});
                 setTimeout(function() {
-                    mythis.fire('openprint');
+                    myThis.fire('openprint');
                 }, 500);
             } else if (nav === "export") {
-                mythis.fire('iron-signal', {name: 'closeloading'});
+                myThis.fire('iron-signal', {name: 'closeloading'});
                 setTimeout(function() {
-                    mythis.fire('exportusfm');
+                    myThis.fire('exportusfm');
                 }, 500);
             } else if (nav === "reload") {
                 if (!full) {
-                    mythis.fire('iron-signal', {name: 'closeloading'});
+                    myThis.fire('iron-signal', {name: 'closeloading'});
                 }
-                mythis.forceResize();
-                mythis.setlocation();
-                mythis.fire('iron-signal', {name: 'passivesearch'});
+                myThis.forceResize();
+                myThis.setlocation();
+                myThis.fire('iron-signal', {name: 'passivesearch'});
                 if (full) {
-                    mythis.checksources();
+                    myThis.checksources();
                 }
             }
         },
 
-        createchapters: function () {
-            var projectmeta = this.currentproject.projectmeta;
-            var current = projectmeta.currentsource;
-            if (current === null || current === undefined || projectmeta.project_type_class !== "standard") {
+        createChapters: function () {
+            const projectMeta = this.currentproject.projectmeta;
+            const current = projectMeta.currentsource;
+            if (current === null || current === undefined || projectMeta.project_type_class !== "standard") {
                 return;
             }
-            var chunks = this.currentproject.chunks;
-            var mythis = this;
-            var chapters = [];
+            const chunks = this.currentproject.chunks;
+            const myThis = this;
+            const chapters = [];
 
             _.forEach(_.groupBy(chunks, function(chunk) {
                 return chunk.chunkmeta.chapter;
             }), function (data, chap) {
-                var chapcomplete = true;
-                var conflicts = false;
-                var transcontent = "";
-                var srccontent = "";
-                var chaptermeta = {};
+                let chapComplete = true;
+                let conflicts = false;
+                let transContent = "";
+                let srcContent = "";
+                let chapterMeta = {};
 
                 _.forEach(data, function (chunk) {
                     if (chunk.chunkmeta.frame > 0) {
                         if (!chunk.completed) {
-                            chapcomplete = false;
+                            chapComplete = false;
                         }
                         if (chunk.conflicts.exists) {
                             conflicts = true;
                         }
-                        transcontent += chunk.transcontent + " ";
-                        srccontent += chunk.srccontent + " ";
-                        chaptermeta = chunk.chunkmeta;
+                        transContent += chunk.transcontent + " ";
+                        srcContent += chunk.srccontent + " ";
+                        chapterMeta = chunk.chunkmeta;
                     }
                 });
-                var statedata = mythis.currentproject.statedata[chaptermeta.chapterid];
-                if (!statedata) {
-                    statedata = {read: App.configurator.getUserSetting('bemode')};
-                    mythis.currentproject.statedata[chaptermeta.chapterid] = statedata;
+                let stateData = myThis.currentproject.statedata[chapterMeta.chapterid];
+                if (!stateData) {
+                    stateData = {read: App.configurator.getUserSetting('bemode')};
+                    myThis.currentproject.statedata[chapterMeta.chapterid] = stateData;
                 }
-                if (chaptermeta.chapter > 0) {
-                    chapters.push({completed: chapcomplete, conflicts: conflicts, transcontent: transcontent, srccontent: srccontent, projectmeta: _.cloneDeep(projectmeta), chaptermeta: chaptermeta, state: statedata});
+                if (chapterMeta.chapter > 0) {
+                    chapters.push({
+                        completed: chapComplete,
+                        conflicts: conflicts,
+                        transcontent: transContent,
+                        srccontent: srcContent,
+                        projectmeta: _.cloneDeep(projectMeta),
+                        chaptermeta: chapterMeta,
+                        state: stateData
+                    });
                 }
             });
             this.set('currentproject.chapters', chapters);
@@ -1337,30 +1389,31 @@
             };
         },
 
-        getFrameData: function (chunkmeta, projectmeta) {
-            var typeclass = projectmeta.project_type_class;
-            var complexid = chunkmeta.chapterid + '-' + chunkmeta.frameid;
-            var verses = chunkmeta.verses;
-            var maindata = this.currentproject.rawdata.main[complexid];
-            var seconddata = this.currentproject.rawdata.second[complexid];
-            var statedata = this.currentproject.statedata[complexid];
-            var completed = projectmeta.finished_chunks.indexOf(complexid) >= 0;
-            var transcontent = "";
-            var helpscontent = [];
-            var conflicts = {exists: false};
+        getFrameData: function (chunkMeta, projectMeta) {
+            let i;
+            const typeClass = projectMeta.project_type_class;
+            const complexId = chunkMeta.chapterid + '-' + chunkMeta.frameid;
+            const verses = chunkMeta.verses;
+            const mainData = this.currentproject.rawdata.main[complexId];
+            const secondData = this.currentproject.rawdata.second[complexId];
+            let stateData = this.currentproject.statedata[complexId];
+            const completed = projectMeta.finished_chunks.indexOf(complexId) >= 0;
+            let transContent = "";
+            let helpsContent = [];
+            let conflicts = { exists: false };
 
-            if (typeclass === "extant") {
-                helpscontent = [{title: "", body: ""}];
+            if (typeClass === "extant") {
+                helpsContent = [{title: "", body: ""}];
             }
 
-            if (maindata) {
-                if (typeclass === "standard") {
-                    transcontent = maindata.transcontent;
-                    conflicts = App.renderer.parseConflicts(App.renderer.replaceConflictCode(transcontent));
+            if (mainData) {
+                if (typeClass === "standard") {
+                    transContent = mainData.transcontent;
+                    conflicts = App.renderer.parseConflicts(App.renderer.replaceConflictCode(transContent));
                     if (conflicts.exists) {
                         this.set('currentproject.conflicts', this.currentproject.conflicts + 1);
 
-                        for (var i = 0; i < conflicts.array.length; i++) {
+                        for (i = 0; i < conflicts.array.length; i++) {
                             conflicts.array[i] = App.renderer.convertVerseMarkers(conflicts.array[i]).text;
                             conflicts.array[i] = App.renderer.migrateMarkers(conflicts.array[i]);
                             conflicts.array[i] = App.renderer.removeChapterMarkers(conflicts.array[i]);
@@ -1368,17 +1421,21 @@
                             conflicts.array[i] = App.renderer.validateFootnotes(conflicts.array[i]);
                         }
                     } else {
-                        transcontent = App.renderer.convertVerseMarkers(transcontent).text;
-                        transcontent = App.renderer.migrateMarkers(transcontent);
-                        transcontent = App.renderer.removeChapterMarkers(transcontent);
-                        transcontent = App.renderer.validateVerseMarkers(transcontent, verses);
-                        transcontent = App.renderer.validateFootnotes(transcontent);
+                        transContent = App.renderer.convertVerseMarkers(transContent).text;
+                        transContent = App.renderer.migrateMarkers(transContent);
+                        transContent = App.renderer.removeChapterMarkers(transContent);
+                        transContent = App.renderer.validateVerseMarkers(transContent, verses);
+                        transContent = App.renderer.validateFootnotes(transContent);
                     }
                 } else {
-                    conflicts = App.renderer.parseConflicts(App.renderer.consolidateHelpsConflict(App.renderer.replaceConflictCode(maindata.helpscontent)));
+                    conflicts = App.renderer.parseConflicts(
+                        App.renderer.consolidateHelpsConflict(
+                            App.renderer.replaceConflictCode(mainData.helpscontent)
+                        )
+                    );
                     if (conflicts.exists) {
                         this.set('currentproject.conflicts', this.currentproject.conflicts + 1);
-                        helpscontent = [{title: "Dummy Data", body: "Dummy Data"}];
+                        helpsContent = [{title: "Dummy Data", body: "Dummy Data"}];
 
                         for (i = 0; i < conflicts.array.length; i++) {
                             if (conflicts.array[i] === "Conflict Parsing Error") {
@@ -1392,23 +1449,31 @@
                         }
                     } else {
                         try {
-                            helpscontent = JSON.parse(maindata.helpscontent);
+                            helpsContent = JSON.parse(mainData.helpscontent);
                         } catch (e) {
-                            helpscontent = [{title: "Data Parsing Error", body: "Data Parsing Error"}];
+                            helpsContent = [{title: "Data Parsing Error", body: "Data Parsing Error"}];
                         }
                     }
                 }
             }
-            if (seconddata && typeclass === "helps") {
-                transcontent = seconddata.transcontent;
-                transcontent = App.renderer.migrateMarkers(transcontent);
-                transcontent = App.renderer.removeChapterMarkers(transcontent);
+            if (secondData && typeClass === "helps") {
+                transContent = secondData.transcontent;
+                transContent = App.renderer.migrateMarkers(transContent);
+                transContent = App.renderer.removeChapterMarkers(transContent);
             }
-            if (!statedata) {
-                statedata = {chunk: true, review: true, resource: 0};
-                this.currentproject.statedata[complexid] = statedata;
+            if (!stateData) {
+                stateData = {chunk: true, review: true, resource: 0};
+                this.currentproject.statedata[complexId] = stateData;
             }
-            return {projectmeta: _.cloneDeep(projectmeta), chunkmeta: chunkmeta, transcontent: transcontent, helpscontent: helpscontent, conflicts: conflicts, completed: completed, state: statedata};
+            return {
+                projectmeta: _.cloneDeep(projectMeta),
+                chunkmeta: chunkMeta,
+                transcontent: transContent,
+                helpscontent: helpsContent,
+                conflicts: conflicts,
+                completed: completed,
+                state: stateData
+            };
         },
 
         navigate: function () {

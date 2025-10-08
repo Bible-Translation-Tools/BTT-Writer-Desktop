@@ -28,6 +28,6 @@
     "freeze": true,
     "nonew": true,
     "singleGroups": true,
-    "node": true,
-    "predef": ["App"]
+    "predef": ["App"],
+    "esversion": 11
 }

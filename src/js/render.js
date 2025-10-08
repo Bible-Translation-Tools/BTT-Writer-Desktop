@@ -53,17 +53,13 @@ function Renderer() {
 
         removeParaTags: function (text) {
             const test = new RegExp(/<\/?para[^<>]*>/g);
-
             text = text.replace(test, "");
-
             return text.trim();
         },
 
         removeCharTags: function (text) {
             const test = new RegExp(/<\/?char[^<>]*>/g);
-
             text = text.replace(test, "");
-
             return text.trim();
         },
 
@@ -144,54 +140,54 @@ function Renderer() {
         },
 
         parseConflicts: function (text) {
-            const conflicttest = new RegExp(/([^<>]*)(<S>)([^<>]*)(<M>)([^<>]*)(<E>)([^<>]*)/);
-            const optiontest = new RegExp(/(@s@)([^]+?)(@e@)/);
-            const confirmtest = new RegExp(/<([SME])>/);
-            const startmarker = "@s@";
-            const endmarker = "@e@";
+            const conflictTest = new RegExp(/([^<>]*)(<S>)([^<>]*)(<M>)([^<>]*)(<E>)([^<>]*)/);
+            const optionTest = new RegExp(/(@s@)([^]+?)(@e@)/);
+            const confirmTest = new RegExp(/<([SME])>/);
+            const startMarker = "@s@";
+            const endMarker = "@e@";
             let exists = false;
-            let conarray = [];
+            let conArray = [];
 
-            while (conflicttest.test(text)) {
-                var pieces = conflicttest.exec(text);
+            while (conflictTest.test(text)) {
+                const pieces = conflictTest.exec(text);
 
-                if (!optiontest.test(pieces[3])) {
-                    pieces[3] = startmarker + pieces[3] + endmarker;
+                if (!optionTest.test(pieces[3])) {
+                    pieces[3] = startMarker + pieces[3] + endMarker;
                 }
-                if (!optiontest.test(pieces[5])) {
-                    pieces[5] = startmarker + pieces[5] + endmarker;
+                if (!optionTest.test(pieces[5])) {
+                    pieces[5] = startMarker + pieces[5] + endMarker;
                 }
 
-                var newcontent = pieces[3] + pieces[5];
+                let newContent = pieces[3] + pieces[5];
 
                 if (pieces[1]) {
-                    newcontent = newcontent.replace(/@s@/g, startmarker + pieces[1]);
+                    newContent = newContent.replace(/@s@/g, startMarker + pieces[1]);
                 }
                 if (pieces[7]) {
-                    newcontent = newcontent.replace(/@e@/g, pieces[7] + endmarker);
+                    newContent = newContent.replace(/@e@/g, pieces[7] + endMarker);
                 }
 
-                text = text.replace(conflicttest, newcontent);
+                text = text.replace(conflictTest, newContent);
                 exists = true;
             }
 
             if (exists) {
-                while (optiontest.test(text)) {
-                    const option = optiontest.exec(text)[2];
+                while (optionTest.test(text)) {
+                    const option = optionTest.exec(text)[2];
 
-                    conarray.push(option.trim());
-                    text = text.replace(optiontest, "");
+                    conArray.push(option.trim());
+                    text = text.replace(optionTest, "");
                 }
 
-                conarray = _.uniq(conarray);
+                conArray = _.uniq(conArray);
             }
 
-            if (confirmtest.test(text)) {
+            if (confirmTest.test(text)) {
                 exists = true;
-                conarray.push("Conflict Parsing Error");
+                conArray.push("Conflict Parsing Error");
             }
 
-            return {exists: exists, array: conarray};
+            return {exists: exists, array: conArray};
         },
 
         consolidateHelpsConflict: function (text) {
@@ -499,7 +495,7 @@ function Renderer() {
                 const lineDiv = document.createElement("div");
                 lineDiv.className = `style-scope ${module}`;
 
-                if (linearray[j] === "") {
+                if (linearray[j].trim() === "") {
                     // Add non-breaking space for empty lines
                     lineDiv.innerHTML = "&nbsp;";
                 } else {
@@ -709,6 +705,16 @@ function Renderer() {
             }
 
             return walk(doc.body).trim();
+        },
+
+        compareSourceTargetParagraphs: function (srcText, targetText) {
+            const srcParaTest = new RegExp(/<para\b/gi);
+            const srcParagraphs = srcText.match(srcParaTest)?.length ?? 0;
+
+            const targetParaTest = new RegExp(/\\p\b/g);
+            const targetParagraphs = targetText.match(targetParaTest)?.length ?? 0;
+
+            return { src: srcParagraphs, target: targetParagraphs };
         },
 
         translate: function (key, ...args) {

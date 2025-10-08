@@ -276,14 +276,14 @@
         },
 
         checkdone: function () {
-            var mythis = this;
-            var completed = this.chunk.completed;
-            var index = this.chunk.index;
-            var toggle = this.$.toggle;
+            const myThis = this;
+            const completed = this.chunk.completed;
+            const index = this.chunk.index;
+            const toggle = this.$.toggle;
 
             if (toggle.pressed) {
                 setTimeout(function() {
-                    mythis.checkdone();
+                    myThis.checkdone();
                 }, 100);
                 return;
             }
@@ -291,16 +291,29 @@
             toggle.checked = false;
 
             if (!completed) {
-                if (mythis.chunk.transcontent === "") {
-                    mythis.fire('iron-signal', {name: 'opennodata'});
+                let paragraphCount = App.renderer.compareSourceTargetParagraphs(
+                    myThis.chunk.rawsourcecontent,
+                    myThis.chunk.transcontent
+                );
+
+                if (myThis.chunk.transcontent === "") {
+                    myThis.fire('iron-signal', {name: 'opennodata'});
+                } else if (paragraphCount.target >= (paragraphCount.src + 3)) {
+                    myThis.fire('iron-signal', {
+                        name: 'openparagrapherror',
+                        data: {
+                            src: paragraphCount.src,
+                            target: paragraphCount.target,
+                        }
+                    });
                 } else {
-                    mythis.fire('iron-signal', {name: 'openchecklist', data: {index: index}});
+                    myThis.fire('iron-signal', {name: 'openchecklist', data: {index: index}});
                 }
             } else {
-                mythis.set('chunk.completed', false);
+                myThis.set('chunk.completed', false);
                 setTimeout(function() {
-                    mythis.fire('setheight');
-                    mythis.fire('iron-signal', {name: 'updatecompletion'});
+                    myThis.fire('setheight');
+                    myThis.fire('iron-signal', {name: 'updatecompletion'});
                 }, 200);
             }
         },
