@@ -57,7 +57,7 @@ test:
 
 clean:
 	# Removes volume
-	docker volume rm $(VOLUME_LABEL)
+	docker volume rm $(VOLUME_LABEL) || true
 
 release:
 	# Creates executables
