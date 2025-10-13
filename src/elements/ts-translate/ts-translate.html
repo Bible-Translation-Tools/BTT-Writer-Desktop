@@ -1788,9 +1788,15 @@
             var marked = 0;
             chunks.forEach(function(chunk, index) {
                 if (chunk.transcontent !== "") {
-                    chunk.completed = true;
-                    mythis.fire('iron-signal', {name: 'completechunk', data: {index: index}});
-                    marked++;
+                    let paragraphCount = App.renderer.compareSourceTargetParagraphs(
+                        chunk.rawsourcecontent,
+                        chunk.transcontent
+                    );
+                    if (paragraphCount.target < (paragraphCount.src + 3)) {
+                        chunk.completed = true;
+                        mythis.fire('iron-signal', {name: 'completechunk', data: {index: index}});
+                        marked++;
+                    }
                 }
             });
 
