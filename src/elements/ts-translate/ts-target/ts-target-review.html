@@ -247,6 +247,7 @@
                     parentelement.insertBefore(dragelement, this);
                     mythis.savemarkers();
                     mythis.fire('setheight');
+                    mythis.writeChunk();
                 });
             }
         },
@@ -271,6 +272,7 @@
                 setTimeout(function() {
                     mythis.fire('setheight');
                     mythis.fire('iron-signal', {name: 'updatecompletion'});
+                    mythis.writeChunk();
                 }, 200);
             }
         },
@@ -291,21 +293,8 @@
             toggle.checked = false;
 
             if (!completed) {
-                let paragraphCount = App.renderer.compareSourceTargetParagraphs(
-                    myThis.chunk.rawsourcecontent,
-                    myThis.chunk.transcontent
-                );
-
                 if (myThis.chunk.transcontent === "") {
                     myThis.fire('iron-signal', {name: 'opennodata'});
-                } else if (paragraphCount.target >= (paragraphCount.src + 3)) {
-                    myThis.fire('iron-signal', {
-                        name: 'openparagrapherror',
-                        data: {
-                            src: paragraphCount.src,
-                            target: paragraphCount.target,
-                        }
-                    });
                 } else {
                     myThis.fire('iron-signal', {name: 'openchecklist', data: {index: index}});
                 }
@@ -314,6 +303,7 @@
                 setTimeout(function() {
                     myThis.fire('setheight');
                     myThis.fire('iron-signal', {name: 'updatecompletion'});
+                    myThis.writeChunk();
                 }, 200);
             }
         },
@@ -334,11 +324,17 @@
         },
 
         edit: function () {
-            var id = this.chunk.chunkmeta.chapterid + "-" + this.chunk.chunkmeta.frameid;
+            const id = this.chunk.chunkmeta.chapterid + "-" + this.chunk.chunkmeta.frameid;
             this.set('chunk.state.review', false);
             this.fire('setheight');
             this.fire('iron-signal', {name: 'updatestate', data: {id: id, mode: "review", value: false}});
             this.fire('edit');
+        },
+
+        writeChunk: function () {
+            setTimeout(() => {
+                this.fire('iron-signal', {name: 'writechunk', data: {chunk: this.chunk}});
+            }, 500);
         },
 
         translate: function (key, ...args) {

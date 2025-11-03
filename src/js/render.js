@@ -233,7 +233,7 @@ function Renderer() {
         },
 
         paragraphsToBreaks: function (text) {
-            return text.replace(/\n/g, '<br>').replace(/\\p/g, '<br>');
+            return text.replace(/\n/g, '<br>');
         },
 
         displayConflicts: function (content) {
@@ -600,7 +600,7 @@ function Renderer() {
                     }
                     returnstr = returnstr.trim();
                     if (j !== paragraphs.length-1) {
-                        returnstr += " \\p ";
+                        returnstr += "\n";
                     }
                 }
             }
@@ -686,7 +686,7 @@ function Renderer() {
                     }
                     else if (child.nodeType === Node.ELEMENT_NODE) {
                         if (BLOCK_TAGS.has(child.tagName) && result.length > 0 && !result.endsWith('\n')) {
-                            result += ' \\p ';
+                            result += '\n';
                         }
 
                         if (child.tagName === "TS-TARGET-NOTE-MARKER") {
@@ -695,7 +695,7 @@ function Renderer() {
                                 result += `\\f + \\ft ${noteText} \\f*`;
                             }
                         } else if (child.tagName === 'BR') {
-                            result += ' \\p ';
+                            result += '\n';
                         } else {
                             result += walk(child);
                         }
@@ -705,16 +705,6 @@ function Renderer() {
             }
 
             return walk(doc.body).trim();
-        },
-
-        compareSourceTargetParagraphs: function (srcText, targetText) {
-            const srcParaTest = new RegExp(/<para\b/gi);
-            const srcParagraphs = srcText.match(srcParaTest)?.length ?? 0;
-
-            const targetParaTest = new RegExp(/\\p\b/g);
-            const targetParagraphs = targetText.match(targetParaTest)?.length ?? 0;
-
-            return { src: srcParagraphs, target: targetParagraphs };
         },
 
         translate: function (key, ...args) {

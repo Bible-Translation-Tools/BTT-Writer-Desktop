@@ -234,6 +234,7 @@
             this.set('chunk.state.review', true);
             this.fire('setheight');
             this.fire('iron-signal', {name: 'updatestate', data: {id: id, mode: "review", value: true}});
+            this.writeChunk();
         },
 
         onChange: function (event) {
@@ -318,6 +319,7 @@
             if (note) {
                 note.remove();
                 this.processContent(this.$.textbox.innerHTML);
+                this.writeChunk();
             }
         },
 
@@ -326,6 +328,7 @@
             if (note) {
                 note.setAttribute("text", data.text.replace(/[\n\r\t]/gm, ""));
                 this.processContent(this.$.textbox.innerHTML);
+                this.writeChunk();
             }
         },
 
@@ -377,6 +380,12 @@
                 }
                 offset += len;
             }
+        },
+
+        writeChunk: function () {
+            setTimeout(() => {
+                this.fire('iron-signal', {name: 'writechunk', data: {chunk: this.chunk}});
+            }, 500);
         },
 
         translate: function (key, ...args) {
