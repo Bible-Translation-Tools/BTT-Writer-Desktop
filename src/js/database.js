@@ -535,38 +535,6 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
             }
         },
 
-        getAllTa: function () {
-            var mythis = this;
-            var containers = [
-                "en_ta-intro_vol1",
-                "en_ta-process_vol1",
-                "en_ta-translate_vol1",
-                "en_ta-translate_vol2",
-                "en_ta-checking_vol1",
-                "en_ta-checking_vol2",
-                "en_ta-audio_vol2",
-                "en_ta-gateway_vol3"
-            ];
-            var allchunks = [];
-
-            containers.forEach(function (container) {
-                allchunks.push(mythis.getContainerData(container));
-            });
-
-            allchunks = _.flatten(allchunks);
-
-            allchunks.forEach(function (item) {
-                if (item.chunk === "title") {
-                    item.content = "# " + item.content;
-                }
-                if (item.chunk === "sub-title") {
-                    item.content = "## " + item.content;
-                }
-            });
-
-            return allchunks;
-        },
-
         translate: function (key, ...args) {
             return App.locale.translate(key, ...args);
         },
