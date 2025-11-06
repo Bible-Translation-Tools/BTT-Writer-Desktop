@@ -92,20 +92,19 @@
             padding: 0;
         }
 
-        #nodatapopup, #paragraphError {
+        #nodatapopup {
             text-align: center;
             color: var(--primary-text-color);
         }
 
-        #nodatapopup .buttons, #paragraphError .buttons {
+        #nodatapopup .buttons {
             display: flex;
             justify-content: center;
             color: var(--secondary-text-color);
             gap: 20px;
         }
 
-        #nodatapopup .buttons paper-button:hover,
-        #paragraphError .buttons paper-button:hover {
+        #nodatapopup .buttons paper-button:hover {
             color: var(--accent-color);
         }
 
@@ -256,14 +255,6 @@
             </div>
         </paper-dialog>
 
-        <paper-dialog id="paragraphError" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-            <h2>{{translate("too_many_paragraphs")}}</h2>
-            <div id="paraError"></div>
-            <div class="buttons">
-                <paper-button dialog-dismiss>{{translate("ok")}}</paper-button>
-            </div>
-        </paper-dialog>
-
         <paper-dialog id="note" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
             <div id="noteheader">
                 <h2>{{translate("footnote")}}</h2>
@@ -310,7 +301,6 @@
         <iron-signals on-iron-signal-openchecklist="openchecklist"></iron-signals>
         <iron-signals on-iron-signal-openedit="openedit"></iron-signals>
         <iron-signals on-iron-signal-opennodata="opennodata"></iron-signals>
-        <iron-signals on-iron-signal-openparagrapherror="openParagraphError"></iron-signals>
         <iron-signals on-iron-signal-opennote="opennote"></iron-signals>
         <iron-signals on-iron-signal-opennoteeditor="opennoteeditor"></iron-signals>
         <iron-signals on-iron-signal-opensource="opensource"></iron-signals>
@@ -321,6 +311,7 @@
         <iron-signals on-iron-signal-reset="reset"></iron-signals>
         <iron-signals on-iron-signal-saveclose="saveAndClose"></iron-signals>
         <iron-signals on-iron-signal-saveall="saveAll"></iron-signals>
+        <iron-signals on-iron-signal-writechunk="writeChunk"></iron-signals>
         <iron-signals on-iron-signal-gotoreview="goToReview"></iron-signals>
         <iron-signals on-iron-signal-resolveconflict="resolveConflict"></iron-signals>
         <iron-signals on-iron-signal-translateright="setrightanimation"></iron-signals>
@@ -459,33 +450,33 @@
         },
 
         saveAll: function () {
-            var mythis = this;
-            var projectmeta = mythis.currentproject.projectmeta;
-            var allchunks = mythis.currentproject.chunks;
-            var changes = false;
-            var savechunks = mythis.saveoptions.chunks;
+            const myThis = this;
+            const projectMeta = myThis.currentproject.projectmeta;
+            const allChunks = myThis.currentproject.chunks;
+            let changes = false;
+            const saveChunks = myThis.saveoptions.chunks;
 
-            var saveChunk = function (data) {
-                var chunk = allchunks[data];
-                return App.projectsManager.saveTargetChunk(chunk, projectmeta)
+            const saveChunk = function (data) {
+                const chunk = allChunks[data];
+                return App.projectsManager.saveTargetChunk(chunk, projectMeta)
                     .catch(function (err) {
-                        App.reporter.logError(err, mythis.translate("saving_chunk_error"));
+                        App.reporter.logError(err, myThis.translate("saving_chunk_error"));
                     });
             };
 
-            mythis.set('message', mythis.translate("checking_changes"));
+            myThis.set('message', myThis.translate("checking_changes"));
 
             return Promise.resolve(true)
                 .then(function () {
-                    if (savechunks.length) {
+                    if (saveChunks.length) {
                         changes = true;
-                        mythis.addcontributor();
-                        return Promise.all(_.map(savechunks, saveChunk))
+                        myThis.addcontributor();
+                        return Promise.all(_.map(saveChunks, saveChunk))
                             .then(function () {
-                                mythis.set('saveoptions.chunks', []);
-                                return App.projectsManager.cleanProject(allchunks, projectmeta)
+                                myThis.set('saveoptions.chunks', []);
+                                return App.projectsManager.cleanProject(allChunks, projectMeta)
                                     .catch(function (err) {
-                                        App.reporter.logError(err, mythis.translate("clean_project_error"));
+                                        App.reporter.logError(err, myThis.translate("clean_project_error"));
                                     });
                             });
                     } else {
@@ -493,15 +484,15 @@
                     }
                 })
                 .then(function () {
-                    if (mythis.saveoptions.manifest) {
+                    if (myThis.saveoptions.manifest) {
                         changes = true;
-                        return App.projectsManager.saveTargetManifest(projectmeta)
+                        return App.projectsManager.saveTargetManifest(projectMeta)
                             .then(function () {
-                                mythis.set('saveoptions.manifest', false);
+                                myThis.set('saveoptions.manifest', false);
                                 return Promise.resolve(true);
                             })
                             .catch(function (err) {
-                                App.reporter.logError(err, mythis.translate("save_manifest_error"));
+                                App.reporter.logError(err, myThis.translate("save_manifest_error"));
                             });
                     } else {
                         return Promise.resolve(true);
@@ -509,33 +500,33 @@
                 })
                 .then(function () {
                     if (changes) {
-                        return App.projectsManager.commitProject(projectmeta, mythis.currentuser)
+                        return App.projectsManager.commitProject(projectMeta, myThis.currentuser)
                             .catch(function (err) {
-                                App.reporter.logError(err, mythis.translate("commit_project_error"));
+                                App.reporter.logError(err, myThis.translate("commit_project_error"));
                             });
                     } else {
                         return Promise.resolve(true);
                     }
                 })
                 .then(function () {
-                    if (mythis.saveoptions.backup) {
-                        return App.exportManager.autoBackupTranslation(projectmeta)
+                    if (myThis.saveoptions.backup) {
+                        return App.exportManager.autoBackupTranslation(projectMeta)
                             .then(function () {
-                                mythis.set('saveoptions.backup', false);
+                                myThis.set('saveoptions.backup', false);
                                 return Promise.resolve(true);
                             })
                             .catch(function (err) {
-                                let errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("backup_translation_error");
+                                let errorMessage = err.data?.message || err.message || err.stderr || myThis.translate("backup_translation_error");
                                 if (typeof err !== "string") {
                                     errorMessage = JSON.stringify(errorMessage, null, 2);
                                 }
-                                mythis.set('options', {});
-                                mythis.set('options.title', mythis.translate("autobackup_failed"));
-                                mythis.set('options.body', errorMessage);
-                                mythis.set('options.loading', false);
-                                mythis.fire('iron-signal', {name: 'openloading'});
-                                mythis.set('saveoptions.backup', false);
-                                App.reporter.logError(err, mythis.translate("backup_translation_error"));
+                                myThis.set('options', {});
+                                myThis.set('options.title', myThis.translate("autobackup_failed"));
+                                myThis.set('options.body', errorMessage);
+                                myThis.set('options.loading', false);
+                                myThis.fire('iron-signal', {name: 'openloading'});
+                                myThis.set('saveoptions.backup', false);
+                                App.reporter.logError(err, myThis.translate("backup_translation_error"));
                             });
                     } else {
                         return Promise.resolve(true);
@@ -543,15 +534,15 @@
                 })
                 .then(function () {
                     if (changes) {
-                        mythis.set('message', mythis.translate("changes_saved"));
+                        myThis.set('message', myThis.translate("changes_saved"));
                     } else {
-                        mythis.set('message', mythis.translate("no_changes_found"));
+                        myThis.set('message', myThis.translate("no_changes_found"));
                     }
                     return Promise.resolve(true);
                 })
                 .then(function () {
                     setTimeout(function() {
-                        mythis.set('message', mythis.translate("idle"));
+                        myThis.set('message', myThis.translate("idle"));
                     }, 1000);
                     return Promise.resolve(true);
                 });
@@ -568,16 +559,6 @@
 
         opennodata: function () {
             this.$.nodatapopup.open();
-        },
-
-        openParagraphError: function (event, data) {
-            this.$.paragraphError.open();
-            let text = this.translate("too_many_paragraphs_error", data.src, data.target);
-            text += "<br><br>";
-            text += this.translate("src_paragraphs_count", data.src);
-            text += "<br>";
-            text += this.translate("target_paragraphs_count", data.target);
-            this.$.paraError.innerHTML = text;
         },
 
         opennote: function (event, data) {
@@ -1016,6 +997,17 @@
                 this.push('saveoptions.chunks', data.chunk.index);
             }
             this.createChapters();
+        },
+
+        writeChunk: function (event, data) {
+            const meta = this.currentproject.projectmeta;
+            App.projectsManager.saveTargetChunk(data.chunk, meta)
+                .then(function () {
+                    App.projectsManager.saveTargetManifest(meta)
+                })
+                .catch(function (err) {
+                    App.reporter.logError(err, this.translate("saving_chunk_error"));
+                });
         },
 
         savemanifest: function () {
@@ -1788,15 +1780,9 @@
             var marked = 0;
             chunks.forEach(function(chunk, index) {
                 if (chunk.transcontent !== "") {
-                    let paragraphCount = App.renderer.compareSourceTargetParagraphs(
-                        chunk.rawsourcecontent,
-                        chunk.transcontent
-                    );
-                    if (paragraphCount.target < (paragraphCount.src + 3)) {
-                        chunk.completed = true;
-                        mythis.fire('iron-signal', {name: 'completechunk', data: {index: index}});
-                        marked++;
-                    }
+                    chunk.completed = true;
+                    mythis.fire('iron-signal', {name: 'completechunk', data: {index: index}});
+                    marked++;
                 }
             });
 
