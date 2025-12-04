@@ -248,16 +248,14 @@
 
         onPaste: function (event) {
             event.preventDefault();
-            const content = (event.clipboardData || window.clipboardData).getData("text");
-            this.$.textbox.innerHTML = this.$.textbox.innerHTML + content;
-            this.processContent(this.$.textbox.innerHTML);
+            const content = (event.clipboardData || window.clipboardData).getData("text/plain");
+            this.insertExternalText(content);
         },
 
         onDrop: function (event) {
             event.preventDefault();
-            const content = event.dataTransfer.getData('text');
-            this.$.textbox.innerHTML = this.$.textbox.innerHTML + content;
-            this.processContent(this.$.textbox.innerHTML);
+            const content = event.dataTransfer.getData("text/plain");
+            this.insertExternalText(content);
         },
 
         onInput: function (event) {
@@ -283,8 +281,9 @@
 
             this.saveChunk(result);
 
-            this.$.textbox.innerHTML = App.renderer.markersToFootnotes(result, this.chunk.index);
-            this.$.textbox.innerHTML = App.renderer.paragraphsToBreaks(this.$.textbox.innerHTML);
+            let finalHtml = App.renderer.markersToFootnotes(result, this.chunk.index);
+            finalHtml = App.renderer.paragraphsToBreaks(finalHtml);
+            this.$.textbox.innerHTML = finalHtml;
         },
 
         addNote: function () {
@@ -304,7 +303,9 @@
                 this.restoreCaretPosition();
                 this.insertTextAtCaret(` \\f + \\ft ${data.text.replace(/[\n\r\t]/gm, "")} \\f* `);
                 this.set('noteeditoropen', false);
+                this.saveCaretPosition();
                 this.processContent(this.$.textbox.innerHTML);
+                this.restoreCaretPosition();
             }, 10);
         },
 
@@ -386,6 +387,26 @@
             setTimeout(() => {
                 this.fire('iron-signal', {name: 'writechunk', data: {chunk: this.chunk}});
             }, 500);
+        },
+
+        insertExternalText: function (text) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            selection.deleteFromDocument();
+
+            const range = selection.getRangeAt(0);
+            const textNode = document.createTextNode(text);
+            range.insertNode(textNode);
+
+            range.setStartAfter(textNode);
+            range.setEndAfter(textNode);
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            this.saveCaretPosition()
+            this.processContent(this.$.textbox.innerHTML);
+            this.restoreCaretPosition()
         },
 
         translate: function (key, ...args) {

@@ -80,30 +80,30 @@ function ImportManager(configurator, migrator, dataManager) {
         },
 
         importFromUSFM: function (filepath, projectmeta) {
-            var mythis = this;
-            var parser = new UsfmParser();
+            const mythis = this;
+            const parser = new UsfmParser();
 
             return parser.load(filepath)
                 .then(function () {
-                    var parsedData = parser.parse();
+                    const parsedData = parser.parse();
 
                     if (JSON.stringify(parsedData) === JSON.stringify({})) {
                         throw new Error(mythis.translate("not_valid_usfm_file"));
                     }
-                    var chunks = [];
-                    var markers = dataManager.getChunkMarkers(projectmeta.project.id);
-                    var lastLabeledChapter = null;
+                    const chunks = [];
+                    const markers = dataManager.getChunkMarkers(projectmeta.project.id);
+                    let lastLabeledChapter = null;
 
-                    for (var i = 0; i < markers.length; i++) {
-                        var frameid = markers[i].verse;
-                        var first = parseInt(frameid);
-                        var chapter = markers[i].chapter;
-                        var isLastChunkOfChapter = !markers[i+1] || markers[i+1].chapter !== chapter;
-                        var last = isLastChunkOfChapter ? Number.MAX_VALUE : parseInt(markers[i+1].verse) - 1;
+                    for (let i = 0; i < markers.length; i++) {
+                        const frameid = markers[i].verse;
+                        const first = parseInt(frameid);
+                        const chapter = markers[i].chapter;
+                        const isLastChunkOfChapter = !markers[i + 1] || markers[i + 1].chapter !== chapter;
+                        const last = isLastChunkOfChapter ? Number.MAX_VALUE : parseInt(markers[i + 1].verse) - 1;
 
                         if (parsedData[chapter]) {
-                            var transcontent = _.chain(parsedData[chapter].verses).filter(function (verse) {
-                                var id = parseInt(verse.id);
+                            const transcontent = _.chain(parsedData[chapter].verses).filter(function (verse) {
+                                const id = parseInt(verse.id);
                                 return id <= last && id >= first;
                             }).map("contents").value().join(" ");
 
@@ -115,9 +115,9 @@ function ImportManager(configurator, migrator, dataManager) {
                                 transcontent: transcontent.trim(),
                                 completed: false
                             });
-                            
+
                             if (parsedData[chapter].verses.title && lastLabeledChapter !== chapter) {
-                                var title = parsedData[chapter].verses.title.contents.trim();
+                                const title = parsedData[chapter].verses.title.contents.trim();
                                 chunks.unshift({
                                     chunkmeta: {
                                         chapterid: chapter,
@@ -157,7 +157,7 @@ function ImportManager(configurator, migrator, dataManager) {
 function UsfmParser () {
     this.contents = [];
 
-    var markerTypes = {
+    const markerTypes = {
         id: {
             regEx: /\\id/,
             hasOptions: false,
@@ -198,11 +198,11 @@ function UsfmParser () {
             hasOptions: false,
             type: "sectionHeading"
         },
-        paragraph: {
-            regEx: /\\p/,
-            hasOptions: false,
-            type: "paragraph"
-        },
+        // paragraph: {
+        //     regEx: /\\p/,
+        //     hasOptions: false,
+        //     type: "paragraph"
+        // },
         tableOfContents: {
             regEx: /\\toc[0-2]*/,
             hasOptions: false,
@@ -210,9 +210,9 @@ function UsfmParser () {
         }
     };
 
-    var getMarker = function (line) {
-        var beginMarker = line.split(" ")[0];
-        for (var type in markerTypes) {
+    const getMarker = function (line) {
+        const beginMarker = line.split(" ")[0];
+        for (const type in markerTypes) {
             if (markerTypes[type].regEx.test(beginMarker)) {
                 return markerTypes[type];
             }
@@ -220,7 +220,7 @@ function UsfmParser () {
         return false;
     };
 
-    var mythis = this;
+    const mythis = this;
 
     return {
         load: function (file) {
@@ -228,7 +228,7 @@ function UsfmParser () {
 
             return new Promise(function (resolve, reject) {
 
-                var lineReader = readline.createInterface({
+                const lineReader = readline.createInterface({
                     input: fs.createReadStream(mythis.file, {encoding: "utf8"})
                 });
 
@@ -244,7 +244,7 @@ function UsfmParser () {
             });
         },
 
-        parse: function(){
+        parse: function() {
             this.getMarkers();
             return this.buildChapters();
         },
@@ -252,13 +252,15 @@ function UsfmParser () {
         getMarkers: function () {
             mythis.markers = [];
             mythis.markerCount = 0;
-            var currentMarker = null;
-            for (var i = 0; i < mythis.contents.length; i++) {
-                var line = mythis.contents[i];
-                var lineArray = line.split(" ");
-                for (var c = 0; c < lineArray.length; c++) {
-                    var section = lineArray[c];
-                    var marker = getMarker(section);
+            let currentMarker = null;
+            for (let i = 0; i < mythis.contents.length; i++) {
+                const line = mythis.contents[i];
+                const lineArray = line.split(" ");
+                let lineStarted = true;
+
+                for (let c = 0; c < lineArray.length; c++) {
+                    const section = lineArray[c];
+                    const marker = getMarker(section);
 
                     if (marker) {
                         mythis.markers[mythis.markerCount] = {
@@ -277,7 +279,8 @@ function UsfmParser () {
                         mythis.markerCount++;
                     } else {
                         if (currentMarker) {
-                            currentMarker.contents += section + " ";
+                            currentMarker.contents += (lineStarted ? "\n" : "") + section + " ";
+                            lineStarted = false;
                         }
                     }
                 }
@@ -286,13 +289,13 @@ function UsfmParser () {
 
         buildChapters: function () {
             mythis.chapters = {};
-            var chap;
-            var chapnum = 0;
-            var lastverse = 100;
-            var globalChapterLabel = null;
-            var localChapterLabel = null;
+            let chap;
+            let chapnum = 0;
+            let lastverse = 100;
+            let globalChapterLabel = null;
+            let localChapterLabel = null;
 
-            var createchapter = function (chapnum) {
+            const createchapter = function (chapnum) {
                 chap = chapnum.toString();
                 if (chap.length === 1) {
                     chap = "0" + chap;
@@ -326,7 +329,7 @@ function UsfmParser () {
                             contents: label
                         };
                     }
-                    
+
                     const thisverse = parseInt(marker.options);
 
                     if (thisverse < lastverse) {
