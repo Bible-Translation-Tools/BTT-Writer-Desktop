@@ -119,9 +119,35 @@ function Renderer() {
             return container.innerHTML;
         },
 
+        renderPoetry: function (text, module) {
+            const bExpression = new RegExp(/\\b/)
+            const qExpression = new RegExp(/\\q(\d+)?([^<]*)/);
+
+            while (bExpression.test(text)) {
+                text = text.replace(bExpression, "<br/>");
+            }
+
+            while (qExpression.test(text)) {
+                const match = qExpression.exec(text);
+                let level = match[1] || "1";
+                const content = match[2] || "";
+
+                if (parseInt(level) > 6) level = "6"
+
+                const div = document.createElement('div');
+                div.className = `style-scope poetry${level} ${module}`;
+                div.innerHTML = content;
+
+                text = text.replace(qExpression, div.outerHTML);
+            }
+
+            return text;
+        },
+
         renderTargetWithVerses: function (text, module) {
             text = this.replaceParagraphs(text);
             text = this.renderParagraphs(text, module);
+            text = this.renderPoetry(text, module);
             text = this.renderSuperscriptVerses(text);
 
             return text;
@@ -256,25 +282,8 @@ function Renderer() {
         renderPrintPreview: function (chunks, options, pagetitle) {
             const mythis = this;
             const module = "ts-print";
-            const startheader = "\<h2 class='style-scope " + module + "'\>";
-            const endheader = "\<\/h2\>";
-            let add = "";
-            if (options.doubleSpace) {
-                add += "double ";
-            }
-            if (options.justify) {
-                add += "justify ";
-            }
-            if (options.newpage) {
-                add += "break ";
-            }
-            const startdiv = "\<div class='style-scope " + add + module + "'\>";
-            const enddiv = "\<\/div\>";
+
             const chapters = [];
-
-            pagetitle = options.pagetitle ? "\<div class='style-scope page-title centered " + module + "' \>" + pagetitle + "\<\/div\>" : "";
-            let text = "\<div id='startnum' class='style-scope " + module + "'\>";
-
             _.forEach(_.groupBy(chunks, function(chunk) {
                 return chunk.chunkmeta.chapter;
             }), function (data, chap) {
@@ -283,6 +292,7 @@ function Renderer() {
 
                 _.forEach(data, function (chunk) {
                     if (chunk.chunkmeta.frameid === "title") {
+                        // Use transcontent if available, otherwise srccontent
                         title = chunk.transcontent || chunk.srccontent;
                     }
                     if (chunk.chunkmeta.frame > 0 && chunk.transcontent) {
@@ -297,19 +307,61 @@ function Renderer() {
                 }
             });
 
-            chapters.forEach(function (chapter) {
-                if (chapter.content) {
-                    if (options.newpage) {
-                        text += pagetitle;
-                    }
-                    text += startheader + chapter.title + endheader;
-                    text += startdiv + mythis.renderTargetWithVerses(chapter.content, module) + enddiv;
+            function createScopedElement(tag, extraClasses = []) {
+                const el = document.createElement(tag);
+                // Add default 'style-scope' and module class
+                el.classList.add("style-scope", module);
+                if (extraClasses.length > 0) {
+                    el.classList.add(...extraClasses);
                 }
+                return el;
+            }
+
+            function createPageTitleEl() {
+                const el = createScopedElement("div", ["page-title", "centered"]);
+                el.textContent = pagetitle || "";
+                return el;
+            }
+
+            const fragment = document.createDocumentFragment();
+
+            // If not in 'newpage' mode, the title sits outside the main container
+            if (!options.newpage && options.pagetitle) {
+                fragment.appendChild(createPageTitleEl());
+            }
+
+            const startNumDiv = createScopedElement("div");
+            startNumDiv.id = "startnum";
+
+            chapters.forEach(function (chapter) {
+                if (!chapter.content) return;
+
+                // If 'newpage' is on, title repeats inside the container before every chapter
+                if (options.newpage && options.pagetitle) {
+                    startNumDiv.appendChild(createPageTitleEl());
+                }
+
+                const header = createScopedElement("h2");
+                // Using innerHTML allows formatting within titles if necessary
+                header.innerHTML = chapter.title;
+                startNumDiv.appendChild(header);
+
+                const contentClasses = [];
+                if (options.doubleSpace) contentClasses.push("double");
+                if (options.justify) contentClasses.push("justify");
+                if (options.newpage) contentClasses.push("break");
+
+                const contentDiv = createScopedElement("div", contentClasses);
+
+                // Render verses content
+                contentDiv.innerHTML = mythis.renderTargetWithVerses(chapter.content, module);
+
+                startNumDiv.appendChild(contentDiv);
             });
 
-            const title = !options.newpage ? pagetitle : "";
+            fragment.appendChild(startNumDiv);
 
-            return title + text + enddiv;
+            return fragment.firstChild.outerHTML;
         },
 
         renderObsPrintPreview: function (chunks, options, imagePath) {
@@ -503,6 +555,7 @@ function Renderer() {
 
                     for (let i = 0; i < wordarray.length; i++) {
                         if (wordarray[i] === "\\v") {
+                            // Verse marker
                             const verse = parseInt(wordarray[i + 1]);
                             if (verses.indexOf(verse) >= 0 && used.indexOf(verse) === -1) {
                                 const marker = document.createElement("ts-verse-marker");
@@ -516,6 +569,7 @@ function Renderer() {
                             }
                             i++;
                         } else if (wordarray[i] === "\\f") {
+                            // Footnote marker
                             let footnote = "";
 
                             for (let k = i; k < wordarray.length; k++) {
@@ -536,7 +590,21 @@ function Renderer() {
                             }
 
                             noteindex++;
+                        } else if ((/\\q(\d+)?/.test(wordarray[i]))) {
+                            // Poetry marker
+                            const match = wordarray[i].match(/\\q(\d+)?/);
+                            let level = match[1] || "1";
+                            if (parseInt(level) > 6) level = "6";
+
+                            const span = document.createElement("span");
+                            span.className = `targets style-scope poetry${level} ${module}`;
+                            lineDiv.appendChild(span);
+                        } else if (wordarray[i] === "\\b") {
+                            // Poetry blank line
+                            const br = document.createElement("br");
+                            lineDiv.appendChild(br);
                         } else {
+                            // All the rest text and markers
                             const span = document.createElement("span");
                             span.className = `targets style-scope ${module}`;
                             span.textContent = wordarray[i];

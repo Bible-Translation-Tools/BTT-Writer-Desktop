@@ -104,6 +104,30 @@
             direction: rtl;
         }
 
+        .poetry1 {
+            padding-left: 20px;
+        }
+
+        .poetry2 {
+            padding-left: 40px;
+        }
+
+        .poetry3 {
+            padding-left: 60px;
+        }
+
+        .poetry4 {
+            padding-left: 80px;
+        }
+
+        .poetry5 {
+            padding-left: 100px;
+        }
+
+        .poetry6 {
+            padding-left: 120px;
+        }
+
     </style>
 
     <template>
@@ -183,15 +207,15 @@
         },
 
         rendertext: function () {
-            var chunks = this.currentproject.chunks;
-            var options = this.currentproject.printoptions;
-            var book = chunks[0].transcontent || chunks[0].srccontent;
-            var resource = chunks[0].projectmeta.target_language.name + ": " + chunks[0].projectmeta.resource.name;
-            var pagetitle = chunks[0].projectmeta.target_language.name + " - " + book;
+            const chunks = this.currentproject.chunks;
+            const options = this.currentproject.printoptions;
+            const book = chunks[0].transcontent || chunks[0].srccontent;
+            const resource = chunks[0].projectmeta.target_language.name + ": " + chunks[0].projectmeta.resource.name;
+            const pagetitle = chunks[0].projectmeta.target_language.name + " - " + book;
 
             this.$.licenseholder.markdown = App.printManager.getLicense("LICENSE.md");
-            this.$.resource.innerHTML = resource;
-            this.$.title.innerHTML = book;
+            this.$.resource.textContent = resource;
+            this.$.title.textContent = book;
             this.$.textholder.innerHTML = App.renderer.renderPrintPreview(chunks, options, pagetitle);
         },
 
@@ -207,9 +231,9 @@
 
         load: function () {
             if (this.route === "preview") {
-                var links = this.getElementsByTagName('a');
+                const links = this.getElementsByTagName('a');
 
-                for (var i = 0; i < links.length; i++) {
+                for (let i = 0; i < links.length; i++) {
                     links[i].addEventListener('click', this.externalClick);
                 }
 
@@ -218,15 +242,15 @@
         },
 
         externalClick: function (event) {
-            var shell = require('electron').shell;
+            const shell = require('electron').shell;
 
             event.preventDefault();
             shell.openExternal(this.href);
         },
 
         goback: function () {
-            var mythis = this;
-            var backto = this.backto;
+            const mythis = this;
+            const backto = this.backto;
 
             mythis.$.content.scrollTop = 0;
             mythis.set('route', backto);
@@ -242,11 +266,19 @@
         },
 
         print: function () {
-            var mythis = this;
-            var name = this.currentproject.projectmeta.unique_id;
-            var defaultPath = App.configurator.getUserPath('datalocation', name);
-            var direction = this.currentproject.projectmeta.target_language.direction;
-            var filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: 'PDF Files', extensions: ['pdf']}]}});
+            const mythis = this;
+            const name = this.currentproject.projectmeta.unique_id;
+            const defaultPath = App.configurator.getUserPath('datalocation', name);
+            const direction = this.currentproject.projectmeta.target_language.direction;
+            const filePath = App.ipc.sendSync('save-as', {
+                options: {
+                    defaultPath: defaultPath,
+                    filters: [{
+                        name: 'PDF Files',
+                        extensions: ['pdf']
+                    }]
+                }
+            });
             if (!filePath) {
                 return;
             }
@@ -256,10 +288,10 @@
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
-            var resource = mythis.$.resource.innerHTML;
-            var title = mythis.$.title.innerHTML;
-            var license = mythis.$.license.innerHTML;
-            var body = mythis.$.textholder.innerHTML;
+            const resource = mythis.$.resource.innerHTML;
+            const title = mythis.$.title.innerHTML;
+            const license = mythis.$.license.innerHTML;
+            const body = mythis.$.textholder.innerHTML;
 
             setTimeout(function() {
                 return App.printManager.savePdf(resource, title, license, body, filePath, direction)
@@ -270,7 +302,7 @@
                         mythis.goback();
                     })
                     .catch(function (err) {
-                        var errmessage = mythis.translate("save_project_error");
+                        let errmessage = mythis.translate("save_project_error");
                         if(err !== null) {
                             errmessage = err;
                         }
@@ -286,7 +318,7 @@
         },
 
         princeLink: function () {
-            var translated = this.translate("pdf_generated_by", '<a href="https://www.princexml.com/">Prince</a>');
+            const translated = this.translate("pdf_generated_by", '<a href="https://www.princexml.com/">Prince</a>');
             this.$.attrib.innerHTML = `(${translated})`;
         },
 

@@ -56,10 +56,10 @@ h1, h2 {
     display: none;
 }
 
-@page { 
-    @top-center { 
-        content: string(title) 
-    } 
+@page {
+    @top-center {
+        content: string(title)
+    }
 }
 
 #startnum {
@@ -82,6 +82,30 @@ sup {
 a {
     text-decoration: none;
     color: black;
+}
+
+.poetry1 {
+    padding-left: 20px;
+}
+
+.poetry2 {
+    padding-left: 40px;
+}
+
+.poetry3 {
+    padding-left: 60px;
+}
+
+.poetry4 {
+    padding-left: 80px;
+}
+
+.poetry5 {
+    padding-left: 100px;
+}
+
+.poetry6 {
+    padding-left: 120px;
 }
 
 
