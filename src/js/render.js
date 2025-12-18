@@ -93,6 +93,39 @@ function Renderer() {
             return text.trim();
         },
 
+        renderFootnotes: function (text, chapter, module) {
+            const noteRegex = new RegExp(/\\f\s(\S)\s([\s\S]+?)\\f\*/);
+            const noteContentRegex = new RegExp(/\\f(\w)([\s\S]*?)(?=\\f|$)/);
+            const footnotes = [];
+            let noteNumber = 1;
+
+            while (noteRegex.test(text)) {
+                const match = noteRegex.exec(text);
+                let content = match[2] || "";
+                const noteElements = [];
+
+                while (noteContentRegex.test(content)) {
+                    const contentMatch = noteContentRegex.exec(content);
+                    content = content.replace(noteContentRegex, "");
+                    noteElements.push({tag: contentMatch[1], text: contentMatch[2]});
+                }
+
+                const callerText = document.createElement("sup");
+                callerText.textContent = noteNumber.toString();
+
+                const caller = document.createElement("a")
+                caller.className = `footnote-caller-link ${module}`
+                caller.href = `#caller-${chapter}-${noteNumber}`;
+                caller.appendChild(callerText);
+
+                text = text.replace(noteRegex, caller.outerHTML);
+                footnotes.push({order: noteNumber, elements: noteElements});
+                noteNumber++;
+            }
+
+            return {text, footnotes};
+        },
+
         renderParagraphs: function (text, module) {
             const expression = new RegExp(/([^>\r\n]*)(\r\n|\r|\n)/);
             const container = document.createElement('div');
@@ -330,21 +363,21 @@ function Renderer() {
                 fragment.appendChild(createPageTitleEl());
             }
 
-            const startNumDiv = createScopedElement("div");
-            startNumDiv.id = "startnum";
+            const chapterDiv = createScopedElement("div");
+            chapterDiv.id = "startnum";
 
-            chapters.forEach(function (chapter) {
+            chapters.forEach(function (chapter, index) {
                 if (!chapter.content) return;
 
                 // If 'newpage' is on, title repeats inside the container before every chapter
                 if (options.newpage && options.pagetitle) {
-                    startNumDiv.appendChild(createPageTitleEl());
+                    chapterDiv.appendChild(createPageTitleEl());
                 }
 
                 const header = createScopedElement("h2");
                 // Using innerHTML allows formatting within titles if necessary
                 header.innerHTML = chapter.title;
-                startNumDiv.appendChild(header);
+                chapterDiv.appendChild(header);
 
                 const contentClasses = [];
                 if (options.doubleSpace) contentClasses.push("double");
@@ -354,12 +387,41 @@ function Renderer() {
                 const contentDiv = createScopedElement("div", contentClasses);
 
                 // Render verses content
-                contentDiv.innerHTML = mythis.renderTargetWithVerses(chapter.content, module);
+                let renderedContents = mythis.renderTargetWithVerses(chapter.content, module);
+                const {text, footnotes} = mythis.renderFootnotes(renderedContents, index + 1, module);
+                contentDiv.innerHTML = text;
 
-                startNumDiv.appendChild(contentDiv);
+                chapterDiv.appendChild(contentDiv);
+
+                if (footnotes.length > 0) {
+                    const footnotesDiv = document.createElement("div");
+                    footnotesDiv.className = `footnotes ${module}`;
+
+                    footnotes.forEach(function (footnote) {
+                        const noteDiv = document.createElement("div");
+                        const orderSup = document.createElement("sup");
+                        orderSup.className = `footnote-caller-target ${module}`;
+                        orderSup.textContent = footnote.order + " ";
+
+                        noteDiv.id = `caller-${index+1}-${footnote.order}`;
+                        noteDiv.appendChild(orderSup);
+
+                        footnote.elements.forEach(function (element, index) {
+                            const elSpan = document.createElement("span");
+                            elSpan.className = `notetag-${element.tag} ${module}`;
+                            const comma = (index + 1) === footnote.elements.length ? "" : ", ";
+                            elSpan.textContent = element.text + comma;
+                            noteDiv.appendChild(elSpan);
+                        });
+
+                        footnotesDiv.appendChild(noteDiv);
+                    })
+
+                    chapterDiv.appendChild(footnotesDiv);
+                }
             });
 
-            fragment.appendChild(startNumDiv);
+            fragment.appendChild(chapterDiv);
 
             return fragment.firstChild.outerHTML;
         },

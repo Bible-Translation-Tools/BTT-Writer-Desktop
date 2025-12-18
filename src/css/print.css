@@ -108,4 +108,12 @@ a {
     padding-left: 120px;
 }
 
+.footnote-caller-link {
+    color: #00B0FF;
+}
+
+.footnote-caller-target {
+    font-weight: bold;
+}
+
 
