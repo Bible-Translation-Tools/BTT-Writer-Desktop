@@ -94,34 +94,40 @@ function Renderer() {
         },
 
         renderFootnotes: function (text, chapter, module) {
-            const noteRegex = new RegExp(/\\f\s(\S)\s([\s\S]+?)\\f\*/);
-            const noteContentRegex = new RegExp(/\\f(\w)([\s\S]*?)(?=\\f|$)/);
+            const noteRegex = new RegExp(/\\f\s+(\S+)\s+([\s\S]+?)\\f\*/g);
+            const noteContentRegex = new RegExp(/\\(f[a-z0-9]*\*?)\s?([\s\S]*?)(?=\\f|$)/gi);
             const footnotes = [];
             let noteNumber = 1;
 
-            while (noteRegex.test(text)) {
-                const match = noteRegex.exec(text);
-                let content = match[2] || "";
+            text = text.replace(noteRegex, (match, caller, rawContent) => {
                 const noteElements = [];
 
-                while (noteContentRegex.test(content)) {
-                    const contentMatch = noteContentRegex.exec(content);
-                    content = content.replace(noteContentRegex, "");
-                    noteElements.push({tag: contentMatch[1], text: contentMatch[2]});
+                const innerMatches = rawContent.matchAll(noteContentRegex);
+
+                for (const m of innerMatches) {
+                    noteElements.push({
+                        tag: m[1],
+                        text: m[2]
+                    });
                 }
+
+                footnotes.push({
+                    order: noteNumber,
+                    caller: caller,
+                    elements: noteElements
+                });
 
                 const callerText = document.createElement("sup");
                 callerText.textContent = noteNumber.toString();
 
-                const caller = document.createElement("a")
-                caller.className = `footnote-caller-link ${module}`
-                caller.href = `#caller-${chapter}-${noteNumber}`;
-                caller.appendChild(callerText);
+                const callerLink = document.createElement("a")
+                callerLink.className = `footnote-caller-link ${module}`
+                callerLink.href = `#caller-${chapter}-${noteNumber}`;
+                callerLink.appendChild(callerText);
 
-                text = text.replace(noteRegex, caller.outerHTML);
-                footnotes.push({order: noteNumber, elements: noteElements});
                 noteNumber++;
-            }
+                return callerLink.outerHTML;
+            });
 
             return {text, footnotes};
         },
@@ -154,7 +160,7 @@ function Renderer() {
 
         renderPoetry: function (text, module) {
             const bExpression = new RegExp(/\\b/)
-            const qExpression = new RegExp(/\\q(\d+)?([^<]*)/);
+            const qExpression = new RegExp(/\\q(\d+)?\b([^<]*)/);
 
             while (bExpression.test(text)) {
                 text = text.replace(bExpression, "<br/>");
@@ -363,35 +369,35 @@ function Renderer() {
                 fragment.appendChild(createPageTitleEl());
             }
 
-            const chapterDiv = createScopedElement("div");
-            chapterDiv.id = "startnum";
+            const chaptersContainer = createScopedElement("div");
+            chaptersContainer.id = "startnum";
 
             chapters.forEach(function (chapter, index) {
                 if (!chapter.content) return;
 
                 // If 'newpage' is on, title repeats inside the container before every chapter
                 if (options.newpage && options.pagetitle) {
-                    chapterDiv.appendChild(createPageTitleEl());
+                    chaptersContainer.appendChild(createPageTitleEl());
                 }
 
                 const header = createScopedElement("h2");
                 // Using innerHTML allows formatting within titles if necessary
                 header.innerHTML = chapter.title;
-                chapterDiv.appendChild(header);
+                chaptersContainer.appendChild(header);
 
                 const contentClasses = [];
                 if (options.doubleSpace) contentClasses.push("double");
                 if (options.justify) contentClasses.push("justify");
                 if (options.newpage) contentClasses.push("break");
 
-                const contentDiv = createScopedElement("div", contentClasses);
+                const chapterDiv = createScopedElement("div", contentClasses);
 
                 // Render verses content
                 let renderedContents = mythis.renderTargetWithVerses(chapter.content, module);
                 const {text, footnotes} = mythis.renderFootnotes(renderedContents, index + 1, module);
-                contentDiv.innerHTML = text;
+                chapterDiv.innerHTML = text;
 
-                chapterDiv.appendChild(contentDiv);
+                chaptersContainer.appendChild(chapterDiv);
 
                 if (footnotes.length > 0) {
                     const footnotesDiv = document.createElement("div");
@@ -409,8 +415,7 @@ function Renderer() {
                         footnote.elements.forEach(function (element, index) {
                             const elSpan = document.createElement("span");
                             elSpan.className = `notetag-${element.tag} ${module}`;
-                            const comma = (index + 1) === footnote.elements.length ? "" : ", ";
-                            elSpan.textContent = element.text + comma;
+                            elSpan.textContent = element.text;
                             noteDiv.appendChild(elSpan);
                         });
 
@@ -421,9 +426,11 @@ function Renderer() {
                 }
             });
 
-            fragment.appendChild(chapterDiv);
+            fragment.appendChild(chaptersContainer);
+            const output = document.createElement("div");
+            output.appendChild(fragment);
 
-            return fragment.firstChild.outerHTML;
+            return output.innerHTML;
         },
 
         renderObsPrintPreview: function (chunks, options, imagePath) {
@@ -652,9 +659,9 @@ function Renderer() {
                             }
 
                             noteindex++;
-                        } else if ((/\\q(\d+)?/.test(wordarray[i]))) {
+                        } else if ((/\\q(\d+)?\b/.test(wordarray[i]))) {
                             // Poetry marker
-                            const match = wordarray[i].match(/\\q(\d+)?/);
+                            const match = wordarray[i].match(/\\q(\d+)?\b/);
                             let level = match[1] || "1";
                             if (parseInt(level) > 6) level = "6";
 
@@ -772,16 +779,14 @@ function Renderer() {
 
         markerToFootnote: function (marker, chunkIndex, noteIndex, readonly) {
             readonly = readonly || false;
-            const charRegex = new RegExp(/\\(f[^*\s]+)\s([^\\]+)(?:\\f\1\*)?/g);
-            let match;
+            const wrapperRegex = /\\f\s+\S+\s+([\s\S]+?)\\f\*/;
+            const match = wrapperRegex.exec(marker);
             let note = "";
 
-            do {
-                match = charRegex.exec(marker);
-                if (match) {
-                    note += match[2];
-                }
-            } while (match);
+            if (match) {
+                let rawContent = match[1];
+                note = rawContent.replace(/\\f[a-z0-9]*\*?\s?/gi, "").trim();
+            }
 
             let footnote;
             if (readonly) {
