@@ -424,23 +424,6 @@ function Renderer() {
 
                     chapterDiv.appendChild(footnotesDiv);
                 }
-
-                const header = createScopedElement("h2");
-                // Using innerHTML allows formatting within titles if necessary
-                header.innerHTML = chapter.title;
-                startNumDiv.appendChild(header);
-
-                const contentClasses = [];
-                if (options.doubleSpace) contentClasses.push("double");
-                if (options.justify) contentClasses.push("justify");
-                if (options.newpage) contentClasses.push("break");
-
-                const contentDiv = createScopedElement("div", contentClasses);
-
-                // Render verses content
-                contentDiv.innerHTML = mythis.renderTargetWithVerses(chapter.content, module);
-
-                startNumDiv.appendChild(contentDiv);
             });
 
             fragment.appendChild(chaptersContainer);
