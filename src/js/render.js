@@ -169,7 +169,7 @@ function Renderer() {
                 let type = match[1] || "1";
                 const content = match[2] || "";
 
-                if (parseInt(type) > 6) type = "6"
+                if (parseInt(type) > 3) type = "3"
 
                 let element = null;
                  if (type === "ac") {
