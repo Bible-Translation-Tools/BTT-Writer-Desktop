@@ -603,7 +603,7 @@ function Renderer() {
         markersToBalloons: function (chunk, module) {
             const verses = chunk.chunkmeta.verses;
             const chap = chunk.chunkmeta.chapter;
-            const linearray = this.replaceParagraphs(chunk.transcontent).split("\n");
+            const linearray = chunk.transcontent.split("\n");
             const used = [];
             let noteindex = 0;
 
@@ -662,18 +662,9 @@ function Renderer() {
                             }
 
                             noteindex++;
-                        } else if ((/\\q(\d+)?\b/.test(wordarray[i]))) {
-                            // Poetry marker
-                            const match = wordarray[i].match(/\\q(\d+)?\b/);
-                            let level = match[1] || "1";
-                            if (parseInt(level) > 6) level = "6";
-
-                            const span = document.createElement("span");
-                            span.className = `targets style-scope poetry${level} ${module}`;
-                            lineDiv.appendChild(span);
-                        } else if (wordarray[i] === "\\b") {
-                            // Poetry blank line
+                        } else if (wordarray[i] === "\\p") {
                             const br = document.createElement("br");
+                            br.dataset.type = "p";
                             lineDiv.appendChild(br);
                         } else {
                             // All the rest text and markers
@@ -726,15 +717,21 @@ function Renderer() {
                 } else {
                     for (let i = 0; i < children.length; i++) {
                         const type = children[i].nodeName;
+                        const child = children[i];
 
                         if (type === "TS-VERSE-MARKER") {
-                            const versenum = children[i].verse;
+                            const versenum = child.verse;
                             returnstr += `\\v ${versenum} `;
                         } else if (type === "TS-TARGET-NOTE-MARKER") {
-                            const text = children[i].text;
+                            const text = child.text;
                             returnstr += `\\f + \\ft ${text.trim()} \\f* `;
+                        } else if (type === "BR") {
+                            const brType = child.dataset.type;
+                            let br = "\n";
+                            if (brType === "p") br = "\\p ";
+                            returnstr += br;
                         } else {
-                            const text = children[i].textContent;
+                            const text = child.textContent;
                             returnstr += `${text} `;
                         }
                     }
