@@ -159,25 +159,28 @@ function Renderer() {
         },
 
         renderPoetry: function (text, module) {
-            const bExpression = new RegExp(/\\b/)
-            const qExpression = new RegExp(/\\q(\d+)?\b([^<]*)/);
+            const bExpression = new RegExp(/\\b/g)
+            const qExpression = new RegExp(/\\q([a-z0-9]+)?\b\s*((?:(?!\\q\1\*)[^<])*)(?:\\q\1\*)?/);
 
-            while (bExpression.test(text)) {
-                text = text.replace(bExpression, "<br/>");
-            }
+            text = text.replace(bExpression, "<br/>");
 
             while (qExpression.test(text)) {
                 const match = qExpression.exec(text);
-                let level = match[1] || "1";
+                let type = match[1] || "1";
                 const content = match[2] || "";
 
-                if (parseInt(level) > 6) level = "6"
+                if (parseInt(type) > 6) type = "6"
 
-                const div = document.createElement('div');
-                div.className = `style-scope poetry${level} ${module}`;
-                div.innerHTML = content;
+                let element = null;
+                 if (type === "ac") {
+                     element = document.createElement('span');
+                } else {
+                     element = document.createElement('div');
+                }
+                element.className = `style-scope poetry-${type} ${module}`;
+                element.innerHTML = content;
 
-                text = text.replace(qExpression, div.outerHTML);
+                text = text.replace(qExpression, element.outerHTML);
             }
 
             return text;
@@ -186,8 +189,8 @@ function Renderer() {
         renderTargetWithVerses: function (text, module) {
             text = this.replaceParagraphs(text);
             text = this.renderParagraphs(text, module);
-            text = this.renderPoetry(text, module);
             text = this.renderSuperscriptVerses(text);
+            text = this.renderPoetry(text, module);
 
             return text;
         },

@@ -84,28 +84,40 @@ a {
     color: black;
 }
 
-.poetry1 {
+.poetry-1 {
     padding-left: 20px;
 }
 
-.poetry2 {
+.poetry-2 {
     padding-left: 40px;
 }
 
-.poetry3 {
+.poetry-3 {
     padding-left: 60px;
 }
 
-.poetry4 {
+.poetry-4 {
     padding-left: 80px;
 }
 
-.poetry5 {
+.poetry-5 {
     padding-left: 100px;
 }
 
-.poetry6 {
+.poetry-6 {
     padding-left: 120px;
+}
+
+.poetry-s, .poetry-r {
+    text-align: end;
+}
+
+.poetry-a, .poetry-c, .poetry-d, *[class*="poetry-m"] {
+    text-align: center;
+}
+
+.poetry-a, .poetry-ac, .poetry-d, *[class*="poetry-m"] {
+    font-style: italic;
 }
 
 .footnote-caller-link {
