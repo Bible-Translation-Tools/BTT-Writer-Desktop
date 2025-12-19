@@ -415,7 +415,7 @@ function Renderer() {
                         noteDiv.id = `caller-${index+1}-${footnote.order}`;
                         noteDiv.appendChild(orderSup);
 
-                        footnote.elements.forEach(function (element, index) {
+                        footnote.elements.forEach(function (element) {
                             const elSpan = document.createElement("span");
                             elSpan.className = `notetag-${element.tag} ${module}`;
                             elSpan.textContent = element.text;
