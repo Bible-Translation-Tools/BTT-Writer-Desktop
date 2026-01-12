@@ -93,6 +93,45 @@ function Renderer() {
             return text.trim();
         },
 
+        renderFootnotes: function (text, chapter, module) {
+            const noteRegex = new RegExp(/\\f\s+(\S+)\s+([\s\S]+?)\\f\*/g);
+            const noteContentRegex = new RegExp(/\\(f[a-z0-9]*\*?)\s?([\s\S]*?)(?=\\f|$)/gi);
+            const footnotes = [];
+            let noteNumber = 1;
+
+            text = text.replace(noteRegex, (match, caller, rawContent) => {
+                const noteElements = [];
+
+                const innerMatches = rawContent.matchAll(noteContentRegex);
+
+                for (const m of innerMatches) {
+                    noteElements.push({
+                        tag: m[1],
+                        text: m[2]
+                    });
+                }
+
+                footnotes.push({
+                    order: noteNumber,
+                    caller: caller,
+                    elements: noteElements
+                });
+
+                const callerText = document.createElement("sup");
+                callerText.textContent = noteNumber.toString();
+
+                const callerLink = document.createElement("a")
+                callerLink.className = `footnote-caller-link ${module}`
+                callerLink.href = `#caller-${chapter}-${noteNumber}`;
+                callerLink.appendChild(callerText);
+
+                noteNumber++;
+                return callerLink.outerHTML;
+            });
+
+            return {text, footnotes};
+        },
+
         renderParagraphs: function (text, module) {
             const expression = new RegExp(/([^>\r\n]*)(\r\n|\r|\n)/);
             const container = document.createElement('div');
@@ -120,25 +159,28 @@ function Renderer() {
         },
 
         renderPoetry: function (text, module) {
-            const bExpression = new RegExp(/\\b/)
-            const qExpression = new RegExp(/\\q(\d+)?([^<]*)/);
+            const bExpression = new RegExp(/\\b/g)
+            const qExpression = new RegExp(/\\q([a-z0-9]+)?\b\s*((?:(?!\\q\1\*)[^<])*)(?:\\q\1\*)?/);
 
-            while (bExpression.test(text)) {
-                text = text.replace(bExpression, "<br/>");
-            }
+            text = text.replace(bExpression, "<br/>");
 
             while (qExpression.test(text)) {
                 const match = qExpression.exec(text);
-                let level = match[1] || "1";
+                let type = match[1] || "1";
                 const content = match[2] || "";
 
-                if (parseInt(level) > 6) level = "6"
+                if (parseInt(type) > 3) type = "3"
 
-                const div = document.createElement('div');
-                div.className = `style-scope poetry${level} ${module}`;
-                div.innerHTML = content;
+                let element = null;
+                 if (type === "ac") {
+                     element = document.createElement('span');
+                } else {
+                     element = document.createElement('div');
+                }
+                element.className = `style-scope poetry-${type} ${module}`;
+                element.innerHTML = content;
 
-                text = text.replace(qExpression, div.outerHTML);
+                text = text.replace(qExpression, element.outerHTML);
             }
 
             return text;
@@ -147,8 +189,8 @@ function Renderer() {
         renderTargetWithVerses: function (text, module) {
             text = this.replaceParagraphs(text);
             text = this.renderParagraphs(text, module);
-            text = this.renderPoetry(text, module);
             text = this.renderSuperscriptVerses(text);
+            text = this.renderPoetry(text, module);
 
             return text;
         },
@@ -330,38 +372,68 @@ function Renderer() {
                 fragment.appendChild(createPageTitleEl());
             }
 
-            const startNumDiv = createScopedElement("div");
-            startNumDiv.id = "startnum";
+            const chaptersContainer = createScopedElement("div");
+            chaptersContainer.id = "startnum";
 
-            chapters.forEach(function (chapter) {
+            chapters.forEach(function (chapter, index) {
                 if (!chapter.content) return;
 
                 // If 'newpage' is on, title repeats inside the container before every chapter
                 if (options.newpage && options.pagetitle) {
-                    startNumDiv.appendChild(createPageTitleEl());
+                    chaptersContainer.appendChild(createPageTitleEl());
                 }
 
                 const header = createScopedElement("h2");
                 // Using innerHTML allows formatting within titles if necessary
                 header.innerHTML = chapter.title;
-                startNumDiv.appendChild(header);
+                chaptersContainer.appendChild(header);
 
                 const contentClasses = [];
                 if (options.doubleSpace) contentClasses.push("double");
                 if (options.justify) contentClasses.push("justify");
                 if (options.newpage) contentClasses.push("break");
 
-                const contentDiv = createScopedElement("div", contentClasses);
+                const chapterDiv = createScopedElement("div", contentClasses);
 
                 // Render verses content
-                contentDiv.innerHTML = mythis.renderTargetWithVerses(chapter.content, module);
+                let renderedContents = mythis.renderTargetWithVerses(chapter.content, module);
+                const {text, footnotes} = mythis.renderFootnotes(renderedContents, index + 1, module);
+                chapterDiv.innerHTML = text;
 
-                startNumDiv.appendChild(contentDiv);
+                chaptersContainer.appendChild(chapterDiv);
+
+                if (footnotes.length > 0) {
+                    const footnotesDiv = document.createElement("div");
+                    footnotesDiv.className = `footnotes ${module}`;
+
+                    footnotes.forEach(function (footnote) {
+                        const noteDiv = document.createElement("div");
+                        const orderSup = document.createElement("sup");
+                        orderSup.className = `footnote-caller-target ${module}`;
+                        orderSup.textContent = footnote.order + " ";
+
+                        noteDiv.id = `caller-${index+1}-${footnote.order}`;
+                        noteDiv.appendChild(orderSup);
+
+                        footnote.elements.forEach(function (element) {
+                            const elSpan = document.createElement("span");
+                            elSpan.className = `notetag-${element.tag} ${module}`;
+                            elSpan.textContent = element.text;
+                            noteDiv.appendChild(elSpan);
+                        });
+
+                        footnotesDiv.appendChild(noteDiv);
+                    })
+
+                    chapterDiv.appendChild(footnotesDiv);
+                }
             });
 
-            fragment.appendChild(startNumDiv);
+            fragment.appendChild(chaptersContainer);
+            const output = document.createElement("div");
+            output.appendChild(fragment);
 
-            return fragment.firstChild.outerHTML;
+            return output.innerHTML;
         },
 
         renderObsPrintPreview: function (chunks, options, imagePath) {
@@ -531,7 +603,7 @@ function Renderer() {
         markersToBalloons: function (chunk, module) {
             const verses = chunk.chunkmeta.verses;
             const chap = chunk.chunkmeta.chapter;
-            const linearray = this.replaceParagraphs(chunk.transcontent).split("\n");
+            const linearray = chunk.transcontent.split("\n");
             const used = [];
             let noteindex = 0;
 
@@ -590,18 +662,9 @@ function Renderer() {
                             }
 
                             noteindex++;
-                        } else if ((/\\q(\d+)?/.test(wordarray[i]))) {
-                            // Poetry marker
-                            const match = wordarray[i].match(/\\q(\d+)?/);
-                            let level = match[1] || "1";
-                            if (parseInt(level) > 6) level = "6";
-
-                            const span = document.createElement("span");
-                            span.className = `targets style-scope poetry${level} ${module}`;
-                            lineDiv.appendChild(span);
-                        } else if (wordarray[i] === "\\b") {
-                            // Poetry blank line
+                        } else if (wordarray[i] === "\\p") {
                             const br = document.createElement("br");
+                            br.dataset.type = "p";
                             lineDiv.appendChild(br);
                         } else {
                             // All the rest text and markers
@@ -654,15 +717,21 @@ function Renderer() {
                 } else {
                     for (let i = 0; i < children.length; i++) {
                         const type = children[i].nodeName;
+                        const child = children[i];
 
                         if (type === "TS-VERSE-MARKER") {
-                            const versenum = children[i].verse;
+                            const versenum = child.verse;
                             returnstr += `\\v ${versenum} `;
                         } else if (type === "TS-TARGET-NOTE-MARKER") {
-                            const text = children[i].text;
+                            const text = child.text;
                             returnstr += `\\f + \\ft ${text.trim()} \\f* `;
+                        } else if (type === "BR") {
+                            const brType = child.dataset.type;
+                            let br = "\n";
+                            if (brType === "p") br = "\\p ";
+                            returnstr += br;
                         } else {
-                            const text = children[i].textContent;
+                            const text = child.textContent;
                             returnstr += `${text} `;
                         }
                     }
@@ -710,16 +779,14 @@ function Renderer() {
 
         markerToFootnote: function (marker, chunkIndex, noteIndex, readonly) {
             readonly = readonly || false;
-            const charRegex = new RegExp(/\\(f[^*\s]+)\s([^\\]+)(?:\\f\1\*)?/g);
-            let match;
+            const wrapperRegex = /\\f\s+\S+\s+([\s\S]+?)\\f\*/;
+            const match = wrapperRegex.exec(marker);
             let note = "";
 
-            do {
-                match = charRegex.exec(marker);
-                if (match) {
-                    note += match[2];
-                }
-            } while (match);
+            if (match) {
+                let rawContent = match[1];
+                note = rawContent.replace(/\\f[a-z0-9]*\*?\s?/gi, "").trim();
+            }
 
             let footnote;
             if (readonly) {
