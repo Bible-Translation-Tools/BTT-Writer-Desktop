@@ -26,13 +26,13 @@ function install(dir, os) {
     let url = '';
 
     if(os === 'win') {
-        url = 'http://www.princexml.com/download/prince-16-win32.zip';
+        url = 'https://www.princexml.com/download/prince-16.1-win64.zip';
         tempfile += ".zip";
     } else if(os === 'osx') {
-        url = 'https://www.princexml.com/download/prince-16-macos.zip';
+        url = 'https://www.princexml.com/download/prince-16.1-macos.zip';
         tempfile += ".zip";
     } else if(os === 'linux') {
-        url = 'http://www.princexml.com/download/prince-16-linux-generic-x86_64.tar.gz';
+        url = 'https://www.princexml.com/download/prince-16.1-linux-generic-x86_64.tar.gz';
         tempfile += ".tar.gz";
     } else {
         return Promise.reject('Missing or invalid os parameter');
