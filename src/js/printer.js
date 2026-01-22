@@ -70,7 +70,7 @@ function PrintManager(configurator) {
             var resourcegroup = '\<h1 id="resource" class="titles" style="font-family: ' + font + ';"\>' + resource + '\<\/h1\>';
             var titlegroup = '\<h1 id="title" class="break" style="font-family: ' + font + ';"\>' + title + '\<\/h1\>';
             var licensegroup = '\<div id="license" class="break"\>' + license + '\<\/div\>';
-            var bodygroup = '\<div id="textholder" style="direction: ' + direction + '; font-family: ' + font + '; font-size: ' + size + ';"\>' + body + '\<\/div\>';
+            var bodygroup = '\<div id="textholder" dir="'+direction+'" style="font-family: ' + font + '; font-size: ' + size + ';"\>' + body + '\<\/div\>';
 
             var princeInfo = princePackager.info(os.platform());
 
