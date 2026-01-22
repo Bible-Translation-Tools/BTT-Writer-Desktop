@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const { usfmToHtml } = require('./usfmparse');
 
 function Renderer() {
 
@@ -93,45 +94,6 @@ function Renderer() {
             return text.trim();
         },
 
-        renderFootnotes: function (text, chapter, module) {
-            const noteRegex = new RegExp(/\\f\s+(\S+)\s+([\s\S]+?)\\f\*/g);
-            const noteContentRegex = new RegExp(/\\(f[a-z0-9]*\*?)\s?([\s\S]*?)(?=\\f|$)/gi);
-            const footnotes = [];
-            let noteNumber = 1;
-
-            text = text.replace(noteRegex, (match, caller, rawContent) => {
-                const noteElements = [];
-
-                const innerMatches = rawContent.matchAll(noteContentRegex);
-
-                for (const m of innerMatches) {
-                    noteElements.push({
-                        tag: m[1],
-                        text: m[2]
-                    });
-                }
-
-                footnotes.push({
-                    order: noteNumber,
-                    caller: caller,
-                    elements: noteElements
-                });
-
-                const callerText = document.createElement("sup");
-                callerText.textContent = noteNumber.toString();
-
-                const callerLink = document.createElement("a")
-                callerLink.className = `footnote-caller-link ${module}`
-                callerLink.href = `#caller-${chapter}-${noteNumber}`;
-                callerLink.appendChild(callerText);
-
-                noteNumber++;
-                return callerLink.outerHTML;
-            });
-
-            return {text, footnotes};
-        },
-
         renderParagraphs: function (text, module) {
             const expression = new RegExp(/([^>\r\n]*)(\r\n|\r|\n)/);
             const container = document.createElement('div');
@@ -158,39 +120,10 @@ function Renderer() {
             return container.innerHTML;
         },
 
-        renderPoetry: function (text, module) {
-            const bExpression = new RegExp(/\\b/g)
-            const qExpression = new RegExp(/\\q([a-z0-9]+)?\b\s*((?:(?!\\q\1\*)[^<])*)(?:\\q\1\*)?/);
-
-            text = text.replace(bExpression, "<br/>");
-
-            while (qExpression.test(text)) {
-                const match = qExpression.exec(text);
-                let type = match[1] || "1";
-                const content = match[2] || "";
-
-                if (parseInt(type) > 3) type = "3"
-
-                let element = null;
-                 if (type === "ac") {
-                     element = document.createElement('span');
-                } else {
-                     element = document.createElement('div');
-                }
-                element.className = `style-scope poetry-${type} ${module}`;
-                element.innerHTML = content;
-
-                text = text.replace(qExpression, element.outerHTML);
-            }
-
-            return text;
-        },
-
         renderTargetWithVerses: function (text, module) {
             text = this.replaceParagraphs(text);
             text = this.renderParagraphs(text, module);
             text = this.renderSuperscriptVerses(text);
-            text = this.renderPoetry(text, module);
 
             return text;
         },
@@ -345,7 +278,7 @@ function Renderer() {
                 });
 
                 if (chap > 0) {
-                    chapters.push({title: title, content: content.trim()});
+                    chapters.push({id: chap, title: title, content: content.trim()});
                 }
             });
 
@@ -396,31 +329,28 @@ function Renderer() {
                 const chapterDiv = createScopedElement("div", contentClasses);
 
                 // Render verses content
-                let renderedContents = mythis.renderTargetWithVerses(chapter.content, module);
-                const {text, footnotes} = mythis.renderFootnotes(renderedContents, index + 1, module);
-                chapterDiv.innerHTML = text;
+                const result = usfmToHtml(chapter.content, chapter.id, module);
+                chapterDiv.innerHTML = result.html;
 
                 chaptersContainer.appendChild(chapterDiv);
 
-                if (footnotes.length > 0) {
+                if (result.footnotes.length > 0) {
                     const footnotesDiv = document.createElement("div");
                     footnotesDiv.className = `footnotes ${module}`;
 
-                    footnotes.forEach(function (footnote) {
+                    result.footnotes.forEach(function (footnote, index) {
+                        const order = (index + 1);
                         const noteDiv = document.createElement("div");
                         const orderSup = document.createElement("sup");
                         orderSup.className = `footnote-caller-target ${module}`;
-                        orderSup.textContent = footnote.order + " ";
+                        orderSup.textContent = order + " ";
 
-                        noteDiv.id = `caller-${index+1}-${footnote.order}`;
+                        noteDiv.id = `caller-${chapter.id}-${order}`;
                         noteDiv.appendChild(orderSup);
 
-                        footnote.elements.forEach(function (element) {
-                            const elSpan = document.createElement("span");
-                            elSpan.className = `notetag-${element.tag} ${module}`;
-                            elSpan.textContent = element.text;
-                            noteDiv.appendChild(elSpan);
-                        });
+                        const noteText = document.createElement("span");
+                        noteText.textContent = footnote;
+                        noteDiv.appendChild(noteText);
 
                         footnotesDiv.appendChild(noteDiv);
                     })
