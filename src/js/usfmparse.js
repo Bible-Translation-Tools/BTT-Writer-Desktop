@@ -78,6 +78,10 @@ class HtmlParseContext {
                 this.isItalic = !isCloser;
                 break;
 
+            case "c":
+                // We ignore chapter marker if it's in the chunk file
+                break;
+
             // Poetry
             default:
                 if (marker.startsWith("qm")) {
