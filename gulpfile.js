@@ -201,10 +201,11 @@ function release(done){
     }
 
     const releaseDmg = function () {
+        const name = `BTT-Writer-${p.version}-osx-universal`;
         let buildPath = BUILD_DIR + 'BTT-Writer-darwin-x64/BTT-Writer.app';
         const options = {
             appPath: buildPath,
-            name: "BTT-Writer",
+            name: name,
             out: RELEASE_DIR,
             icon: "icons/icon.icns"
         }
