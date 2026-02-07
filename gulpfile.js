@@ -9,12 +9,16 @@ const gulp = require('gulp'),
     rimraf = require('rimraf'),
     argv = require('yargs').argv,
     packager = require('@electron/packager'),
+    rebuild = require('@electron/rebuild'),
     replace = require('gulp-replace'),
     path = require('path'),
     mkdirp = require('mkdirp'),
     fs = require('fs'),
-    util = require('./src/js/lib/utils');
-    princePackager = require('./src/js/prince-packager');
+    util = require('./src/js/lib/utils'),
+    princePackager = require('./src/js/prince-packager'),
+    debInstaller = require('electron-installer-debian'),
+    dmgInstaller = require('electron-installer-dmg'),
+    p = require("./package.json");
 
 const APP_NAME = 'BTT-Writer',
     JS_FILES = './src/js/**/*.js',
@@ -96,7 +100,14 @@ function build(done) {
         'icon': './icons/icon',
         'osxUniversal': {
             'x64ArchFiles': '*'
-        }
+        },
+        'afterCopy': [
+            (buildPath, electronVersion, platform, arch, callback) => {
+                rebuild.rebuild({ buildPath, electronVersion, arch })
+                    .then(() => callback())
+                    .catch((error) => callback(error));
+            },
+        ],
     }).then(() => done())
     .catch(err => {
         console.log(err)
@@ -171,6 +182,37 @@ function release(done){
         });
     };
 
+    const releaseDeb = function (arch) {
+        let buildPath = BUILD_DIR + 'BTT-Writer-linux-x64/';
+        const options = {
+            name: "btt-writer",
+            src: buildPath,
+            dest: RELEASE_DIR,
+            arch: arch,
+            icon: "icons/icon.png",
+            compression: "gzip",
+            categories: [
+                "Translation", "Languages"
+            ],
+        }
+        return new Promise(function(resolve, reject) {
+            resolve(debInstaller(options))
+        });
+    }
+
+    const releaseDmg = function () {
+        let buildPath = BUILD_DIR + 'BTT-Writer-darwin-x64/BTT-Writer.app';
+        const options = {
+            appPath: buildPath,
+            name: "BTT-Writer",
+            out: RELEASE_DIR,
+            icon: "icons/icon.icns"
+        }
+        return new Promise(function(resolve, reject) {
+            resolve(dmgInstaller.createDMG(options))
+        });
+    }
+
     function _release() {
         for (const os of platforms) {
             switch (os) {
@@ -192,12 +234,22 @@ function release(done){
                             const dest = `${RELEASE_DIR}BTT-Writer-${p.version}-osx-universal.zip`;
                             try {
                                 const output = fs.createWriteStream(dest);
-                                output.on('close', function () {
-                                    resolve({
-                                        os: os,
-                                        status: 'ok',
-                                        path: dest
-                                    });
+                                output.on('close', async function () {
+                                    try {
+                                        await releaseDmg();
+                                        resolve({
+                                            os: os,
+                                            status: 'ok',
+                                            path: dest
+                                        });
+                                    } catch (err) {
+                                        console.error(err);
+                                        resolve({
+                                            os: os,
+                                            status: 'error',
+                                            path: null
+                                        });
+                                    }
                                 });
                                 const archive = archiver.create('zip');
                                 archive.on('error', reject);
@@ -228,12 +280,22 @@ function release(done){
                             const dest = `${RELEASE_DIR}BTT-Writer-${p.version}-linux-x64.zip`;
                             try {
                                 const output = fs.createWriteStream(dest);
-                                output.on('close', function () {
-                                    resolve({
-                                        os: os,
-                                        status: 'ok',
-                                        path: dest
-                                    });
+                                output.on('close', async function () {
+                                    try {
+                                        await releaseDeb("x86_64", os);
+                                        resolve({
+                                            os: os,
+                                            status: 'ok',
+                                            path: dest
+                                        });
+                                    } catch (err) {
+                                        console.error(err);
+                                        resolve({
+                                            os: os,
+                                            status: 'error',
+                                            path: null
+                                        });
+                                    }
                                 });
                                 const archive = archiver.create('zip');
                                 archive.on('error', reject);
