@@ -13,6 +13,8 @@ set -x
 
 brew install --cask wine-stable
 brew install innoextract
+brew install fakeroot
+brew install dpkg
 
 wine --version
 innoextract --version
