@@ -201,7 +201,7 @@ function release(done){
     }
 
     const releaseDmg = function () {
-        const name = `BTT-Writer-${p.version}-osx-universal`;
+        const name = `BTT-Writer-${p.version}-osx`;
         let buildPath = BUILD_DIR + 'BTT-Writer-darwin-x64/BTT-Writer.app';
         const options = {
             appPath: buildPath,
@@ -283,7 +283,7 @@ function release(done){
                                 const output = fs.createWriteStream(dest);
                                 output.on('close', async function () {
                                     try {
-                                        await releaseDeb("x86_64", os);
+                                        await releaseDeb("amd64", os);
                                         resolve({
                                             os: os,
                                             status: 'ok',
