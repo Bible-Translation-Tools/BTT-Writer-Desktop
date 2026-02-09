@@ -109,7 +109,7 @@ function build(done) {
         },
         'out': BUILD_DIR,
         'appVersion': packageJson.version,
-        'icon': './icons/icon',
+        'icon': './icons/icon.ico',
         'osxUniversal': {
             'x64ArchFiles': '*'
         },
