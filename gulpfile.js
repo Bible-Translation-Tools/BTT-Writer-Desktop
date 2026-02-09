@@ -9,12 +9,15 @@ const gulp = require('gulp'),
     rimraf = require('rimraf'),
     argv = require('yargs').argv,
     packager = require('@electron/packager'),
-    replace = require('gulp-replace'),
-    path = require('path'),
+    rebuild = require('@electron/rebuild'),
     mkdirp = require('mkdirp'),
     fs = require('fs'),
-    util = require('./src/js/lib/utils');
-    princePackager = require('./src/js/prince-packager');
+    util = require('./src/js/lib/utils'),
+    princePackager = require('./src/js/prince-packager'),
+    debInstaller = require('electron-installer-debian'),
+    dmgInstaller = require('electron-installer-dmg'),
+    packageJson = require("./package.json"),
+    archiver = require('archiver');
 
 const APP_NAME = 'BTT-Writer',
     JS_FILES = './src/js/**/*.js',
@@ -52,6 +55,20 @@ gulp.task('prince', function(done) {
         .catch(() => done());
 });
 
+function zipDirectory(sourceDir, destPath, outPath) {
+    return new Promise((resolve, reject) => {
+        const archive = archiver.create('zip');
+        const output = fs.createWriteStream(outPath);
+
+        output.on('close', () => resolve());
+        archive.on('error', (err) => reject(err));
+
+        archive.pipe(output);
+        archive.directory(sourceDir, destPath);
+        archive.finalize();
+    });
+}
+
 function build(done) {
 
     const platforms = [];
@@ -61,8 +78,7 @@ function build(done) {
     if (argv.linux) platforms.push('linux');
     if (!platforms.length) platforms.push('win32', 'darwin', 'linux');
 
-    const p = require('./package');
-    const ignored = Object.keys(p['devDependencies']).concat([
+    const ignored = Object.keys(packageJson['devDependencies']).concat([
         'unit_tests',
         'acceptance_tests',
         '__tests__',
@@ -85,18 +101,25 @@ function build(done) {
             let i = 0, len = ignored.length;
             for (; i < len; ++i) {
                 if (ignored[i].test(name)) {
-                    console.log('\t(Ignoring)\t', name);
+                    // console.log('\t(Ignoring)\t', name); // Commented out for speed
                     return true;
                 }
             }
             return false;
         },
         'out': BUILD_DIR,
-        'appVersion': p.version,
+        'appVersion': packageJson.version,
         'icon': './icons/icon',
         'osxUniversal': {
             'x64ArchFiles': '*'
-        }
+        },
+        'afterCopy': [
+            (buildPath, electronVersion, platform, arch, callback) => {
+                rebuild.rebuild({ buildPath, electronVersion, arch })
+                    .then(() => callback())
+                    .catch((error) => callback(error));
+            },
+        ],
     }).then(() => done())
     .catch(err => {
         console.log(err)
@@ -108,8 +131,7 @@ function build(done) {
 gulp.task('build', gulp.series(clean, build));
 
 function release(done){
-    const p = require('./package');
-    const archiver = require('archiver');
+
     const exec = require('child_process').exec;
 
     const promises = [];
@@ -148,8 +170,8 @@ function release(done){
      */
     const releaseWin = function (arch, os) {
         // TRICKY: the iss script cannot take the .exe extension on the file name
-        const file = `BTT-Writer-${p.version}-win-x${arch}`;
-        const cmd = `iscc scripts/win_installer.iss /DArch=${arch === '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${p.version} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
+        const file = `BTT-Writer-${packageJson.version}-win-x${arch}`;
+        const cmd = `iscc scripts/win_installer.iss /DArch=${arch === '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${packageJson.version} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
         console.log(cmd);
         return new Promise(function(resolve, reject) {
             exec(cmd, function(err, stdout, stderr) {
@@ -171,98 +193,91 @@ function release(done){
         });
     };
 
-    function _release() {
-        for (const os of platforms) {
-            switch (os) {
-                case 'win64':
-                    if (fs.existsSync(BUILD_DIR + 'BTT-Writer-win32-x64/')) {
-                        promises.push(downloadGit(gitVersion, '64')
-                            .then(releaseWin.bind(undefined, '64', os)));
-                    } else {
-                        promises.push(Promise.resolve({
-                            os: os,
-                            status: 'missing',
-                            path: null
-                        }));
-                    }
-                    break;
-                case 'darwin':
-                    if (fs.existsSync(BUILD_DIR + 'BTT-Writer-darwin-universal/')) {
-                        promises.push(new Promise(function (os, resolve, reject) {
-                            const dest = `${RELEASE_DIR}BTT-Writer-${p.version}-osx-universal.zip`;
-                            try {
-                                const output = fs.createWriteStream(dest);
-                                output.on('close', function () {
-                                    resolve({
-                                        os: os,
-                                        status: 'ok',
-                                        path: dest
-                                    });
-                                });
-                                const archive = archiver.create('zip');
-                                archive.on('error', reject);
-                                archive.pipe(output);
-                                archive.directory(BUILD_DIR + 'BTT-Writer-darwin-universal/BTT-Writer.app/', 'BTT-Writer.app');
-                                archive.finalize();
-                            } catch (e) {
-                                console.error(e);
-                                resolve({
-                                    os: os,
-                                    status: 'error',
-                                    path: null
-                                });
-                            }
-                        }.bind(undefined, os)));
-                    } else {
-                        promises.push(Promise.resolve({
-                            os: os,
-                            status: 'missing',
-                            path: null
-                        }));
-                    }
-                    break;
-                case 'linux':
-                    let linuxBuildPath = BUILD_DIR + 'BTT-Writer-linux-x64/';
-                    if (fs.existsSync(linuxBuildPath)) {
-                        promises.push(new Promise(function (os, resolve, reject) {
-                            const dest = `${RELEASE_DIR}BTT-Writer-${p.version}-linux-x64.zip`;
-                            try {
-                                const output = fs.createWriteStream(dest);
-                                output.on('close', function () {
-                                    resolve({
-                                        os: os,
-                                        status: 'ok',
-                                        path: dest
-                                    });
-                                });
-                                const archive = archiver.create('zip');
-                                archive.on('error', reject);
-                                archive.pipe(output);
-                                archive.directory(linuxBuildPath, 'BTT-Writer');
-                                archive.finalize();
-                            } catch (e) {
-                                console.error(e);
-                                resolve({
-                                    os: os,
-                                    status: 'error',
-                                    path: null
-                                });
-                            }
-                        }.bind(undefined, os)));
-                    } else {
-                        promises.push(Promise.resolve({
-                            os: os,
-                            status: 'missing',
-                            path: null
-                        }));
-                    }
-                    break;
-                default:
-                    console.warn('No release procedure has been defined for ' + os);
-            }
+    const releaseDeb = function (arch) {
+        let buildPath = BUILD_DIR + `BTT-Writer-linux-x64/`;
+        const options = {
+            name: "btt-writer",
+            src: buildPath,
+            dest: RELEASE_DIR,
+            arch: arch,
+            icon: "icons/icon.png",
+            compression: "gzip",
+            categories: [
+                "Translation", "Languages"
+            ],
         }
+        return debInstaller(options);
+    }
 
-        Promise.all(promises).then(() => done());
+    const releaseDmg = function (arch) {
+        const name = `BTT-Writer-${packageJson.version}-osx`;
+        let buildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/BTT-Writer.app`;
+        const options = {
+            appPath: buildPath,
+            name: name,
+            out: RELEASE_DIR,
+            icon: "icons/icon.icns"
+        }
+        return new Promise(function(resolve, reject) {
+            resolve(dmgInstaller.createDMG(options))
+        });
+    }
+
+    function _release() {
+        const tasks = platforms.map(async (os) => {
+            try {
+                switch (os) {
+                    case 'win64':
+                        if (!fs.existsSync(BUILD_DIR + 'BTT-Writer-win32-x64/')) {
+                            throw new Error('Missing build');
+                        }
+                        await downloadGit(gitVersion, '64');
+                        return await releaseWin('64', os);
+
+                    case 'darwin':
+                        let arch = 'universal';
+                        let macBuildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/`;
+                        if (!fs.existsSync(macBuildPath)) {
+                            // fallback to x64 arch
+                            arch = "x64";
+                            macBuildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/`;
+                        }
+
+                        if (!fs.existsSync(macBuildPath)) {
+                            throw new Error('Missing build');
+                        }
+
+                        const macDest = `${RELEASE_DIR}BTT-Writer-${packageJson.version}-osx-${arch}.zip`;
+
+                        await zipDirectory(macBuildPath + 'BTT-Writer.app/', 'BTT-Writer.app', macDest);
+                        await releaseDmg(arch);
+
+                        return {os: os, status: 'ok', path: macDest};
+
+                    case 'linux':
+                        const linuxBuildPath = BUILD_DIR + 'BTT-Writer-linux-x64/';
+                        if (!fs.existsSync(linuxBuildPath)) {
+                            throw new Error('Missing build');
+                        }
+
+                        const linuxDest = `${RELEASE_DIR}BTT-Writer-${packageJson.version}-linux-x64.zip`;
+
+                        await zipDirectory(linuxBuildPath, 'BTT-Writer', linuxDest);
+                        await releaseDeb("amd64", os);
+
+                        return {os: os, status: 'ok', path: linuxDest};
+
+                    default:
+                        console.warn('No release procedure for ' + os);
+                        return null;
+                }
+            } catch (err) {
+                console.error(`Failed to release ${os}:`, err.message);
+                return {os: os, status: 'error', path: null, error: err};
+            }
+        });
+
+        Promise.all(tasks).then(() => done());
     }
 
     mkdirp.sync('release')
