@@ -584,7 +584,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                 .then(flatten())
                 .then(map(readChunk))
                 .then(Promise.all.bind(Promise))
-                .then(utils.lodash.indexBy('name'));
+                .then(utils.lodash.keyBy('name'));
         },
 
         unsetValues: function (key) {
