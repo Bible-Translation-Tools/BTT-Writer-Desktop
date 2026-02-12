@@ -4,7 +4,7 @@ let fs = require('fs');
 let path = require('path');
 let jsonfile = require('jsonfile');
 let _ = require('lodash');
-let locale2 = new require('locale');
+let locale = require('locale');
 
 String.prototype.format = function(...args) {
     return this.replace(/{(\d+)}/g, function(match, number) {
@@ -47,7 +47,7 @@ function supportedLocales (dir) {
     _.forEach(fs.readdirSync(dir), function(n) {
         localLocales.push(n.replace(/\.[^/.]+$/, ''));
     });
-    return new locale2.Locales(localLocales);
+    return new locale.Locales(localLocales);
 }
 
 /**
@@ -56,7 +56,7 @@ function supportedLocales (dir) {
  * @param {Locale}
  */
 function chooseBestLocale(dir, code) {
-    let defaultLocale = new locale2.Locales(code || 'en');
+    let defaultLocale = new locale.Locales(code || 'en');
     return defaultLocale.best(supportedLocales(dir));
 }
 

@@ -99,15 +99,14 @@ class HtmlParseContext {
     handleVerse(number) {
         const isSpecialBlock = this.currentIndentLevel > 0 || this.currentAlignment !== "align-start";
 
-        // Auto-flush if needed
-        if (isSpecialBlock && !this.isParagraphStart) {
-            this.flush();
-        }
-
         if (this.isParagraphStart && isSpecialBlock) {
             // Capture for absolute positioning
             this.pendingVerseNumber = number;
         } else {
+            // Auto-flush if needed
+            if (isSpecialBlock && !this.isParagraphStart) {
+                this.flush();
+            }
             // Inline verse
             this.currentTextBuffer += `<sup class="verse-num ${this.module}">${number}</sup> `;
         }

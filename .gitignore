@@ -31,3 +31,4 @@ pnpm-*.yaml
 
 .vscode
 .fleet
+.tmp

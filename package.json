@@ -59,7 +59,8 @@
     "gulp": "5.0.0",
     "gulp-mocha": "3.0.0",
     "gulp-replace": "0.5.4",
-    "jest": "14.1.0",
+    "jest": "30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
     "mocha": "3.0.2",
     "yargs": "4.8.1"
   },
