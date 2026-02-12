@@ -4,25 +4,9 @@
 
 'use strict';
 
-// 1. Mock External Dependencies
-jest.mock('path', () => ({
-    join: jest.fn((...args) => args.join('/'))
-}));
-
-jest.mock('../src/js/usfmparse', () => ({
-    usfmToHtml: jest.fn()
-}));
-
-jest.mock('lodash', () => ({
-    forEach: jest.fn((obj, fn) => {
-        if (Array.isArray(obj)) obj.forEach(fn);
-        else Object.keys(obj).forEach(key => fn(obj[key], key));
-    }),
-    groupBy: jest.fn(),
-    uniq: jest.fn(arr => arr),
-    compact: jest.fn(arr => arr.filter(Boolean)),
-    merge: jest.fn((...args) => Object.assign({}, ...args))
-}));
+// 1. Mock External Dependencies using centralized mocks
+jest.mock('path');
+jest.mock('lodash');
 
 // 2. Global App Mock (Still needed as it's your app logic)
 global.App = {

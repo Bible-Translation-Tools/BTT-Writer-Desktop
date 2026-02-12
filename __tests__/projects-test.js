@@ -1,8 +1,10 @@
 'use strict';
 
-// Mock all dependencies
+// Mock all dependencies using centralized mocks
 jest.mock('lodash');
 jest.mock('path');
+
+// Mock utils module with fs functions
 jest.mock('../src/js/lib/utils', () => ({
     fs: {
         mkdirs: jest.fn(),
@@ -99,13 +101,6 @@ describe('ProjectsManager', () => {
             });
             return result;
         });
-        lodash.partialRight.mockImplementation((fn, ...args) => (...moreArgs) => fn(...moreArgs, ...args));
-        lodash.keyBy.mockImplementation((arr, key) => {
-            const result = {};
-            arr.forEach(item => result[item[key]] = item);
-            return result;
-        });
-        lodash.compact.mockImplementation((arr) => arr.filter(Boolean));
 
         // Create ProjectsManager instance
         projectsManager = new ProjectsManager(

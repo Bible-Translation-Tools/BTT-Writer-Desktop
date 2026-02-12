@@ -5,7 +5,7 @@ const fs = require('fs');
 const mkdirp = require('mkdirp');
 const SQL = require('sql.js');
 
-// Mock all dependencies
+// Mock dependencies using centralized mocks
 jest.mock('path');
 jest.mock('fs');
 jest.mock('mkdirp');

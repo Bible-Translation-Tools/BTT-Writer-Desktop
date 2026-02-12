@@ -44,13 +44,8 @@ jest.mock('mkdirp', () => ({
     sync: jest.fn()
 }));
 
-// Mock path
-jest.mock('path', () => ({
-    join: jest.fn((...args) => args.join('/')),
-    resolve: jest.fn((...args) => args.join('/')),
-    sep: '/',
-    dirname: jest.fn((p) => p.split('/').slice(0, -1).join('/'))
-}));
+// Use centralized path mock
+jest.mock('path');
 
 // Mock all the module dependencies
 jest.mock('../src/js/configurator', () => ({

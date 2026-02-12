@@ -4,7 +4,10 @@
 const _ = require('lodash');
 global._ = _;
 
-// Mock cmdr to return a function that creates chainable objects
+// Use centralized path mock from __mocks__/path.js
+jest.mock('path');
+
+// Module-specific mocks that shouldn't be centralized
 jest.mock('../src/js/lib/cmdr', () => {
     return jest.fn((paths) => {
         return function(cmdString) {
@@ -24,10 +27,6 @@ jest.mock('../src/js/lib/cmdr', () => {
         };
     });
 });
-
-jest.mock('path', () => ({
-    join: jest.fn((...args) => args.join('/'))
-}));
 
 jest.mock('../src/js/lib/utils', () => ({
     fs: {

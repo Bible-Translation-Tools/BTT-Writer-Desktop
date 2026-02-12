@@ -96,27 +96,9 @@ describe('Reporter', () => {
     describe('ReporterNetworkCalls', () => {
         describe('reportBug', () => {
             it('should successfully submit the report', async () => {
-                // Setup https mock
-                const mockResponse = {
-                    statusCode: 201,
-                    setEncoding: jest.fn(),
-                    on: jest.fn((event, callback) => {
-                        if (event === 'data') callback('response data');
-                        if (event === 'end') callback();
-                        return mockResponse;
-                    })
-                };
-
-                const mockRequest = {
-                    on: jest.fn(),
-                    write: jest.fn(),
-                    end: jest.fn()
-                };
-
-                https.request.mockImplementation((options, callback) => {
-                    callback(mockResponse);
-                    return mockRequest;
-                });
+                // Configure the https mock from __mocks__ directory
+                https.__statusCode = 201;
+                https.__responseMessage = 'response data';
 
                 // Mock canReportToGithub to return true
                 reporter.canReportToGithub = jest.fn().mockReturnValue(true);
@@ -125,6 +107,7 @@ describe('Reporter', () => {
                 await reporter.reportBug('Test bug report');
 
                 expect(https.request).toHaveBeenCalled();
+                expect(https.__requestCount).toBe(1);
             });
         });
     });

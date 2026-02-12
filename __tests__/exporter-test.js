@@ -1,10 +1,10 @@
 'use strict';
 
-// Mock dependencies
-jest.mock('path', () => ({
-    join: jest.fn((...args) => args.join('/'))
-}));
+// Use centralized mocks (Jest automatically looks in __mocks__ directory)
+jest.mock('path');
+jest.mock('lodash');
 
+// Module-specific mocks that shouldn't be centralized
 jest.mock('archiver', () => ({
     create: jest.fn(() => ({
         pipe: jest.fn(),
@@ -18,10 +18,6 @@ jest.mock('fs', () => ({
     createWriteStream: jest.fn(() => ({
         pipe: jest.fn()
     }))
-}));
-
-jest.mock('lodash', () => ({
-    map: jest.fn((arr, fn) => arr.map(fn))
 }));
 
 jest.mock('../src/js/lib/utils', () => ({

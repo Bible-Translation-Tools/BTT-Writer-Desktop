@@ -1,13 +1,5 @@
 'use strict';
 
-// Mock dependencies
-jest.mock('path', () => ({
-    sep: '/',
-    join: jest.fn((...args) => args.join('/'))
-}));
-
-jest.mock('untildify', () => jest.fn((val) => val));
-
 jest.mock('../src/config/user-setting', () => [
     {
         name: 'localization',
@@ -45,8 +37,6 @@ jest.mock('../package', () => ({
     version: '1.5.4+x'
 }));
 
-const path = require('path');
-const untildify = require('untildify');
 const { Configurator } = require('../src/js/configurator');
 
 describe('Configurator', () => {
@@ -55,6 +45,10 @@ describe('Configurator', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         configurator = new Configurator();
+
+        // Initialize storage properly to avoid JSON parse errors
+        const storage = configurator._storage();
+        Object.keys(storage).forEach(key => delete storage[key]);
     });
 
     describe('getValue', () => {
@@ -156,10 +150,17 @@ describe('Configurator', () => {
 
     describe('getUserSettingArr', () => {
         it('should return default settings when storage is empty', () => {
+            // Suppress expected JSON parse error
+            const originalError = console.error;
+            console.error = jest.fn();
+
             const result = configurator.getUserSettingArr();
 
             expect(Array.isArray(result)).toBe(true);
             expect(result.length).toBeGreaterThan(0);
+
+            // Restore console.error
+            console.error = originalError;
         });
 
         it('should return parsed settings from storage', () => {
