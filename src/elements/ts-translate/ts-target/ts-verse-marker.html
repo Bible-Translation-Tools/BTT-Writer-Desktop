@@ -8,27 +8,29 @@
         :host {
             display: inline-block;
             vertical-align: middle;
+            transform: translate(0, 0);
         }
 
         #contain {
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
             position: relative;
             display: flex;
             justify-content: center;
+            align-items: center;
         }
 
         iron-icon {
             position: absolute;
-            top: 0;
-            left: 0;
+            width: 32px;
+            height: 32px;
         }
 
         #num {
-            font-size: 55%;
-            color: var(--reverse-text-color);
+            font-size: 70%;
+            color: white;
             z-index: 1;
-            padding-top: 2px;
+            padding-bottom: 4px;
         }
 
 	</style>
