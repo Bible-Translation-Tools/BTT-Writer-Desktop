@@ -203,7 +203,6 @@
             this.set('active', true);
             this.setpreview();
             this.setheights();
-            this.setlocation();
             this.movein();
         },
 
@@ -229,10 +228,10 @@
                 contain.classList.add("movein");
                 setTimeout(function() {
                     contain.classList.remove("movein");
-                    mythis.setheights();
+                    mythis.setlocation();
                     mythis.fire('iron-signal', {name: 'closeloading'});
-                }, 100);
-            }, 100);
+                }, 300);
+            }, 300);
         },
 
         setpreview: function () {
