@@ -109,13 +109,13 @@
         },
 
         updateheight: function (e) {
-            var list = this.$.chunklist;
-            var index = e.model.index;
+            const list = this.$.chunklist;
+            const index = e.model.index;
             list.updateSizeForItem(index);
         },
 
         refresh: function () {
-            var mythis = this;
+            const mythis = this;
 
             if (mythis.active) {
                 mythis.getlocation();
@@ -128,12 +128,12 @@
         },
 
         setheights: function () {
-            var list = this.$.chunklist;
+            const list = this.$.chunklist;
 
             list.fire('iron-resize');
 
-            for (var i = list.firstVisibleIndex; i <= list.lastVisibleIndex; i++) {
-                var card = document.getElementById(this.modename + i);
+            for (let i = list.firstVisibleIndex; i <= list.lastVisibleIndex; i++) {
+                const card = document.getElementById(this.modename + i);
                 if (card && this.chunks && i < this.chunks.length) {
                     card.setheight();
                 }
@@ -154,8 +154,8 @@
         },
 
         moveout: function () {
-            var mythis = this;
-            var contain = this.$.contain;
+            const mythis = this;
+            const contain = this.$.contain;
 
             contain.classList.add("moveout");
             setTimeout(function() {
@@ -167,8 +167,8 @@
         },
 
         movein: function () {
-            var mythis = this;
-            var contain = this.$.contain;
+            const mythis = this;
+            const contain = this.$.contain;
 
             setTimeout(function() {
                 mythis.classList.remove("preview");
@@ -177,8 +177,8 @@
                     contain.classList.remove("movein");
                     mythis.setheights();
                     mythis.fire('iron-signal', {name: 'closeloading'});
-                }, 500);
-            }, 500);
+                }, 100);
+            }, 100);
         },
 
         setpreview: function () {
@@ -187,9 +187,9 @@
         },
 
         getlocation: function () {
-            var list = this.$.chunklist;
-            var index = list.firstVisibleIndex || 0;
-            var chunks = this.chunks;
+            const list = this.$.chunklist;
+            const index = list.firstVisibleIndex || 0;
+            const chunks = this.chunks;
 
             if (chunks && chunks.length) {
                 this.set('modestatus.chapter', chunks[index].chunkmeta.chapter);
@@ -198,13 +198,13 @@
         },
 
         setlocation: function () {
-            var list = this.$.chunklist;
-            var index = this.modestatus.index;
-            var chunks = this.chunks;
-            var chapter = this.modestatus.chapter;
+            const list = this.$.chunklist;
+            let index = parseInt(this.modestatus.index) || -1;
+            const chunks = this.chunks;
+            const chapter = this.modestatus.chapter;
 
             if (index < 0) {
-                var filtered = chunks.filter(function (chunk) {
+                const filtered = chunks.filter(function (chunk) {
                     return chunk.chunkmeta.chapter === chapter;
                 });
                 if (filtered.length) {

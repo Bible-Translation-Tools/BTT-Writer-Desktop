@@ -113,8 +113,8 @@
         },
 
         setheight: function () {
-            var trans = this.$.transcard;
-            var src = this.$.srccard;
+            const trans = this.$.transcard;
+            const src = this.$.srccard;
             trans.style.minHeight = 0;
             src.style.minHeight = 0;
             trans.style.minHeight = src.getBoundingClientRect().height + "px";
@@ -122,10 +122,10 @@
         },
 
         transtop: function () {
-            var trans = this.$.transcard;
-            var src = this.$.srccard;
-            var mythis = this;
-            var id = this.chunk.chaptermeta.chapterid;
+            const trans = this.$.transcard;
+            const src = this.$.srccard;
+            const mythis = this;
+            const id = this.chunk.chaptermeta.chapterid;
 
             if(this.chunk.state.read) {
                 trans.classList.add("up");
@@ -140,10 +140,10 @@
         },
 
         srctop: function () {
-            var trans = this.$.transcard;
-            var src = this.$.srccard;
-            var mythis = this;
-            var id = this.chunk.chaptermeta.chapterid;
+            const trans = this.$.transcard;
+            const src = this.$.srccard;
+            const mythis = this;
+            const id = this.chunk.chaptermeta.chapterid;
 
             if(!this.chunk.state.read) {
                 trans.classList.add("down");

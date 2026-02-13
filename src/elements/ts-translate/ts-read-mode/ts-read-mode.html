@@ -108,7 +108,7 @@
         },
 
         refresh: function () {
-            var mythis = this;
+            const mythis = this;
 
             if (mythis.active) {
                 mythis.getlocation();
@@ -121,12 +121,11 @@
         },
 
         setheights: function () {
-            var list = this.$.readlist;
-
+            const list = this.$.readlist;
             list.fire('iron-resize');
 
-            for (var i = list.firstVisibleIndex; i <= list.lastVisibleIndex; i++) {
-                var card = document.getElementById(this.modename + i);
+            for (let i = list.firstVisibleIndex; i <= list.lastVisibleIndex; i++) {
+                const card = document.getElementById(this.modename + i);
                 if (card && this.chapters && i < this.chapters.length) {
                     card.setheight();
                     list.updateSizeForItem(i);
@@ -143,13 +142,13 @@
         tomode: function () {
             this.set('active', true);
             this.setpreview();
-            this.setlocation();
+            this.setheights();
             this.movein();
         },
 
         moveout: function () {
-            var mythis = this;
-            var contain = this.$.contain;
+            const mythis = this;
+            const contain = this.$.contain;
 
             contain.classList.add("moveout");
             setTimeout(function() {
@@ -161,18 +160,19 @@
         },
 
         movein: function () {
-            var mythis = this;
-            var contain = this.$.contain;
+            const mythis = this;
+            const contain = this.$.contain;
 
             setTimeout(function() {
                 mythis.classList.remove("preview");
                 contain.classList.add("movein");
                 setTimeout(function() {
                     contain.classList.remove("movein");
-                    mythis.setheights();
+                    //mythis.setheights();
+                    mythis.setlocation();
                     mythis.fire('iron-signal', {name: 'closeloading'});
-                }, 500);
-            }, 500);
+                }, 300);
+            }, 300);
         },
 
         setpreview: function () {
@@ -181,9 +181,8 @@
         },
 
         getlocation: function () {
-            var list = this.$.readlist;
-            var index = list.firstVisibleIndex;
-            var chapters = this.chapters;
+            const index = this.getCenteredIndex();
+            const chapters = this.chapters;
 
             if (chapters && chapters.length) {
                 this.set('modestatus.chapter', chapters[index].chaptermeta.chapter);
@@ -192,14 +191,24 @@
         },
 
         setlocation: function () {
-            var list = this.$.readlist;
-            var index = parseInt(this.modestatus.chapter) - 1;
-
-            list.scrollToIndex(index);
+            const index = (parseInt(this.modestatus.chapter) || 1) - 1;
+            this.$.readlist.scrollToIndex(index);
         },
 
         createid: function (index) {
             return this.modename + index;
+        },
+
+        getCenteredIndex: function () {
+            const list = this.$.readlist;
+            const mid = list.getBoundingClientRect().top + (list.offsetHeight / 2);
+
+            const mostVisible = list._physicalItems.find(item => {
+                const rect = item.getBoundingClientRect();
+                return mid >= rect.top && mid <= rect.bottom;
+            });
+
+            return mostVisible ? list.modelForElement(mostVisible).index : list.firstVisibleIndex;
         },
 
         ready: function() {

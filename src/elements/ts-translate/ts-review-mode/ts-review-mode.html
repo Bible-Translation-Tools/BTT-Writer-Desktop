@@ -123,7 +123,7 @@
         },
 
         opensearch: function () {
-            var mythis = this;
+            const mythis = this;
 
             this.$.reviewlist.classList.add('searchmode');
             this.$.searchbar.classList.remove('hide');
@@ -144,11 +144,11 @@
         },
 
         next: function () {
-            var list = this.$.reviewlist;
-            var index = list.firstVisibleIndex || 0;
-            var order = this.results.forward;
+            const list = this.$.reviewlist;
+            const index = list.firstVisibleIndex || 0;
+            const order = this.results.forward;
 
-            var next = order.find(function (num) {
+            const next = order.find(function (num) {
                 return num > index;
             });
 
@@ -156,11 +156,11 @@
         },
 
         previous: function () {
-            var list = this.$.reviewlist;
-            var index = list.firstVisibleIndex || 0;
-            var order = this.results.backward;
+            const list = this.$.reviewlist;
+            const index = list.firstVisibleIndex || 0;
+            const order = this.results.backward;
 
-            var previous = order.find(function (num) {
+            const previous = order.find(function (num) {
                 return num < index;
             });
 
@@ -168,7 +168,7 @@
         },
 
         refresh: function () {
-            var mythis = this;
+            const mythis = this;
 
             if (mythis.active) {
                 mythis.getlocation();
@@ -182,11 +182,11 @@
         },
 
         setheights: function () {
-            var list = this.$.reviewlist;
+            const list = this.$.reviewlist;
 
             list.fire('iron-resize');
 
-            for (var i = list.firstVisibleIndex; i <= list.lastVisibleIndex; i++) {
+            for (let i = list.firstVisibleIndex; i <= list.lastVisibleIndex; i++) {
                 if (this.chunks && this.chunks.length && i < this.chunks.length) {
                     list.updateSizeForItem(i);
                 }
@@ -202,13 +202,14 @@
         tomode: function () {
             this.set('active', true);
             this.setpreview();
+            this.setheights();
             this.setlocation();
             this.movein();
         },
 
         moveout: function () {
-            var mythis = this;
-            var contain = this.$.contain;
+            const mythis = this;
+            const contain = this.$.contain;
 
             contain.classList.add("moveout");
             setTimeout(function() {
@@ -220,8 +221,8 @@
         },
 
         movein: function () {
-            var mythis = this;
-            var contain = this.$.contain;
+            const mythis = this;
+            const contain = this.$.contain;
 
             setTimeout(function() {
                 mythis.classList.remove("preview");
@@ -230,8 +231,8 @@
                     contain.classList.remove("movein");
                     mythis.setheights();
                     mythis.fire('iron-signal', {name: 'closeloading'});
-                }, 500);
-            }, 500);
+                }, 100);
+            }, 100);
         },
 
         setpreview: function () {
@@ -240,14 +241,13 @@
         },
 
         getlocation: function () {
-            var list = this.$.reviewlist;
-            var index = list.firstVisibleIndex || 0;
-            var chunks = this.chunks;
-            var chapter;
+            const index = this.$.reviewlist.firstVisibleIndex || 0;
+            const chunks = this.chunks;
+            let chapter;
 
             if (chunks && chunks.length) {
-                var chunk = chunks[index];
-                var type = chunk.projectmeta.type.id;
+                const chunk = chunks[index];
+                const type = chunk.projectmeta.type.id;
 
                 if (type === "tw") {
                     chapter = chunk.chunkmeta.frameid.charAt(0).toUpperCase();
@@ -261,13 +261,12 @@
         },
 
         setlocation: function () {
-            var list = this.$.reviewlist;
-            var index = this.modestatus.index;
-            var chunks = this.chunks;
-            var chapter = this.modestatus.chapter;
+            let index = parseInt(this.modestatus.index) || -1;
+            const chunks = this.chunks;
+            const chapter = this.modestatus.chapter;
 
             if (index < 0) {
-                var filtered = chunks.filter(function (chunk) {
+                const filtered = chunks.filter(function (chunk) {
                     return chunk.chunkmeta.chapter === chapter;
                 });
                 if (filtered.length) {
@@ -277,7 +276,8 @@
                 }
             }
 
-            list.scrollToIndex(index);
+            this.$.reviewlist.scrollToIndex(index);
+
         },
 
 		ready: function() {

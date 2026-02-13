@@ -120,8 +120,8 @@
         setheight: function () {
             var trans = this.$.transcard;
             var src = this.$.srccard;
-            trans.style.minHeight = 0;
-            src.style.minHeight = 0;
+            //trans.style.minHeight = 0;
+            //src.style.minHeight = 0;
             trans.style.minHeight = src.getBoundingClientRect().height + "px";
             src.style.minHeight = trans.getBoundingClientRect().height + "px";
             this.fire('updateheight');
