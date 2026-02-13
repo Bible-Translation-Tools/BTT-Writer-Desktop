@@ -228,6 +228,7 @@
                 contain.classList.add("movein");
                 setTimeout(function() {
                     contain.classList.remove("movein");
+                    mythis.setheights();
                     mythis.setlocation();
                     mythis.fire('iron-signal', {name: 'closeloading'});
                 }, 300);
@@ -275,8 +276,9 @@
                 }
             }
 
-            this.$.reviewlist.scrollToIndex(index);
-
+            this.async(() => {
+                this.$.reviewlist.scrollToIndex(index);
+            }, 1);
         },
 
 		ready: function() {

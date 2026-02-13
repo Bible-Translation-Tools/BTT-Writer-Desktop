@@ -168,6 +168,7 @@
                 contain.classList.add("movein");
                 setTimeout(function() {
                     contain.classList.remove("movein");
+                    mythis.setheights();
                     mythis.setlocation();
                     mythis.fire('iron-signal', {name: 'closeloading'});
                 }, 300);
@@ -191,7 +192,9 @@
 
         setlocation: function () {
             const index = (parseInt(this.modestatus.chapter) || 1) - 1;
-            this.$.readlist.scrollToIndex(index);
+            this.async(() => {
+                this.$.readlist.scrollToIndex(index);
+            }, 1);
         },
 
         createid: function (index) {
@@ -200,14 +203,32 @@
 
         getCenteredIndex: function () {
             const list = this.$.readlist;
-            const mid = list.getBoundingClientRect().top + (list.offsetHeight / 2);
+            const listRect = list.getBoundingClientRect();
 
-            const mostVisible = list._physicalItems.find(item => {
+            let maxVisibleHeight = 0;
+            let mostVisibleItem = null;
+
+            // iron-list maintains a set of 'physical' elements currently in DOM
+            list._physicalItems.forEach(item => {
                 const rect = item.getBoundingClientRect();
-                return mid >= rect.top && mid <= rect.bottom;
+
+                // Calculate the overlap between the item and the list viewport
+                const visibleTop = Math.max(rect.top, listRect.top);
+                const visibleBottom = Math.min(rect.bottom, listRect.bottom);
+                const visibleHeight = visibleBottom - visibleTop;
+
+                if (visibleHeight > maxVisibleHeight) {
+                    maxVisibleHeight = visibleHeight;
+                    mostVisibleItem = item;
+                }
             });
 
-            return mostVisible ? list.modelForElement(mostVisible).index : list.firstVisibleIndex;
+            if (mostVisibleItem) {
+                // Use iron-list's internal method to map the element back to the data index
+                return list.modelForElement(mostVisibleItem).index;
+            }
+
+            return list.firstVisibleIndex;
         },
 
         ready: function() {

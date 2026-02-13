@@ -175,6 +175,7 @@
                 contain.classList.add("movein");
                 setTimeout(function() {
                     contain.classList.remove("movein");
+                    mythis.setheights();
                     mythis.setlocation();
                     mythis.fire('iron-signal', {name: 'closeloading'});
                 }, 300);
@@ -198,7 +199,6 @@
         },
 
         setlocation: function () {
-            const list = this.$.chunklist;
             let index = parseInt(this.modestatus.index) || -1;
             const chunks = this.chunks;
             const chapter = this.modestatus.chapter;
@@ -214,7 +214,9 @@
                 }
             }
 
-            list.scrollToIndex(index);
+            this.async(() => {
+                this.$.chunklist.scrollToIndex(index);
+            }, 1);
         },
 
         createid: function (index) {
