@@ -98,9 +98,6 @@
                 type: String,
                 value: "read"
             },
-            timer: {
-                type: Number
-            },
             active: {
                 type: Boolean,
                 value: false
@@ -112,11 +109,9 @@
 
             if (mythis.active) {
                 mythis.getlocation();
-                clearTimeout(mythis.timer);
-
-                mythis.timer = setTimeout(function() {
+                this.async(() => {
                     mythis.setheights();
-                }, 100);
+                }, 1);
             }
         },
 

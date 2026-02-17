@@ -113,9 +113,6 @@
                 type: Object,
                 value: {}
             },
-            timer: {
-                type: Number
-            },
             active: {
                 type: Boolean,
                 value: false
@@ -172,12 +169,10 @@
 
             if (mythis.active) {
                 mythis.getlocation();
-                clearTimeout(mythis.timer);
-
-                mythis.timer = setTimeout(function() {
+                mythis.async(() => {
                     mythis.setheights();
                     mythis.fire('iron-signal', {name: 'passivesearch'});
-                }, 100);
+                }, 1);
             }
         },
 

@@ -99,9 +99,6 @@
                 type: String,
                 value: "chunk"
             },
-            timer: {
-                type: Number
-            },
             active: {
                 type: Boolean,
                 value: false
@@ -119,11 +116,9 @@
 
             if (mythis.active) {
                 mythis.getlocation();
-                clearTimeout(mythis.timer);
-
-                mythis.timer = setTimeout(function() {
+                mythis.async(() => {
                     mythis.setheights();
-                }, 100);
+                }, 1);
             }
         },
 
