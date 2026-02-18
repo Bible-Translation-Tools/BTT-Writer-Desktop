@@ -1546,7 +1546,7 @@
             const mythis = this;
             const projectmeta = this.currentproject.projectmeta;
             const key = projectmeta.unique_id;
-            const index = parseInt(App.configurator.getValue(key + "-index")) || -1;
+            const index = parseInt(App.configurator.getValue(key + "-index")) || 0;
             const chapter = parseInt(App.configurator.getValue(key + "-chapter")) || 0;
             const bemode = App.configurator.getUserSetting('bemode');
             const typeclass = projectmeta.project_type_class;

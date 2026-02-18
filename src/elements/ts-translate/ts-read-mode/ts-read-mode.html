@@ -37,11 +37,11 @@
         }
 
         .movein {
-            -webkit-animation: moveinto .5s;
+            -webkit-animation: moveinto .3s;
         }
 
         .moveout {
-            -webkit-animation: moveout .5s;
+            -webkit-animation: moveout .3s;
         }
 
         @-webkit-keyframes moveinto {
@@ -98,18 +98,32 @@
                 type: String,
                 value: "read"
             },
+            timer: {
+                type: Number
+            },
             active: {
                 type: Boolean,
                 value: false
+            },
+            scrollTicking: {
+                type: Boolean,
             }
         },
 
         refresh: function () {
             const mythis = this;
 
-            if (mythis.active) {
-                mythis.getlocation();
-                this.async(() => {
+            if (this.active) {
+                if (!this.scrollTicking) {
+                    window.requestAnimationFrame(() => {
+                        mythis.getlocation();
+                        this.scrollTicking = false;
+                    });
+                    this.scrollTicking = true;
+                }
+
+                this.cancelAsync(this.timer);
+                this.timer = this.async(() => {
                     mythis.setheights();
                 }, 1);
             }
@@ -200,30 +214,28 @@
             const list = this.$.readlist;
             const listRect = list.getBoundingClientRect();
 
-            let maxVisibleHeight = 0;
-            let mostVisibleItem = null;
+            // Use the list's own center relative to the viewport
+            const mid = listRect.top + (list.offsetHeight / 2);
+            const items = list.querySelectorAll('ts-read-card');
 
-            // iron-list maintains a set of 'physical' elements currently in DOM
-            list._physicalItems.forEach(item => {
+            // Fallback to the first visible index if center logic fails
+            let mostVisibleIndex = list.firstVisibleIndex;
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
                 const rect = item.getBoundingClientRect();
 
-                // Calculate the overlap between the item and the list viewport
-                const visibleTop = Math.max(rect.top, listRect.top);
-                const visibleBottom = Math.min(rect.bottom, listRect.bottom);
-                const visibleHeight = visibleBottom - visibleTop;
-
-                if (visibleHeight > maxVisibleHeight) {
-                    maxVisibleHeight = visibleHeight;
-                    mostVisibleItem = item;
+                // Check if the center of the list falls within this card's boundaries
+                if (mid >= rect.top && mid <= rect.bottom) {
+                    const model = list.modelForElement(item);
+                    if (model) {
+                        mostVisibleIndex = model.index;
+                        break;
+                    }
                 }
-            });
-
-            if (mostVisibleItem) {
-                // Use iron-list's internal method to map the element back to the data index
-                return list.modelForElement(mostVisibleItem).index;
             }
 
-            return list.firstVisibleIndex;
+            return mostVisibleIndex;
         },
 
         ready: function() {

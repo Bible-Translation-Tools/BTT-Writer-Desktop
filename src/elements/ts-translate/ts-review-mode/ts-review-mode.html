@@ -46,11 +46,11 @@
         }
 
         .movein {
-            -webkit-animation: moveinto .5s;
+            -webkit-animation: moveinto .3s;
         }
 
         .moveout {
-            -webkit-animation: moveout .5s;
+            -webkit-animation: moveout .3s;
         }
 
         @-webkit-keyframes moveinto {
@@ -113,9 +113,15 @@
                 type: Object,
                 value: {}
             },
+            timer: {
+                type: Number
+            },
             active: {
                 type: Boolean,
                 value: false
+            },
+            scrollTicking: {
+                type: Boolean,
             }
         },
 
@@ -167,9 +173,17 @@
         refresh: function () {
             const mythis = this;
 
-            if (mythis.active) {
-                mythis.getlocation();
-                mythis.async(() => {
+            if (this.active) {
+                if (!this.scrollTicking) {
+                    window.requestAnimationFrame(() => {
+                        mythis.getlocation();
+                        this.scrollTicking = false;
+                    });
+                    this.scrollTicking = true;
+                }
+
+                this.cancelAsync(this.timer);
+                this.timer = this.async(() => {
                     mythis.setheights();
                     mythis.fire('iron-signal', {name: 'passivesearch'});
                 }, 1);
@@ -236,7 +250,7 @@
         },
 
         getlocation: function () {
-            const index = this.$.reviewlist.firstVisibleIndex || 0;
+            const index = this.getTopVisibleIndex();
             const chunks = this.chunks;
             let chapter;
 
@@ -256,7 +270,7 @@
         },
 
         setlocation: function () {
-            let index = parseInt(this.modestatus.index) || -1;
+            let index = parseInt(this.modestatus.index) || 0;
             const chunks = this.chunks;
             const chapter = this.modestatus.chapter;
 
@@ -274,6 +288,33 @@
             this.async(() => {
                 this.$.reviewlist.scrollToIndex(index);
             }, 1);
+        },
+
+        getTopVisibleIndex: function () {
+            const list = this.$.reviewlist;
+            const listRect = list.getBoundingClientRect();
+
+            // We look 20 pixels down from the top of the list to ignore small overlaps
+            const checkPoint = listRect.top + 20;
+
+            const items = list.querySelectorAll('ts-review-card');
+            let index = list.firstVisibleIndex || 0;
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const rect = item.getBoundingClientRect();
+
+                // If this card covers the point 20px from the top, it's our winner
+                if (checkPoint >= rect.top && checkPoint <= rect.bottom) {
+                    const model = list.modelForElement(item);
+                    if (model) {
+                        index = model.index;
+                        break;
+                    }
+                }
+            }
+
+            return index;
         },
 
 		ready: function() {
