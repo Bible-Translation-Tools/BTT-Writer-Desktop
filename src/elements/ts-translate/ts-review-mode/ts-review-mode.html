@@ -46,11 +46,11 @@
         }
 
         .movein {
-            -webkit-animation: moveinto .5s;
+            -webkit-animation: moveinto .3s;
         }
 
         .moveout {
-            -webkit-animation: moveout .5s;
+            -webkit-animation: moveout .3s;
         }
 
         @-webkit-keyframes moveinto {
@@ -119,11 +119,14 @@
             active: {
                 type: Boolean,
                 value: false
+            },
+            scrollTicking: {
+                type: Boolean,
             }
         },
 
         opensearch: function () {
-            var mythis = this;
+            const mythis = this;
 
             this.$.reviewlist.classList.add('searchmode');
             this.$.searchbar.classList.remove('hide');
@@ -144,11 +147,11 @@
         },
 
         next: function () {
-            var list = this.$.reviewlist;
-            var index = list.firstVisibleIndex || 0;
-            var order = this.results.forward;
+            const list = this.$.reviewlist;
+            const index = list.firstVisibleIndex || 0;
+            const order = this.results.forward;
 
-            var next = order.find(function (num) {
+            const next = order.find(function (num) {
                 return num > index;
             });
 
@@ -156,11 +159,11 @@
         },
 
         previous: function () {
-            var list = this.$.reviewlist;
-            var index = list.firstVisibleIndex || 0;
-            var order = this.results.backward;
+            const list = this.$.reviewlist;
+            const index = list.firstVisibleIndex || 0;
+            const order = this.results.backward;
 
-            var previous = order.find(function (num) {
+            const previous = order.find(function (num) {
                 return num < index;
             });
 
@@ -168,25 +171,31 @@
         },
 
         refresh: function () {
-            var mythis = this;
+            const mythis = this;
 
-            if (mythis.active) {
-                mythis.getlocation();
-                clearTimeout(mythis.timer);
+            if (this.active) {
+                if (!this.scrollTicking) {
+                    window.requestAnimationFrame(() => {
+                        mythis.getlocation();
+                        this.scrollTicking = false;
+                    });
+                    this.scrollTicking = true;
+                }
 
-                mythis.timer = setTimeout(function() {
+                this.cancelAsync(this.timer);
+                this.timer = this.async(() => {
                     mythis.setheights();
                     mythis.fire('iron-signal', {name: 'passivesearch'});
-                }, 100);
+                }, 1);
             }
         },
 
         setheights: function () {
-            var list = this.$.reviewlist;
+            const list = this.$.reviewlist;
 
             list.fire('iron-resize');
 
-            for (var i = list.firstVisibleIndex; i <= list.lastVisibleIndex; i++) {
+            for (let i = list.firstVisibleIndex; i <= list.lastVisibleIndex; i++) {
                 if (this.chunks && this.chunks.length && i < this.chunks.length) {
                     list.updateSizeForItem(i);
                 }
@@ -202,13 +211,13 @@
         tomode: function () {
             this.set('active', true);
             this.setpreview();
-            this.setlocation();
+            this.setheights();
             this.movein();
         },
 
         moveout: function () {
-            var mythis = this;
-            var contain = this.$.contain;
+            const mythis = this;
+            const contain = this.$.contain;
 
             contain.classList.add("moveout");
             setTimeout(function() {
@@ -220,8 +229,8 @@
         },
 
         movein: function () {
-            var mythis = this;
-            var contain = this.$.contain;
+            const mythis = this;
+            const contain = this.$.contain;
 
             setTimeout(function() {
                 mythis.classList.remove("preview");
@@ -229,9 +238,10 @@
                 setTimeout(function() {
                     contain.classList.remove("movein");
                     mythis.setheights();
+                    mythis.setlocation();
                     mythis.fire('iron-signal', {name: 'closeloading'});
-                }, 500);
-            }, 500);
+                }, 300);
+            }, 300);
         },
 
         setpreview: function () {
@@ -240,14 +250,13 @@
         },
 
         getlocation: function () {
-            var list = this.$.reviewlist;
-            var index = list.firstVisibleIndex || 0;
-            var chunks = this.chunks;
-            var chapter;
+            const index = this.getTopVisibleIndex();
+            const chunks = this.chunks;
+            let chapter;
 
             if (chunks && chunks.length) {
-                var chunk = chunks[index];
-                var type = chunk.projectmeta.type.id;
+                const chunk = chunks[index];
+                const type = chunk.projectmeta.type.id;
 
                 if (type === "tw") {
                     chapter = chunk.chunkmeta.frameid.charAt(0).toUpperCase();
@@ -261,13 +270,12 @@
         },
 
         setlocation: function () {
-            var list = this.$.reviewlist;
-            var index = this.modestatus.index;
-            var chunks = this.chunks;
-            var chapter = this.modestatus.chapter;
+            let index = parseInt(this.modestatus.index) || 0;
+            const chunks = this.chunks;
+            const chapter = this.modestatus.chapter;
 
             if (index < 0) {
-                var filtered = chunks.filter(function (chunk) {
+                const filtered = chunks.filter(function (chunk) {
                     return chunk.chunkmeta.chapter === chapter;
                 });
                 if (filtered.length) {
@@ -277,7 +285,36 @@
                 }
             }
 
-            list.scrollToIndex(index);
+            this.async(() => {
+                this.$.reviewlist.scrollToIndex(index);
+            }, 1);
+        },
+
+        getTopVisibleIndex: function () {
+            const list = this.$.reviewlist;
+            const listRect = list.getBoundingClientRect();
+
+            // We look 20 pixels down from the top of the list to ignore small overlaps
+            const checkPoint = listRect.top + 20;
+
+            const items = list.querySelectorAll('ts-review-card');
+            let index = list.firstVisibleIndex || 0;
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const rect = item.getBoundingClientRect();
+
+                // If this card covers the point 20px from the top, it's our winner
+                if (checkPoint >= rect.top && checkPoint <= rect.bottom) {
+                    const model = list.modelForElement(item);
+                    if (model) {
+                        index = model.index;
+                        break;
+                    }
+                }
+            }
+
+            return index;
         },
 
 		ready: function() {

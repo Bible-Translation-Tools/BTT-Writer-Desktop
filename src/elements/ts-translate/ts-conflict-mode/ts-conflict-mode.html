@@ -42,11 +42,11 @@
         }
 
         .movein {
-            -webkit-animation: moveinto .5s;
+            -webkit-animation: moveinto .3s;
         }
 
         .moveout {
-            -webkit-animation: moveout .5s;
+            -webkit-animation: moveout .3s;
         }
 
         @-webkit-keyframes moveinto {
@@ -110,6 +110,9 @@
             active: {
                 type: Boolean,
                 value: false
+            },
+            scrollTicking: {
+                type: Boolean,
             }
         },
 
@@ -118,24 +121,30 @@
         },
 
         refresh: function () {
-            var mythis = this;
+            const mythis = this;
 
-            if (mythis.active) {
-                mythis.getlocation();
-                clearTimeout(mythis.timer);
+            if (this.active) {
+                if (!this.scrollTicking) {
+                    window.requestAnimationFrame(() => {
+                        mythis.getlocation();
+                        this.scrollTicking = false;
+                    });
+                    this.scrollTicking = true;
+                }
 
-                mythis.timer = setTimeout(function() {
+                this.cancelAsync(this.timer);
+                this.timer = this.async(() => {
                     mythis.setheights();
-                }, 100);
+                }, 1);
             }
         },
 
         setheights: function () {
-            var list = this.$.conflictlist;
+            const list = this.$.conflictlist;
 
             list.fire('iron-resize');
 
-            for (var i = list.firstVisibleIndex; i <= list.lastVisibleIndex; i++) {
+            for (let i = list.firstVisibleIndex; i <= list.lastVisibleIndex; i++) {
                 if (this.chunks && this.chunks.length && i < this.chunks.length) {
                     list.updateSizeForItem(i);
                 }
@@ -151,13 +160,13 @@
         tomode: function () {
             this.set('active', true);
             this.setpreview();
-            this.setlocation();
+            this.setheights();
             this.movein();
         },
 
         moveout: function () {
-            var mythis = this;
-            var contain = this.$.contain;
+            const mythis = this;
+            const contain = this.$.contain;
 
             contain.classList.add("moveout");
             setTimeout(function() {
@@ -169,8 +178,8 @@
         },
 
         movein: function () {
-            var mythis = this;
-            var contain = this.$.contain;
+            const mythis = this;
+            const contain = this.$.contain;
 
             setTimeout(function() {
                 mythis.classList.remove("preview");
@@ -178,9 +187,10 @@
                 setTimeout(function() {
                     contain.classList.remove("movein");
                     mythis.setheights();
+                    mythis.setlocation();
                     mythis.fire('iron-signal', {name: 'closeloading'});
-                }, 500);
-            }, 500);
+                }, 300);
+            }, 300);
         },
 
         setpreview: function () {
@@ -189,13 +199,12 @@
         },
 
         getlocation: function () {
-            var list = this.$.conflictlist;
-            var index = list.firstVisibleIndex || 0;
-            var chunks = this.chunks;
+            const index = this.getTopVisibleIndex();
+            const chunks = this.chunks;
 
             if (chunks && chunks.length) {
-                var chunk = chunks[index];
-                var chapter = chunk.chunkmeta.chapter;
+                const chunk = chunks[index];
+                const chapter = chunk.chunkmeta.chapter;
 
                 this.set('modestatus.chapter', chapter);
                 this.set('modestatus.index', index);
@@ -203,13 +212,12 @@
         },
 
         setlocation: function () {
-            var list = this.$.conflictlist;
-            var index = this.modestatus.index;
-            var chunks = this.chunks;
-            var chapter = this.modestatus.chapter;
+            let index = parseInt(this.modestatus.index) || 0;
+            const chunks = this.chunks;
+            const chapter = this.modestatus.chapter;
 
             if (index < 0) {
-                var filtered = chunks.filter(function (chunk) {
+                const filtered = chunks.filter(function (chunk) {
                     return chunk.chunkmeta.chapter === chapter;
                 });
                 if (filtered.length) {
@@ -219,7 +227,34 @@
                 }
             }
 
-            list.scrollToIndex(index);
+            this.async(() => {
+                this.$.conflictlist.scrollToIndex(index);
+            }, 1);
+        },
+
+        getTopVisibleIndex: function () {
+            const list = this.$.conflictlist;
+            const listRect = list.getBoundingClientRect();
+
+            const checkPoint = listRect.top + 20;
+
+            const items = list.querySelectorAll('ts-conflict-card');
+            let index = list.firstVisibleIndex || 0;
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const rect = item.getBoundingClientRect();
+
+                if (checkPoint >= rect.top && checkPoint <= rect.bottom) {
+                    const model = list.modelForElement(item);
+                    if (model) {
+                        index = model.index;
+                        break;
+                    }
+                }
+            }
+
+            return index;
         },
 
 		ready: function() {

@@ -1173,7 +1173,7 @@
                 });
                 let stateData = myThis.currentproject.statedata[chapterMeta.chapterid];
                 if (!stateData) {
-                    stateData = {read: App.configurator.getUserSetting('bemode')};
+                    stateData = { read: App.configurator.getUserSetting('bemode') };
                     myThis.currentproject.statedata[chapterMeta.chapterid] = stateData;
                 }
                 if (chapterMeta.chapter > 0) {
@@ -1543,13 +1543,13 @@
         },
 
         setmodestate: function () {
-            var mythis = this;
-            var projectmeta = this.currentproject.projectmeta;
-            var key = projectmeta.unique_id;
-            var index = App.configurator.getValue(key + "-index");
-            var chapter = App.configurator.getValue(key + "-chapter");
-            var bemode = App.configurator.getUserSetting('bemode');
-            var typeclass = projectmeta.project_type_class;
+            const mythis = this;
+            const projectmeta = this.currentproject.projectmeta;
+            const key = projectmeta.unique_id;
+            const index = parseInt(App.configurator.getValue(key + "-index")) || 0;
+            const chapter = parseInt(App.configurator.getValue(key + "-chapter")) || 0;
+            const bemode = App.configurator.getUserSetting('bemode');
+            const typeclass = projectmeta.project_type_class;
 
             if (chapter > 0) {
                 mythis.set('modestatus.chapter', chapter);
