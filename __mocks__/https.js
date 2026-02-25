@@ -1,60 +1,27 @@
 'use strict';
 
-var callbacks = {};
-var responseMessage = 'success';
-var statusCode = 200;
-var lastWritten = '';
-var lastOptions = {};
+const https = jest.createMockFromModule('https');
 
-var https = {
-    get __lastOptions () {
-        return lastOptions;
-    },
-
-    get __lastWritten () {
-       return lastWritten;
-    },
-
-    set __setResponse (message) {
-        responseMessage = message;
-    },
-
-    set __setStatusCode(code) {
-        statusCode = code;
-    },
-
-    request: jest.fn(function(options, callback) {
-        lastOptions = options;
-        return {
-            on: function(type, callback) {
-                callbacks[type] = callback;
-                return this;
-            },
-            write: function(data) {
-                lastWritten = data;
-            },
-            end: function() {
-                var resourceCallbacks = {};
-                callback({
-                    setEncoding: function(encoding) {
-
-                    },
-                    on: function(type, resCallback) {
-                        resourceCallbacks[type] = resCallback;
-
-                        if(type === 'end') {
-                            resourceCallbacks['data'](responseMessage);
-                            resourceCallbacks['end']();
-                        }
-                        return this;
-                    },
-                    get statusCode () {
-                        return statusCode
-                    }
-                });
-            }
-        };
+let mockResponse = {
+    statusCode: 201,
+    setEncoding: jest.fn(),
+    on: jest.fn(function(event, cb) {
+        if (event === 'data') cb('{"id": 123}');
+        if (event === 'end') cb();
+        return this;
     })
 };
+
+const request = jest.fn((options, callback) => {
+    if (callback) callback(mockResponse);
+    return {
+        on: jest.fn().mockReturnThis(),
+        write: jest.fn(),
+        end: jest.fn()
+    };
+});
+
+https.request = request;
+https.__setResponse = (res) => { mockResponse = { ...mockResponse, ...res }; };
 
 module.exports = https;
