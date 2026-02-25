@@ -5,7 +5,6 @@
 
 // 1. Setup Mocks
 jest.mock('fs-extra');
-jest.mock('js-yaml');
 jest.mock('lodash');
 
 // Mock the local utils library using our helper file
