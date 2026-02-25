@@ -15,18 +15,18 @@ function MigrateManager(configurator, git, reporter, dataManager) {
     return {
 
         migrateAll: function (list) {
-            var mythis = this;
-            var getProjectName = function (proj) {
+            const mythis = this;
+            const getProjectName = function (proj) {
                 return proj.projectDir.split(path.sep).pop();
             };
 
             return utils.chain(this.migrate, function(err, proj) {
-                var name = getProjectName(proj);
+                const name = getProjectName(proj);
                 reporter.logWarning(err, mythis.translate("unable_migrate_project", name));
 
                 return false;
             })(list).then(function (migrated) {
-                var names = migrated.map(function (manifest) {
+                const names = migrated.map(function (manifest) {
                     return getProjectName(manifest.paths);
                 });
                 reporter.logNotice(names, mythis.translate("migrated_projects"));
@@ -35,9 +35,9 @@ function MigrateManager(configurator, git, reporter, dataManager) {
         },
 
         migrate: function (paths) {
-            var user = configurator.getValue("userdata");
+            const user = configurator.getValue("userdata");
 
-            var readManifest = function (paths) {
+            const readManifest = function (paths) {
                 return read(paths.manifest).then(function (manifest) {
                     manifest = fromJSON(manifest);
                     manifest.package_version = manifest.package_version || 2;
@@ -45,7 +45,7 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                 })
             };
 
-            var migrateV2 = function (project) {
+            const migrateV2 = function (project) {
                 let manifest = project.manifest;
                 let paths = project.paths;
 
@@ -93,7 +93,7 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                 return {manifest: manifest, paths: paths};
             };
 
-            var migrateV3 = function (project) {
+            const migrateV3 = function (project) {
                 let manifest = project.manifest;
                 let paths = project.paths;
 
@@ -102,12 +102,13 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                     manifest.translators = _.unique(_.map(_.values(manifest.translators), function (obj) {
                         return typeof obj === 'string' ? obj : obj.name;
                     }));
+                    manifest.package_version = 4;
                 }
 
                 return {manifest: manifest, paths: paths};
             };
 
-            var migrateV4 = function (project) {
+            const migrateV4 = function (project) {
                 let manifest = project.manifest;
                 let paths = project.paths;
 
@@ -130,7 +131,7 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                     };
 
                     // update project
-                    // NOTE: this was actually in v3 but we missed it so we need to catch it here
+                    // NOTE: this was actually in v3, but we missed it so we need to catch it here
                     if (_.has(manifest, 'project_id')) {
                         manifest.project = {
                             id: manifest.project_id,
@@ -260,7 +261,7 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                 return {manifest: manifest, paths: paths};
             };
 
-            var migrateV5 = function (project) {
+            const migrateV5 = function (project) {
                 let manifest = project.manifest;
                 let paths = project.paths;
 
@@ -282,7 +283,7 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                     let readyfile = path.join(paths.projectDir, 'READY');
                     let srcDir = path.resolve(path.join(__dirname, '..'));
 
-                    for (var i = 0; i < localstorageitems.length; i++) {
+                    for (let i = 0; i < localstorageitems.length; i++) {
                         configurator.setValue(unique_id + localstorageitems[i], configurator.getValue(oldname + localstorageitems[i]));
                         configurator.unsetValue(oldname + localstorageitems[i]);
                     }
@@ -314,15 +315,15 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                 return {manifest: manifest, paths: paths};
             };
 
-            var migrateV6 = function (project) {
+            const migrateV6 = function (project) {
                 let manifest = project.manifest;
                 let paths = project.paths;
 
                 if (manifest.package_version <= 6) {
-                    var targetPath;
-                    var lastChapter = "00";
-                    var lastChunk = "01";
-                    var titleexists = false;
+                    let targetPath;
+                    let lastChapter = "00";
+                    let lastChunk = "01";
+                    let titleexists = false;
 
                     return utils.fs.readdir(paths.projectDir)
                         .then(function (all) {
@@ -340,8 +341,8 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                         })
                         .then(function (exists) {
                             if (exists) {
-                                var resourceDir = dataManager.getResourceDir();
-                                var container = "en_" + manifest.project.id + "_ulb";
+                                const resourceDir = dataManager.getResourceDir();
+                                const container = "en_" + manifest.project.id + "_ulb";
 
                                 return dataManager.activateContainer("en", manifest.project.id, "ulb")
                                     .then(function () {
@@ -349,7 +350,7 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                                     })
                                     .then(function (files) {
                                         files.forEach(function (file) {
-                                            var item = file.split(".")[0];
+                                            const item = file.split(".")[0];
                                             if (parseInt(item) && parseInt(item) > parseInt(lastChunk)) {
                                                 lastChunk = item;
                                             }
@@ -362,9 +363,9 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                                     })
                                     .then(function () {
                                         if (manifest.finished_chunks && manifest.finished_chunks.length) {
-                                            var oldid = lastChapter + "-00";
-                                            var newid = lastChapter + "-" + lastChunk;
-                                            var index = manifest.finished_chunks.indexOf(oldid);
+                                            const oldid = lastChapter + "-00";
+                                            const newid = lastChapter + "-" + lastChunk;
+                                            const index = manifest.finished_chunks.indexOf(oldid);
 
                                             if (index > -1) {
                                                 manifest.finished_chunks.splice(index, 1);
@@ -376,8 +377,8 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                         })
                         .then(function () {
                             if (titleexists) {
-                                var oldPath = path.join(paths.projectDir, "00");
-                                var newPath = path.join(paths.projectDir, "front");
+                                const oldPath = path.join(paths.projectDir, "00");
+                                const newPath = path.join(paths.projectDir, "front");
 
                                 return utils.fs.copy(oldPath, newPath, {clobber: true})
                                     .then(function () {
@@ -385,9 +386,9 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                                     })
                                     .then(function () {
                                         if (manifest.finished_chunks && manifest.finished_chunks.length) {
-                                            var oldid = "00-title";
-                                            var newid = "front-title";
-                                            var index = manifest.finished_chunks.indexOf(oldid);
+                                            const oldid = "00-title";
+                                            const newid = "front-title";
+                                            const index = manifest.finished_chunks.indexOf(oldid);
 
                                             if (index > -1) {
                                                 manifest.finished_chunks.splice(index, 1);
@@ -407,18 +408,54 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                 return {manifest: manifest, paths: paths};
             };
 
-            var migrateV7 = function (project) {
+            const migrateV7 = function (project) {
                 let manifest = project.manifest;
                 let paths = project.paths;
 
                 if (manifest.package_version <= 7) {
-                    //add code here to migrate to v8
+                    if (!manifest.hasOwnProperty('source_translations')) {
+                        manifest.source_translations = {};
+                    }
+                    const resourceId = manifest.resource.id;
+                    let resourceName = manifest.resource.name;
+                    if (!resourceName) {
+                        switch (resourceId) {
+                            case "reg":
+                                resourceName = "Regular";
+                                break;
+                            case "udb":
+                                resourceName = "Unlocked Literal Bible";
+                                break;
+                            case "ulb":
+                                resourceName = "Unlocked Literal Bible";
+                                break;
+                            case "obs":
+                                resourceName = "Open Bible Stories";
+                                break;
+                            default:
+                                resourceName = resourceId;
+                        }
+                    }
+
+                    manifest.resource.name = resourceName;
+                    manifest.package_version = 8;
                 }
 
                 return {manifest: manifest, paths: paths};
             };
 
-            var migrateName = function (project) {
+            const migrateV8 = function (project) {
+                let manifest = project.manifest;
+                let paths = project.paths;
+
+                if (manifest.package_version <= 8) {
+                    //add code here to migrate to v9
+                }
+
+                return {manifest: manifest, paths: paths};
+            };
+
+            const migrateName = function (project) {
                 let manifest = project.manifest;
                 let paths = project.paths;
 
@@ -448,14 +485,14 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                 return {manifest: manifest, paths: paths};
             };
 
-            var checkVersion = function (project) {
-                if (project.manifest.package_version !== 7) {
+            const checkVersion = function (project) {
+                if (project.manifest.package_version !== 8) {
                     throw new Error(this.translate("migrate_project_failed"));
                 }
                 return project;
             };
 
-            var saveManifest = function (project) {
+            const saveManifest = function (project) {
                 let manifest = project.manifest;
                 let paths = project.paths;
 
@@ -475,6 +512,7 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                 .then(migrateV5)
                 .then(migrateV6)
                 .then(migrateV7)
+                .then(migrateV8)
                 .then(migrateName)
                 .then(checkVersion)
                 .then(saveManifest)
