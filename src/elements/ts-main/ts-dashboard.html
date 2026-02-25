@@ -1262,24 +1262,24 @@
       },
 
       checkBuild: function () {
-          var mythis = this;
-          var path = require('path');
-          var libraryDir = App.configurator.getValue('libraryDir');
-          var libraryPath = path.join(libraryDir, "index.sqlite");
-          var srcDir = path.resolve(path.join(__dirname, '..'));
-          var srcDB = path.join(srcDir, 'index', 'index.sqlite');
-          var appData = App.configurator.getAppData();
-          var libraryBuild = App.configurator.getValue("libraryBuild");
-          var tmpDir = App.configurator.getValue('tempDir');
-          var resourceDir = App.dataManager.getResourceDir();
-          var movePromises = Promise.resolve(true);
+          const mythis = this;
+          const path = require('path');
+          const libraryDir = App.configurator.getValue('libraryDir');
+          const libraryPath = path.join(libraryDir, "index.sqlite");
+          const srcDir = path.resolve(path.join(__dirname, '..'));
+          const srcDB = path.join(srcDir, 'index', 'index.sqlite');
+          const appData = App.configurator.getAppData();
+          const libraryBuild = App.configurator.getValue("libraryBuild");
+          const tmpDir = App.configurator.getValue('tempDir');
+          const resourceDir = App.dataManager.getResourceDir();
+          let movePromises = Promise.resolve(true);
 
           if (!libraryBuild) {
               App.configurator.setUserSetting("bemode", false);
           }
 
-          if (libraryBuild != appData.build) {
-              var translations = [];
+          if (libraryBuild !== appData.build) {
+              let translations = [];
 
               App.ipc.send('loading-status', mythis.translate("index_update_status"));
 
@@ -1287,14 +1287,14 @@
                   translations = App.dataManager.getTranslations();
               }
 
-              var imports = translations.filter(function (item) {
+              const imports = translations.filter(function (item) {
                   return item.resource.imported;
               });
 
               imports.forEach(function (item) {
-                  var foldername = item.language.slug + "_" + item.project.slug + "_" + item.resource.slug;
-                  var tmpPath = path.join(tmpDir, foldername);
-                  var resourcePath = path.join(resourceDir, foldername);
+                  const foldername = item.language.slug + "_" + item.project.slug + "_" + item.resource.slug;
+                  const tmpPath = path.join(tmpDir, foldername);
+                  const resourcePath = path.join(resourceDir, foldername);
 
                   movePromises = movePromises.then(function () {
                       return App.utils.fs.mover(resourcePath, tmpPath);
@@ -1316,10 +1316,10 @@
                       return [];
                   })
                   .then(function (temps) {
-                      var importPromises = Promise.resolve(true);
+                      let importPromises = Promise.resolve(true);
 
                       temps.forEach(function (item) {
-                          var itemPath = path.join(tmpDir, item);
+                          const itemPath = path.join(tmpDir, item);
 
                           importPromises = importPromises.then(function () {
                               return App.dataManager.importContainer(itemPath);

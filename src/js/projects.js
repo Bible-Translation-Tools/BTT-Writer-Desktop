@@ -510,7 +510,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         migrateTargetTranslationsList: function () {
-            var paths = utils.makeProjectPaths.bind(utils, targetDir);
+            const paths = utils.makeProjectPaths.bind(utils, targetDir);
             return this.loadProjectsList()
                 .then(map(paths))
                 .then(migrator.migrateAll.bind(migrator))
