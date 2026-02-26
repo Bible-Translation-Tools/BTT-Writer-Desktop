@@ -99,15 +99,17 @@ a {
 }
 
 .verse-num {
-    font-size: 0.7em;
+    font-size: 0.8em;
     vertical-align: super;
-    margin-right: 4px;
+    margin-right: 1px;
     color: #888888;
+    font-weight: bold;
 }
 
 .verse-num-abs {
     position: absolute;
     top: 0;
+    font-weight: bold;
 }
 [dir="ltr"] .verse-num-abs {
     left: 0;
@@ -129,6 +131,11 @@ a {
 .footnote-caller-link {
     color: #00B0FF;
     text-decoration: none;
+}
+
+.footnote-caller-link sup {
+    text-decoration: underline;
+    margin-left: 1px;
 }
 
 .footnote-caller-target {
