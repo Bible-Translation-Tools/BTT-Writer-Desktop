@@ -109,7 +109,7 @@ class HtmlParseContext {
             this.pendingVerseNumber = number;
         } else {
             // Inline verse
-            this.currentTextBuffer += `<sup class="verse-num ${this.module}">${number}</sup> `;
+            this.currentTextBuffer += `<sup class="verse-num ${this.module}">${number}</sup>`;
         }
         this.isParagraphStart = false;
     }
@@ -145,7 +145,9 @@ class HtmlParseContext {
         const fnId = `caller-${this.chapterId}-${index}`;
 
         // Add link in text
-        this.currentTextBuffer += `<a href="#${fnId}" class="footnote-caller-link ${this.module}"><sup>${index}</sup></a>`;
+        // Trim the preceding text so the footnote sits closer to it
+        this.currentTextBuffer = this.currentTextBuffer.trim() +
+            `<a href="#${fnId}" class="footnote-caller-link ${this.module}"><sup class="${this.module}">${index}</sup></a> `;
     }
 
     handleFootnoteMarker(marker, isCloser, argument) {
