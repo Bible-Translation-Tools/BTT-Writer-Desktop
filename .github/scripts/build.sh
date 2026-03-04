@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -x
+set -e
 
 #sudo add-apt-repository --yes ppa:ubuntu-wine/ppa
 #sudo dpkg --add-architecture i386

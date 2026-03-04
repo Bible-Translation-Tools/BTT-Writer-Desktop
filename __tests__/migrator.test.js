@@ -101,7 +101,7 @@ describe('MigrateManager', () => {
 
             const result = await migrator.migrate(MOCK_PATHS);
 
-            expect(result.manifest.package_version).toBe(7);
+            expect(result.manifest.package_version).toBe(8);
             expect(result.manifest.project.id).toBe('gen');
             expect(result.manifest.target_language.id).toBe('en');
         });
