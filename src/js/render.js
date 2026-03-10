@@ -345,8 +345,14 @@ function Renderer() {
                         orderSup.className = `footnote-caller-target ${module}`;
                         orderSup.textContent = order + " ";
 
+                        const backLink = document.createElement("a");
+                        backLink.href = `#source-caller-${chapter.id}-${order}`;
+                        backLink.className = `footnote-back-link ${module}`;
+                        backLink.style.cursor = "pointer";
+                        backLink.appendChild(orderSup);
+
                         noteDiv.id = `caller-${chapter.id}-${order}`;
-                        noteDiv.appendChild(orderSup);
+                        noteDiv.appendChild(backLink);
 
                         const noteText = document.createElement("span");
                         noteText.textContent = footnote;

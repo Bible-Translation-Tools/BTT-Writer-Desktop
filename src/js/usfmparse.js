@@ -143,11 +143,12 @@ class HtmlParseContext {
         this.inFootnote = true;
         const index = this.footnotes.length + 1;
         const fnId = `caller-${this.chapterId}-${index}`;
+        const sourceId = `source-${fnId}`;
 
         // Add link in text
         // Trim the preceding text so the footnote sits closer to it
         this.currentTextBuffer = this.currentTextBuffer.trim() +
-            `<a href="#${fnId}" class="footnote-caller-link ${this.module}"><sup class="${this.module}">${index}</sup></a> `;
+            `<a href="#${fnId}" id="${sourceId}" class="footnote-caller-link ${this.module}"><sup class="${this.module}">${index}</sup></a> `;
     }
 
     handleFootnoteMarker(marker, isCloser, argument) {
