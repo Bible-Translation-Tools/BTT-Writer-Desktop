@@ -828,9 +828,9 @@
                       return App.projectsManager.createTargetTranslation(chunks, projectmeta, user);
                   })
                   .then(function () {
-                      var list = mythis.projectlist;
-                      var meta = _.cloneDeep(projectmeta);
-                      var newlist = list.filter(function (item) {
+                      const list = mythis.projectlist;
+                      const meta = _.cloneDeep(projectmeta);
+                      const newlist = list.filter(function (item) {
                           return item.unique_id !== meta.unique_id;
                       });
 

@@ -1,27 +1,27 @@
 'use strict';
 
-var _ = require('lodash');
-var path = require('path');
-var AdmZip = require('adm-zip');
-var request = require('request');
-var fs = require('fs');
-var readline = require('readline');
-var utils = require('../js/lib/utils');
+const _ = require('lodash');
+const path = require('path');
+const AdmZip = require('adm-zip');
+const fs = require('fs');
+const readline = require('readline');
+const utils = require('../js/lib/utils');
+const {USFMParser, HMarker, CLMarker, CMarker, VMarker} = require("usfmtools");
 
 function ImportManager(configurator, migrator, dataManager) {
 
     return {
 
         extractBackup: function(filePath) {
-            var mythis = this;
-            var tmpDir = configurator.getValue('tempDir');
-            var targetDir = configurator.getValue('targetTranslationsDir');
-            var basename = path.basename(filePath, '.tstudio');
-            var extractPath = path.join(tmpDir, basename);
+            const mythis = this;
+            const tmpDir = configurator.getValue('tempDir');
+            const targetDir = configurator.getValue('targetTranslationsDir');
+            const basename = path.basename(filePath, '.tstudio');
+            const extractPath = path.join(tmpDir, basename);
 
             return migrator.listTargetTranslations(filePath)
                 .then(function(targetPaths) {
-                    var zip = new AdmZip(filePath);
+                    const zip = new AdmZip(filePath);
 
                     zip.extractAllTo(extractPath, true);
                     return targetPaths;
@@ -45,7 +45,7 @@ function ImportManager(configurator, migrator, dataManager) {
                 })
                 .then(function (targetPaths) {
                     return _.map(targetPaths, function(p) {
-                        var tmpPath = path.join(extractPath, p),
+                        const tmpPath = path.join(extractPath, p),
                             targetPath = path.join(targetDir, p);
 
                         return utils.fs.stat(targetPath).then(utils.ret(true)).catch(utils.ret(false))
@@ -61,10 +61,10 @@ function ImportManager(configurator, migrator, dataManager) {
         },
 
         retrieveUSFMProjectID: function (filepath) {
-            var id = "";
+            let id = "";
 
             return new Promise(function (resolve, reject) {
-                var lineReader = readline.createInterface({
+                const lineReader = readline.createInterface({
                     input: fs.createReadStream(filepath)
                 });
                 lineReader.on('line', function (line) {
@@ -81,66 +81,90 @@ function ImportManager(configurator, migrator, dataManager) {
 
         importFromUSFM: function (filepath, projectmeta) {
             const mythis = this;
-            const parser = new UsfmParser();
 
-            return parser.load(filepath)
-                .then(function () {
-                    const parsedData = parser.parse();
-
-                    if (JSON.stringify(parsedData) === JSON.stringify({})) {
+            return new Promise((resolve) => {
+                const parser = new USFMParser(null, true, true);
+                const contents = fs.readFileSync(filepath, "utf-8");
+                resolve(parser.parseFromString(contents.toString()));
+            })
+                .then(document => {
+                    if (document.contents.length === 0) {
                         throw new Error(mythis.translate("not_valid_usfm_file"));
                     }
+
+                    const chapters = document.getChildMarkers(CMarker);
                     const chunks = [];
                     const markers = dataManager.getChunkMarkers(projectmeta.project.id);
-                    let lastLabeledChapter = null;
+
+                    const heading = document.getChildMarkers(HMarker)[0];
+                    if (heading) {
+                        chunks.push({
+                            chunkmeta: {
+                                chapterid: "front",
+                                frameid: "title"
+                            },
+                            transcontent: heading.headerText,
+                            completed: false
+                        })
+                    }
 
                     for (let i = 0; i < markers.length; i++) {
-                        const frameid = markers[i].verse;
-                        const first = parseInt(frameid);
                         const chapter = markers[i].chapter;
+                        const frameId = markers[i].verse;
                         const isLastChunkOfChapter = !markers[i + 1] || markers[i + 1].chapter !== chapter;
+                        const first = parseInt(frameId);
                         const last = isLastChunkOfChapter ? Number.MAX_VALUE : parseInt(markers[i + 1].verse) - 1;
 
-                        if (parsedData[chapter]) {
-                            const transcontent = _.chain(parsedData[chapter].verses).filter(function (verse) {
-                                const id = parseInt(verse.id);
-                                return id <= last && id >= first;
-                            }).map("contents").value().join(" ");
+                        const chapterObj = chapters.find(c => {
+                            let chap = c.number.toString();
+                            if (chap.length === 1) {
+                                chap = "0" + chap;
+                            }
+                            return chap === chapter
+                        });
 
-                            chunks.push({
-                                chunkmeta: {
-                                    chapterid: chapter,
-                                    frameid: frameid
-                                },
-                                transcontent: transcontent.trim(),
-                                completed: false
-                            });
-
-                            if (parsedData[chapter].verses.title && lastLabeledChapter !== chapter) {
-                                const title = parsedData[chapter].verses.title.contents.trim();
-                                chunks.unshift({
+                        if (chapterObj) {
+                            const chapterLabel = chapterObj.getChildMarkers(CLMarker)[0];
+                            if (chapterLabel) {
+                                chunks.push({
                                     chunkmeta: {
                                         chapterid: chapter,
                                         frameid: "title"
                                     },
-                                    transcontent: title,
+                                    transcontent: chapterLabel.label,
                                     completed: false
                                 });
-                                lastLabeledChapter = chapter;
                             }
+
+                            const verses = chapterObj.getChildMarkers(VMarker);
+                            let transContent = _.chain(verses).filter(function (verse) {
+                                return verse.endingVerse <= last && verse.startingVerse >= first;
+                            }).map(v => v.getRawContents()).value().join(" ");
+
+                            if (verses.length > 0 && first === 1) {
+                                // Retrieve markers that precede the first verse marker
+                                // so we can prepend their contents in the first chunk
+                                const siblingsBefore = verses[0].getSiblingsBefore(chapterObj);
+                                let contentsBefore = ""
+                                for (const marker of siblingsBefore) {
+                                    if (marker instanceof CMarker) continue;
+                                    if (marker instanceof CLMarker) continue;
+                                    contentsBefore += marker.getRawContents()
+                                }
+                                transContent = contentsBefore + transContent;
+                            }
+
+                            chunks.push({
+                                chunkmeta: {
+                                    chapterid: chapter,
+                                    frameid: frameId
+                                },
+                                transcontent: transContent.trim(),
+                                completed: false
+                            });
                         }
                     }
 
-                    if (parsedData['front'] && parsedData['front'].contents) {
-                        chunks.unshift({
-                            chunkmeta: {
-                                chapterid: 'front',
-                                frameid: 'title'
-                            },
-                            transcontent: parsedData['front'].contents.trim(),
-                            completed: false
-                        });
-                    }
                     return chunks;
                 })
                 .catch(function (err) {
@@ -154,201 +178,4 @@ function ImportManager(configurator, migrator, dataManager) {
     };
 }
 
-function UsfmParser () {
-    this.contents = [];
-
-    const markerTypes = {
-        id: {
-            regEx: /\\id/,
-            hasOptions: false,
-            type: "id"
-        },
-        encoding: {
-            regEx: /\\ide/,
-            hasOptions: false,
-            type: "encoding"
-        },
-        majorTitle: {
-            regEx: /\\mt[0-9]*/,
-            hasOptions: false,
-            type: "majorTitle"
-        },
-        heading: {
-            regEx: /\\h[0-9]*/,
-            hasOptions: false,
-            type: "heading"
-        },
-        chapterLabel: {
-            regEx: /\\cl/,
-            hasOptions: false,
-            type: "chapterLabel"
-        },
-        chapter: {
-            regEx: /\\c/,
-            hasOptions: true,
-            type: "chapter"
-        },
-        verse: {
-            regEx: /\\v/,
-            hasOptions: true,
-            type: "verse"
-        },
-        sectionHeading: {
-            regEx: /\\s[0-9]*/,
-            hasOptions: false,
-            type: "sectionHeading"
-        },
-        // paragraph: {
-        //     regEx: /\\p/,
-        //     hasOptions: false,
-        //     type: "paragraph"
-        // },
-        tableOfContents: {
-            regEx: /\\toc[0-2]*/,
-            hasOptions: false,
-            type: "tableOfContents"
-        }
-    };
-
-    const getMarker = function (line) {
-        const beginMarker = line.split(" ")[0];
-        for (const type in markerTypes) {
-            if (markerTypes[type].regEx.test(beginMarker)) {
-                return markerTypes[type];
-            }
-        }
-        return false;
-    };
-
-    const mythis = this;
-
-    return {
-        load: function (file) {
-            mythis.file = file;
-
-            return new Promise(function (resolve, reject) {
-
-                const lineReader = readline.createInterface({
-                    input: fs.createReadStream(mythis.file, {encoding: "utf8"})
-                });
-
-                lineReader.on('line', function (line) {
-                    if (line) {
-                        mythis.contents.push(line);
-                    }
-                });
-
-                lineReader.on('close', function() {
-                    resolve(mythis);
-                });
-            });
-        },
-
-        parse: function() {
-            this.getMarkers();
-            return this.buildChapters();
-        },
-
-        getMarkers: function () {
-            mythis.markers = [];
-            mythis.markerCount = 0;
-            let currentMarker = null;
-            for (let i = 0; i < mythis.contents.length; i++) {
-                const line = mythis.contents[i];
-                const lineArray = line.split(" ");
-                let lineStarted = true;
-
-                for (let c = 0; c < lineArray.length; c++) {
-                    const section = lineArray[c];
-                    const marker = getMarker(section);
-
-                    if (marker) {
-                        mythis.markers[mythis.markerCount] = {
-                            type: marker.type,
-                            line: line,
-                            contents: ""
-                        };
-                        if (marker.hasOptions) {
-                            mythis.markers[mythis.markerCount].options = lineArray[c + 1];
-                            c++;
-                        }
-                        currentMarker = mythis.markers[mythis.markerCount];
-                        if (marker.type === "verse") {
-                            currentMarker.contents = section + " " + currentMarker.options + " ";
-                        }
-                        mythis.markerCount++;
-                    } else {
-                        if (currentMarker) {
-                            currentMarker.contents += (lineStarted ? "\n" : "") + section + " ";
-                            lineStarted = false;
-                        }
-                    }
-                }
-            }
-        },
-
-        buildChapters: function () {
-            mythis.chapters = {};
-            let chap;
-            let chapnum = 0;
-            let lastverse = 100;
-            let globalChapterLabel = null;
-            let localChapterLabel = null;
-
-            const createchapter = function (chapnum) {
-                chap = chapnum.toString();
-                if (chap.length === 1) {
-                    chap = "0" + chap;
-                }
-                mythis.chapters[chap] = {
-                    id: chap,
-                    verses: {}
-                };
-            };
-
-            mythis.markers.forEach(function (marker) {
-                if (marker.type === "heading" && chapnum === 0) {
-                    createchapter("front");
-                    mythis.chapters[chap].contents = marker.contents.trim();
-                } else if (marker.type === "chapterLabel") {
-                    if (chap === "front") {
-                        globalChapterLabel = marker.contents.trim();
-                    } else {
-                        localChapterLabel = marker.contents.trim();
-                    }
-                } else if (marker.type === "chapter") {
-                    chapnum = parseInt(marker.options);
-                    createchapter(chapnum);
-                    lastverse = 0;
-                    localChapterLabel = null;
-                } else if (marker.type === "verse") {
-                    if ((globalChapterLabel || localChapterLabel) && !mythis.chapters[chap].verses.title) {
-                        const label = localChapterLabel ? localChapterLabel : globalChapterLabel + " " + chapnum;
-                        mythis.chapters[chap].verses["title"] = {
-                            id: "title",
-                            contents: label
-                        };
-                    }
-
-                    const thisverse = parseInt(marker.options);
-
-                    if (thisverse < lastverse) {
-                        chapnum++;
-                        createchapter(chapnum);
-                    }
-                    lastverse = thisverse;
-
-                    mythis.chapters[chap].verses[marker.options] = {
-                        id: marker.options,
-                        contents: marker.contents.trim()
-                    };
-                }
-            });
-
-            return mythis.chapters;
-        }
-    }
-}
-
 module.exports.ImportManager = ImportManager;
-module.exports.UsfmParser = UsfmParser;
