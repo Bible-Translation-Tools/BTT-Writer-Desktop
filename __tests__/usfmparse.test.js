@@ -72,7 +72,7 @@ describe('usfmToHtml', () => {
             const input = '\\p Verse text \\f + \\ft Footnote content \\f* followed by text.';
             const result = usfmToHtml(input, CHAPTER, MODULE);
 
-            expect(result.html).toContain('<a href="#caller-1-1" class="footnote-caller-link ts-module"><sup class="ts-module">1</sup></a>');
+            expect(result.html).toContain('<a href="#caller-1-1" id="source-caller-1-1" class="footnote-caller-link ts-module"><sup class="ts-module">1</sup></a>');
             expect(result.footnotes).toHaveLength(1);
             expect(result.footnotes[0]).toBe('Footnote content');
             expect(result.html).toContain('followed by text');

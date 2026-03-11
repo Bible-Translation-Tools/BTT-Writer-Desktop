@@ -128,7 +128,8 @@ a {
 [dir="rtl"] .indent-2 { padding-right: 40px; }
 [dir="rtl"] .indent-3 { padding-right: 60px; }
 
-.footnote-caller-link {
+.footnote-caller-link,
+.footnote-back-link {
     color: #00B0FF;
     text-decoration: none;
 }
@@ -136,6 +137,16 @@ a {
 .footnote-caller-link sup {
     text-decoration: underline;
     margin-left: 1px;
+}
+
+.footnote-caller-link,
+.footnote-back-link {
+    display: inline-block;
+}
+
+.footnote-caller-link {
+    padding-top: 100px;
+    margin-top: -100px;
 }
 
 .footnote-caller-target {
@@ -148,4 +159,10 @@ a {
     border-top: 1px solid #1C1C1C;
     border-bottom: 1px solid #1C1C1C;
     page-break-before: auto;
+}
+
+.footnotes > div {
+    display: block;
+    padding-top: 100px;
+    margin-top: -100px;
 }
