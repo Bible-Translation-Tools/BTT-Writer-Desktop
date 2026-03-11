@@ -47,7 +47,8 @@
     "sql.js": "0.3.2",
     "tar": "2.2.2",
     "trash": "7.2.0",
-    "untildify": "2.1.0"
+    "untildify": "2.1.0",
+    "usfmtools": "^1.1.0"
   },
   "devDependencies": {
     "@electron/packager": "^18.3.6",
