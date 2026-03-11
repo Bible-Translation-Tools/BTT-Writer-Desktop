@@ -44,14 +44,14 @@ describe('GitManager', () => {
         it('should get git version strings and parse them', async () => {
             mockCmdrRunner.mockResolvedValue({ stdout: 'git version 2.25.1' });
             const version = await gitManager.getVersion();
-            expect(version.major).toBe('2');
+            expect(version.major).toBe(2);
             expect(version.toString()).toBe('2.25.1');
         });
 
         it('should verify git meets requirements', async () => {
             mockCmdrRunner.mockResolvedValue({ stdout: 'git version 2.30.0' });
             const version = await gitManager.verifyGit();
-            expect(version.major).toBe('2');
+            expect(version.major).toBe(2);
         });
     });
 
