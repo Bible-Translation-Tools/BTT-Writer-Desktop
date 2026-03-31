@@ -7,7 +7,8 @@ const electron = require('electron'),
     app = electron.app,
     BrowserWindow = electron.BrowserWindow,
     ipcMain = electron.ipcMain,
-    nativeTheme = electron.nativeTheme;
+    nativeTheme = electron.nativeTheme,
+    _ = require('lodash');
 
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {

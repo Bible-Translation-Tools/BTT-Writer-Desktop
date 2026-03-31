@@ -50,7 +50,7 @@ const mockConfiguratorInstance = {
 jest.mock('../src/js/configurator', () => {
     // FIX: Check the flag at the MODULE level, not inside the class constructor.
     // This ensures require('../src/js/configurator') throws immediately,
-    // which triggers the try/catch block in bootstrap.js.
+    // which triggers the try/catch block in preload-main.js.
     if (mockThrowConfiguratorError) {
         throw new Error('Configurator missing');
     }

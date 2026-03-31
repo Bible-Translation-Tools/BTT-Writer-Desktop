@@ -1299,7 +1299,7 @@
                 });
 
                 question = _.flatten(question);
-                question = _.uniq(question, 'title');
+                question = _.uniqBy(question, 'title');
             }
             if (question.length) {
                 resources.push({title: App.translate("resource_questions"), array: true, data: question});

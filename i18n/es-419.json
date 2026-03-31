@@ -615,7 +615,7 @@
     "logout": "Cerrar Sesión",
     "settings": "Ajustes",
     "__folder21": "js",
-    "__file81": "bootstrap.js",
+    "__file81": "preload-main.js",
     "loading_mkdirp": "Cargando mkdirp...",
     "loading_db": "Cargando Base de Datos...",
     "loading_reporter": "Cargando Reporte...",

@@ -38,9 +38,14 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator, tra
                 })
                 .then(function (exists) {
                     if (exists) {
-                        utils.fs.mover(path.join(oldPath, 'automatic_backups'), path.join(newPath, 'automatic_backups'));
-                        utils.fs.mover(path.join(oldPath, 'backups'), path.join(newPath, 'backups'));
+                        return Promise.all([
+                            utils.fs.mover(path.join(oldPath, 'automatic_backups'), path.join(newPath, 'automatic_backups')),
+                            utils.fs.mover(path.join(oldPath, 'backups'), path.join(newPath, 'backups'))
+                        ]).then(function() {
+                            return true;
+                        });
                     }
+
                     return Promise.resolve(true);
                 });
         },
@@ -243,7 +248,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator, tra
                     }
                 }
 
-                meta.source_translations = _.uniq(sources, 'unique_id');
+                meta.source_translations = _.uniqBy(sources, 'unique_id');
 
                 if (meta.source_translations.length) {
                     meta.currentsource = 0;
@@ -401,10 +406,10 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator, tra
                 };
             };
 
-            var setLicense = function () {
-                var srcDir = path.resolve(path.join(__dirname, '..'));
+            const setLicense = function () {
+                const srcDir = path.resolve(path.join(__dirname, '..'));
                 return read(path.join(srcDir, 'assets', 'LICENSE.md'))
-                    .then(function(data) {
+                    .then(function (data) {
                         return write(paths.license, data);
                     });
             };
@@ -414,7 +419,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator, tra
                     mythis.unsetValues(meta.unique_id);
                     return mkdirp(paths.projectDir)
                 })
-                .then(setLicense())
+                .then(setLicense)
                 .then(function () {
                     return mythis.saveTargetManifest(meta);
                 })

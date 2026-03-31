@@ -211,7 +211,7 @@ function UserManager(auth, server, translate) {
             var p = u ? searchUsers(searchRepos) : searchRepos();
 
             return p.then(_.flatten).then(function (repos) {
-                return _.uniq(repos, 'id');
+                return _.uniqBy(repos, 'id');
             })
                 .then(function (repos) {
                     return _.map(repos, function (repo) {

@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash'),
+const _ = require('lodash'),
     path = require('path'),
     archiver = require('archiver'),
     fs = require('fs'),
@@ -8,7 +8,7 @@ var _ = require('lodash'),
 
 function ExportManager(configurator, git, translate) {
 
-    var targetDir = configurator.getValue('targetTranslationsDir');
+    const targetDir = configurator.getValue('targetTranslationsDir');
 
     return {
 
@@ -16,14 +16,14 @@ function ExportManager(configurator, git, translate) {
             if(filePath.split('.').pop() !== 'tstudio') {
                 filePath += '.tstudio';
             }
-            var paths = utils.makeProjectPaths(targetDir, meta);
-            var name = meta.unique_id;
+            const paths = utils.makeProjectPaths(targetDir, meta);
+            const name = meta.unique_id;
 
             return git.getHash(paths.projectDir)
                 .then(function (hash) {
-                    var output = fs.createWriteStream(filePath);
-                    var archive = archiver.create('zip');
-                    var manifest = {
+                    const output = fs.createWriteStream(filePath);
+                    const archive = archiver.create('zip');
+                    const manifest = {
                             generator: {
                                 name: 'ts-desktop',
                                 build: ''
@@ -46,13 +46,9 @@ function ExportManager(configurator, git, translate) {
         },
 
         backupAllTranslations: function (list) {
-            var mythis = this;
-            var autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
-            var backupDir = configurator.getUserPath('datalocation', 'backups');
-            var promises = _.map(list, function(projectmeta) {
-                var filepath = path.join(autoBackupDir, projectmeta.unique_id + ".tstudio");
-                return mythis.backupTranslation(projectmeta, filepath);
-            });
+            const mythis = this;
+            const autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
+            const backupDir = configurator.getUserPath('datalocation', 'backups');
 
             return utils.fs.mkdirs(autoBackupDir)
                 .then(function () {
@@ -62,14 +58,19 @@ function ExportManager(configurator, git, translate) {
                     throw translate("backup_location_not_found");
                 })
                 .then(function () {
-                    return Promise.all(promises);
+                    return Promise.all(
+                        _.map(list, function(projectmeta) {
+                            const filepath = path.join(autoBackupDir, projectmeta.unique_id + ".tstudio");
+                            return mythis.backupTranslation(projectmeta, filepath);
+                        })
+                    );
                 });
         },
 
         autoBackupTranslation: function (meta) {
-            var mythis = this;
-            var autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
-            var filePath = path.join(autoBackupDir, meta.unique_id + ".tstudio");
+            const mythis = this;
+            const autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
+            const filePath = path.join(autoBackupDir, meta.unique_id + ".tstudio");
 
             return utils.fs.mkdirs(autoBackupDir)
                 .catch(function () {

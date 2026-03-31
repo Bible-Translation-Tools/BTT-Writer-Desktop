@@ -1,13 +1,13 @@
 'use strict';
 
-var _ = require('lodash'),
+const _ = require('lodash'),
     AdmZip = require('adm-zip'),
     path = require('path'),
     utils = require('../js/lib/utils');
 
 function MigrateManager(configurator, git, reporter, dataManager, translate) {
 
-    var write = utils.fs.outputFile,
+    const write = utils.fs.outputFile,
         read = utils.fs.readFile,
         toJSON = _.partialRight(JSON.stringify, null, '\t'),
         fromJSON = JSON.parse.bind(JSON);
@@ -98,7 +98,7 @@ function MigrateManager(configurator, git, reporter, dataManager, translate) {
 
                 if (manifest.package_version <= 3) {
                     // flatten translators to an array of names
-                    manifest.translators = _.unique(_.map(_.values(manifest.translators), function (obj) {
+                    manifest.translators = _.uniq(_.map(_.values(manifest.translators), function (obj) {
                         return typeof obj === 'string' ? obj : obj.name;
                     }));
                     manifest.package_version = 4;
@@ -203,7 +203,7 @@ function MigrateManager(configurator, git, reporter, dataManager, translate) {
                     _.forEach(_.get(manifest, 'finished_titles'), function (value, index) {
                         let finishedChunks = _.get(manifest, 'finished_chunks', []);
                         finishedChunks.push(value + '-title');
-                        manifest.finished_chunks = _.unique(finishedChunks);
+                        manifest.finished_chunks = _.uniq(finishedChunks);
                     });
                     delete manifest.finished_titles;
 
@@ -211,7 +211,7 @@ function MigrateManager(configurator, git, reporter, dataManager, translate) {
                     _.forEach(_.get(manifest, 'finished_references'), function (value, index) {
                         let finishedChunks = _.get(manifest, 'finished_chunks', []);
                         finishedChunks.push(value + '-reference');
-                        manifest.finished_chunks = _.unique(finishedChunks);
+                        manifest.finished_chunks = _.uniq(finishedChunks);
                     });
                     delete manifest.finished_references;
 
@@ -219,7 +219,7 @@ function MigrateManager(configurator, git, reporter, dataManager, translate) {
                     _.forEach(_.get(manifest, 'finished_project_components'), function (value, index) {
                         let finishedChunks = _.get(manifest, 'finished_chunks', []);
                         finishedChunks.push('00-' + value);
-                        manifest.finished_chunks = _.unique(finishedChunks);
+                        manifest.finished_chunks = _.uniq(finishedChunks);
                     });
                     delete manifest.finished_project_components;
 

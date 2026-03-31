@@ -1,6 +1,6 @@
 /**
  * Preload script for the main application window.
- * Replaces bootstrap.js — initializes the app context and exposes it
+ * Initializes the app context and exposes it
  * to the renderer via contextBridge (nodeIntegration is disabled).
  */
 

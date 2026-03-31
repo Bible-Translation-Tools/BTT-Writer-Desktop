@@ -616,7 +616,7 @@
     "logout": "Sair",
     "settings": "Configurações",
     "__folder21": "js",
-    "__file81": "bootstrap.js",
+    "__file81": "preload-main.js",
     "loading_mkdirp": "Carregando mkdirp...",
     "loading_db": "Carregando Bancos de Dados...",
     "loading_reporter": "Carregando relatório...",
