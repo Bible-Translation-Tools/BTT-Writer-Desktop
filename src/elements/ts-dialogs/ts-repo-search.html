@@ -180,10 +180,6 @@
             }
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
-
         ready: function () {
             this.$.spinner.active = false;
         },
@@ -194,7 +190,9 @@
 
         detached: function () {
             window.clearTimeout(this.timer);
-        }
+        },
+
+        translate: App.translate,
 
     });
 

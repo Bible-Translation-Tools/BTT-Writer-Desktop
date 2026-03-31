@@ -333,11 +333,11 @@
           var msg = body;
 
           if (conflicts && conflicts.length) {
-              App.reporter.logNotice(conflicts, this.translate("conflicts"));
+              App.reporter.logNotice(conflicts, App.translate("conflicts"));
               if (conflicts.length === 1) {
-                  msg += this.translate("single_chunk_conflict_message");
+                  msg += App.translate("single_chunk_conflict_message");
               } else {
-                  msg += this.translate("multiple_chunk_conflict_message");
+                  msg += App.translate("multiple_chunk_conflict_message");
               }
           }
 
@@ -356,52 +356,52 @@
       },
 
       updateLanguageList: function () {
-          var mythis = this;
-          var before = App.dataManager.getMetrics();
+          const mythis = this;
+          const before = App.dataManager.getMetrics();
 
-          var onProgress = function (type, total, complete) {
+          const onProgress = function (type, total, complete) {
               if (complete === 7000) {
                   mythis.set('options.value', 66);
               }
           };
 
           mythis.$.update.close();
-          mythis.showLoadingMessage(mythis.translate("updating_target_status"));
+          mythis.showLoadingMessage(App.translate("updating_target_status"));
           mythis.set('options.progress', true);
           mythis.set('options.value', 33);
 
           setTimeout(function () {
               return App.dataManager.updateLanguages(onProgress)
                   .then(function () {
-                      var after = App.dataManager.getMetrics();
-                      var diff = after.target_language_count - before.target_language_count;
-                      var msg = mythis.translate("number_target_updates", diff);
+                      const after = App.dataManager.getMetrics();
+                      const diff = after.target_language_count - before.target_language_count;
+                      let msg = App.translate("number_target_updates", diff);
                       if (diff < 1) {
-                          msg = mythis.translate("no_target_updates");
+                          msg = App.translate("no_target_updates");
                       }
-                      mythis.showMessage(mythis.translate("update_complete"), msg);
+                      mythis.showMessage(App.translate("update_complete"), msg);
                   })
                   .catch(function (err) {
                       let errorMessage;
                       if (err.syscall === "getaddrinfo") {
-                          errorMessage = mythis.translate("connection_error");
+                          errorMessage = App.translate("connection_error");
                       } else if (err.syscall === "read") {
-                          errorMessage = mythis.translate("read_error");
+                          errorMessage = App.translate("read_error");
                       } else {
-                          errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("update_error");
+                          errorMessage = err.data?.message || err.message || err.stderr || App.translate("update_error");
                       }
-                      mythis.showErrorMessage(mythis.translate("update_failed"), errorMessage, err);
+                      mythis.showErrorMessage(App.translate("update_failed"), errorMessage, err);
                   });
           }, 500);
       },
 
       updateSourceList: function () {
-          var mythis = this;
-          var before = App.dataManager.getMetrics();
-          var end = false;
+          const mythis = this;
+          const before = App.dataManager.getMetrics();
+          let end = false;
 
-          var onProgress = function (type, total, complete) {
-              var value = 0;
+          const onProgress = function (type, total, complete) {
+              let value = 0;
 
               if (type === "projects") {
                   value = Math.round(complete / total * 10);
@@ -415,41 +415,41 @@
           };
 
           mythis.$.update.close();
-          mythis.showLoadingMessage(mythis.translate("source_update_status"));
+          mythis.showLoadingMessage(App.translate("source_update_status"));
           mythis.set('options.progress', true);
           mythis.set('options.value', 0);
 
           setTimeout(function () {
               return App.dataManager.updateSources(onProgress)
                   .then(function () {
-                      var after = App.dataManager.getMetrics();
-                      var diff = after.resource_count_level3 - before.resource_count_level3;
-                      var msg = mythis.translate('new_sources_available', diff);
+                      const after = App.dataManager.getMetrics();
+                      const diff = after.resource_count_level3 - before.resource_count_level3;
+                      let msg = App.translate('new_sources_available', diff);
                       if (diff < 1) {
-                          msg = mythis.translate('no_sources_available');
+                          msg = App.translate('no_sources_available');
                       }
                       mythis.set('route', 'updates');
-                      mythis.showMessage(mythis.translate('update_complete'), msg);
+                      mythis.showMessage(App.translate('update_complete'), msg);
                   })
                   .catch(function (err) {
                       let errorMessage;
                       if (err.syscall === "getaddrinfo") {
-                          errorMessage = mythis.translate("connection_error");
+                          errorMessage = App.translate("connection_error");
                       } else if (err.syscall === "read") {
-                          errorMessage = mythis.translate("read_error");
+                          errorMessage = App.translate("read_error");
                       } else {
-                          errorMessage = err.data?.message || err.message || err.stderr || mythis.translate('update_error');
+                          errorMessage = err.data?.message || err.message || err.stderr || App.translate('update_error');
                       }
-                      mythis.showErrorMessage(mythis.translate("update_failed"), errorMessage, err);
+                      mythis.showErrorMessage(App.translate("update_failed"), errorMessage, err);
                   });
           }, 500);
       },
 
       updateIndex: function () {
-          var mythis = this;
+          const mythis = this;
 
           mythis.$.update.close();
-          mythis.showLoadingMessage(mythis.translate("updating_index_file_status"));
+          mythis.showLoadingMessage(App.translate("updating_index_file_status"));
           mythis.set('options.progress', false);
           mythis.set('options.value', 0);
 
@@ -461,16 +461,16 @@
                   App.ipc.send('fire-reload');
               })
               .catch (function (err) {
-                  mythis.showErrorMessage(mythis.translate("download_failed"), `${mythis.translate("download_index_file_error")} (${err})`, err);
+                  mythis.showErrorMessage(App.translate("download_failed"), `${App.translate("download_index_file_error")} (${err})`, err);
               });
           }, 500);
       },
 
       downloadSources: function () {
-          var mythis = this;
+          const mythis = this;
 
           mythis.$.update.close();
-          mythis.showLoadingMessage(mythis.translate("source_loading_status"));
+          mythis.showLoadingMessage(App.translate("source_loading_status"));
 
           setTimeout(function() {
               mythis.set('route', 'updates');
@@ -478,10 +478,10 @@
       },
 
       deleteProject: function (event, data) {
-          var mythis = this;
-          var projectmeta = data.projectmeta;
+          const mythis = this;
+          const projectmeta = data.projectmeta;
 
-          mythis.showLoadingMessage(mythis.translate("deleting_project_status"));
+          mythis.showLoadingMessage(App.translate("deleting_project_status"));
 
           setTimeout(function() {
               return App.exportManager.autoBackupTranslation(projectmeta)
@@ -499,7 +499,7 @@
                       return mythis.sortProjects(newlist);
                   })
                   .then(function () {
-                      mythis.showMessage(mythis.translate("project_deleted1"), mythis.translate("project_deleted2"));
+                      mythis.showMessage(App.translate("project_deleted1"), App.translate("project_deleted2"));
                   })
                   .catch(function () {
                       mythis.deleteCorruptProject(projectmeta);
@@ -524,21 +524,21 @@
                   return mythis.sortProjects(newlist);
               })
               .then(function () {
-                  mythis.showMessage(mythis.translate("project_deleted1"), mythis.translate("project_deleted2"));
+                  mythis.showMessage(App.translate("project_deleted1"), App.translate("project_deleted2"));
               })
               .catch(function (err) {
-                  mythis.showErrorMessage(mythis.translate('delete_failed1'), mythis.translate('delete_failed2'), err);
+                  mythis.showErrorMessage(App.translate('delete_failed1'), App.translate('delete_failed2'), err);
               })
       },
 
       changeProject: function (event, data) {
-          var mythis = this;
-          var conflicts = [];
-          var changedata = data;
-          var newmanifest = changedata.newmeta;
+          const mythis = this;
+          let conflicts = [];
+          const changedata = data;
+          let newmanifest = changedata.newmeta;
 
           mythis.set('route', 'home');
-          mythis.showLoadingMessage(mythis.translate("changing_project_status"));
+          mythis.showLoadingMessage(App.translate("changing_project_status"));
 
           setTimeout(function () {
               return Promise.resolve(true)
@@ -576,10 +576,10 @@
                       return mythis.sortProjects(newlist);
                   })
                   .then(function () {
-                      mythis.showConflictsMessage(mythis.translate("project_changed1"), mythis.translate("project_changed2"), conflicts);
+                      mythis.showConflictsMessage(App.translate("project_changed1"), App.translate("project_changed2"), conflicts);
                   })
                   .catch(function(err) {
-                      mythis.showErrorMessage(mythis.translate("change_failed1"), mythis.translate("change_failed2"), err);
+                      mythis.showErrorMessage(App.translate("change_failed1"), App.translate("change_failed2"), err);
                   });
           }, 500);
       },
@@ -607,7 +607,7 @@
 
       startRepoImport: function () {
           var mythis = this;
-          var path = require('path');
+          var path = App.path;
           var repo = this.importdata.repo.repo;
           var project = this.importdata.repo.project;
           var force = this.importdata.force || false;
@@ -623,7 +623,7 @@
               mythis.set('route', 'home');
               mythis.$.translate.reset();
           }
-          mythis.showLoadingMessage(mythis.translate("importing_status"));
+          mythis.showLoadingMessage(App.translate("importing_status"));
 
           setTimeout(function() {
               return App.utils.fs.mkdirs(tmpPath)
@@ -655,7 +655,7 @@
                       }
                   })
                   .catch(function(err) {
-                      mythis.showErrorMessage(mythis.translate("import_failed1"), mythis.translate("import_failed2"), err && err.error ? err.error : err);
+                      mythis.showErrorMessage(App.translate("import_failed1"), App.translate("import_failed2"), err && err.error ? err.error : err);
 
                       return mythis.clearTempDir();
                   });
@@ -665,13 +665,13 @@
       startProjectImport: function() {
           var mythis = this;
           var defaultPath = App.configurator.getUserPath('datalocation', 'backups');
-          var filePath = App.ipc.sendSync('open-file', {options: {defaultPath: defaultPath, filters: [{name: mythis.translate("tstudio_files"), extensions: ['tstudio']}], properties: ['openFile']}});
+          var filePath = App.ipc.sendSync('open-file', {options: {defaultPath: defaultPath, filters: [{name: App.translate("tstudio_files"), extensions: ['tstudio']}], properties: ['openFile']}});
           if (!filePath) {
               return;
           }
 
           mythis.$.import.close();
-          mythis.showLoadingMessage(mythis.translate("importing_status"));
+          mythis.showLoadingMessage(App.translate("importing_status"));
 
           setTimeout(function() {
               return App.importManager.extractBackup(filePath[0])
@@ -690,13 +690,13 @@
                   .catch(function(err) {
                       let errorMessage;
 
-                      if (err.includes(mythis.translate("extraction_error"))) {
+                      if (err.includes(App.translate("extraction_error"))) {
                           errorMessage = err;
                       } else {
-                          errorMessage = err.data?.message || err.message || err.stderr || mythis.translate('import_failed2');
+                          errorMessage = err.data?.message || err.message || err.stderr || App.translate('import_failed2');
                       }
 
-                      mythis.showErrorMessage(mythis.translate('import_failed1'), errorMessage, err);
+                      mythis.showErrorMessage(App.translate('import_failed1'), errorMessage, err);
 
                       return mythis.clearTempDir();
                   });
@@ -705,7 +705,7 @@
 
       finishImport: function () {
           var mythis = this;
-          var path = require('path');
+          var path = App.path;
           var conflicts = [];
           var overwrite = this.importdata.overwrite;
           var targetPath = this.importdata.targetpath;
@@ -713,7 +713,7 @@
           var key = targetPath.split(path.sep).pop();
           var newmanifest = {};
 
-          mythis.showLoadingMessage(mythis.translate("importing_status"));
+          mythis.showLoadingMessage(App.translate("importing_status"));
 
           setTimeout(function() {
               return Promise.resolve(true)
@@ -757,10 +757,10 @@
                       return mythis.sortProjects(newlist);
                   })
                   .then(function () {
-                      mythis.showConflictsMessage(mythis.translate("project_imported1"), mythis.translate("project_imported2"), conflicts);
+                      mythis.showConflictsMessage(App.translate("project_imported1"), App.translate("project_imported2"), conflicts);
                   })
                   .catch(function(err) {
-                      mythis.showErrorMessage(mythis.translate("import_failed1"), mythis.translate("import_failed2"), err && err.error ? err.error : err);
+                      mythis.showErrorMessage(App.translate("import_failed1"), App.translate("import_failed2"), err && err.error ? err.error : err);
 
                       return mythis.clearTempDir();
                   });
@@ -774,7 +774,7 @@
       startUsfmImport: function () {
           var mythis = this;
           var defaultPath = App.configurator.getUserPath('datalocation', 'backups');
-          var filePath = App.ipc.sendSync('open-file', {options: {defaultPath: defaultPath, filters: [{name: mythis.translate("usfm_format"), extensions: ['txt', 'usfm']}], properties: ['openFile']}});
+          var filePath = App.ipc.sendSync('open-file', {options: {defaultPath: defaultPath, filters: [{name: App.translate("usfm_format"), extensions: ['txt', 'usfm']}], properties: ['openFile']}});
           if (!filePath) {
               return;
           }
@@ -796,7 +796,7 @@
                   mythis.set('route', 'new');
               }).catch(function (err) {
                   var filename = (filePath && filePath[0]) || '';
-                  mythis.showErrorMessage(mythis.translate("import_failed"), mythis.translate("read_file_error", filename), err);
+                  mythis.showErrorMessage(App.translate("import_failed"), App.translate("read_file_error", filename), err);
               });
       },
 
@@ -810,7 +810,7 @@
           var backupName = projectmeta.unique_id + '.' + timeString + '.tstudio';
           var backupPath = App.configurator.getUserPath('datalocation', 'backups', backupName);
 
-          mythis.showLoadingMessage(mythis.translate("importing_status"));
+          mythis.showLoadingMessage(App.translate("importing_status"));
 
           setTimeout(function() {
               return Promise.resolve(true)
@@ -839,10 +839,10 @@
                       return mythis.sortProjects(newlist);
                   })
                   .then(function () {
-                      mythis.showMessage(mythis.translate("project_imported1"), mythis.translate("project_imported3"));
+                      mythis.showMessage(App.translate("project_imported1"), App.translate("project_imported3"));
                   })
                   .catch(function (err) {
-                      mythis.showErrorMessage(mythis.translate('import_failed1'), mythis.translate("import_failed2"), err);
+                      mythis.showErrorMessage(App.translate('import_failed1'), App.translate("import_failed2"), err);
 
                       if (overwrite) {
                           return App.importManager.extractBackup(backupPath)
@@ -872,7 +872,7 @@
 
           mythis.set('importdata', {filepath: filePath[0]});
           mythis.$.import.close();
-          mythis.showLoadingMessage(mythis.translate("importing_source_status"));
+          mythis.showLoadingMessage(App.translate("importing_source_status"));
 
           setTimeout(function() {
               return App.dataManager.checkForContainer(filePath[0])
@@ -891,20 +891,20 @@
           var mythis = this;
           var filePath = this.importdata.filepath;
 
-          mythis.showLoadingMessage(mythis.translate("importing_source_status"));
+          mythis.showLoadingMessage(App.translate("importing_source_status"));
 
           setTimeout(function() {
               return App.dataManager.importContainer(filePath)
                   .then(function() {
-                      mythis.showMessage(mythis.translate("project_imported1"), mythis.translate("source_imported"));
+                      mythis.showMessage(App.translate("project_imported1"), App.translate("source_imported"));
                   })
                   .catch(function(err) {
-                      var errmessage = mythis.translate("source_import_failed");
+                      var errmessage = App.translate("source_import_failed");
 
                       if (err.toString()) {
                           errmessage = err.toString();
                       }
-                      mythis.showErrorMessage(mythis.translate("import_failed"), errmessage, err);
+                      mythis.showErrorMessage(App.translate("import_failed"), errmessage, err);
                   });
           }, 500);
       },
@@ -914,19 +914,19 @@
       },
 
       uploadProject: function () {
-          var mythis = this;
-          var projectmeta = this.currentproject.projectmeta;
-          var loading = this.$.wideloading;
-          var target = App.configurator.getValue('targetTranslationsDir');
-          var paths = App.utils.makeProjectPaths(target, projectmeta);
-          var repo = projectmeta.unique_id;
-          var user = this.currentuser;
-          var shell = require('electron').shell;
-          var deviceId = "";
+          const mythis = this;
+          const projectmeta = this.currentproject.projectmeta;
+          const loading = this.$.wideloading;
+          const target = App.configurator.getValue('targetTranslationsDir');
+          const paths = App.utils.makeProjectPaths(target, projectmeta);
+          const repo = projectmeta.unique_id;
+          const user = this.currentuser;
+          const shell = App.shell;
+          let deviceId = "";
 
           mythis.$.export.close();
           mythis.set('options', {});
-          mythis.set('options.body', mythis.translate("project_upload"));
+          mythis.set('options.body', App.translate("project_upload"));
           mythis.set('options.loading', true);
           loading.open();
 
@@ -936,7 +936,7 @@
               })
               .then(function (devId) {
                   deviceId = devId;
-                  var getreg = App.keyManager.getRegistrationInfo.bind(App.keyManager, deviceId),
+                  const getreg = App.keyManager.getRegistrationInfo.bind(App.keyManager, deviceId),
                       genreg = App.keyManager.generateRegistrationInfo.bind(App.keyManager, deviceId),
                       rereg = function () {
                           return App.userManager.unregister(user, deviceId).then(genreg);
@@ -955,18 +955,18 @@
                   return App.gitManager.push(user, paths.projectDir, repo).then(App.utils.ret(repo.full_name));
               })
               .then(function (fullname) {
-                  var readServer = App.configurator.getUserSetting("readerserver");
-                  var readUrl = readServer + "/" + fullname;
-                  var dataServer = App.configurator.getUserSetting("dataserver");
-                  var dataUrl = dataServer + "/" + fullname;
+                  const readServer = App.configurator.getUserSetting("readerserver");
+                  const readUrl = readServer + "/" + fullname;
+                  const dataServer = App.configurator.getUserSetting("dataserver");
+                  const dataUrl = dataServer + "/" + fullname;
 
-                  mythis.set('options.title', mythis.translate("upload_complete"));
-                  mythis.set('options.body', mythis.translate("project_uploaded_to"));
+                  mythis.set('options.title', App.translate("upload_complete"));
+                  mythis.set('options.body', App.translate("project_uploaded_to"));
                   mythis.set('options.readlink', readUrl);
                   mythis.set('options.datalink', dataUrl);
                   mythis.set('options.showlink', true);
                   mythis.set('options.loading', false);
-                  var links = loading.querySelectorAll(".url");
+                  const links = loading.querySelectorAll(".url");
 
                   links.forEach((link) => {
                     link.addEventListener('click', function clicker (event) {
@@ -980,41 +980,46 @@
                   let errorMessage;
 
                   if (err.syscall === "getaddrinfo") {
-                      errorMessage = mythis.translate("connection_error");
+                      errorMessage = App.translate("connection_error");
                   } else if (err.status === 401) {
-                      errorMessage = mythis.translate("cannot_upload_whithout_account");
+                      errorMessage = App.translate("cannot_upload_whithout_account");
                   } else {
-                      errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("upload_project_error");
+                      errorMessage = err.data?.message || err.message || err.stderr || App.translate("upload_project_error");
                   }
 
                   if (typeof errorMessage === 'string' && errorMessage.includes("rejected because the remote contains work")) {
                       loading.close();
                       mythis.$.conflict.open();
                   } else {
-                      mythis.showErrorMessage(mythis.translate("upload_failed"), errorMessage, err);
+                      mythis.showErrorMessage(App.translate("upload_failed"), errorMessage, err);
                   }
               });
       },
 
       exportProject: function () {
-          var mythis = this;
-          var projectmeta = this.currentproject.projectmeta;
-          var defaultPath = App.configurator.getUserPath('datalocation', 'backups', projectmeta.unique_id);
-          var filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: mythis.translate("tstudio_files"), extensions: ['tstudio']}]}});
+          const mythis = this;
+          const projectmeta = this.currentproject.projectmeta;
+          const defaultPath = App.configurator.getUserPath('datalocation', 'backups', projectmeta.unique_id);
+          const filePath = App.ipc.sendSync('save-as', {
+              options: {
+                  defaultPath: defaultPath,
+                  filters: [{name: App.translate("tstudio_files"), extensions: ['tstudio']}]
+              }
+          });
           if (!filePath) {
               return;
           }
 
           mythis.$.export.close();
-          mythis.showLoadingMessage(mythis.translate("creating_project_file_status"));
+          mythis.showLoadingMessage(App.translate("creating_project_file_status"));
 
           setTimeout(function() {
               return App.exportManager.backupTranslation(projectmeta, filePath)
                   .then(function () {
-                      mythis.showMessage(mythis.translate("project_export1"), mythis.translate("project_export2"));
+                      mythis.showMessage(App.translate("project_export1"), App.translate("project_export2"));
                   })
                   .catch(function (err) {
-                      mythis.showErrorMessage(mythis.translate('project_failed1'), mythis.translate('project_failed2'), err);
+                      mythis.showErrorMessage(App.translate('project_failed1'), App.translate('project_failed2'), err);
                   });
           }, 500);
       },
@@ -1037,12 +1042,12 @@
       },
 
       openPreview: function () {
-          var mythis = this;
-          var options = _.cloneDeep(this.options);
-          var current = this.route;
+          const mythis = this;
+          const options = _.cloneDeep(this.options);
+          const current = this.route;
 
           mythis.$.print.close();
-          mythis.showLoadingMessage(mythis.translate("preparing_print_status"));
+          mythis.showLoadingMessage(App.translate("preparing_print_status"));
           if (current === "translate") {
               mythis.fire('iron-signal', {name: 'translateleft'});
           }
@@ -1054,10 +1059,10 @@
               return Promise.resolve(true)
                   .then(function () {
                       if (options.includeImages) {
-                          mythis.set('options.body', mythis.translate('download_images'));
-                          return App.printManager.downloadImages()
+                          mythis.set('options.body', App.translate('download_images'));
+                          return AppAsync.printManager.downloadImages()
                               .then(function(){
-                                  mythis.set('options.body', mythis.translate("extract_images"));
+                                  mythis.set('options.body', App.translate("extract_images"));
                                   return App.printManager.extractImages();
                               });
                       } else {
@@ -1065,7 +1070,7 @@
                       }
                   })
                   .then(function () {
-                      mythis.set('options.body', mythis.translate("print_preview"));
+                      mythis.set('options.body', App.translate("print_preview"));
                       setTimeout(function() {
                           mythis.set('currentproject.printoptions', options);
                           mythis.$.preview.rendertext();
@@ -1075,8 +1080,8 @@
                       }, 500);
                   })
                   .catch(function(err){
-                      let errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("download_images_error");
-                      mythis.showErrorMessage(mythis.translate("download_failed"), errorMessage, err);
+                      let errorMessage = err.data?.message || err.message || err.stderr || App.translate("download_images_error");
+                      mythis.showErrorMessage(App.translate("download_failed"), errorMessage, err);
                   });
           }, 500);
       },
@@ -1094,39 +1099,39 @@
       },
 
       exportUsfm: function () {
-          var mythis = this;
-          var projectmeta = this.currentproject.projectmeta;
-          var translation = this.currentproject.chunks;
-          var conflicts = this.currentproject.conflicts;
-          var mediaServer = App.configurator.getUserSetting("mediaserver");
-          var name = projectmeta.unique_id;
-          var defaultPath = App.configurator.getUserPath('datalocation', name);
-          var filePath;
+          const mythis = this;
+          const projectmeta = this.currentproject.projectmeta;
+          const translation = this.currentproject.chunks;
+          const conflicts = this.currentproject.conflicts;
+          const mediaServer = App.configurator.getUserSetting("mediaserver");
+          const name = projectmeta.unique_id;
+          const defaultPath = App.configurator.getUserPath('datalocation', name);
+          let filePath;
 
           if (conflicts) {
-              mythis.showMessage(mythis.translate("conflicts_exist"),mythis.translate("conflicts_request"));
+              mythis.showMessage(App.translate("conflicts_exist"), App.translate("conflicts_request"));
               return;
           }
 
           if (projectmeta.format === 'markdown') {
-              filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: mythis.translate("zip_format"), extensions: ['zip']}]}});
+              filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: App.translate("zip_format"), extensions: ['zip']}]}});
           } else {
-              filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: mythis.translate("usfm_format"), extensions: ['usfm']}]}});
+              filePath = App.ipc.sendSync('save-as', {options: {defaultPath: defaultPath, filters: [{name: App.translate("usfm_format"), extensions: ['usfm']}]}});
           }
           if (!filePath) {
               return;
           }
 
-          mythis.showLoadingMessage(mythis.translate("exporting_project_status"));
+          mythis.showLoadingMessage(App.translate("exporting_project_status"));
 
           setTimeout(function() {
               return App.exportManager.exportTranslation(translation, projectmeta, filePath, mediaServer)
                   .then(function () {
-                      mythis.showMessage(mythis.translate("project_export3"), mythis.translate("project_export4"));
+                      mythis.showMessage(App.translate("project_export3"), App.translate("project_export4"));
                   })
                   .catch(function (err) {
-                      let errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("project_failed3");
-                      mythis.showErrorMessage(mythis.translate("project_failed4"), errorMessage, err);
+                      let errorMessage = err.data?.message || err.message || err.stderr || App.translate("project_failed3");
+                      mythis.showErrorMessage(App.translate("project_failed4"), errorMessage, err);
                   });
           }, 500);
       },
@@ -1141,11 +1146,11 @@
       },
 
       sendFeedback: function () {
-          var message = this.feedback;
-          var mythis = this;
+          const message = this.feedback;
+          const mythis = this;
 
           mythis.closeFeedback();
-          mythis.showLoadingMessage(mythis.translate("sending_feedback_status"));
+          mythis.showLoadingMessage(App.translate("sending_feedback_status"));
 
           if (App.reporter.canReportToGithub()) {
               return App.reporter.reportBug(message)
@@ -1157,26 +1162,26 @@
                       } catch (e) {}
 
                       if (response && response.url && response.repository_url) {
-                          App.reporter.logNotice(response.url, mythis.translate("feedback_sent"));
-                          mythis.showMessage(mythis.translate("feedback_sent"), mythis.translate("feedback_sent2"));
+                          App.reporter.logNotice(response.url, App.translate("feedback_sent"));
+                          mythis.showMessage(App.translate("feedback_sent"), App.translate("feedback_sent2"));
                       } else {
-                          !response && App.reporter.logWarning(res, mythis.translate("feedback_failed2"));
-                          mythis.showErrorMessage(mythis.translate("feedback_failed"), mythis.translate("feedback_failed3"), response || null);
+                          !response && App.reporter.logWarning(res, App.translate("feedback_failed2"));
+                          mythis.showErrorMessage(App.translate("feedback_failed"), App.translate("feedback_failed3"), response || null);
                       }
                   })
                   .catch(function (err) {
                       let errorMessage;
                       if (err.syscall === "getaddrinfo") {
-                          errorMessage = mythis.translate("connection_error");
+                          errorMessage = App.translate("connection_error");
                       } else if (err.syscall === "read") {
-                          errorMessage = mythis.translate("read_error");
+                          errorMessage = App.translate("read_error");
                       } else {
-                          errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("feedback_failed4");
+                          errorMessage = err.data?.message || err.message || err.stderr || App.translate("feedback_failed4");
                       }
-                      mythis.showErrorMessage(mythis.translate("feedback_failed"), errorMessage, err);
+                      mythis.showErrorMessage(App.translate("feedback_failed"), errorMessage, err);
                   });
           } else {
-              mythis.showErrorMessage(mythis.translate('feedback_failed'), mythis.translate("token_error"), null);
+              mythis.showErrorMessage(App.translate('feedback_failed'), App.translate("token_error"), null);
           }
       },
 
@@ -1263,11 +1268,10 @@
 
       checkBuild: function () {
           const mythis = this;
-          const path = require('path');
+          const path = App.path;
           const libraryDir = App.configurator.getValue('libraryDir');
           const libraryPath = path.join(libraryDir, "index.sqlite");
-          const srcDir = path.resolve(path.join(__dirname, '..'));
-          const srcDB = path.join(srcDir, 'index', 'index.sqlite');
+          const srcDB = path.join(App.srcDir, 'index', 'index.sqlite');
           const appData = App.configurator.getAppData();
           const libraryBuild = App.configurator.getValue("libraryBuild");
           const tmpDir = App.configurator.getValue('tempDir');
@@ -1281,7 +1285,7 @@
           if (libraryBuild !== appData.build) {
               let translations = [];
 
-              App.ipc.send('loading-status', mythis.translate("index_update_status"));
+              App.ipc.send('loading-status', App.translate("index_update_status"));
 
               if (parseInt(libraryBuild) >= 110) {
                   translations = App.dataManager.getTranslations();
@@ -1335,7 +1339,7 @@
                       return mythis.clearTempDir();
                   })
                   .then(function () {
-                      App.ipc.send('loading-status', mythis.translate("project_migration_status"));
+                      App.ipc.send('loading-status', App.translate("project_migration_status"));
                       return App.projectsManager.migrateTargetTranslationsList();
                   })
                   .then(function () {
@@ -1347,7 +1351,7 @@
       },
 
       createInitialSettings: function (version) {
-          var untildify = require('untildify');
+          var untildify = App.untildify;
           var gitversion = version ? version.toString() : 'N/A';
 
           App.configurator.refreshUserSetting();
@@ -1366,19 +1370,17 @@
           App.configurator.applyPrefAppearance();
       },
 
-      translate: function (key, ...args) {
-          return App.locale.translate(key, ...args);
-      },
+      translate: App.translate,
 
       ready: function() {
           var mythis = this;
 
-          mythis.set('message', mythis.translate("idle"));
+          mythis.set('message', App.translate("idle"));
 
           return App.gitManager.verifyGit()
               .then(function (version) {
-                  App.ipc.send('loading-status', mythis.translate("get_user_settings"));
-                  App.reporter.logNotice(mythis.translate("git_version") + version);
+                  App.ipc.send('loading-status', App.translate("get_user_settings"));
+                  App.reporter.logNotice(App.translate("git_version") + version);
                   mythis.createInitialSettings(version);
                   mythis.checkUser(App.configurator.getValue("userdata"));
 
@@ -1389,21 +1391,21 @@
                       App.ipc.send('fire-reload');
                       return Promise.resolve(false);
                   } else {
-                      App.ipc.send('loading-status', mythis.translate("get_project_list"));
+                      App.ipc.send('loading-status', App.translate("get_project_list"));
                       return App.projectsManager.loadTargetTranslationsList()
                           .then(function (list) {
-                              App.ipc.send('loading-status', mythis.translate("get_resource_containers"));
+                              App.ipc.send('loading-status', App.translate("get_resource_containers"));
                               return mythis.checkAllContainers(_.compact(list));
                           })
                           .then(function (list) {
-                              App.ipc.send('loading-status', mythis.translate("update_project_list"));
+                              App.ipc.send('loading-status', App.translate("update_project_list"));
                               return _.compact(list.map(App.projectsManager.updateManifestToMeta, App.projectsManager));
                           })
                           .then(function (list) {
                               return mythis.sortProjects(list);
                           })
                           .then(function (list) {
-                              App.ipc.send('loading-status', mythis.translate("make_backups"));
+                              App.ipc.send('loading-status', App.translate("make_backups"));
                               return App.exportManager.backupAllTranslations(list);
                           })
                           .then(function () {
@@ -1414,17 +1416,17 @@
               })
               .catch(function (err) {
                   let errorMessage;
-                  err && err.stack && App.reporter.logError(err.stack, mythis.translate("startup_error"));
+                  err && err.stack && App.reporter.logError(err.stack, App.translate("startup_error"));
 
                   if (err && typeof err === 'string') {
                       errorMessage = err;
                   } else if (err && err.toString() !== '[object Object]') {
                       errorMessage = err.toString();
                   } else {
-                      errorMessage = err.data?.message || err.message || err.stderr || mythis.translate("something_broke");
+                      errorMessage = err.data?.message || err.message || err.stderr || App.translate("something_broke");
                   }
 
-                  mythis.showErrorMessage(mythis.translate("startup_error"), errorMessage, err);
+                  mythis.showErrorMessage(App.translate("startup_error"), errorMessage, err);
                   App.ipc.send('main-loading-done');
                   mythis.$.home.setsortfields();
               });

@@ -20,6 +20,7 @@ describe('DataManager', () => {
     let mockUtils;
     let mockFs;
     let mockYaml;
+    let translate;
 
     const RESOURCE_DIR = '/mock/resources';
     const SOURCE_DIR = '/mock/sources';
@@ -71,12 +72,7 @@ describe('DataManager', () => {
             })
         };
 
-        // Mock Global App (for translation)
-        global.App = {
-            locale: {
-                translate: jest.fn((key) => `translated_${key}`)
-            }
-        };
+        translate = jest.fn((key) => `translated_${key}`);
 
         // Mock Global Fetch
         global.fetch = jest.fn();
@@ -84,7 +80,7 @@ describe('DataManager', () => {
         // Instantiate
         const DatabaseModule = require('../src/js/database');
         DataManager = DatabaseModule.DataManager;
-        dataManager = new DataManager(mockDb, RESOURCE_DIR, SOURCE_DIR, mockConfigurator);
+        dataManager = new DataManager(mockDb, RESOURCE_DIR, SOURCE_DIR, mockConfigurator, translate);
     });
 
     describe('Basic Operations', () => {
@@ -317,7 +313,7 @@ describe('DataManager', () => {
             await dataManager.downloadProjectContainers(item);
 
             expect(item.failure).toBe(true);
-            expect(global.App.locale.translate).toHaveBeenCalledWith('connection_error');
+            expect(translate).toHaveBeenCalledWith('connection_error');
         });
     });
 

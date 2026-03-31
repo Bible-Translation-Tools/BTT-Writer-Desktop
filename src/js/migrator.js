@@ -5,7 +5,7 @@ var _ = require('lodash'),
     path = require('path'),
     utils = require('../js/lib/utils');
 
-function MigrateManager(configurator, git, reporter, dataManager) {
+function MigrateManager(configurator, git, reporter, dataManager, translate) {
 
     var write = utils.fs.outputFile,
         read = utils.fs.readFile,
@@ -15,21 +15,20 @@ function MigrateManager(configurator, git, reporter, dataManager) {
     return {
 
         migrateAll: function (list) {
-            const mythis = this;
             const getProjectName = function (proj) {
                 return proj.projectDir.split(path.sep).pop();
             };
 
             return utils.chain(this.migrate, function(err, proj) {
                 const name = getProjectName(proj);
-                reporter.logWarning(err, mythis.translate("unable_migrate_project", name));
+                reporter.logWarning(err, translate("unable_migrate_project", name));
 
                 return false;
             })(list).then(function (migrated) {
                 const names = migrated.map(function (manifest) {
                     return getProjectName(manifest.paths);
                 });
-                reporter.logNotice(names, mythis.translate("migrated_projects"));
+                reporter.logNotice(names, translate("migrated_projects"));
                 return migrated;
             });
         },
@@ -487,7 +486,7 @@ function MigrateManager(configurator, git, reporter, dataManager) {
 
             const checkVersion = function (project) {
                 if (project.manifest.package_version !== 8) {
-                    throw new Error(this.translate("migrate_project_failed"));
+                    throw new Error(translate("migrate_project_failed"));
                 }
                 return project;
             };
@@ -523,8 +522,6 @@ function MigrateManager(configurator, git, reporter, dataManager) {
         },
 
         listTargetTranslations: function (file) {
-            var mythis = this;
-
             /**
              * current version
              * @param manifest {JSON}
@@ -558,7 +555,7 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                             manifest = v2(manifest);
                             break;
                         default:
-                            reject(mythis.translate("unsupported_package_version", packageVersion));
+                            reject(translate("unsupported_package_version", packageVersion));
                     }
 
                     let paths = [];
@@ -567,18 +564,14 @@ function MigrateManager(configurator, git, reporter, dataManager) {
                     });
 
                     if (!paths.length) {
-                        reject(mythis.translate("archive_not_supported"));
+                        reject(translate("archive_not_supported"));
                     } else {
                         resolve(paths);
                     }
                 } catch (err) {
-                    reject(mythis.translate("migrate_tstudio_archive_failed"));
+                    reject(translate("migrate_tstudio_archive_failed"));
                 }
             });
-        },
-
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
         },
     };
 }

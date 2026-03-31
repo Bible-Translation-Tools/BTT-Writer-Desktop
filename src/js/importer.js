@@ -8,12 +8,11 @@ const readline = require('readline');
 const utils = require('../js/lib/utils');
 const {USFMParser, HMarker, CLMarker, CMarker, VMarker} = require("usfmtools");
 
-function ImportManager(configurator, migrator, dataManager) {
+function ImportManager(configurator, migrator, dataManager, translate) {
 
     return {
 
         extractBackup: function(filePath) {
-            const mythis = this;
             const tmpDir = configurator.getValue('tempDir');
             const targetDir = configurator.getValue('targetTranslationsDir');
             const basename = path.basename(filePath, '.tstudio');
@@ -34,7 +33,7 @@ function ImportManager(configurator, migrator, dataManager) {
                 .then(migrator.migrateAll.bind(migrator))
                 .then(function (results) {
                     if (!results.length) {
-                        throw new Error (mythis.translate("could_not_restore_project"));
+                        throw new Error (translate("could_not_restore_project"));
                     }
                     return results;
                 })
@@ -55,7 +54,7 @@ function ImportManager(configurator, migrator, dataManager) {
                     });
                 })
                 .catch(function (err) {
-                    throw mythis.translate("extract_file_error", err);
+                    throw translate("extract_file_error", err);
                 })
                 .then(Promise.all.bind(Promise));
         },
@@ -80,8 +79,6 @@ function ImportManager(configurator, migrator, dataManager) {
         },
 
         importFromUSFM: function (filepath, projectmeta) {
-            const mythis = this;
-
             return new Promise((resolve) => {
                 const parser = new USFMParser(null, true, true);
                 const contents = fs.readFileSync(filepath, "utf-8");
@@ -89,7 +86,7 @@ function ImportManager(configurator, migrator, dataManager) {
             })
                 .then(document => {
                     if (document.contents.length === 0) {
-                        throw new Error(mythis.translate("not_valid_usfm_file"));
+                        throw new Error(translate("not_valid_usfm_file"));
                     }
 
                     const chapters = document.getChildMarkers(CMarker);
@@ -168,12 +165,8 @@ function ImportManager(configurator, migrator, dataManager) {
                     return chunks;
                 })
                 .catch(function (err) {
-                    throw mythis.translate("parse_file_error", err);
+                    throw translate("parse_file_error", err);
                 });
-        },
-
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
         },
     };
 }

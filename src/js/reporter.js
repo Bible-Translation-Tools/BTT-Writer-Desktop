@@ -98,8 +98,8 @@ function Reporter (args) {
          */
         let callNumber = 4 + stackModifier;
         let location = _this.stackTrace()
-                            .split('\n')[callNumber]
-                            .split(/(\\|\/)/)
+                            ?.split('\n')[callNumber]
+                            ?.split(/([\\/])/)
                             .pop()
                             .slice(0,-1);
 

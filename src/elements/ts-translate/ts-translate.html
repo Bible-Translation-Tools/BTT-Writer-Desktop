@@ -460,11 +460,11 @@
                 const chunk = allChunks[data];
                 return App.projectsManager.saveTargetChunk(chunk, projectMeta)
                     .catch(function (err) {
-                        App.reporter.logError(err, myThis.translate("saving_chunk_error"));
+                        App.reporter.logError(err, App.translate("saving_chunk_error"));
                     });
             };
 
-            myThis.set('message', myThis.translate("checking_changes"));
+            myThis.set('message', App.translate("checking_changes"));
 
             return Promise.resolve(true)
                 .then(function () {
@@ -476,7 +476,7 @@
                                 myThis.set('saveoptions.chunks', []);
                                 return App.projectsManager.cleanProject(allChunks, projectMeta)
                                     .catch(function (err) {
-                                        App.reporter.logError(err, myThis.translate("clean_project_error"));
+                                        App.reporter.logError(err, App.translate("clean_project_error"));
                                     });
                             });
                     } else {
@@ -492,7 +492,7 @@
                                 return Promise.resolve(true);
                             })
                             .catch(function (err) {
-                                App.reporter.logError(err, myThis.translate("save_manifest_error"));
+                                App.reporter.logError(err, App.translate("save_manifest_error"));
                             });
                     } else {
                         return Promise.resolve(true);
@@ -502,7 +502,7 @@
                     if (changes) {
                         return App.projectsManager.commitProject(projectMeta, myThis.currentuser)
                             .catch(function (err) {
-                                App.reporter.logError(err, myThis.translate("commit_project_error"));
+                                App.reporter.logError(err, App.translate("commit_project_error"));
                             });
                     } else {
                         return Promise.resolve(true);
@@ -516,17 +516,17 @@
                                 return Promise.resolve(true);
                             })
                             .catch(function (err) {
-                                let errorMessage = err.data?.message || err.message || err.stderr || myThis.translate("backup_translation_error");
+                                let errorMessage = err.data?.message || err.message || err.stderr || App.translate("backup_translation_error");
                                 if (typeof err !== "string") {
                                     errorMessage = JSON.stringify(errorMessage, null, 2);
                                 }
                                 myThis.set('options', {});
-                                myThis.set('options.title', myThis.translate("autobackup_failed"));
+                                myThis.set('options.title', App.translate("autobackup_failed"));
                                 myThis.set('options.body', errorMessage);
                                 myThis.set('options.loading', false);
                                 myThis.fire('iron-signal', {name: 'openloading'});
                                 myThis.set('saveoptions.backup', false);
-                                App.reporter.logError(err, myThis.translate("backup_translation_error"));
+                                App.reporter.logError(err, App.translate("backup_translation_error"));
                             });
                     } else {
                         return Promise.resolve(true);
@@ -534,15 +534,15 @@
                 })
                 .then(function () {
                     if (changes) {
-                        myThis.set('message', myThis.translate("changes_saved"));
+                        myThis.set('message', App.translate("changes_saved"));
                     } else {
-                        myThis.set('message', myThis.translate("no_changes_found"));
+                        myThis.set('message', App.translate("no_changes_found"));
                     }
                     return Promise.resolve(true);
                 })
                 .then(function () {
                     setTimeout(function() {
-                        myThis.set('message', myThis.translate("idle"));
+                        myThis.set('message', App.translate("idle"));
                     }, 1000);
                     return Promise.resolve(true);
                 });
@@ -606,8 +606,8 @@
                     }
                 });
             } else {
-                const title = mythis.translate("footnote_error");
-                const message = mythis.translate("footnote_status_lost");
+                const title = App.translate("footnote_error");
+                const message = App.translate("footnote_status_lost");
                 mythis.fire('iron-signal', {name: 'showmessage', data: {title, message}});
             }
         },
@@ -617,8 +617,8 @@
                 this.$.deletenotepopup.open();
                 this.$.deletenotebody.innerHTML = this.notestatus.text;
             } else {
-                const title = this.translate("footnote_error");
-                const message = this.translate("footnote_status_lost");
+                const title = App.translate("footnote_error");
+                const message = App.translate("footnote_status_lost");
                 this.fire('iron-signal', {name: 'showmessage', data: {title, message}});
             }
         },
@@ -636,8 +636,8 @@
                 });
                 mythis.set("notestatus", null);
             } else {
-                const title = mythis.translate("footnote_error");
-                const message = mythis.translate("footnote_status_lost");
+                const title = App.translate("footnote_error");
+                const message = App.translate("footnote_status_lost");
                 mythis.fire('iron-signal', {name: 'showmessage', data: {title, message}});
             }
         },
@@ -676,7 +676,7 @@
             var modal = this.$.modal;
 
             mythis.set('options', {});
-            mythis.set('options.body', mythis.translate("loading_source_message"));
+            mythis.set('options.body', App.translate("loading_source_message"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
             mythis.savestate();
@@ -711,8 +711,8 @@
                                     }, 500);
                                 });
                         } else {
-                            mythis.set('options.title', mythis.translate("loading_failed"));
-                            mythis.set('options.body', mythis.translate("source_not_found_error"));
+                            mythis.set('options.title', App.translate("loading_failed"));
+                            mythis.set('options.body', App.translate("source_not_found_error"));
                             mythis.set('options.loading', false);
                         }
                     });
@@ -896,7 +896,7 @@
             };
 
             myThis.set('options', {});
-            myThis.set('options.body', myThis.translate("loading_project"));
+            myThis.set('options.body', App.translate("loading_project"));
             myThis.set('options.loading', true);
             myThis.fire('iron-signal', {name: 'openloading'});
 
@@ -916,7 +916,7 @@
                         .then(function (translation) {
                             myThis.set('currentproject.rawdata.main', translation);
                             if (projectMeta.type.id === "ta") {
-                                throw myThis.translate("translation_academy_projects_error");
+                                throw App.translate("translation_academy_projects_error");
                             }
                             const source = projectMeta.source_translations[projectMeta.currentsource];
 
@@ -935,12 +935,12 @@
                         })
                         .catch(function(err) {
                             App.reporter.logError(err);
-                            let errorMessage = err.data?.message || err.message || err.stderr || myThis.translate("loading_project_error");
+                            let errorMessage = err.data?.message || err.message || err.stderr || App.translate("loading_project_error");
                             if (typeof errorMessage !== "string") {
                                 errorMessage = JSON.stringify(errorMessage, null, 2);
                             }
                             myThis.set('route', 'home');
-                            myThis.set('options.title', myThis.translate("load_project_failed"));
+                            myThis.set('options.title', App.translate("load_project_failed"));
                             myThis.set('options.body', errorMessage);
                             myThis.set('options.loading', false);
                         });
@@ -951,7 +951,7 @@
         updatesources: function (event, data) {
             var mythis = this;
             mythis.set('options', {});
-            mythis.set('options.body', mythis.translate("loading_source"));
+            mythis.set('options.body', App.translate("loading_source"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
             setTimeout(function() {
@@ -1006,7 +1006,7 @@
                     App.projectsManager.saveTargetManifest(meta)
                 })
                 .catch(function (err) {
-                    App.reporter.logError(err, this.translate("saving_chunk_error"));
+                    App.reporter.logError(err, App.translate("saving_chunk_error"));
                 });
         },
 
@@ -1031,7 +1031,7 @@
             var source = sources[selected];
             var container = source.language_id + "_" + source.project_id + "_" + source.resource_id;
 
-            mythis.set('options.body', mythis.translate("removing_invalid_source", container));
+            mythis.set('options.body', App.translate("removing_invalid_source", container));
             mythis.set('options.loading', true);
 
             sources.splice(selected, 1);
@@ -1245,7 +1245,7 @@
                 note = framenotes[0].content;
             }
             if (note.length) {
-                resources.push({title: mythis.translate("resource_notes"), array: true, data: note});
+                resources.push({title: App.translate("resource_notes"), array: true, data: note});
             }
 
             if (wordlist && wordlist[frame.chapter] && wordlist[frame.chapter][frame.chunk]) {
@@ -1259,7 +1259,7 @@
                 if (word) {
                     words.push(word);
                 } else {
-                    console.log(mythis.translate("cannot_find_data", frame.chapter, frame.chunk, frameword));
+                    console.log(App.translate("cannot_find_data", frame.chapter, frame.chunk, frameword));
                 }
             });
 
@@ -1283,7 +1283,7 @@
             }
 
             if (words.length) {
-                resources.push({title: mythis.translate("resource_words"), array: true, data: words});
+                resources.push({title: App.translate("resource_words"), array: true, data: words});
             }
 
             var frameques = questions.filter(function (ques) {
@@ -1302,7 +1302,7 @@
                 question = _.uniq(question, 'title');
             }
             if (question.length) {
-                resources.push({title: mythis.translate("resource_questions"), array: true, data: question});
+                resources.push({title: App.translate("resource_questions"), array: true, data: question});
             }
 
             var frameudb = udb.filter(function (chunk) {
@@ -1324,7 +1324,6 @@
         },
 
         createFrameMeta: function (frame, projectmeta, verses, title) {
-            var mythis = this;
             var refaddon = projectmeta.target_language.name;
             var resource = projectmeta.resource.id;
             var name = projectmeta.project.name;
@@ -1342,28 +1341,28 @@
 
             if (name === "Open Bible Stories") {
                 if (chapterid === "front" && frameid === "title") {
-                    chapterref = mythis.translate("project_title");
-                    chunkref = mythis.translate("project_title");
+                    chapterref = App.translate("project_title");
+                    chunkref = App.translate("project_title");
                 } else if (frameid === "title") {
-                    chapterref = mythis.translate("story_title");
-                    chunkref = mythis.translate("story_title");
+                    chapterref = App.translate("story_title");
+                    chunkref = App.translate("story_title");
                 } else if (frameid === "reference") {
-                    chapterref = mythis.translate("story_reference");
-                    chunkref = mythis.translate("story_reference");
+                    chapterref = App.translate("story_reference");
+                    chunkref = App.translate("story_reference");
                 } else {
                     chapterref = title;
-                    chunkref = mythis.translate("story_chunk_title", title, framenum);
+                    chunkref = App.translate("story_chunk_title", title, framenum);
                 }
             } else {
                 if (chapterid === "front" && frameid === "title") {
-                    chapterref = mythis.translate("project_title");
-                    chunkref = mythis.translate("project_title");
+                    chapterref = App.translate("project_title");
+                    chunkref = App.translate("project_title");
                 } else if (frameid === "title") {
-                    name = mythis.translate(`book_${id}`);
-                    chapterref = mythis.translate("project_chapter_title", name, chapternum);
-                    chunkref = mythis.translate("project_chapter_title", name, chapternum);
+                    name = App.translate(`book_${id}`);
+                    chapterref = App.translate("project_chapter_title", name, chapternum);
+                    chunkref = App.translate("project_chapter_title", name, chapternum);
                 } else {
-                    name = mythis.translate(`book_${id}`);
+                    name = App.translate(`book_${id}`);
                     chapterref = name + " " + chapternum;
                     chunkref = name + " " + chapternum + ":" + verses[0] + "–" + verses[verses.length-1];
                 }
@@ -1648,7 +1647,7 @@
             var mythis = this;
 
             mythis.set('options', {});
-            mythis.set('options.body', mythis.translate("loading_project"));
+            mythis.set('options.body', App.translate("loading_project"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
@@ -1674,7 +1673,7 @@
             var mythis = this;
 
             mythis.set('options', {});
-            mythis.set('options.body', mythis.translate("closing_project_status"));
+            mythis.set('options.body', App.translate("closing_project_status"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
@@ -1695,7 +1694,7 @@
 
             if (mythis.currentproject.projectmeta.source_translations.length || typeclass === "extant") {
                 mythis.set('options', {});
-                mythis.set('options.body', mythis.translate("loading_review_status"));
+                mythis.set('options.body', App.translate("loading_review_status"));
                 mythis.set('options.loading', true);
                 mythis.fire('iron-signal', {name: 'openloading'});
                 setTimeout(function() {
@@ -1712,8 +1711,8 @@
                 }, 250);
             } else {
                 mythis.set('options', {});
-                mythis.set('options.title', mythis.translate("project_empty"));
-                mythis.set('options.body', mythis.translate("project_nothing_to_review"));
+                mythis.set('options.title', App.translate("project_empty"));
+                mythis.set('options.body', App.translate("project_nothing_to_review"));
                 mythis.set('options.loading', false);
                 mythis.fire('iron-signal', {name: 'openloading'});
             }
@@ -1786,8 +1785,8 @@
                 }
             });
 
-            var title = mythis.translate("result");
-            var message = mythis.translate("chunks_marked_done_result", marked, chunks.length);
+            var title = App.translate("result");
+            var message = App.translate("chunks_marked_done_result", marked, chunks.length);
             mythis.fire('iron-signal', {name: 'showmessage', data: {title, message}});
         },
 
@@ -1795,10 +1794,7 @@
             return !target ? 'hide' : '';
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
-
+        translate: App.translate,
 
         ready: function() {
             var mythis = this;

@@ -146,9 +146,7 @@
             mythis.fire('iron-signal', {name: 'saveclose'});
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function () {
             var resize = this.$.resizeicon;

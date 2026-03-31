@@ -254,11 +254,11 @@
             var title = "";
             if (route === "new") {
                 if (this.importdata.importing) {
-                    title = this.translate("import_project");
+                    title = App.translate("import_project");
                 } else if (this.changedata.changing) {
-                    title = this.translate("change_language");
+                    title = App.translate("change_language");
                 } else {
-                    title = this.translate("new_project");
+                    title = App.translate("new_project");
                 }
             }
             return title;
@@ -277,7 +277,7 @@
             var projectarray = this.projectlist;
 
             mythis.set('options', {});
-            mythis.set('options.body', mythis.translate("create_project_status"));
+            mythis.set('options.body', App.translate("create_project_status"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
@@ -296,8 +296,8 @@
             var newprojectmeta = App.projectsManager.updateManifestToMeta(newprojectmanifest);
 
             if (newprojectmeta === null) {
-                mythis.set('options.title', mythis.translate("unknown_error"));
-                mythis.set('options.body', mythis.translate("project_info_corrupt_error"));
+                mythis.set('options.title', App.translate("unknown_error"));
+                mythis.set('options.body', App.translate("project_info_corrupt_error"));
                 mythis.set('options.loading', false);
                 return;
             }
@@ -314,8 +314,8 @@
                         mythis.$.confirmimport.open();
                         return;
                     } else {
-                        mythis.set('options.title', mythis.translate("duplicate_found_error"));
-                        mythis.set('options.body', mythis.translate("project_exists"));
+                        mythis.set('options.title', App.translate("duplicate_found_error"));
+                        mythis.set('options.body', App.translate("project_exists"));
                         mythis.set('options.loading', false);
                         return;
                     }
@@ -323,8 +323,8 @@
             }
 
             if (!typedata.allowed) {
-                mythis.set('options.title', mythis.translate("no_translation"));
-                mythis.set('options.body', mythis.translate("project_doesnt_exist_error"));
+                mythis.set('options.title', App.translate("no_translation"));
+                mythis.set('options.body', App.translate("project_doesnt_exist_error"));
                 mythis.set('options.loading', false);
                 return;
             }
@@ -364,9 +364,7 @@
             this.set('route', "home");
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function() {
         }

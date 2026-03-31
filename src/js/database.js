@@ -6,7 +6,7 @@ var fs = require('fs-extra');
 var path = require('path');
 var yaml = require('js-yaml');
 
-function DataManager(db, resourceDir, sourceDir, configurator) {
+function DataManager(db, resourceDir, sourceDir, configurator, translate) {
 
     return {
 
@@ -198,15 +198,15 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                     return Promise.resolve(true);
                 })
                 .catch(function (err) {
-                    var errmessage = mythis.translate("download_unknown_error");
+                    var errmessage = translate("download_unknown_error");
                     if (err.syscall === "getaddrinfo") {
-                        errmessage = mythis.translate("connection_error");
+                        errmessage = translate("connection_error");
                     }
                     if (err.syscall === "read") {
-                        errmessage = mythis.translate("read_error");
+                        errmessage = translate("read_error");
                     }
                     if (err.status === 404) {
-                        errmessage = mythis.translate("source_on_server_not_found");
+                        errmessage = translate("source_on_server_not_found");
                     }
                     item.failure = true;
                     item.errmsg = errmessage;
@@ -264,7 +264,7 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                                             return Promise.resolve(true);
                                         });
                                 }
-                                return Promise.resolve(mythis.translate("rc_doesnt_exist"));
+                                return Promise.resolve(translate("rc_doesnt_exist"));
                             });
                     }
                     return Promise.resolve(true);
@@ -342,7 +342,7 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
                             if (results.length) {
                                 sorted.push(results[0]);
                             } else {
-                                console.log(mythis.translate("cannot_find_data", container, chapter, chunk));
+                                console.log(translate("cannot_find_data", container, chapter, chunk));
                             }
                         });
                     }
@@ -533,10 +533,6 @@ function DataManager(db, resourceDir, sourceDir, configurator) {
             } else {
                 return [];
             }
-        },
-
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
         },
     };
 }

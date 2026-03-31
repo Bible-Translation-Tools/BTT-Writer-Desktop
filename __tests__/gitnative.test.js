@@ -26,18 +26,14 @@ describe('GitManager', () => {
         const mockCmdrModule = require('../src/js/lib/cmdr');
         mockCmdrRunner = mockCmdrModule.mockRunner;
 
-        global.App = {
-            locale: {
-                translate: jest.fn((key) => `translated_${key}`)
-            }
-        };
+        const translate = jest.fn((key) => `translated_${key}`);
 
         jest.spyOn(console, 'log').mockImplementation(() => {});
         jest.spyOn(console, 'error').mockImplementation(() => {});
 
         const GitModule = require('../src/js/gitnative');
         GitManager = GitModule.GitManager;
-        gitManager = new GitManager();
+        gitManager = new GitManager(translate);
     });
 
     describe('Environment Verification', () => {

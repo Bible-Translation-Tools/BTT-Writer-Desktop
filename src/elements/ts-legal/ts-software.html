@@ -91,13 +91,11 @@
             }
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function() {
             var mythis = this;
-            var shell = require('electron').shell;
+            var shell = App.shell;
             var packages = [
                 {name: 'adm-zip', link: 'https://www.npmjs.com/package/adm-zip', type: 'MIT'},
                 {name: 'archiver', link: 'https://www.npmjs.com/package/archiver', type: 'MIT'},

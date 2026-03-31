@@ -45,12 +45,7 @@ describe('ExportManager', () => {
             getHash: jest.fn().mockResolvedValue('abc123hash')
         };
 
-        // Mock Global App
-        global.App = {
-            locale: {
-                translate: jest.fn((key) => `translated_${key}`)
-            }
-        };
+        const translate = jest.fn((key) => `translated_${key}`);
 
         // Mock FS streams
         const mockStream = { on: jest.fn(), end: jest.fn() };
@@ -58,7 +53,7 @@ describe('ExportManager', () => {
 
         const ExporterModule = require('../src/js/exporter');
         ExportManager = ExporterModule.ExportManager;
-        exportManager = new ExportManager(mockConfigurator, mockGit);
+        exportManager = new ExportManager(mockConfigurator, mockGit, translate);
     });
 
     describe('backupTranslation', () => {

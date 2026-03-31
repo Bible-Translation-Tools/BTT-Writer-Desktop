@@ -245,10 +245,10 @@
         checktitle: function (type) {
             var text = "";
             if (type === "tn") {
-                text = this.translate("reference_text");
+                text = App.translate("reference_text");
             }
             if (type === "tq") {
-                text = this.translate("add_question_here");
+                text = App.translate("add_question_here");
             }
             return text;
         },
@@ -256,10 +256,10 @@
         checkbody: function (type) {
             var text = "";
             if (type === "tn") {
-                text = this.translate("note_text");
+                text = App.translate("note_text");
             }
             if (type === "tq") {
-                text = this.translate("add_answer_here");
+                text = App.translate("add_answer_here");
             }
             return text;
         },
@@ -377,9 +377,7 @@
             }
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
 		ready: function() {
 		}

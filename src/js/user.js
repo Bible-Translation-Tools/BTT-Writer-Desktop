@@ -7,7 +7,7 @@ var _ = require('lodash'),
     utils = require('../js/lib/utils');
 
 
-function UserManager(auth, server) {
+function UserManager(auth, server, translate) {
 
     const apiUrl = server + '/api/v1';
     const api = new Gogs(apiUrl);
@@ -56,7 +56,7 @@ function UserManager(auth, server) {
             return apiRequest(path, userAuth, null, 'DELETE')
                 .then(res => {
                     if (res.status != 204) {
-                        console.error(mythis.translate("delete_token_error"), res);
+                        console.error(translate("delete_token_error"), res);
                     }
                 });
         } else {
@@ -220,10 +220,6 @@ function UserManager(auth, server) {
                         return {repo: repo.full_name, user: user, project: project};
                     });
                 });
-        },
-
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
         },
 
     };

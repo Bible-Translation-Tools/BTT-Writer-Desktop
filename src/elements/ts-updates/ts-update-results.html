@@ -212,7 +212,7 @@
           var completed = 0;
 
           mythis.set('options', {});
-          mythis.set('options.body', mythis.translate("downloading_source"));
+          mythis.set('options.body', App.translate("downloading_source"));
           mythis.set('options.loading', true);
           mythis.set('options.progress', true);
           mythis.set('options.value', 0);
@@ -262,7 +262,7 @@
 
               return promises
                   .then(function () {
-                      var title = mythis.translate("download_complete");
+                      var title = App.translate("download_complete");
                       var passmessage = "";
                       var failmessage = "";
                       var passed = results.filter(function (item) {
@@ -273,15 +273,15 @@
                       });
 
                       if (failed.length === results.length) {
-                          title = mythis.translate("download_failed");
+                          title = App.translate("download_failed");
                       }
 
                       if (passed.length > 0) {
-                        passmessage = mythis.translate("source_text_downloaded", passed.length);
+                        passmessage = App.translate("source_text_downloaded", passed.length);
                       }
 
                       if (failed.length > 0) {
-                        failmessage = mythis.translate("download_attempt_failed", failed.length);
+                        failmessage = App.translate("download_attempt_failed", failed.length);
                       }
 
                       results.forEach(function (item) {
@@ -313,7 +313,7 @@
           var errmsg = event.model.item.errmsg;
 
           this.set('options', {});
-          this.set('options.title', this.translate("download_failed"));
+          this.set('options.title', App.translate("download_failed"));
           this.set('options.body', errmsg);
           this.set('options.loading', false);
           this.fire('iron-signal', {name: 'openloading'});
@@ -441,12 +441,10 @@
       },
 
       translateBook: function(slug) {
-          return this.translate(`book_${slug}`);
+          return App.translate(`book_${slug}`);
       },
 
-      translate: function (key, ...args) {
-          return App.locale.translate(key, ...args);
-      },
+      translate: App.translate,
 
       ready: function() {
 

@@ -172,8 +172,8 @@
                 var returnstr = "";
 
                 conflict.forEach(function (item) {
-                    returnstr += mythis.translate("resource_title", item.title) + "\n";
-                    returnstr += mythis.translate("resource_body", item.body) + "\n\n";
+                    returnstr += App.translate("resource_title", item.title) + "\n";
+                    returnstr += App.translate("resource_body", item.body) + "\n\n";
                 });
 
                 return returnstr.trim();
@@ -235,9 +235,7 @@
             this.fire('setheight');
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
 		ready: function() {
 		}

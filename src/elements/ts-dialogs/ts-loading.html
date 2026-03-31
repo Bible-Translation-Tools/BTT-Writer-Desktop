@@ -137,20 +137,16 @@
         },
 
         readOnWeb: function (event) {
-            var shell = require('electron').shell;
-            const url = event.target.dataset.url;
-            shell.openExternal(url);
+            var url = event.target.dataset.url;
+            App.shell.openExternal(url);
         },
 
         copyUrl: function (event) {
-            const { clipboard } = require('electron');
-            const url = event.target.dataset.url;
-            clipboard.writeText(url);
+            var url = event.target.dataset.url;
+            App.clipboard.writeText(url);
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function () {
         }

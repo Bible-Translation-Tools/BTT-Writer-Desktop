@@ -139,9 +139,7 @@
             this.fire('cancel');
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function () {
         }

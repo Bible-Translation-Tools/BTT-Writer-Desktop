@@ -152,6 +152,8 @@
             }
         },
 
+        translate: App.translate,
+
         ready: function () {
         	this.async(function () {
 				if (!this.options) {
@@ -171,10 +173,6 @@
         	this.selected = event.model.option;
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
-
         cancel: function () {
             this.fire('setting-cancel');
         },
@@ -184,7 +182,7 @@
         },
 
         computeOptionText: function (option, translatable) {
-            return translatable ? this.translate(option.name) : option.name;
+            return translatable ? App.translate(option.name) : option.name;
         },
     });
 

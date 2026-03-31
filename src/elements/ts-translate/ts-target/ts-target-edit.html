@@ -203,7 +203,7 @@
                     const textholder = this.$.textholder;
                     const text = this.chunk.transcontent;
                     const module = "ts-target-edit";
-                    const msg = this.translate("conflict_exists_warning");
+                    const msg = App.translate("conflict_exists_warning");
 
                     if (completed || typeclass !== "standard") {
                         if (text.includes("<<<<<")) {
@@ -409,9 +409,7 @@
             this.restoreCaretPosition()
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function () {
         }

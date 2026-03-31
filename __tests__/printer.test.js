@@ -47,7 +47,7 @@ describe('PrintManager', () => {
         mockUtils.fs.remove.mockResolvedValue(true);
         mockUtils.download.mockResolvedValue(true);
 
-        mockConfigurator = {
+        const mockConfigurator = {
             getValue: jest.fn(key => {
                 if (key === 'rootdir') return ROOT_DIR;
                 if (key === 'tempDir') return TEMP_DIR;
@@ -61,16 +61,14 @@ describe('PrintManager', () => {
             })
         };
 
-        global.App = {
-            locale: {
-                getLocale: () => ({ code: 'en' }),
-                translate: jest.fn(k => k)
-            }
+        const i18n = {
+            getLocale: () => ({ code: 'en' }),
+            translate: jest.fn(k => k)
         };
 
         const PrinterModule = require('../src/js/printer');
         PrintManager = PrinterModule.PrintManager;
-        printer = new PrintManager(mockConfigurator);
+        printer = new PrintManager(mockConfigurator, i18n);
     });
 
     describe('downloadImages', () => {

@@ -141,15 +141,15 @@
 		},
 
         fillresource: function (data) {
-            var textholder = this.$.textholder;
-            var module = "ts-resource-display";
-            var content = "";
-            var clear = [];
-            var footer = this.$.footer;
-            var projectmeta = this.chunks[0].projectmeta;
-            var current = projectmeta.currentsource;
-            var currentsource = projectmeta.source_translations[current];
-            var dict = "bible";
+            const textholder = this.$.textholder;
+            const module = "ts-resource-display";
+            let content = "";
+            const clear = [];
+            const footer = this.$.footer;
+            const projectmeta = this.chunks[0].projectmeta;
+            const current = projectmeta.currentsource;
+            const currentsource = projectmeta.source_translations[current];
+            let dict = "bible";
             if (currentsource.resource_id === "obs") {
                 dict = "bible-obs";
             }
@@ -205,22 +205,22 @@
         },
 
         openindex: function () {
-            var data = {type: "allwords"};
+            const data = {type: "allwords"};
             this.fillresource(data);
         },
 
         newword: function (e) {
-            var word = e.model.word;
+            const word = e.model.word;
             word.type = "Words";
             this.fillresource(word);
         },
 
         notescroll: function (id, mythis) {
-            var chapter = parseInt(id.split(":")[0]);
-            var verse = parseInt(id.split(":")[1]);
-            var chunks = mythis.chunks;
+            const chapter = parseInt(id.split(":")[0]);
+            const verse = parseInt(id.split(":")[1]);
+            const chunks = mythis.chunks;
 
-            var filtered = chunks.filter(function (chunk) {
+            const filtered = chunks.filter(function (chunk) {
                 return chunk.chunkmeta.chapter === chapter && chunk.chunkmeta.frame <= verse;
             });
 
@@ -232,12 +232,12 @@
         },
 
         examplescroll: function (e) {
-            var example = e.model.example;
-            var chapter = example.chapter;
-            var frame = example.frame;
-            var chunks = this.chunks;
+            const example = e.model.example;
+            const chapter = example.chapter;
+            const frame = example.frame;
+            const chunks = this.chunks;
 
-            var filtered = chunks.filter(function (chunk) {
+            const filtered = chunks.filter(function (chunk) {
                 return chunk.chunkmeta.chapter === chapter && chunk.chunkmeta.frame === frame;
             });
             if (filtered.length) {
@@ -251,9 +251,7 @@
             this.fire('closeresource');
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
 		ready: function() {
 		}

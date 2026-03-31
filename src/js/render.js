@@ -2,8 +2,9 @@
 
 const path = require('path');
 const { usfmToHtml } = require('./usfmparse');
+const _ = require("lodash");
 
-function Renderer() {
+function Renderer(translate) {
 
     return {
 
@@ -455,7 +456,6 @@ function Renderer() {
 
             container.appendChild(h2);
             container.appendChild(div);
-
             return container.innerHTML;
         },
 
@@ -470,7 +470,7 @@ function Renderer() {
                 const linkSection = tmLinkTest.exec(text)[2];
                 linkSlug = tmLinkTest.exec(text)[3];
 
-                const linkName = this.translate("translation_manual", `${linkSection}/${linkSlug}`);
+                const linkName = translate("translation_manual", `${linkSection}/${linkSlug}`);
                 let target;
 
                 if (linksEnabled) {
@@ -776,10 +776,6 @@ function Renderer() {
             }
 
             return walk(doc.body).trim();
-        },
-
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
         },
     };
 }

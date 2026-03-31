@@ -72,13 +72,11 @@ describe('MigrateManager', () => {
             activateContainer: jest.fn().mockResolvedValue(true)
         };
 
-        global.App = {
-            locale: { translate: jest.fn(k => k) }
-        };
+        const translate = jest.fn(k => k);
 
         const MigratorModule = require('../src/js/migrator');
         MigrateManager = MigratorModule.MigrateManager;
-        migrator = new MigrateManager(mockConfigurator, mockGit, mockReporter, mockDataManager);
+        migrator = new MigrateManager(mockConfigurator, mockGit, mockReporter, mockDataManager, translate);
     });
 
     describe('Migration Pipeline', () => {

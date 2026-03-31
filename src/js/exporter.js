@@ -6,7 +6,7 @@ var _ = require('lodash'),
     fs = require('fs'),
     utils = require('../js/lib/utils');
 
-function ExportManager(configurator, git) {
+function ExportManager(configurator, git, translate) {
 
     var targetDir = configurator.getValue('targetTranslationsDir');
 
@@ -59,7 +59,7 @@ function ExportManager(configurator, git) {
                     return utils.fs.mkdirs(backupDir);
                 })
                 .catch(function () {
-                    throw mythis.translate("backup_location_not_found");
+                    throw translate("backup_location_not_found");
                 })
                 .then(function () {
                     return Promise.all(promises);
@@ -73,7 +73,7 @@ function ExportManager(configurator, git) {
 
             return utils.fs.mkdirs(autoBackupDir)
                 .catch(function () {
-                    throw mythis.translate("backup_location_not_found");
+                    throw translate("backup_location_not_found");
                 })
                 .then(function () {
                     return mythis.backupTranslation(meta, filePath);
@@ -81,7 +81,6 @@ function ExportManager(configurator, git) {
         },
 
         exportTranslation: function (translation, meta, filePath, mediaServer) {
-            var mythis = this;
             return new Promise(function(resolve, reject) {
                 if (meta.project_type_class === "standard") {
 
@@ -203,17 +202,13 @@ function ExportManager(configurator, git) {
                         });
 
                     } else {
-                        reject(mythis.translate("project_export_format_not_supported"));
+                        reject(translate("project_export_format_not_supported"));
                     }
                 } else {
                     // TODO: support exporting other target translation types if needed e.g. notes, words, questions
-                    reject(mythis.translate("project_export_type_not_supported"));
+                    reject(translate("project_export_type_not_supported"));
                 }
             });
-        },
-
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
         },
     };
 }

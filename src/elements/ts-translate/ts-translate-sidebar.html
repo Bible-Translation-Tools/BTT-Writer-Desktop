@@ -188,19 +188,19 @@
         },
 
         prevchaptitle: function (id) {
-            return id === "tw" ? this.translate("previous_letter") : this.translate("previous_chapter");
+            return id === "tw" ? App.translate("previous_letter") : App.translate("previous_chapter");
         },
 
         nextchaptitle: function (id) {
-            return id === "tw" ? this.translate("next_letter") : this.translate("next_chapter");
+            return id === "tw" ? App.translate("next_letter") : App.translate("next_chapter");
         },
 
         prevchunktitle: function (id) {
-            return id === "tw" ? this.translate("previous_word") : this.translate("previous_chunk");
+            return id === "tw" ? App.translate("previous_word") : App.translate("previous_chunk");
         },
 
         nextchunktitle: function (id) {
-            return id === "tw" ? this.translate("next_word") : this.translate("next_chunk");
+            return id === "tw" ? App.translate("next_word") : App.translate("next_chunk");
         },
 
         gotop: function () {
@@ -444,9 +444,7 @@
             this.fire('iron-signal', {name: 'openprojectchecklist'});
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function() {
         }

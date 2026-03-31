@@ -1,8 +1,6 @@
-// util module
-
 'use strict';
 
-var diacritics = require('./diacritics'),
+const diacritics = require('./diacritics'),
     getmac = require('getmac'),
     nodeMachineId = require('node-machine-id'),
     fs = require('fs'),
@@ -14,8 +12,9 @@ var diacritics = require('./diacritics'),
     fontkit = require('fontkit'),
     os = require('os'),
     _ = require('lodash');
+const {removeSync} = require("fs-extra");
 
-var utils = {
+const utils = {
     /**
      * Ignores diacritics and ignores case.
      */
@@ -48,7 +47,7 @@ var utils = {
             return defaultMessage;
         }
 
-        var msg = defaultMessage;
+        let msg = defaultMessage;
 
         if (typeof err === 'string') {
             msg = err;
@@ -60,7 +59,7 @@ var utils = {
     },
 
     mapObject: function (obj, visit, filter) {
-        var keys = Object.getOwnPropertyNames(obj);
+        let keys = Object.getOwnPropertyNames(obj);
 
         if (filter) {
             keys = keys.filter(function (key) {
@@ -82,19 +81,19 @@ var utils = {
      *  This will pass the proper number of arguments and convert
      *      the callback structure to a Promise.
      *
-     * e.g. var readdir = promisify(fs, 'readdir'),
+     * e.g. const readdir = promisify(fs, 'readdir'),
      *          readdir('something').then(someFunction);
      *
-     *      var rm = promisify(rimraf),
+     *      const rm = promisify(rimraf),
      *          rm('something').then(someFunction);
      */
     promisify: function (module, fn) {
-        var hasModule = typeof module !== 'function',
+        const hasModule = typeof module !== 'function',
             f = hasModule ? module[fn] : module,
             mod = hasModule ? module : null;
 
         return function () {
-            var args = [],
+            let args = [],
                 i = arguments.length - 1;
 
             /**
@@ -137,11 +136,11 @@ var utils = {
      *  Ignores certain properties on a modules so the return values is not polluted.
      *  (This can be configured by passing in a filter function via opts.isValid.)
      *
-     *  E.g.    var myFs = promisifyAll(fs),
+     *  E.g.    const myFs = promisifyAll(fs),
      *              myFs.readdir('somedir').then(doSomething);
      */
     promisifyAll: function (module, opts) {
-        var config = opts || {},
+        const config = opts || {},
             isValid = config.isValid || function (f, fn, mod) {
                 /**
                  * Filter out functions that aren't 'public' and aren't 'methods' and aren't asynchronous.
@@ -171,7 +170,7 @@ var utils = {
      */
     guard: function (module, fn) {
         return function (cb) {
-            var visit = typeof cb === 'function' ? function (v) { return cb(v); } : cb;
+            const visit = typeof cb === 'function' ? function (v) { return cb(v); } : cb;
             return function (collection) {
                 return module[fn](collection, visit);
             };
@@ -179,7 +178,7 @@ var utils = {
     },
 
     guardAll: function (module, opts) {
-        var config = opts || {},
+        const config = opts || {},
             isValid = config.isValid || function (f, fn, mod) {
                 /**
                  * Filter out functions that aren't 'public' and aren't 'methods'.
@@ -201,12 +200,12 @@ var utils = {
     },
 
     every: function (visit, onFail, opts) {
-        var action = utils.wrap(visit),
+        const action = utils.wrap(visit),
             fail = onFail ? onFail : utils.ret(false),
             config = opts || { compact: true };
 
         return function (list) {
-            var promises = list.map(action).map(function (promise) {
+            const promises = list.map(action).map(function (promise) {
                 return promise.catch(fail);
             });
 
@@ -217,11 +216,11 @@ var utils = {
     },
 
     chain: function (visit, onFail, opts) {
-        var fail = onFail ? onFail : utils.ret(false),
+        const fail = onFail ? onFail : utils.ret(false),
             config = opts || { compact: true };
 
         return function (list) {
-            var p = Promise.resolve(false),
+            let p = Promise.resolve(false),
                 results = [];
 
             list.forEach(function (l) {
@@ -249,21 +248,21 @@ var utils = {
     /**
      * Creates a function that returns the data when called.
      *  E.g.
-     *      var myData = 'bob';
-     *      var getData = ret(myData);
+     *      const myData = 'bob';
+     *      const getData = ret(myData);
      *      getData(); // returns 'bob'
      *
      * Useful in Promises:
      *
      *  Before:
-     *      var myData = 'bob';
+     *      const myData = 'bob';
      *
      *      somePromise.then(function (doesntMatter) {
      *          return myData;
      *      });
      *
      *  After:
-     *      var myData = 'bob';
+     *      const myData = 'bob';
      *
      *      somePromise.then(ret(myData));
      */
@@ -300,7 +299,7 @@ var utils = {
      *     somePromise.then(log);
      */
     log: function () {
-        var args = [].slice.apply(arguments);
+        const args = [].slice.apply(arguments);
         if (process.env.NODE_ENV !== 'test') {
             console.log.apply(console, args);
         }
@@ -329,10 +328,10 @@ var utils = {
      */
 
     logr: function () {
-        var args = [].slice.apply(arguments);
+        const args = [].slice.apply(arguments);
 
         return function (data) {
-            var d = Array.isArray(data) ? [data] : data; // so it concats the array itself
+            const d = Array.isArray(data) ? [data] : data; // so it concats the array itself
             utils.log.apply(null, args.concat(d));
             return data;
         };
@@ -369,7 +368,7 @@ var utils = {
      * Returns a consistent MAC address format across Windows/Mac/Linux.
      */
     getDeviceId: function () {
-        var getMac = utils.promisify(getmac, 'getMac');
+        const getMac = utils.promisify(getmac, 'getMac');
 
         return getMac().then(function (mac) {
             return mac.replace(/-|:/g, '');
@@ -384,7 +383,7 @@ var utils = {
     },
 
     makeProjectPaths: function (baseDir, project) {
-        var targetDir = baseDir,
+        const targetDir = baseDir,
             projectName = typeof project === 'object' ? project.unique_id : project,
             projectDir = path.join(targetDir, projectName);
 
@@ -398,7 +397,7 @@ var utils = {
     },
 
     getSystemFonts: function () {
-        var defaultFontDirs = {
+        const defaultFontDirs = {
             win32: () => ['/Windows/Fonts', os.homedir() + '/AppData/Local/Microsoft/Windows/Fonts'],
             darwin: () => ['/Library/Fonts', '/System/Library/Fonts', os.homedir() + '/Library/Fonts'],
             linux: () => [
@@ -412,8 +411,8 @@ var utils = {
             .map(dir => utils.getPaths(path.resolve(dir)))
             .flat()
 
-        var list = fontpaths.map(function (fontpath) {
-            var font = false;
+        let list = fontpaths.map(function (fontpath) {
+            let font = false;
             try {
                 font = fontkit.openSync(fontpath);
             } catch (e) {}
@@ -423,7 +422,7 @@ var utils = {
                 return false;
             }
         }).map(function (fontobject) {
-            var name = false;
+            let name = false;
             try {
                 name = fontobject.font.familyName.toString();
             } catch (e) {}
@@ -446,7 +445,7 @@ var utils = {
             }
         });
 
-        for (var i = 0; i < list.length - 1; i++) {
+        for (let i = 0; i < list.length - 1; i++) {
             if (list[i].name === list[i+1].name) {
                 list.splice(i, 1);
                 i--;
@@ -459,7 +458,7 @@ var utils = {
     },
 
     getTimeStamp: function () {
-        var date = new Date(),
+        const date = new Date(),
             year = date.getFullYear(),
             month = ("0" + (date.getMonth() + 1)).slice(-2),
             day = ("0" + date.getDate()).slice(-2),
@@ -494,37 +493,34 @@ var utils = {
     },
 
     getDateAndTime: function () {
-        var date = new Date();
-        var year = date.getFullYear();
-        var month = `${date.getMonth() + 1}`.padStart(2, '0');
-        var day = `${date.getDate()}`.padStart(2, '0');
-        var hours = `${date.getHours()}`.padStart(2, '0');
-        var minutes = `${date.getMinutes()}`.padStart(2, '0');
-        var seconds = `${date.getSeconds()}`.padStart(2, '0');
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = `${date.getMonth() + 1}`.padStart(2, '0');
+        const day = `${date.getDate()}`.padStart(2, '0');
+        const hours = `${date.getHours()}`.padStart(2, '0');
+        const minutes = `${date.getMinutes()}`.padStart(2, '0');
+        const seconds = `${date.getSeconds()}`.padStart(2, '0');
 
         return `${year}${month}${day}${hours}${minutes}${seconds}`;
     },
 
-    getLocalizations: function () {
-        var list;
-        var localizationDir = path.join(utils.getAppDir(), "i18n");
+    getLocalizations: function (dataManager) {
+        const localizationDir = path.join(utils.getAppDir(), "i18n");
 
-        var localeFiles = utils.getPaths(localizationDir);
+        const localeFiles = utils.getPaths(localizationDir);
 
-        var locales = localeFiles.map(function(file) {
+        const locales = localeFiles.map(function(file) {
             return path.parse(file).name;
         });
 
-        var languages = App.dataManager.getTargetLanguages()
+        const languages = dataManager.getTargetLanguages()
             .filter(function (lang, i) {
                 return locales.includes(lang.id);
             });
 
-        var list = languages.map(function (lang) {
+        return languages.map(function (lang) {
             return {id: lang.id, name: lang.name};
         });
-
-        return list;
     },
 
     getAppDir: function () {
@@ -533,6 +529,10 @@ var utils = {
             appDir = path.join(appDir, '..')
         }
         return appDir
+    },
+
+    remove: function (path) {
+        return fse.removeSync(path);
     }
 };
 

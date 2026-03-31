@@ -157,17 +157,17 @@
             _.forEach(_.groupBy(transData, function(chunks) {
                 return chunks.chunkmeta.chapterid;
             }), function (data, chap) {
-                name = myThis.translate(`book_${id}`);
+                name = App.translate(`book_${id}`);
                 let chapComplete = true;
                 const chapter = parseInt(chap) || 0;
                 let reference;
                 if (chap === "front") {
-                    reference = myThis.translate("project_details");
+                    reference = App.translate("project_details");
                 } else if (typeClass === "extant") {
                     reference = name;
                 } else {
-                    myThis.translate("project_chapter_title", name, chapter);
-                    reference = myThis.translate("project_chapter_title", name, chapter);
+                    App.translate("project_chapter_title", name, chapter);
+                    reference = App.translate("project_chapter_title", name, chapter);
                 }
 
                 _.forEach(data, function (chunk) {
@@ -189,7 +189,7 @@
 
             for (i = 0; i < transChapters.length; i++) {
                 if (transChapters[i].start > 1 && transChapters[i].completed === true && transChapters[i-1].completed === true) {
-                    transChapters[i-1].reference = myThis.translate(
+                    transChapters[i-1].reference = App.translate(
                         "project_chapter_title",
                         name,
                         `${transChapters[i-1].start}–${transChapters[i].end}`
@@ -207,9 +207,7 @@
             this.fire('next');
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function() {
         }

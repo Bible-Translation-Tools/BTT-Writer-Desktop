@@ -186,11 +186,11 @@
         },
 
         checktitle: function (type) {
-            return type === "tw" ? this.translate("translate_word_here") : this.translate("translate_title_here");
+            return type === "tw" ? App.translate("translate_word_here") : App.translate("translate_title_here");
         },
 
         checkbody: function (type) {
-            return type === "tw" ? this.translate("translate_definition_here") : this.translate("translate_text_here");
+            return type === "tw" ? App.translate("translate_definition_here") : App.translate("translate_text_here");
         },
 
         rendertext: function () {
@@ -263,9 +263,7 @@
             }
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
 		ready: function() {
 		}

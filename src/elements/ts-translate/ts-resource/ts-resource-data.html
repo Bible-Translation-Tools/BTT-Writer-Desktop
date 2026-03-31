@@ -77,9 +77,7 @@
             this.fire('iron-signal', {name: 'openresource', data: {content: content}});
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
 		ready: function() {
 		}

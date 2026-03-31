@@ -97,7 +97,7 @@
             // this.set('newinfo', {});
             // this.set('selected', 2);
             var createaccounturl = App.configurator.getUserSetting('createaccounturl');
-            require("electron").shell.openExternal(createaccounturl);
+            App.shell.openExternal(createaccounturl);
         },
 
         local: function () {
@@ -105,9 +105,7 @@
             this.set('selected', 3);
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function() {
         }

@@ -180,20 +180,20 @@
         },
 
         add: function (flag) {
-            var mythis = this;
-            var name = mythis.newinfo.name;
-            var check = mythis.$.check.checked;
+            const mythis = this;
+            const name = mythis.newinfo.name;
+            const check = mythis.$.check.checked;
 
             if (!name) {
                 mythis.set('options', {});
-                mythis.set('options.title', mythis.translate("contrib_missing_info"));
-                mythis.set('options.body', mythis.translate("contrib_must_enter_name"));
+                mythis.set('options.title', App.translate("contrib_missing_info"));
+                mythis.set('options.body', App.translate("contrib_must_enter_name"));
                 mythis.set('options.loading', false);
                 mythis.fire('iron-signal', {name: 'openloading'});
             } else if (!check) {
                 mythis.set('options', {});
-                mythis.set('options.title', mythis.translate("contrib_no_agreement"));
-                mythis.set('options.body', mythis.translate("contrib_must_agree"));
+                mythis.set('options.title', App.translate("contrib_no_agreement"));
+                mythis.set('options.body', App.translate("contrib_must_agree"));
                 mythis.set('options.loading', false);
                 mythis.fire('iron-signal', {name: 'openloading'});
             } else {
@@ -208,9 +208,9 @@
         },
 
         next: function () {
-            var mythis = this;
-            var name = mythis.newinfo.name;
-            var length = mythis.currentproject.projectmeta.translators.length;
+            const mythis = this;
+            const name = mythis.newinfo.name;
+            const length = mythis.currentproject.projectmeta.translators.length;
 
             if (!name && length) {
                 mythis.fire('next');
@@ -231,9 +231,7 @@
             this.fire('iron-signal', {name: 'openstatement'});
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function() {
         }
