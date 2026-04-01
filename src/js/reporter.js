@@ -233,7 +233,7 @@ function Reporter (args) {
             headers: {
                 'User-Agent': 'ts-desktop',
                 'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(payload.length),
+                'Content-Length': Buffer.byteLength(payload),
                 'Authorization': 'token ' + oauthToken
             }
         };
@@ -249,13 +249,13 @@ function Reporter (args) {
                         console.log(res);
                         reject(completeData);
                     } else {
+                        _this.clearLog();
                         resolve(completeData);
                     }
                 });
             }).on('error', reject);
             postReq.write(payload);
             postReq.end();
-            _this.clearLog();
         });
     };
 
