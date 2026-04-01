@@ -159,7 +159,7 @@
 
                 let result = App.renderer.markersToFootnotes(text, this.chunk.index, true);
                 result = App.renderer.renderTargetWithVerses(result, module);
-                this.$.textholder.innerHTML = result;
+                this.$.textholder.innerHTML = App.sanitize(result);
             }
         },
 

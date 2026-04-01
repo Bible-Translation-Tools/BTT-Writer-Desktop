@@ -241,7 +241,7 @@
                         }
                     }
 
-                    mythis.$.textholder.innerHTML = returnstr;
+                    mythis.$.textholder.innerHTML = App.sanitize(returnstr);
                     mythis.$.toggle.checked = completed;
                     mythis.addDragListeners();
                 }
@@ -320,13 +320,6 @@
             const completed = this.chunk.completed;
             const index = this.chunk.index;
             const toggle = this.$.toggle;
-
-            if (toggle.pressed) {
-                setTimeout(function() {
-                    myThis.checkdone();
-                }, 100);
-                return;
-            }
 
             toggle.checked = false;
 

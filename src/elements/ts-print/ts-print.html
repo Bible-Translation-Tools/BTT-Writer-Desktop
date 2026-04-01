@@ -354,7 +354,7 @@
 
         princeLink: function () {
             const translated = App.translate("pdf_generated_by", '<a href="https://www.princexml.com/">Prince</a>');
-            this.$.attrib.innerHTML = `(${translated})`;
+            this.$.attrib.innerHTML = App.sanitize(`(${translated})`);
         },
 
         translate: App.translate,

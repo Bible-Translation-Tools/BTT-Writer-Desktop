@@ -65,7 +65,7 @@
             if(!this.resource.array && this.resource.data.length) {
                 var textholder = this.querySelector("#textholder");
                 if (textholder) {
-                    textholder.innerHTML = this.resource.data[0];
+                    textholder.innerHTML = App.sanitize(this.resource.data[0]);
                     this.fire('setheight');
                 }
             }

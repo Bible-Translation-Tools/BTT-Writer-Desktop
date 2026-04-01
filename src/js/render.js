@@ -3,6 +3,7 @@
 const path = require('path');
 const { usfmToHtml } = require('./usfmparse');
 const _ = require("lodash");
+const sanitize = require('./lib/sanitize');
 
 function Renderer(translate) {
 
@@ -110,7 +111,7 @@ function Renderer(translate) {
 
                 const div = document.createElement('div');
                 div.className = `style-scope ${module}`;
-                div.innerHTML = paragraph;
+                div.innerHTML = sanitize(paragraph);
 
                 container.appendChild(div);
 
@@ -319,7 +320,7 @@ function Renderer(translate) {
 
                 const header = createScopedElement("h2");
                 // Using innerHTML allows formatting within titles if necessary
-                header.innerHTML = chapter.title;
+                header.innerHTML = sanitize(chapter.title);
                 chaptersContainer.appendChild(header);
 
                 const contentClasses = [];
@@ -331,7 +332,7 @@ function Renderer(translate) {
 
                 // Render verses content
                 const result = usfmToHtml(chapter.content, chapter.id, module);
-                chapterDiv.innerHTML = result.html;
+                chapterDiv.innerHTML = sanitize(result.html);
 
                 chaptersContainer.appendChild(chapterDiv);
 
@@ -370,7 +371,7 @@ function Renderer(translate) {
             const output = document.createElement("div");
             output.appendChild(fragment);
 
-            return output.innerHTML;
+            return sanitize(output.innerHTML);
         },
 
         renderObsPrintPreview: function (chunks, options, imagePath) {
@@ -452,7 +453,7 @@ function Renderer(translate) {
             h2.textContent = data.title;
             const div = document.createElement('div');
             div.className = `style-scope ${module}`;
-            div.innerHTML = this.renderResourceLinks(data.body, linksEnabled, module);
+            div.innerHTML = sanitize(this.renderResourceLinks(data.body, linksEnabled, module));
 
             container.appendChild(h2);
             container.appendChild(div);
@@ -590,7 +591,7 @@ function Renderer(translate) {
 
                             const footnoteHtml = this.markerToFootnote(footnote, chunk.index, noteindex);
                             const tempDiv = document.createElement("div");
-                            tempDiv.innerHTML = footnoteHtml;
+                            tempDiv.innerHTML = sanitize(footnoteHtml);
 
                             // Append all child nodes from the temporary div
                             while (tempDiv.firstChild) {

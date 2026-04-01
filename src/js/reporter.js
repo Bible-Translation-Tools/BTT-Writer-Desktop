@@ -233,7 +233,7 @@ function Reporter (args) {
             headers: {
                 'User-Agent': 'ts-desktop',
                 'Content-Type': 'application/json',
-                'Content-Length': payload.length,
+                'Content-Length': Buffer.byteLength(payload.length),
                 'Authorization': 'token ' + oauthToken
             }
         };

@@ -43,6 +43,7 @@ process.stdout.write = console.log.bind(console);
     let Renderer = null;
     let i18n = null;
     let utils = null;
+    let sanitize = null;
 
     // Load and initialize configurator first, because it's necessary to get user selected localization language
     try {
@@ -130,6 +131,7 @@ process.stdout.write = console.log.bind(console);
         setMsg(i18n.translate("loading_utils"));
         utils = require('../js/lib/utils');
 
+        sanitize = require('../js/lib/sanitize');
         const spellcheckEnabled = configurator.getUserSetting("enable_spell_checking");
         ipcRenderer.send('update-spellcheck', spellcheckEnabled);
     } catch (err) {
@@ -285,6 +287,7 @@ process.stdout.write = console.log.bind(console);
         exportManager: exportManager,
         translate: i18n.translate,
         getLocale: i18n.getLocale,
+        sanitize: sanitize,
         showDevTools: function () {
             ipcRenderer.send('show-devtools');
         },

@@ -570,7 +570,7 @@
             });
 
             this.$.note.open();
-            this.$.notebody.innerHTML = data.text;
+            this.$.notebody.innerHTML = App.sanitize(data.text);
         },
 
         opennoteeditor: function (event, data) {
@@ -613,7 +613,7 @@
         deletenoteconfirm: function () {
             if (this.notestatus) {
                 this.$.deletenotepopup.open();
-                this.$.deletenotebody.innerHTML = this.notestatus.text;
+                this.$.deletenotebody.innerHTML = App.sanitize(this.notestatus.text);
             } else {
                 const title = App.translate("footnote_error");
                 const message = App.translate("footnote_status_lost");

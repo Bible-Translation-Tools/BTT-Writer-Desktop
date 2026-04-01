@@ -358,7 +358,7 @@ const utils = {
                     out.close(resolve);
                 });
             }).on('error', function(err) {
-                fs.unlink(dest);
+                fs.unlinkSync(dest);
                 reject(err.message);
             });
         });
