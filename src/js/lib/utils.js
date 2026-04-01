@@ -531,8 +531,9 @@ const utils = {
         return appDir
     },
 
-    remove: function (path) {
-        return fse.removeSync(path);
+    shellEscape: function (s) {
+        if (typeof s !== 'string') s = String(s);
+        return "'" + s.replace(/'/g, "'\\''") + "'";
     }
 };
 

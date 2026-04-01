@@ -1,15 +1,7 @@
 'use strict';
 
 const exec = require('child_process').exec;
-
-/**
- * Escape a string for safe inclusion in a shell command.
- * Wraps in single quotes and escapes any embedded single quotes.
- */
-function shellEscape(s) {
-    if (typeof s !== 'string') s = String(s);
-    return "'" + s.replace(/'/g, "'\\''") + "'";
-}
+const utils = require('./utils');
 
 module.exports = function cmdr (paths) {
 
@@ -26,7 +18,7 @@ module.exports = function cmdr (paths) {
 
         return {
 	        cd: function (dir) {
-	            return cmd(str + 'cd ' + shellEscape(dir));
+	            return cmd(str + 'cd ' + utils.shellEscape(dir));
 	        },
 
 	        get and () {
@@ -46,7 +38,7 @@ module.exports = function cmdr (paths) {
 	        set: function (name, val) {
                 const c = process.platform === 'win32' ?
                     `set ${name}=${val} & ` :
-                    `${name}=${shellEscape(val)} `;
+                    `${name}=${utils.shellEscape(val)} `;
 
                 return cmd(str + c);
 	        },

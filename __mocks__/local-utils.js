@@ -40,5 +40,6 @@ module.exports = {
         compact: () => lodash.compact,
         keyBy: (key) => (data) => lodash.keyBy(data, key)
     },
-    download: jest.fn()
+    download: jest.fn(),
+    shellEscape: jest.fn()
 };

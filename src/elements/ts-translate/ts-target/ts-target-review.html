@@ -290,6 +290,8 @@
 
         savemarkers: function () {
             const textholder = this.querySelector("#textholder");
+            if (!textholder) return;
+
             const paragraphs = this.prepareParagraphData(textholder.children);
 
             if (this.chunk.projectmeta.project.id !== "obs") {
