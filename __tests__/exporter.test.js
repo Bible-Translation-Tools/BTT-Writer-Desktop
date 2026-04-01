@@ -155,7 +155,17 @@ describe('ExportManager', () => {
             const filePath = '/out/export.zip';
             const mediaServer = 'http://media';
 
-            await exportManager.exportTranslation(translationData, meta, filePath, mediaServer);
+            const EventEmitter = require('events');
+            const mockStream = new EventEmitter();
+            mockFs.createWriteStream.mockReturnValue(mockStream);
+
+            const exportPromise = exportManager.exportTranslation(translationData, meta, filePath, mediaServer);
+
+            setImmediate(() => {
+                mockStream.emit('close');
+            });
+
+            await exportPromise;
 
             expect(mockFs.createWriteStream).toHaveBeenCalledWith(filePath);
             const archive = mockArchiver.create();

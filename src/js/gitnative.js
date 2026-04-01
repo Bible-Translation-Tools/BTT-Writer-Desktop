@@ -5,6 +5,15 @@ const path = require('path'),
     cmdr = require('../js/lib/cmdr'),
     _ = require("lodash");
 
+/**
+ * Escape a string for safe inclusion in a shell command.
+ * Wraps in single quotes and escapes any embedded single quotes.
+ */
+function shellEscape(s) {
+    if (typeof s !== 'string') s = String(s);
+    return "'" + s.replace(/'/g, "'\\''") + "'";
+}
+
 const ALLOW_UNRELATED_HISTORIES = '--allow-unrelated-histories';
 const NO_REBASE = '--rebase=false';
 
@@ -65,7 +74,6 @@ function GitManager(translate) {
         },
 
         verifyGit: function () {
-            const mythis = this;
             let installed = false;
 
             return this.getVersion()
@@ -105,11 +113,11 @@ function GitManager(translate) {
             const username = user.username || 'tsDesktop';
             const email = user.email || 'you@example.com';
             const stage = cmd().cd(dir)
-                .and.do(`git config user.name "${username}"`)
-                .and.do(`git config user.email "${email}"`)
+                .and.do(`git config user.name ${shellEscape(username)}`)
+                .and.do(`git config user.email ${shellEscape(email)}`)
                 .and.do('git config core.autocrlf input')
                 .and.do('git add --all')
-                .and.do(`git commit -am "${msg}"`);
+                .and.do(`git commit -am ${shellEscape(msg)}`);
 
             return stage.run()
                 .catch(function (err) {
@@ -143,7 +151,7 @@ function GitManager(translate) {
                 })
                 .then(function (version) {
                     const diff = cmd().cd(localPath).and.do('git diff --name-only --diff-filter=U');
-                    let pullCommand = `git pull "${remotePath}" master ${NO_REBASE}`;
+                    let pullCommand = `git pull ${shellEscape(remotePath)} master ${NO_REBASE}`;
 
                     if (version.major > 2 || (version.major === 2 && version.minor > 8)) {
                         pullCommand += ` ${ALLOW_UNRELATED_HISTORIES}`;
@@ -201,12 +209,12 @@ function GitManager(translate) {
         push: function (user, dir, repo, opts) {
             opts = opts || {};
 
-            const ssh = `ssh -i "${user.reg.paths.privateKeyPath}" -o "StrictHostKeyChecking no"`;
+            const ssh = `ssh -i ${shellEscape(user.reg.paths.privateKeyPath)} -o StrictHostKeyChecking=no`;
             const pushUrl = user.reg ? repo.ssh_url : repo.html_url;
-            const gitSshPush = `git push -u ${pushUrl} master --follow-tags`;
+            const gitSshPush = `git push -u ${shellEscape(pushUrl)} master --follow-tags`;
             const push = cmd().cd(dir).and.set('GIT_SSH_COMMAND', ssh).do(gitSshPush);
             const tagName = createTagName(new Date());
-            const tag = opts.requestToPublish ? cmd().cd(dir).and.do(`git tag -a ${tagName} -m "Request to Publish"`).run() : Promise.resolve();
+            const tag = opts.requestToPublish ? cmd().cd(dir).and.do(`git tag -a ${shellEscape(tagName)} -m ${shellEscape('Request to Publish')}`).run() : Promise.resolve();
 
             console.log(translate("starting_push", push));
 
@@ -220,7 +228,7 @@ function GitManager(translate) {
         clone: function (repoUrl, localPath) {
             const repoName = repoUrl.replace(/\.git/, '').split('/').pop();
             const savePath = localPath.includes(repoName) ? localPath : path.join(localPath, repoName);
-            const clone = cmd().do(`git clone ${repoUrl} "${savePath}"`);
+            const clone = cmd().do(`git clone ${shellEscape(repoUrl)} ${shellEscape(savePath)}`);
 
             return clone.run()
                 .catch(function (err) {

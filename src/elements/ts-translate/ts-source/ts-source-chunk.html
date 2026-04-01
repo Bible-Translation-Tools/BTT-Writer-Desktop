@@ -184,7 +184,7 @@
                 this.$.textholder.innerHTML = text;
                 this.$.textholder.style.direction = direction;
                 const links = this.$.textholder.getElementsByTagName('a');
-                for (const j = 0, len = links.length; j < len; ++j) {
+                for (let j = 0, len = links.length; j < len; ++j) {
                     links[j].addEventListener('click', function (event) {
                         event.preventDefault();
                     });

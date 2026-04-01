@@ -22,7 +22,7 @@ function ExportManager(configurator, git, translate) {
             return git.getHash(paths.projectDir)
                 .then(function (hash) {
                     const output = fs.createWriteStream(filePath);
-                    const archive = archiver.create('zip');
+                    const archive = archiver.create('zip', { zlib: { level: 9 }});
                     const manifest = {
                             generator: {
                                 name: 'ts-desktop',
@@ -91,13 +91,21 @@ function ExportManager(configurator, git, translate) {
                         }
                         let chapterContent = '',
                             currentChapter = -1,
-                            zip = archiver.create('zip'),
+                            zip = archiver.create('zip', { zlib: { level: 9 }}),
                             output = fs.createWriteStream(filePath),
                             numFinishedFrames = 0;
+
+                        output.on("close", function() {
+                            resolve(true);
+                        });
+                        zip.on('error', (err) => reject(err));
+                        output.on('error', (err) => reject(err));
+
                         zip.pipe(output);
+
                         for(let frame of translation) {
 
-                            // close chapter chapter
+                            // close chapter
                             if(frame.chunkmeta.chapter !== currentChapter) {
                                 if(chapterContent !== '' && numFinishedFrames > 0) {
                                     // TODO: we need to get the chapter reference and insert it here
@@ -138,15 +146,14 @@ function ExportManager(configurator, git, translate) {
                             chapterContent += '////\n';
                             zip.append(Buffer.from(chapterContent), {name: currentChapter + '.md'});
                         }
-                        zip.finalize();
-                        resolve(true);
+                        void zip.finalize();
                     } else if (meta.format === 'usfm') {
                         if(filePath.split('.').pop() !== 'usfm') {
                             filePath += '.usfm';
                         }
 
-                        var content = "";
-                        var currentChapter = 0;
+                        let content = "";
+                        let currentChapter = 0;
 
                         // Use first element from the translation array as a book meta
                         const bookTranslation = translation[0];
@@ -179,11 +186,11 @@ function ExportManager(configurator, git, translate) {
                                     return;
                                 }
                                 if (chunk.transcontent) {
-                                    var text = chunk.transcontent;
-                                    var start = 0;
-                                    var keepsearching = true;
+                                    const text = chunk.transcontent;
+                                    let start = 0;
+                                    let keepsearching = true;
                                     while (keepsearching) {
-                                        var end = text.indexOf("\\v", start + 2);
+                                        const end = text.indexOf("\\v", start + 2);
                                         if (end === -1) {
                                             keepsearching = false;
                                             content += text.substring(start).trim() + "\n";
@@ -201,7 +208,6 @@ function ExportManager(configurator, git, translate) {
                         }).catch(function (err) {
                             reject(err);
                         });
-
                     } else {
                         reject(translate("project_export_format_not_supported"));
                     }

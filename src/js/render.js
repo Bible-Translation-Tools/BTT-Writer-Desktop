@@ -652,8 +652,8 @@ function Renderer(translate) {
                     returnstr += "\n";
                 } else {
                     for (let i = 0; i < children.length; i++) {
-                        const type = children[i].nodeName;
                         const child = children[i];
+                        const type = child.nodeName;
 
                         if (type === "TS-VERSE-MARKER") {
                             const versenum = child.verse;

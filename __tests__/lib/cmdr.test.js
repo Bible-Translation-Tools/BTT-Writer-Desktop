@@ -81,7 +81,7 @@ describe('Commander (cmdr)', () => {
 
         it('should chain .cd() commands with quotes', () => {
             const result = builder('').cd('/tmp').toString();
-            expect(result).toBe('cd "/tmp"');
+            expect(result).toBe("cd '/tmp'");
         });
 
         it('should chain .and (&&)', () => {
@@ -183,8 +183,8 @@ describe('Commander (cmdr)', () => {
                 .do('npm install')
                 .toString();
 
-            // Expected: cd "/var/www" && ENV='prod' PATH=/bin:$PATH npm install
-            expect(result).toBe('cd "/var/www" && ENV=\'prod\' PATH=/bin:$PATH npm install');
+            // Expected: cd '/var/www' && ENV='prod' PATH=/bin:$PATH npm install
+            expect(result).toBe("cd '/var/www' && ENV='prod' PATH=/bin:$PATH npm install");
         });
     });
 });

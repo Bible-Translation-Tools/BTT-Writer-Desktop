@@ -1,6 +1,6 @@
 'use strict';
 
-var path = require('path'),
+const path = require('path'),
     utils = require('../js/lib/utils'),
     _ = require('lodash'),
     keypair = require('keypair'),
@@ -8,26 +8,26 @@ var path = require('path'),
 
 function KeyManager(dataPath) {
 
-    var paths = {
+    const paths = {
         sshPath: path.resolve(path.join(dataPath, 'ssh')),
 
         publicKeyName: 'ts.pub',
 
         privateKeyName: 'ts',
 
-        get publicKeyPath () {
+        get publicKeyPath() {
             return path.join(this.sshPath, this.publicKeyName);
         },
 
-        get privateKeyPath () {
+        get privateKeyPath() {
             return path.join(this.sshPath, this.privateKeyName);
         }
     };
 
-    var createKeyPair = function (deviceId) {
+    const createKeyPair = function (deviceId) {
 
         return utils.fs.mkdirs(paths.sshPath).then(function () {
-            var pair = keypair(),
+            const pair = keypair(),
                 publicKey = forge.pki.publicKeyFromPem(pair.public),
                 publicSsh = forge.ssh.publicKeyToOpenSSH(publicKey, deviceId),
                 privateKey = forge.pki.privateKeyFromPem(pair.private),
@@ -38,20 +38,20 @@ function KeyManager(dataPath) {
                 private: privateSsh
             };
         })
-        .then(utils.logr('Keys created!'))
-        .then(function (keys) {
-            var writePublicKey = utils.fs.outputFile(paths.publicKeyPath, keys.public),
-                writePrivateKey = utils.fs.outputFile(paths.privateKeyPath, keys.private).then(function () {
-                    return utils.fs.chmod(paths.privateKeyPath, '600');
-                });
+            .then(utils.logr('Keys created!'))
+            .then(function (keys) {
+                const writePublicKey = utils.fs.outputFile(paths.publicKeyPath, keys.public),
+                    writePrivateKey = utils.fs.outputFile(paths.privateKeyPath, keys.private).then(function () {
+                        return utils.fs.chmod(paths.privateKeyPath, '600');
+                    });
 
-            return Promise.all([writePublicKey, writePrivateKey]).then(utils.ret(keys));
-        });
+                return Promise.all([writePublicKey, writePrivateKey]).then(utils.ret(keys));
+            });
     };
 
-    var readKeyPair = function () {
-            var readPubKey = utils.fs.readFile(paths.publicKeyPath),
-                readSecKey = utils.fs.readFile(paths.privateKeyPath);
+    const readKeyPair = function () {
+        const readPubKey = utils.fs.readFile(paths.publicKeyPath),
+            readSecKey = utils.fs.readFile(paths.privateKeyPath);
 
         return Promise.all([readPubKey, readSecKey])
             .then(utils.lodash.map(String))

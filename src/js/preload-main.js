@@ -187,6 +187,7 @@ process.stdout.write = console.log.bind(console);
     const userManager = new UserManager(
         {token: configurator.getValue('gogs-token')},
         configurator.getUserSetting("dataserver"),
+        navigator.userAgent,
         i18n.translate
     )
     const importManager = new ImportManager(configurator, migrateManager, dataManager, i18n.translate)

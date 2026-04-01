@@ -1,8 +1,5 @@
-// reporter module
-
 'use strict';
 
-let fs = require('fs');
 let os = require('os');
 let https = require('https');
 let utils = require('./lib/utils');
@@ -22,8 +19,8 @@ function Reporter (args) {
     let appVersion = args.appVersion || '0.0.0';
     let verbose = args.verbose || false;
 
-    var convertError = function (err) {
-        if(!err) return '';
+    const convertError = function (err) {
+        if (!err) return '';
 
         var indentLines = function (s) {
             return s.split('\n').map(function (line) {
@@ -37,18 +34,18 @@ function Reporter (args) {
         return indentLines(converted);
     };
 
-    var addTitle = function (err, title) {
+    const addTitle = function (err, title) {
         var shouldHaveNewLine = !!err;
         var pre = (title || '') + (shouldHaveNewLine ? '\n' : '');
         return pre + err;
     };
 
-    var makeMessage = function (err, title) {
+    const makeMessage = function (err, title) {
         var e = convertError(err);
         return addTitle(e, title);
     };
 
-    var log = function (level, err, title, stackModifier) {
+    const log = function (level, err, title, stackModifier) {
         err = err || '';
         stackModifier = stackModifier || 0;
 
@@ -103,7 +100,7 @@ function Reporter (args) {
                             .pop()
                             .slice(0,-1);
 
-        let date = moment().format('YYYY-MM-DD HH:m:s');
+        let date = moment().format('YYYY-MM-DD HH:mm:ss');
 
         let message = date + ' ' + level + '/' + location + ': ' + string + '\n';
 
@@ -139,7 +136,7 @@ function Reporter (args) {
 
             if (kb >= maxLogFileKb) {
                 return _this.stringFromLogFile().then(function (res) {
-                    var lines = res.split('\n');
+                    const lines = res.split('\n');
                     return lines.slice(Math.ceil(lines.length / 2), lines.length - 1)
                                 .join('\n');
                 }).then(function (res) {
@@ -160,7 +157,7 @@ function Reporter (args) {
         issueObject.labels = [type, appVersion];
         if (string) {
             if (string.length > 30) {
-                issueObject.title = string.substr(0, 29) + '...';
+                issueObject.title = string.substring(0, 29) + '...';
             } else {
                 issueObject.title = string;
             }

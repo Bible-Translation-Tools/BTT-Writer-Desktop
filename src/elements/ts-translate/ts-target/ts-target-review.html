@@ -290,7 +290,7 @@
 
         savemarkers: function () {
             const textholder = this.querySelector("#textholder");
-            const paragraphs = textholder.children;
+            const paragraphs = this.prepareParagraphData(textholder.children);
 
             if (this.chunk.projectmeta.project.id !== "obs") {
                 this.set('chunk.transcontent', App.renderer.balloonsToMarkers(paragraphs));
@@ -371,6 +371,22 @@
             setTimeout(() => {
                 this.fire('iron-signal', {name: 'writechunk', data: {chunk: this.chunk}});
             }, 500);
+        },
+
+        prepareParagraphData: function(paragraphs) {
+            return Array.from(paragraphs).map(function(p) {
+                return {
+                    children: Array.from(p.children).map(function(child) {
+                        return {
+                            nodeName: child.nodeName,
+                            textContent: child.textContent,
+                            verse: child.verse || null,
+                            text: child.text || null,
+                            dataset: { type: child.dataset ? child.dataset.type : null }
+                        };
+                    })
+                };
+            });
         },
 
         translate: App.translate,
