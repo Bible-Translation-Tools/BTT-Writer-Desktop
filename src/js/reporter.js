@@ -45,18 +45,24 @@ function Reporter (args) {
         return addTitle(e, title);
     };
 
-    const log = function (level, err, title, stackModifier) {
+    const log = function (level, err, title, caller) {
         err = err || '';
-        stackModifier = stackModifier || 0;
 
         var msg = makeMessage(err, title);
 
-        return _this.toLogFile(level, msg, stackModifier);
+        if (typeof caller === 'string') {
+            return _this.toLogFile(level, msg, 0, caller);
+        }
+        return _this.toLogFile(level, msg, caller || 0);
     };
 
     _this.logWarning = log.bind(_this, 'W');
     _this.logError = log.bind(_this, 'E');
     _this.logNotice = log.bind(_this, 'I');
+
+    _this.logWithCaller = function (level, err, title, callerLocation) {
+        return log(level, err, title, callerLocation);
+    };
 
     _this.clearLog = function () {
         return utils.fs.writeFile(logPath, '');
@@ -87,16 +93,22 @@ function Reporter (args) {
         return err.stack;
     };
 
-    _this.toLogFile = function (level, string, stackModifier) {
-        /* We make 3 calls before processing who called the original
-         *  log command; therefore, the 4th call will be the original caller.
-         */
-        let callNumber = 4 + stackModifier;
-        let location = _this.stackTrace()
-                            ?.split('\n')[callNumber]
-                            ?.split(/([\\/])/)
-                            .pop()
-                            .slice(0,-1);
+    _this.toLogFile = function (level, string, stackModifier, callerLocation) {
+        let location;
+        if (callerLocation) {
+            location = callerLocation;
+        } else {
+            /* We make 3 calls before processing who called the original
+             *  log command; therefore, the 4th call will be the original caller.
+             */
+            let callNumber = 4 + (stackModifier || 0);
+            location = _this.stackTrace()
+                                ?.split('\n')[callNumber]
+                                ?.split(/([\\/])/)
+                                .pop()
+                                ?.slice(0,-1)
+                            || 'unknown';
+        }
 
         let date = moment().format('YYYY-MM-DD HH:mm:ss');
 

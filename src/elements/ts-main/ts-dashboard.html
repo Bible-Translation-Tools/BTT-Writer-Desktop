@@ -324,16 +324,16 @@
       },
 
       showErrorMessage: function (title, defaultBody, err) {
-          App.reporter.logError(err, title, 1);
+          Log.error(err, title);
           const message = typeof defaultBody === 'string' ? defaultBody : JSON.stringify(defaultBody, null, 2);
           this.showMessage(title, message);
       },
 
       showConflictsMessage: function (title, body, conflicts) {
-          var msg = body;
+          let msg = body;
 
           if (conflicts && conflicts.length) {
-              App.reporter.logNotice(conflicts, App.translate("conflicts"));
+              Log.notice(conflicts, App.translate("conflicts"));
               if (conflicts.length === 1) {
                   msg += App.translate("single_chunk_conflict_message");
               } else {
@@ -345,8 +345,8 @@
       },
 
       openMessagePopup: function (event, data) {
-          var title = data.title;
-          var message = data.message;
+          const title = data.title;
+          const message = data.message;
           this.$.loading.entryAnimation = "scale-up-animation";
           this.showMessage(title, message);
       },
@@ -508,7 +508,7 @@
       },
 
       deleteCorruptProject: function (projectmeta) {
-          var mythis = this;
+          const mythis = this;
           App.projectsManager.backupProject(projectmeta.projectDir)
               .then(function () {
                   return App.projectsManager.deleteTargetTranslation(projectmeta)
@@ -516,8 +516,8 @@
               .then(function() {
                   App.projectsManager.unsetValues(projectmeta.unique_id);
 
-                  var list = mythis.projectlist;
-                  var newlist = list.filter(function (item) {
+                  const list = mythis.projectlist;
+                  const newlist = list.filter(function (item) {
                       return item.unique_id !== projectmeta.unique_id;
                   });
 
@@ -1162,10 +1162,10 @@
                       } catch (e) {}
 
                       if (response && response.url && response.repository_url) {
-                          App.reporter.logNotice(response.url, App.translate("feedback_sent"));
+                          Log.notice(response.url, App.translate("feedback_sent"));
                           mythis.showMessage(App.translate("feedback_sent"), App.translate("feedback_sent2"));
                       } else {
-                          !response && App.reporter.logWarning(res, App.translate("feedback_failed2"));
+                          !response && Log.warning(res, App.translate("feedback_failed2"));
                           mythis.showErrorMessage(App.translate("feedback_failed"), App.translate("feedback_failed3"), response || null);
                       }
                   })
@@ -1373,14 +1373,14 @@
       translate: App.translate,
 
       ready: function() {
-          var mythis = this;
+          const mythis = this;
 
           mythis.set('message', App.translate("idle"));
 
           return App.gitManager.verifyGit()
               .then(function (version) {
                   App.ipc.send('loading-status', App.translate("get_user_settings"));
-                  App.reporter.logNotice(App.translate("git_version") + version);
+                  Log.notice(App.translate("git_version") + version);
                   mythis.createInitialSettings(version);
                   mythis.checkUser(App.configurator.getValue("userdata"));
 
@@ -1416,7 +1416,7 @@
               })
               .catch(function (err) {
                   let errorMessage;
-                  err && err.stack && App.reporter.logError(err.stack, App.translate("startup_error"));
+                  err && err.stack && Log.error(err.stack, App.translate("startup_error"));
 
                   if (err && typeof err === 'string') {
                       errorMessage = err;

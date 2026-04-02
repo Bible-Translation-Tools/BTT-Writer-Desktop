@@ -460,7 +460,7 @@
                 const chunk = allChunks[data];
                 return App.projectsManager.saveTargetChunk(chunk, projectMeta)
                     .catch(function (err) {
-                        App.reporter.logError(err, App.translate("saving_chunk_error"));
+                        Log.error(err, App.translate("saving_chunk_error"));
                     });
             };
 
@@ -476,7 +476,7 @@
                                 myThis.set('saveoptions.chunks', []);
                                 return App.projectsManager.cleanProject(allChunks, projectMeta)
                                     .catch(function (err) {
-                                        App.reporter.logError(err, App.translate("clean_project_error"));
+                                        Log.error(err, App.translate("clean_project_error"));
                                     });
                             });
                     } else {
@@ -492,7 +492,7 @@
                                 return Promise.resolve(true);
                             })
                             .catch(function (err) {
-                                App.reporter.logError(err, App.translate("save_manifest_error"));
+                                Log.error(err, App.translate("save_manifest_error"));
                             });
                     } else {
                         return Promise.resolve(true);
@@ -502,7 +502,7 @@
                     if (changes) {
                         return App.projectsManager.commitProject(projectMeta, myThis.currentuser)
                             .catch(function (err) {
-                                App.reporter.logError(err, App.translate("commit_project_error"));
+                                Log.error(err, App.translate("commit_project_error"));
                             });
                     } else {
                         return Promise.resolve(true);
@@ -526,7 +526,7 @@
                                 myThis.set('options.loading', false);
                                 myThis.fire('iron-signal', {name: 'openloading'});
                                 myThis.set('saveoptions.backup', false);
-                                App.reporter.logError(err, App.translate("backup_translation_error"));
+                                Log.error(err, App.translate("backup_translation_error"));
                             });
                     } else {
                         return Promise.resolve(true);
@@ -930,7 +930,7 @@
                             loadData();
                         })
                         .catch(function(err) {
-                            App.reporter.logError(err);
+                            Log.error(err);
                             let errorMessage = err.data?.message || err.message || err.stderr || App.translate("loading_project_error");
                             if (typeof errorMessage !== "string") {
                                 errorMessage = JSON.stringify(errorMessage, null, 2);
@@ -1002,7 +1002,7 @@
                     App.projectsManager.saveTargetManifest(meta)
                 })
                 .catch(function (err) {
-                    App.reporter.logError(err, App.translate("saving_chunk_error"));
+                    Log.error(err, App.translate("saving_chunk_error"));
                 });
         },
 
