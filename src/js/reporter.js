@@ -65,9 +65,8 @@ function Reporter (args) {
     /**
      * Sends a bug report to github
      * @param string the bug report
-     * @param callback deprecated
      */
-    _this.reportBug = function (string, callback) {
+    _this.reportBug = function (string) {
         if (!string) {
             return Promise.reject('reporter.reportBug requires a message.')
         }
@@ -78,9 +77,8 @@ function Reporter (args) {
      *
      * @param string
      * @param crashFilePath
-     * @param callback
      */
-    _this.reportCrash = function (string, crashFilePath, callback) {
+    _this.reportCrash = function (string, crashFilePath) {
         return _this.formGithubIssue('crash report', string, crashFilePath);
     };
 

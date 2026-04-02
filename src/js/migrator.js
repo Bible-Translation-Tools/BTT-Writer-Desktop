@@ -21,7 +21,7 @@ function MigrateManager(configurator, git, reporter, dataManager, translate) {
 
             return utils.chain(this.migrate, function(err, proj) {
                 const name = getProjectName(proj);
-                reporter.logWarning(err, translate("unable_migrate_project", name));
+                reporter.logError(err, translate("unable_migrate_project", name));
 
                 return false;
             })(list).then(function (migrated) {
