@@ -193,7 +193,7 @@ process.stdout.write = console.log.bind(console);
         i18n.translate
     )
     const importManager = new ImportManager(configurator, migrateManager, dataManager, i18n.translate)
-    const exportManager = new ExportManager(configurator, gitManager, i18n.translate)
+    const exportManager = new ExportManager(configurator, gitManager, reporter, i18n.translate)
 
     // TODO: where should this be?
     mkdirp.sync(configurator.getValue('targetTranslationsDir'));

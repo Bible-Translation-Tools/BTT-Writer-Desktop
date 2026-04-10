@@ -3,8 +3,7 @@
 const _ = require('lodash'),
     path = require('path'),
     utils = require('../js/lib/utils'),
-    archiver = require('archiver'),
-    fs = require('fs'),
+    AdmZip = require("adm-zip"),
     trash = require('trash');
 
 function ProjectsManager(dataManager, configurator, reporter, git, migrator, translate) {
@@ -636,12 +635,10 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator, tra
                     }
                 })
                 .then(function () {
-                    const output = fs.createWriteStream(filePath);
-                    const archive = archiver.create('zip', { zlib: { level: 9 }});
-                    archive.pipe(output);
-                    archive.directory(projectDir, projectName + "/");
-                    return archive.finalize().then(function () {
-                        return filePath;
+                    const zip = new AdmZip(undefined, {});
+                    zip.addLocalFolder(projectDir, projectName);
+                    zip.writeZip(filePath, (err) => {
+                        if (err) reporter.logError(err);
                     });
                 });
         },

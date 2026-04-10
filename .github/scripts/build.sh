@@ -3,15 +3,6 @@
 set -x
 set -e
 
-#sudo add-apt-repository --yes ppa:ubuntu-wine/ppa
-#sudo dpkg --add-architecture i386
-#sudo mkdir -pm755 /etc/apt/keyrings
-#sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-#sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
-#sudo add-apt-repository --yes ppa:arx/release
-#sudo apt-get update -d
-#sudo apt-get install -y -q --install-recommends innoextract winehq-stable software-properties-common
-
 brew install --cask wine-stable
 brew install innoextract
 brew install fakeroot
@@ -29,10 +20,8 @@ cat package.json | jq --arg variable "$ENVVER" '.version = $variable' > package.
 sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
 iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
 npm install
-#patch --forward --reject-file=- node_modules/gogs-client-fork/lib/request.js < gogs-client-lib-request.diff || ( EXIT_CODE=$?; if [ $EXIT_CODE -gt 1 ]; then exit $EXIT_CODE; fi )
-#npm install gulp -g
-#npm install bower -g
 npm test
+npx gulp test
 wget --no-verbose "https://btt-writer-resources.s3.amazonaws.com/resource_containers.zip"
 if [ -f resource_containers.zip ]; then rm -r ./src/index; fi
 unzip -qq resource_containers.zip -d ./src/index/

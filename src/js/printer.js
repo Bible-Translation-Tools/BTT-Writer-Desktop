@@ -33,7 +33,7 @@ function PrintManager(configurator, i18n) {
         },
 
         extractImages: function () {
-            const zip = new AdmZip(zipPath);
+            const zip = new AdmZip(zipPath, {});
             zip.extractAllTo(imagePath, true);
 
             const directories = fs.readdirSync(imagePath).filter(function (file) {

@@ -20,7 +20,7 @@ function ImportManager(configurator, migrator, dataManager, translate) {
 
             return migrator.listTargetTranslations(filePath)
                 .then(function(targetPaths) {
-                    const zip = new AdmZip(filePath);
+                    const zip = new AdmZip(filePath, {});
 
                     zip.extractAllTo(extractPath, true);
                     return targetPaths;

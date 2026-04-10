@@ -2,11 +2,10 @@
 
 const _ = require('lodash'),
     path = require('path'),
-    archiver = require('archiver'),
-    fs = require('fs'),
+    AdmZip = require('adm-zip'),
     utils = require('../js/lib/utils');
 
-function ExportManager(configurator, git, translate) {
+function ExportManager(configurator, git, reporter, translate) {
 
     const targetDir = configurator.getValue('targetTranslationsDir');
 
@@ -21,24 +20,25 @@ function ExportManager(configurator, git, translate) {
 
             return git.getHash(paths.projectDir)
                 .then(function (hash) {
-                    const output = fs.createWriteStream(filePath);
-                    const archive = archiver.create('zip', { zlib: { level: 9 }});
                     const manifest = {
-                            generator: {
-                                name: 'ts-desktop',
-                                build: ''
-                            },
-                            package_version: 2,
-                            timestamp: new Date().getTime(),
-                            target_translations: [{path: name, id: name, commit_hash: hash, direction: meta.target_language.direction}]
-                        };
-                    archive.pipe(output);
-                    archive.directory(paths.projectDir, name + "/");
-                    archive.append(JSON.stringify(manifest, null, '\t'), {name: 'manifest.json'});
-                    return archive.finalize()
-                        .then(function () {
-                            return filePath;
-                        });
+                        generator: {
+                            name: 'ts-desktop',
+                            build: ''
+                        },
+                        package_version: 2,
+                        timestamp: new Date().getTime(),
+                        target_translations: [{path: name, id: name, commit_hash: hash, direction: meta.target_language.direction}]
+                    };
+
+                    const zip = new AdmZip(undefined, {});
+                    zip.addLocalFolder(paths.projectDir, name);
+                    const manifestContent = JSON.stringify(manifest, null, '\t');
+                    zip.addFile("manifest.json", Buffer.from(manifestContent));
+                    zip.writeZip(filePath, (err) => {
+                        if (err) reporter.logError(err);
+                    });
+
+                    return filePath;
                 })
                 .catch(function (err) {
                     throw "Error creating backup: " + err;
@@ -91,27 +91,17 @@ function ExportManager(configurator, git, translate) {
                         }
                         let chapterContent = '',
                             currentChapter = -1,
-                            zip = archiver.create('zip', { zlib: { level: 9 }}),
-                            output = fs.createWriteStream(filePath),
+                            zip = new AdmZip(undefined, {}),
                             numFinishedFrames = 0;
 
-                        output.on("close", function() {
-                            resolve(true);
-                        });
-                        zip.on('error', (err) => reject(err));
-                        output.on('error', (err) => reject(err));
-
-                        zip.pipe(output);
-
                         for(let frame of translation) {
-
                             // close chapter
                             if(frame.chunkmeta.chapter !== currentChapter) {
                                 if(chapterContent !== '' && numFinishedFrames > 0) {
                                     // TODO: we need to get the chapter reference and insert it here
                                     chapterContent += '////\n';
                                     //console.log('chapter ' + currentChapter, chapterContent);
-                                    zip.append(Buffer.from(chapterContent), {name: currentChapter + '.md'});
+                                    zip.addFile(currentChapter + '.md', Buffer.from(chapterContent));
                                 }
                                 currentChapter = frame.chunkmeta.chapter;
                                 chapterContent = '';
@@ -144,9 +134,10 @@ function ExportManager(configurator, git, translate) {
                         if(chapterContent !== '' && numFinishedFrames > 0) {
                             // TODO: we need to get the chapter reference and insert it here
                             chapterContent += '////\n';
-                            zip.append(Buffer.from(chapterContent), {name: currentChapter + '.md'});
+                            zip.addFile(currentChapter + '.md', Buffer.from(chapterContent));
                         }
-                        void zip.finalize();
+
+                        zip.writeZip(filePath, err => err ? reject(err) : resolve(true));
                     } else if (meta.format === 'usfm') {
                         if(filePath.split('.').pop() !== 'usfm') {
                             filePath += '.usfm';

@@ -26,29 +26,23 @@
     let dataDir = 'unit_tests/migration/data/';
 
     let mkdir = function(path) {
-        return new Promise(function(resolve, reject) {
-            fs.mkdir(path, resolve);
-        });
+        fs.mkdirSync(path, { recursive: true });
     };
 
     describe('@migration', function() {
         this.timeout(10000);
         before(function (done) {
+            mkdir(tempDir);
+            mkdir(tempDir + 'v2');
+            mkdir(tempDir + 'v3');
+            mkdir(tempDir + 'v4');
 
-            let promises = [
-                mkdir(tempDir),
-                mkdir(tempDir + 'v2'),
-                mkdir(tempDir + 'v3'),
-                mkdir(tempDir + 'v4')
-            ];
-            Promise.all(promises).then(function() {
-                // load data
-                fs.createReadStream(dataDir + 'v2.json').pipe(fs.createWriteStream(tempDir + 'v2/manifest.json'));
-                fs.createReadStream(dataDir + 'v3.json').pipe(fs.createWriteStream(tempDir + 'v3/manifest.json'));
-                fs.createReadStream(dataDir + 'v4.json').pipe(fs.createWriteStream(tempDir + 'v4/manifest.json'));
-                fs.writeFileSync(tempDir + 'v4/title.txt', 'This is a test project title');
-                done();
-            });
+            fs.copyFileSync(dataDir + 'v2.json', tempDir + 'v2/manifest.json');
+            fs.copyFileSync(dataDir + 'v3.json', tempDir + 'v3/manifest.json');
+            fs.copyFileSync(dataDir + 'v4.json', tempDir + 'v4/manifest.json');
+            fs.writeFileSync(tempDir + 'v4/title.txt', 'This is a test project title');
+
+            done();
         });
 
         after(function (done) {

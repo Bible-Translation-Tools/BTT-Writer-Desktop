@@ -545,7 +545,7 @@ function MigrateManager(configurator, git, reporter, dataManager, translate) {
 
             return new Promise(function (resolve, reject) {
                 try {
-                    let zip = new AdmZip(file);
+                    let zip = new AdmZip(file, {});
                     let manifest = JSON.parse(zip.readAsText('manifest.json'));
                     let packageVersion = manifest.package_version;
                     switch (packageVersion) {
