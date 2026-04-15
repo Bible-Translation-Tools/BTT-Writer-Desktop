@@ -136,7 +136,6 @@ jest.mock('moment');
 ### Module-Specific Mocks
 Some mocks are module-specific and should remain inline in test files:
 
-- `archiver` - Archive creation (test-specific configuration)
 - `fs` - File system operations (test-specific setup)
 - `cmdr` - Command execution (test-specific behavior)
 - `utils` - Utility functions (test-specific mocks)
@@ -144,9 +143,6 @@ Some mocks are module-specific and should remain inline in test files:
 **Example:**
 ```javascript
 jest.mock('path'); // Centralized mock
-jest.mock('archiver', () => ({ // Module-specific mock
-    create: jest.fn(() => ({...}))
-}));
 ```
 
 ## Migration Guide

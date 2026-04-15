@@ -1,14 +1,13 @@
 'use strict';
 
-var _ = require('lodash'),
+const _ = require('lodash'),
     path = require('path'),
-    archiver = require('archiver'),
-    fs = require('fs'),
+    AdmZip = require('adm-zip'),
     utils = require('../js/lib/utils');
 
-function ExportManager(configurator, git) {
+function ExportManager(configurator, git, reporter, translate) {
 
-    var targetDir = configurator.getValue('targetTranslationsDir');
+    const targetDir = configurator.getValue('targetTranslationsDir');
 
     return {
 
@@ -16,29 +15,30 @@ function ExportManager(configurator, git) {
             if(filePath.split('.').pop() !== 'tstudio') {
                 filePath += '.tstudio';
             }
-            var paths = utils.makeProjectPaths(targetDir, meta);
-            var name = meta.unique_id;
+            const paths = utils.makeProjectPaths(targetDir, meta);
+            const name = meta.unique_id;
 
             return git.getHash(paths.projectDir)
                 .then(function (hash) {
-                    var output = fs.createWriteStream(filePath);
-                    var archive = archiver.create('zip');
-                    var manifest = {
-                            generator: {
-                                name: 'ts-desktop',
-                                build: ''
-                            },
-                            package_version: 2,
-                            timestamp: new Date().getTime(),
-                            target_translations: [{path: name, id: name, commit_hash: hash, direction: meta.target_language.direction}]
-                        };
-                    archive.pipe(output);
-                    archive.directory(paths.projectDir, name + "/");
-                    archive.append(JSON.stringify(manifest, null, '\t'), {name: 'manifest.json'});
-                    return archive.finalize()
-                        .then(function () {
-                            return filePath;
-                        });
+                    const manifest = {
+                        generator: {
+                            name: 'ts-desktop',
+                            build: ''
+                        },
+                        package_version: 2,
+                        timestamp: new Date().getTime(),
+                        target_translations: [{path: name, id: name, commit_hash: hash, direction: meta.target_language.direction}]
+                    };
+
+                    const zip = new AdmZip(undefined, {});
+                    zip.addLocalFolder(paths.projectDir, name);
+                    const manifestContent = JSON.stringify(manifest, null, '\t');
+                    zip.addFile("manifest.json", Buffer.from(manifestContent));
+                    zip.writeZip(filePath, (err) => {
+                        if (err) reporter.logError(err);
+                    });
+
+                    return filePath;
                 })
                 .catch(function (err) {
                     throw "Error creating backup: " + err;
@@ -46,34 +46,35 @@ function ExportManager(configurator, git) {
         },
 
         backupAllTranslations: function (list) {
-            var mythis = this;
-            var autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
-            var backupDir = configurator.getUserPath('datalocation', 'backups');
-            var promises = _.map(list, function(projectmeta) {
-                var filepath = path.join(autoBackupDir, projectmeta.unique_id + ".tstudio");
-                return mythis.backupTranslation(projectmeta, filepath);
-            });
+            const mythis = this;
+            const autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
+            const backupDir = configurator.getUserPath('datalocation', 'backups');
 
             return utils.fs.mkdirs(autoBackupDir)
                 .then(function () {
                     return utils.fs.mkdirs(backupDir);
                 })
                 .catch(function () {
-                    throw mythis.translate("backup_location_not_found");
+                    throw translate("backup_location_not_found");
                 })
                 .then(function () {
-                    return Promise.all(promises);
+                    return Promise.all(
+                        _.map(list, function(projectmeta) {
+                            const filepath = path.join(autoBackupDir, projectmeta.unique_id + ".tstudio");
+                            return mythis.backupTranslation(projectmeta, filepath);
+                        })
+                    );
                 });
         },
 
         autoBackupTranslation: function (meta) {
-            var mythis = this;
-            var autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
-            var filePath = path.join(autoBackupDir, meta.unique_id + ".tstudio");
+            const mythis = this;
+            const autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
+            const filePath = path.join(autoBackupDir, meta.unique_id + ".tstudio");
 
             return utils.fs.mkdirs(autoBackupDir)
                 .catch(function () {
-                    throw mythis.translate("backup_location_not_found");
+                    throw translate("backup_location_not_found");
                 })
                 .then(function () {
                     return mythis.backupTranslation(meta, filePath);
@@ -81,7 +82,6 @@ function ExportManager(configurator, git) {
         },
 
         exportTranslation: function (translation, meta, filePath, mediaServer) {
-            var mythis = this;
             return new Promise(function(resolve, reject) {
                 if (meta.project_type_class === "standard") {
 
@@ -91,19 +91,17 @@ function ExportManager(configurator, git) {
                         }
                         let chapterContent = '',
                             currentChapter = -1,
-                            zip = archiver.create('zip'),
-                            output = fs.createWriteStream(filePath),
+                            zip = new AdmZip(undefined, {}),
                             numFinishedFrames = 0;
-                        zip.pipe(output);
-                        for(let frame of translation) {
 
-                            // close chapter chapter
+                        for(let frame of translation) {
+                            // close chapter
                             if(frame.chunkmeta.chapter !== currentChapter) {
                                 if(chapterContent !== '' && numFinishedFrames > 0) {
                                     // TODO: we need to get the chapter reference and insert it here
                                     chapterContent += '////\n';
                                     //console.log('chapter ' + currentChapter, chapterContent);
-                                    zip.append(Buffer.from(chapterContent), {name: currentChapter + '.md'});
+                                    zip.addFile(currentChapter + '.md', Buffer.from(chapterContent));
                                 }
                                 currentChapter = frame.chunkmeta.chapter;
                                 chapterContent = '';
@@ -136,17 +134,17 @@ function ExportManager(configurator, git) {
                         if(chapterContent !== '' && numFinishedFrames > 0) {
                             // TODO: we need to get the chapter reference and insert it here
                             chapterContent += '////\n';
-                            zip.append(Buffer.from(chapterContent), {name: currentChapter + '.md'});
+                            zip.addFile(currentChapter + '.md', Buffer.from(chapterContent));
                         }
-                        zip.finalize();
-                        resolve(true);
+
+                        zip.writeZip(filePath, err => err ? reject(err) : resolve(true));
                     } else if (meta.format === 'usfm') {
                         if(filePath.split('.').pop() !== 'usfm') {
                             filePath += '.usfm';
                         }
 
-                        var content = "";
-                        var currentChapter = 0;
+                        let content = "";
+                        let currentChapter = 0;
 
                         // Use first element from the translation array as a book meta
                         const bookTranslation = translation[0];
@@ -179,11 +177,11 @@ function ExportManager(configurator, git) {
                                     return;
                                 }
                                 if (chunk.transcontent) {
-                                    var text = chunk.transcontent;
-                                    var start = 0;
-                                    var keepsearching = true;
+                                    const text = chunk.transcontent;
+                                    let start = 0;
+                                    let keepsearching = true;
                                     while (keepsearching) {
-                                        var end = text.indexOf("\\v", start + 2);
+                                        const end = text.indexOf("\\v", start + 2);
                                         if (end === -1) {
                                             keepsearching = false;
                                             content += text.substring(start).trim() + "\n";
@@ -201,19 +199,14 @@ function ExportManager(configurator, git) {
                         }).catch(function (err) {
                             reject(err);
                         });
-
                     } else {
-                        reject(mythis.translate("project_export_format_not_supported"));
+                        reject(translate("project_export_format_not_supported"));
                     }
                 } else {
                     // TODO: support exporting other target translation types if needed e.g. notes, words, questions
-                    reject(mythis.translate("project_export_type_not_supported"));
+                    reject(translate("project_export_type_not_supported"));
                 }
             });
-        },
-
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
         },
     };
 }

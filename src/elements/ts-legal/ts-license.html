@@ -84,18 +84,15 @@
         properties: {
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function() {
-            var shell = require('electron').shell;
             var links = this.$.content.getElementsByTagName('a');
 
             for (var i = 0; i < links.length; i++) {
                 links[i].addEventListener('click', function (event) {
                     event.preventDefault();
-                    shell.openExternal(this.href);
+                    App.shell.openExternal(this.href);
                 });
             }
         }

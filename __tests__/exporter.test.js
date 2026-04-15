@@ -5,7 +5,7 @@
 'use strict';
 
 // 1. Setup Mocks
-jest.mock('archiver');
+jest.mock('adm-zip');
 jest.mock('fs');
 jest.mock('lodash');
 
@@ -18,9 +18,10 @@ describe('ExportManager', () => {
 
     // Dependencies
     let mockConfigurator;
+    let mockReporter;
     let mockGit;
     let mockFs;
-    let mockArchiver;
+    let mockAdmZip;
     let mockUtils;
 
     beforeEach(() => {
@@ -28,8 +29,17 @@ describe('ExportManager', () => {
         jest.clearAllMocks();
 
         mockFs = require('fs');
-        mockArchiver = require('archiver');
+        mockAdmZip = require('adm-zip');
         mockUtils = require('../src/js/lib/utils');
+
+        // AdmZip Mocks
+        mockAdmZip.prototype.addFile = jest.fn();
+        mockAdmZip.prototype.addLocalFolder = jest.fn();
+        mockAdmZip.prototype.writeZip = jest.fn((path, cb) => {
+            if (typeof cb === 'function') {
+                cb(null);
+            }
+        });
 
         // Mock Configurator
         mockConfigurator = {
@@ -40,25 +50,18 @@ describe('ExportManager', () => {
             getUserPath: jest.fn((key, subdir) => `/mock/user/${subdir}`)
         };
 
+        mockReporter = { logError: jest.fn() };
+
         // Mock Git
         mockGit = {
             getHash: jest.fn().mockResolvedValue('abc123hash')
         };
 
-        // Mock Global App
-        global.App = {
-            locale: {
-                translate: jest.fn((key) => `translated_${key}`)
-            }
-        };
-
-        // Mock FS streams
-        const mockStream = { on: jest.fn(), end: jest.fn() };
-        mockFs.createWriteStream.mockReturnValue(mockStream);
+        const translate = jest.fn((key) => `translated_${key}`);
 
         const ExporterModule = require('../src/js/exporter');
         ExportManager = ExporterModule.ExportManager;
-        exportManager = new ExportManager(mockConfigurator, mockGit);
+        exportManager = new ExportManager(mockConfigurator, mockGit, mockReporter, translate);
     });
 
     describe('backupTranslation', () => {
@@ -73,21 +76,19 @@ describe('ExportManager', () => {
             const result = await exportManager.backupTranslation(meta, filePath);
 
             expect(mockGit.getHash).toHaveBeenCalledWith('/mock/target/en_ulb');
-            expect(mockFs.createWriteStream).toHaveBeenCalledWith(filePath);
 
-            const archive = mockArchiver.create();
-            expect(archive.directory).toHaveBeenCalledWith('/mock/target/en_ulb', 'en_ulb/');
-            expect(archive.append).toHaveBeenCalledWith(
-                expect.stringContaining('"generator"'),
-                { name: 'manifest.json' }
+            expect(mockAdmZip.prototype.addLocalFolder).toHaveBeenCalledWith('/mock/target/en_ulb', 'en_ulb');
+            expect(mockAdmZip.prototype.addFile).toHaveBeenCalledWith(
+                'manifest.json',
+                expect.any(Buffer)
             );
-            expect(archive.finalize).toHaveBeenCalled();
+            expect(mockAdmZip.prototype.writeZip).toHaveBeenCalledWith(filePath, expect.any(Function));
             expect(result).toBe(filePath);
         });
 
         it('should append extension if missing', async () => {
             await exportManager.backupTranslation(meta, '/downloads/backup');
-            expect(mockFs.createWriteStream).toHaveBeenCalledWith('/downloads/backup.tstudio');
+            expect(mockAdmZip.prototype.writeZip).toHaveBeenCalledWith('/downloads/backup.tstudio', expect.any(Function));
         });
 
         it('should throw error on git failure', async () => {
@@ -109,9 +110,18 @@ describe('ExportManager', () => {
 
             expect(mockUtils.fs.mkdirs).toHaveBeenCalledTimes(2); // AutoBackup + Backups dir
             expect(mockGit.getHash).toHaveBeenCalledTimes(2);
+
             // Should save to auto backup dir
-            expect(mockFs.createWriteStream).toHaveBeenCalledWith(
-                expect.stringContaining('/mock/user/automatic_backups/en_ulb.tstudio')
+            expect(mockAdmZip.prototype.writeZip).toHaveBeenCalledTimes(2);
+
+            // Verify the paths used in writeZip
+            expect(mockAdmZip.prototype.writeZip).toHaveBeenCalledWith(
+                expect.stringContaining('/mock/user/automatic_backups/en_ulb.tstudio'),
+                expect.any(Function)
+            );
+            expect(mockAdmZip.prototype.writeZip).toHaveBeenCalledWith(
+                expect.stringContaining('/mock/user/automatic_backups/es_ulb.tstudio'),
+                expect.any(Function)
             );
         });
 
@@ -130,8 +140,9 @@ describe('ExportManager', () => {
             await exportManager.autoBackupTranslation(meta);
 
             expect(mockUtils.fs.mkdirs).toHaveBeenCalled();
-            expect(mockFs.createWriteStream).toHaveBeenCalledWith(
-                '/mock/user/automatic_backups/en_ulb.tstudio'
+            expect(mockAdmZip.prototype.writeZip).toHaveBeenCalledWith(
+                expect.stringContaining('/mock/user/automatic_backups/en_ulb.tstudio'),
+                expect.any(Function)
             );
         });
     });
@@ -162,14 +173,12 @@ describe('ExportManager', () => {
 
             await exportManager.exportTranslation(translationData, meta, filePath, mediaServer);
 
-            expect(mockFs.createWriteStream).toHaveBeenCalledWith(filePath);
-            const archive = mockArchiver.create();
-            // Should have appended content for chapter 1
-            expect(archive.append).toHaveBeenCalledWith(
-                expect.any(Buffer),
-                { name: '1.md' }
+            expect(mockAdmZip.prototype.addFile).toHaveBeenCalledWith(
+                '1.md',
+                expect.any(Buffer)
             );
-            expect(archive.finalize).toHaveBeenCalled();
+
+            expect(mockAdmZip.prototype.writeZip).toHaveBeenCalledWith(filePath, expect.any(Function));
         });
 
         it('should export standard project as USFM', async () => {

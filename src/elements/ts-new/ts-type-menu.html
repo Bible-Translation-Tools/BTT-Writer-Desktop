@@ -183,12 +183,10 @@
         },
 
         translateType: function (id) {
-            return id ? this.translate(`${id}_type`) : "";
+            return id ? App.translate(`${id}_type`) : "";
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function () {
         }

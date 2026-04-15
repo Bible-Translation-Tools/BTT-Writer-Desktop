@@ -186,27 +186,27 @@
         },
 
         checktitle: function (type) {
-            return type === "tw" ? this.translate("translate_word_here") : this.translate("translate_title_here");
+            return type === "tw" ? App.translate("translate_word_here") : App.translate("translate_title_here");
         },
 
         checkbody: function (type) {
-            return type === "tw" ? this.translate("translate_definition_here") : this.translate("translate_text_here");
+            return type === "tw" ? App.translate("translate_definition_here") : App.translate("translate_text_here");
         },
 
         rendertext: function () {
             if(this.chunk && this.chunk.srccontent && this.chunk.projectmeta.project_type_class === "extant") {
-                var mythis = this;
+                const mythis = this;
                 setTimeout(function() {
-                    var completed = mythis.chunk.completed;
-                    var content = mythis.$.content;
-                    var text = mythis.chunk.helpscontent[0].body;
-                    var module = "ts-target-words";
+                    const completed = mythis.chunk.completed;
+                    const content = mythis.$.content;
+                    const text = mythis.chunk.helpscontent[0].body;
+                    const module = "ts-target-words";
 
                     if (completed) {
                         content.classList.remove("editmode");
                         content.classList.add("donemode");
-                        var textholder = mythis.querySelector("#textholder");
-                        textholder.innerHTML = App.renderer.renderTargetWithVerses(text, module);
+                        const textholder = mythis.querySelector("#textholder");
+                        textholder.innerHTML = App.sanitize(App.renderer.renderTargetWithVerses(text, module));
                     } else {
                         content.classList.add("editmode");
                         content.classList.remove("donemode");
@@ -217,7 +217,7 @@
         },
 
         completechunk: function (event, data) {
-            var index = data.index;
+            const index = data.index;
             if (this.chunk.index === index && this.chunk.projectmeta.project_type_class === "extant") {
                 this.set('chunk.completed', true);
                 this.$.toggle.checked = true;
@@ -227,27 +227,20 @@
         },
 
         checkdone: function () {
-            var completed = this.chunk.completed;
-            var index = this.chunk.index;
-            var toggle = this.$.toggle;
-            var mythis = this;
-            var blankcheck = false;
-            var helps = this.chunk.helpscontent;
+            const completed = this.chunk.completed;
+            const index = this.chunk.index;
+            const toggle = this.$.toggle;
+            let blankcheck = false;
+            const helps = this.chunk.helpscontent;
 
             if (helps.length) {
-                for (var i = 0; i < helps.length; i++) {
+                for (let i = 0; i < helps.length; i++) {
                     if (helps[i].title === "" || helps[i].body === "") {
                         blankcheck = true;
                     }
                 }
             }
 
-            if (toggle.pressed) {
-                setTimeout(function() {
-                    mythis.checkdone();
-                }, 100);
-                return;
-            }
             toggle.checked = false;
 
             if (!completed) {
@@ -263,9 +256,7 @@
             }
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
 		ready: function() {
 		}

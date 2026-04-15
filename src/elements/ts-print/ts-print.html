@@ -262,11 +262,11 @@
 
         createtitle: function (backto) {
             if (backto === "translate") {
-                return this.translate("project");
+                return App.translate("project");
             } else if (backto === "review") {
-                return this.translate("review");
+                return App.translate("review");
             } else {
-                return this.translate("home");
+                return App.translate("home");
             }
         },
 
@@ -283,10 +283,8 @@
         },
 
         externalClick: function (event) {
-            const shell = require('electron').shell;
-
             event.preventDefault();
-            shell.openExternal(this.href);
+            App.shell.openExternal(this.href);
         },
 
         goback: function () {
@@ -325,7 +323,7 @@
             }
 
             mythis.set('options', {});
-            mythis.set('options.body', mythis.translate("creating_pdf_status"));
+            mythis.set('options.body', App.translate("creating_pdf_status"));
             mythis.set('options.loading', true);
             mythis.fire('iron-signal', {name: 'openloading'});
 
@@ -337,31 +335,29 @@
             setTimeout(function() {
                 return App.printManager.savePdf(resource, title, license, body, filePath, direction)
                     .then(function () {
-                        mythis.set('options.title', mythis.translate("pdf_created"));
-                        mythis.set('options.body', mythis.translate("project_saved_pdf"));
+                        mythis.set('options.title', App.translate("pdf_created"));
+                        mythis.set('options.body', App.translate("project_saved_pdf"));
                         mythis.set('options.loading', false);
                         mythis.goback();
                     })
                     .catch(function (err) {
-                        let errmessage = mythis.translate("save_project_error");
+                        let errmessage = App.translate("save_project_error");
                         if(err !== null) {
                             errmessage = err;
                         }
-                        mythis.set('options.title', mythis.translate("print_failed"));
+                        mythis.set('options.title', App.translate("print_failed"));
                         mythis.set('options.body', errmessage);
                         mythis.set('options.loading', false);
                     });
             }, 500);
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
+        princeLink: function () {
+            const translated = App.translate("pdf_generated_by", '<a href="https://www.princexml.com/">Prince</a>');
+            this.$.attrib.innerHTML = App.sanitize(`(${translated})`);
         },
 
-        princeLink: function () {
-            const translated = this.translate("pdf_generated_by", '<a href="https://www.princexml.com/">Prince</a>');
-            this.$.attrib.innerHTML = `(${translated})`;
-        },
+        translate: App.translate,
 
         ready: function () {
             document.addEventListener('click', function(event) {

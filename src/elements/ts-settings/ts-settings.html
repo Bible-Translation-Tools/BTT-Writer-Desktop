@@ -205,7 +205,7 @@
         },
 
         createtitle: function (backto) {
-            return backto === "translate" ? this.translate("project") : this.translate("home");
+            return backto === "translate" ? App.translate("project") : App.translate("home");
         },
 
         load: function () {
@@ -248,19 +248,15 @@
 
         _computeHelpText: function (setting) {
             let text;
-            let helpText = setting.helpText ? this.translate(setting.helpText) : null;
+            let helpText = setting.helpText ? App.translate(setting.helpText) : null;
             if (typeof setting.value === "number" && helpText) {
                 text = helpText.replace("<int>", setting.value);
             } else {
                 const translatable = setting.translatable || false;
-                const translated = translatable ? this.translate(setting.value.name || setting.value) : null;
+                const translated = translatable ? App.translate(setting.value.name || setting.value) : null;
                 text = helpText || translated || setting.value.name || setting.value;
             }
             return text;
-        },
-
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
         },
 
         _isBoolean: function (value) {
@@ -363,7 +359,7 @@
             const setting = event.model.setting;
             modal.id = "setting-modal";
             modal.style.display = 'block';
-            modal.heading = this.translate(setting.mainText);
+            modal.heading = App.translate(setting.mainText);
             // The following assignments will determine what kind of interface the modal
             // will have (Edit for text, select for selected.)
             if (setting.options) {
@@ -372,7 +368,7 @@
                 modal.translatable = setting.translatable || false;
                 if (setting.name === "targetfont" || setting.name === "sourcefont") {
                     mythis.set('options', {});
-                    mythis.set('options.body', mythis.translate("font_list_update"));
+                    mythis.set('options.body', App.translate("font_list_update"));
                     mythis.set('options.loading', true);
                     mythis.fire('iron-signal', {name: 'openloading'});
                     setTimeout(function() {
@@ -382,11 +378,11 @@
                     }, 500);
                 } else if (setting.name === "localization") {
                     mythis.set('options', {});
-                    mythis.set('options.body', mythis.translate("localizations_list_load"));
+                    mythis.set('options.body', App.translate("localizations_list_load"));
                     mythis.set('options.loading', true);
                     mythis.fire('iron-signal', {name: 'openloading'});
                     setTimeout(function() {
-                        modal.options = App.utils.getLocalizations();
+                        modal.options = App.utils.getLocalizations(App.dataManager);
                         mythis.fire('iron-signal', {name: 'closeloading'});
                         mythis.openModal(modal, event);
                     }, 500);
@@ -431,7 +427,9 @@
                     }
                 }
             }.bind(this), 1);
-        }
+        },
+
+        translate: App.translate,
 
     });
 

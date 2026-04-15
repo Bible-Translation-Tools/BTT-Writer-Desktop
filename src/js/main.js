@@ -1,13 +1,14 @@
 'use strict';
 
-var electron = require('electron'),
+const electron = require('electron'),
     Menu = electron.Menu,
     dialog = electron.dialog,
     path = require('path'),
     app = electron.app,
     BrowserWindow = electron.BrowserWindow,
     ipcMain = electron.ipcMain,
-    nativeTheme = electron.nativeTheme;
+    nativeTheme = electron.nativeTheme,
+    _ = require('lodash');
 
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -21,7 +22,7 @@ if (!gotTheLock) {
 const userAgent = 'btt-writer-desktop';
 
 app.setPath('userData', (function (dataDir) {
-    var base = process.env.LOCALAPPDATA ||
+    const base = process.env.LOCALAPPDATA ||
         (process.platform === 'darwin' ?
             path.join(process.env.HOME, 'Library', 'Application Support') :
             path.join(process.env.HOME, '.config'));
@@ -45,8 +46,10 @@ function createMainSplash() {
         show: false,
         title: 'BTT Writer',
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
+            nodeIntegration: false,
+            contextIsolation: true,
+            sandbox: false,
+            preload: path.join(__dirname, 'preload-splash.js'),
         }
     });
 
@@ -70,8 +73,10 @@ function createReloadSplash() {
         show: false,
         title: 'BTT Writer',
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
+            nodeIntegration: false,
+            contextIsolation: true,
+            sandbox: false,
+            preload: path.join(__dirname, 'preload-reload.js'),
         }
     });
 
@@ -99,14 +104,15 @@ function createMainWindow () {
         frame: false,
         show: false,
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
+            nodeIntegration: false,
+            contextIsolation: true,
+            sandbox: false,
+            preload: path.join(__dirname, 'preload-main.js'),
         }
     });
 
     mainWindow.dataPath = app.getPath('userData');
-
-    // mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools({ mode: 'detach' });
 
     mainWindow.loadURL('file://' + __dirname + '/../views/index.html', { userAgent });
 
@@ -130,9 +136,9 @@ function createMainWindow () {
 
 function createAppMenus() {
     // Create the Application's main menu
-    var path = require('path');
-    var i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
-    var template = [
+    const path = require('path');
+    const i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
+    const template = [
         {
             label: i18n.translate("application"),
             submenu: [
@@ -160,7 +166,7 @@ function createAppMenus() {
                     label: i18n.translate("toggle_dev_tools"),
                     accelerator: "Shift+CmdOrCtrl+I",
                     click: function () {
-                        var w = BrowserWindow.getFocusedWindow();
+                        const w = BrowserWindow.getFocusedWindow();
                         w && w.webContents.openDevTools();
                     }
                 }
@@ -178,7 +184,7 @@ function reloadApplication() {
         createReloadSplash();
     }
     setTimeout(function () {
-        splashScreen.show();
+        if (splashScreen) splashScreen.show();
         setTimeout(function () {
             if (mainWindow) {
                 mainWindow.hide();
@@ -189,11 +195,18 @@ function reloadApplication() {
 }
 
 ipcMain.on('main-window', function (event, arg) {
-    if (typeof mainWindow[arg] === 'function') {
-        let ret = mainWindow[arg]();
-        event.returnValue = !!ret;
-    } else if (mainWindow[arg]) {
-        event.returnValue = mainWindow[arg];
+    const allowed = {
+        'close': function () { mainWindow.close(); },
+        'minimize': function () { mainWindow.minimize(); },
+        'maximize': function () { mainWindow.maximize(); },
+        'unmaximize': function () { mainWindow.unmaximize(); },
+        'isMaximized': function () { return mainWindow.isMaximized(); },
+        'dataPath': function () { return mainWindow.dataPath; }
+    };
+
+    if (allowed.hasOwnProperty(arg)) {
+        const ret = allowed[arg]();
+        event.returnValue = ret !== undefined ? ret : true;
     } else {
         event.returnValue = null;
     }

@@ -1,8 +1,9 @@
 'use strict';
 
 const path = require('path'),
-    utils = require('../js/lib/utils'),
-    cmdr = require('../js/lib/cmdr');
+    utils = require('./lib/utils'),
+    cmdr = require('./lib/cmdr'),
+    _ = require("lodash");
 
 const ALLOW_UNRELATED_HISTORIES = '--allow-unrelated-histories';
 const NO_REBASE = '--rebase=false';
@@ -18,7 +19,7 @@ function createTagName(datetime) {
         utils.padZero(datetime.getSeconds());
 }
 
-function GitManager() {
+function GitManager(translate) {
 
     const logr = utils.logr;
     const toJSON = function (obj) {
@@ -64,7 +65,6 @@ function GitManager() {
         },
 
         verifyGit: function () {
-            const mythis = this;
             let installed = false;
 
             return this.getVersion()
@@ -78,9 +78,9 @@ function GitManager() {
                 .catch(function (err) {
                     let msg;
                     if (installed) {
-                        msg = mythis.translate("git_ver_outdated", err, minGitVersion);
+                        msg = translate("git_ver_outdated", err, minGitVersion);
                     } else {
-                        msg = mythis.translate("git_not_installed")
+                        msg = translate("git_not_installed")
                     }
                     throw msg;
                 });
@@ -91,26 +91,24 @@ function GitManager() {
         },
 
         init: function (dir) {
-            const mythis = this;
             return utils.fs.readdir(dir).then(function (files) {
                 const init = cmd().cd(dir).and.do('git init -b master');
                 const hasGitFolder = (files.indexOf('.git') >= 0);
 
                 return !hasGitFolder && init.run();
-            }).then(logr(mythis.translate("git_initialized")));
+            }).then(logr(translate("git_initialized")));
         },
 
         commitAll: function (user, dir) {
-            const mythis = this;
             const msg = new Date();
             const username = user.username || 'tsDesktop';
             const email = user.email || 'you@example.com';
             const stage = cmd().cd(dir)
-                .and.do(`git config user.name "${username}"`)
-                .and.do(`git config user.email "${email}"`)
+                .and.do(`git config user.name ${utils.shellEscape(username)}`)
+                .and.do(`git config user.email ${utils.shellEscape(email)}`)
                 .and.do('git config core.autocrlf input')
                 .and.do('git add --all')
-                .and.do(`git commit -am "${msg}"`);
+                .and.do(`git commit -am ${utils.shellEscape(msg)}`);
 
             return stage.run()
                 .catch(function (err) {
@@ -119,7 +117,7 @@ function GitManager() {
                     }
                     return true;
                 })
-                .then(logr(mythis.translate("files_committed")));
+                .then(logr(translate("files_committed")));
         },
 
         merge: function (user, localPath, remotePath) {
@@ -144,7 +142,7 @@ function GitManager() {
                 })
                 .then(function (version) {
                     const diff = cmd().cd(localPath).and.do('git diff --name-only --diff-filter=U');
-                    let pullCommand = `git pull "${remotePath}" master ${NO_REBASE}`;
+                    let pullCommand = `git pull ${utils.shellEscape(remotePath)} master ${NO_REBASE}`;
 
                     if (version.major > 2 || (version.major === 2 && version.minor > 8)) {
                         pullCommand += ` ${ALLOW_UNRELATED_HISTORIES}`;
@@ -187,12 +185,12 @@ function GitManager() {
                 })
                 .catch(function (err) {
                     if (err.stderr !== undefined) {
-                        throw mythis.translate("projects_merge_error", err.stderr);
+                        throw translate("projects_merge_error", err.stderr);
                     } else {
                         console.error(err);
                     }
                 })
-                .then(utils.logr(mythis.translate("merge_finished")))
+                .then(utils.logr(translate("merge_finished")))
                 .then(function () {
                     return {conflicts: conflicts, manifest: mergedManifest};
                 });
@@ -202,28 +200,26 @@ function GitManager() {
         push: function (user, dir, repo, opts) {
             opts = opts || {};
 
-            const mythis = this;
-            const ssh = `ssh -i "${user.reg.paths.privateKeyPath}" -o "StrictHostKeyChecking no"`;
+            const ssh = `ssh -i ${utils.shellEscape(user.reg.paths.privateKeyPath)} -o StrictHostKeyChecking=no`;
             const pushUrl = user.reg ? repo.ssh_url : repo.html_url;
-            const gitSshPush = `git push -u ${pushUrl} master --follow-tags`;
+            const gitSshPush = `git push -u ${utils.shellEscape(pushUrl)} master --follow-tags`;
             const push = cmd().cd(dir).and.set('GIT_SSH_COMMAND', ssh).do(gitSshPush);
             const tagName = createTagName(new Date());
-            const tag = opts.requestToPublish ? cmd().cd(dir).and.do(`git tag -a ${tagName} -m "Request to Publish"`).run() : Promise.resolve();
+            const tag = opts.requestToPublish ? cmd().cd(dir).and.do(`git tag -a ${utils.shellEscape(tagName)} -m ${utils.shellEscape('Request to Publish')}`).run() : Promise.resolve();
 
-            console.log(mythis.translate("starting_push", push));
+            console.log(translate("starting_push", push));
 
             return tag
                 .then(function () {
                     return push.run();
                 })
-                .then(logr(mythis.translate("files_pushed")));
+                .then(logr(translate("files_pushed")));
         },
 
         clone: function (repoUrl, localPath) {
-            const mythis = this;
             const repoName = repoUrl.replace(/\.git/, '').split('/').pop();
             const savePath = localPath.includes(repoName) ? localPath : path.join(localPath, repoName);
-            const clone = cmd().do(`git clone ${repoUrl} "${savePath}"`);
+            const clone = cmd().do(`git clone ${utils.shellEscape(repoUrl)} ${utils.shellEscape(savePath)}`);
 
             return clone.run()
                 .catch(function (err) {
@@ -232,11 +228,7 @@ function GitManager() {
                     }
                     return err;
                 })
-                .then(logr(mythis.translate("project_cloned")));
-        },
-
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
+                .then(logr(translate("project_cloned")));
         },
     };
 }

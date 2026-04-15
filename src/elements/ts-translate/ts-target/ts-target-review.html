@@ -163,7 +163,7 @@
 
 <script>
 
-	Polymer({
+    Polymer({
 
 		is: 'ts-target-review',
 
@@ -222,7 +222,7 @@
 
                         if (completed || searcharray.length === 1) {
                             const regex2 = new RegExp(App.renderer.replaceEscapes(search.text) + "(?!([^<]*>)|(\\d*<\/sup))", "gi");
-                            const matches = _.unique(returnstr.match(regex2)) || [];
+                            const matches = _.uniq(returnstr.match(regex2)) || [];
 
                             matches.forEach(function (match) {
                                 const result = new RegExp(App.renderer.replaceEscapes(match) + "(?!([^<]*>)|(\\d*<\/sup))", "g");
@@ -231,7 +231,7 @@
                             });
                         } else {
                             const regex = new RegExp(regexstr, "gi");
-                            const matches2 = _.unique(returnstr.match(regex)) || [];
+                            const matches2 = _.uniq(returnstr.match(regex)) || [];
 
                             matches2.forEach(function (match) {
                                 const result = new RegExp(match, "g");
@@ -241,7 +241,7 @@
                         }
                     }
 
-                    mythis.$.textholder.innerHTML = returnstr;
+                    mythis.$.textholder.innerHTML = App.sanitize(returnstr);
                     mythis.$.toggle.checked = completed;
                     mythis.addDragListeners();
                 }
@@ -290,7 +290,9 @@
 
         savemarkers: function () {
             const textholder = this.querySelector("#textholder");
-            const paragraphs = textholder.children;
+            if (!textholder) return;
+
+            const paragraphs = this.prepareParagraphData(textholder.children);
 
             if (this.chunk.projectmeta.project.id !== "obs") {
                 this.set('chunk.transcontent', App.renderer.balloonsToMarkers(paragraphs));
@@ -299,8 +301,8 @@
         },
 
         completechunk: function (event, data) {
-            var index = data.index;
-            var mythis = this;
+            const index = data.index;
+            const mythis = this;
 
             if (this.chunk.index === index && this.chunk.projectmeta.project_type_class === "standard") {
                 mythis.set('chunk.completed', true);
@@ -318,13 +320,6 @@
             const completed = this.chunk.completed;
             const index = this.chunk.index;
             const toggle = this.$.toggle;
-
-            if (toggle.pressed) {
-                setTimeout(function() {
-                    myThis.checkdone();
-                }, 100);
-                return;
-            }
 
             toggle.checked = false;
 
@@ -345,7 +340,7 @@
         },
 
         editchunk: function (event, data) {
-            var index = data.index;
+            const index = data.index;
 
             if (this.chunk.index === index) {
                 this.checkdone();
@@ -353,7 +348,7 @@
         },
 
         review: function () {
-            var id = this.chunk.chunkmeta.chapterid + "-" + this.chunk.chunkmeta.frameid;
+            const id = this.chunk.chunkmeta.chapterid + "-" + this.chunk.chunkmeta.frameid;
             this.set('chunk.state.review', true);
             this.fire('setheight');
             this.fire('iron-signal', {name: 'updatestate', data: {id: id, mode: "review", value: true}});
@@ -373,9 +368,23 @@
             }, 500);
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
+        prepareParagraphData: function(paragraphs) {
+            return Array.from(paragraphs).map(function(p) {
+                return {
+                    children: Array.from(p.children).map(function(child) {
+                        return {
+                            nodeName: child.nodeName,
+                            textContent: child.textContent,
+                            verse: child.verse || null,
+                            text: child.text || null,
+                            dataset: { type: child.dataset ? child.dataset.type : null }
+                        };
+                    })
+                };
+            });
         },
+
+        translate: App.translate,
 
 		ready: function() {
 		}

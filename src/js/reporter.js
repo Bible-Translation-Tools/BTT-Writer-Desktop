@@ -1,8 +1,5 @@
-// reporter module
-
 'use strict';
 
-let fs = require('fs');
 let os = require('os');
 let https = require('https');
 let utils = require('./lib/utils');
@@ -22,8 +19,8 @@ function Reporter (args) {
     let appVersion = args.appVersion || '0.0.0';
     let verbose = args.verbose || false;
 
-    var convertError = function (err) {
-        if(!err) return '';
+    const convertError = function (err) {
+        if (!err) return '';
 
         var indentLines = function (s) {
             return s.split('\n').map(function (line) {
@@ -37,29 +34,35 @@ function Reporter (args) {
         return indentLines(converted);
     };
 
-    var addTitle = function (err, title) {
+    const addTitle = function (err, title) {
         var shouldHaveNewLine = !!err;
         var pre = (title || '') + (shouldHaveNewLine ? '\n' : '');
         return pre + err;
     };
 
-    var makeMessage = function (err, title) {
+    const makeMessage = function (err, title) {
         var e = convertError(err);
         return addTitle(e, title);
     };
 
-    var log = function (level, err, title, stackModifier) {
+    const log = function (level, err, title, caller) {
         err = err || '';
-        stackModifier = stackModifier || 0;
 
         var msg = makeMessage(err, title);
 
-        return _this.toLogFile(level, msg, stackModifier);
+        if (typeof caller === 'string') {
+            return _this.toLogFile(level, msg, 0, caller);
+        }
+        return _this.toLogFile(level, msg, caller || 0);
     };
 
     _this.logWarning = log.bind(_this, 'W');
     _this.logError = log.bind(_this, 'E');
     _this.logNotice = log.bind(_this, 'I');
+
+    _this.logWithCaller = function (level, err, title, callerLocation) {
+        return log(level, err, title, callerLocation);
+    };
 
     _this.clearLog = function () {
         return utils.fs.writeFile(logPath, '');
@@ -68,9 +71,8 @@ function Reporter (args) {
     /**
      * Sends a bug report to github
      * @param string the bug report
-     * @param callback deprecated
      */
-    _this.reportBug = function (string, callback) {
+    _this.reportBug = function (string) {
         if (!string) {
             return Promise.reject('reporter.reportBug requires a message.')
         }
@@ -81,9 +83,8 @@ function Reporter (args) {
      *
      * @param string
      * @param crashFilePath
-     * @param callback
      */
-    _this.reportCrash = function (string, crashFilePath, callback) {
+    _this.reportCrash = function (string, crashFilePath) {
         return _this.formGithubIssue('crash report', string, crashFilePath);
     };
 
@@ -92,18 +93,24 @@ function Reporter (args) {
         return err.stack;
     };
 
-    _this.toLogFile = function (level, string, stackModifier) {
-        /* We make 3 calls before processing who called the original
-         *  log command; therefore, the 4th call will be the original caller.
-         */
-        let callNumber = 4 + stackModifier;
-        let location = _this.stackTrace()
-                            .split('\n')[callNumber]
-                            .split(/(\\|\/)/)
-                            .pop()
-                            .slice(0,-1);
+    _this.toLogFile = function (level, string, stackModifier, callerLocation) {
+        let location;
+        if (callerLocation) {
+            location = callerLocation;
+        } else {
+            /* We make 3 calls before processing who called the original
+             *  log command; therefore, the 4th call will be the original caller.
+             */
+            let callNumber = 4 + (stackModifier || 0);
+            location = _this.stackTrace()
+                                ?.split('\n')[callNumber]
+                                ?.split(/([\\/])/)
+                                .pop()
+                                ?.slice(0,-1)
+                            || 'unknown';
+        }
 
-        let date = moment().format('YYYY-MM-DD HH:m:s');
+        let date = moment().format('YYYY-MM-DD HH:mm:ss');
 
         let message = date + ' ' + level + '/' + location + ': ' + string + '\n';
 
@@ -139,7 +146,7 @@ function Reporter (args) {
 
             if (kb >= maxLogFileKb) {
                 return _this.stringFromLogFile().then(function (res) {
-                    var lines = res.split('\n');
+                    const lines = res.split('\n');
                     return lines.slice(Math.ceil(lines.length / 2), lines.length - 1)
                                 .join('\n');
                 }).then(function (res) {
@@ -160,7 +167,7 @@ function Reporter (args) {
         issueObject.labels = [type, appVersion];
         if (string) {
             if (string.length > 30) {
-                issueObject.title = string.substr(0, 29) + '...';
+                issueObject.title = string.substring(0, 29) + '...';
             } else {
                 issueObject.title = string;
             }
@@ -236,7 +243,7 @@ function Reporter (args) {
             headers: {
                 'User-Agent': 'ts-desktop',
                 'Content-Type': 'application/json',
-                'Content-Length': payload.length,
+                'Content-Length': Buffer.byteLength(payload),
                 'Authorization': 'token ' + oauthToken
             }
         };
@@ -252,13 +259,13 @@ function Reporter (args) {
                         console.log(res);
                         reject(completeData);
                     } else {
+                        _this.clearLog();
                         resolve(completeData);
                     }
                 });
             }).on('error', reject);
             postReq.write(payload);
             postReq.end();
-            _this.clearLog();
         });
     };
 

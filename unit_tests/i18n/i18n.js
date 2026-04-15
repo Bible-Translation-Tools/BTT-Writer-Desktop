@@ -16,7 +16,7 @@
             let i18n = new Locale('./i18n','');
 
             it('should return a code tag', function () {
-                assert.equal(i18n._('missing_key'), '[i18n: missing_key]');
+                assert.equal(i18n.translate('missing_key'), 'missing_key');
             });
 
             it('should default to english', function () {
@@ -28,7 +28,7 @@
             let i18nInstance = new Locale('./unit_tests/i18n/data/');
 
             it('should return localization', function () {
-                assert.equal(i18nInstance._('test'), 'This is a test!');
+                assert.equal(i18nInstance.translate('test'), 'This is a test!');
             });
         });
 
@@ -41,11 +41,11 @@
             });
 
             it('should return localization', function () {
-                assert.equal(i18nInstance._('test'), 'Guten tag!');
+                assert.equal(i18nInstance.translate('test'), 'Guten tag!');
             });
 
             it('should use default locale when missing translations', function () {
-                assert.equal(i18nInstance._('missingFromDe'), 'This is english!');
+                assert.equal(i18nInstance.translate('missingFromDe'), 'This is english!');
             });
         });
 

@@ -723,7 +723,7 @@
     "settings": "Settings",
 
     "__folder21": "js",
-    "__file81": "bootstrap.js",
+    "__file81": "preload-main.js",
     "loading_mkdirp": "Loading mkdirp...",
     "loading_db": "Loading Database...",
     "loading_reporter": "Loading Reporter...",

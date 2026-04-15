@@ -203,7 +203,7 @@
                     const textholder = this.$.textholder;
                     const text = this.chunk.transcontent;
                     const module = "ts-target-edit";
-                    const msg = this.translate("conflict_exists_warning");
+                    const msg = App.translate("conflict_exists_warning");
 
                     if (completed || typeclass !== "standard") {
                         if (text.includes("<<<<<")) {
@@ -212,7 +212,7 @@
                             span.textContent = msg;
                             textholder.replaceChildren(span);
                         } else {
-                            textholder.innerHTML = App.renderer.renderTargetWithVerses(text, module);
+                            textholder.innerHTML = App.sanitize(App.renderer.renderTargetWithVerses(text, module));
                         }
                         textholder.classList.remove("hide");
                         textbox.classList.add("hide");
@@ -222,8 +222,8 @@
                         textbox.classList.remove("hide");
                         contentbox.classList.add("editmode");
 
-                        textbox.innerHTML = App.renderer.markersToFootnotes(text, this.chunk.index);
-                        textbox.innerHTML = App.renderer.paragraphsToBreaks(textbox.innerHTML);
+                        textbox.innerHTML = App.sanitize(App.renderer.markersToFootnotes(text, this.chunk.index));
+                        textbox.innerHTML = App.sanitize(App.renderer.paragraphsToBreaks(textbox.innerHTML));
                     }
                 }
             }.bind(this), 1);
@@ -283,7 +283,7 @@
 
             let finalHtml = App.renderer.markersToFootnotes(result, this.chunk.index);
             finalHtml = App.renderer.paragraphsToBreaks(finalHtml);
-            this.$.textbox.innerHTML = finalHtml;
+            this.$.textbox.innerHTML = App.sanitize(finalHtml);
         },
 
         addNote: function () {
@@ -409,9 +409,7 @@
             this.restoreCaretPosition()
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function () {
         }

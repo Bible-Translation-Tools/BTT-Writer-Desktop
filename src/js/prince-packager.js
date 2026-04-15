@@ -109,7 +109,7 @@ function install(dir, os) {
  */
 function extractZipball(zipball, destdir) {
     return new Promise(function(resolve, reject) {
-        let zip = new AdmZip(zipball);
+        let zip = new AdmZip(zipball, {});
         try {
             zip.extractAllTo(destdir);
             resolve();

@@ -120,9 +120,7 @@
             this.fire('iron-signal', {name: 'openupdate'});
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function() {
         }

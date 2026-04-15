@@ -616,7 +616,7 @@
     "logout": "Выход",
     "settings": "Настройки",
     "__folder21": "js",
-    "__file81": "bootstrap.js",
+    "__file81": "preload-main.js",
     "loading_mkdirp": "Загрузка mkdirp...",
     "loading_db": "Загрузка базы данных...",
     "loading_reporter": "Загрузка отчета...",

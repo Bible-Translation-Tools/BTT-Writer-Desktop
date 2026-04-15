@@ -1,6 +1,7 @@
 'use strict';
 
-var exec = require('child_process').exec;
+const exec = require('child_process').exec;
+const utils = require('./utils');
 
 module.exports = function cmdr (paths) {
 
@@ -13,11 +14,11 @@ module.exports = function cmdr (paths) {
 	})(paths);
 
 	return function cmd(s) {
-	    var str = s || '';
+        const str = s || '';
 
-	    return {
+        return {
 	        cd: function (dir) {
-	            return cmd(str + 'cd "' + dir + '"');
+	            return cmd(str + 'cd ' + utils.shellEscape(dir));
 	        },
 
 	        get and () {
@@ -25,9 +26,9 @@ module.exports = function cmdr (paths) {
 	        },
 
 	        get then () {
-	            var c = process.platform === 'win32' ? '& ' : '; ';
+                const c = process.platform === 'win32' ? '& ' : '; ';
 
-	            return cmd(str + c);
+                return cmd(str + c);
 	        },
 
 	        get or () {
@@ -35,11 +36,11 @@ module.exports = function cmdr (paths) {
 	        },
 
 	        set: function (name, val) {
-	            var c = process.platform === 'win32' ?
-	                        `set ${name}=${val} & ` :
-	                        `${name}='${val}' `;
+                const c = process.platform === 'win32' ?
+                    `set ${name}=${val} & ` :
+                    `${name}=${utils.shellEscape(val)} `;
 
-	            return cmd(str + c);
+                return cmd(str + c);
 	        },
 
 	        do: function (c) {
@@ -49,13 +50,13 @@ module.exports = function cmdr (paths) {
 	        run: function () {
 	            return new Promise(function (resolve, reject) {
 	                exec(str, function (err, stdout, stderr) {
-	                    var ret = {
-	                        stdout: stdout,
-	                        stderr: stderr,
-	                        error: err
-	                    };
+                        const ret = {
+                            stdout: stdout,
+                            stderr: stderr,
+                            error: err
+                        };
 
-	                    (err && reject(ret)) || resolve(ret);
+                        (err && reject(ret)) || resolve(ret);
 	                });
 	            });
 	        },

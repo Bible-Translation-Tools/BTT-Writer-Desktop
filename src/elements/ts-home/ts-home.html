@@ -355,7 +355,7 @@
         },
 
         checkicon: function (projectmeta) {
-            return projectmeta.project.id === "obs" || projectmeta.project_type_class === "extant" ? 
+            return projectmeta.project.id === "obs" || projectmeta.project_type_class === "extant" ?
                 '../elements/ts-icons/uw-icon-small.png' : '../elements/ts-icons/uw-project-icon.png';
         },
 
@@ -501,12 +501,10 @@
             }
         },
 
-        translateBook: function(slug) {
-            return this.translate(`book_${slug}`);
-        },
+        translate: App.translate,
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
+        translateBook: function(slug) {
+            return App.translate(`book_${slug}`);
         },
 
         ready: function() {

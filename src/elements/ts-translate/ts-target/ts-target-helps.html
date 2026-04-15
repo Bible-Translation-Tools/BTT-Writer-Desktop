@@ -243,44 +243,44 @@
         },
 
         checktitle: function (type) {
-            var text = "";
+            let text = "";
             if (type === "tn") {
-                text = this.translate("reference_text");
+                text = App.translate("reference_text");
             }
             if (type === "tq") {
-                text = this.translate("add_question_here");
+                text = App.translate("add_question_here");
             }
             return text;
         },
 
         checkbody: function (type) {
-            var text = "";
+            let text = "";
             if (type === "tn") {
-                text = this.translate("note_text");
+                text = App.translate("note_text");
             }
             if (type === "tq") {
-                text = this.translate("add_answer_here");
+                text = App.translate("add_answer_here");
             }
             return text;
         },
 
         moveup: function (e) {
-            var noteindex = e.model.index;
+            const noteindex = e.model.index;
             if (noteindex > 0) {
                 this.movehelp(noteindex, -1);
             }
         },
 
         movedown: function (e) {
-            var noteindex = e.model.index;
+            const noteindex = e.model.index;
             if (noteindex < this.chunk.helpscontent.length - 1) {
                 this.movehelp(noteindex, 1);
             }
         },
 
         movehelp: function (index, dir) {
-            var helps = _.cloneDeep(this.chunk.helpscontent);
-            var removed = helps[index];
+            const helps = _.cloneDeep(this.chunk.helpscontent);
+            const removed = helps[index];
 
             helps.splice(index, 1);
             helps.splice(index + dir, 0, removed);
@@ -290,15 +290,15 @@
         },
 
         addhelp: function () {
-            var newhelp = {title: "", body: ""};
+            const newhelp = {title: "", body: ""};
             this.push('chunk.helpscontent', newhelp);
             this.fire('setheight');
             this.fire('iron-signal', {name: 'savechunk', data: {chunk: this.chunk}});
         },
 
         deletehelp: function (e) {
-            var noteindex = e.model.index;
-            var helps = _.cloneDeep(this.chunk.helpscontent);
+            const noteindex = e.model.index;
+            const helps = _.cloneDeep(this.chunk.helpscontent);
 
             helps.splice(noteindex, 1);
             this.set('chunk.helpscontent', helps);
@@ -316,8 +316,8 @@
 
         rendertext: function () {
             if(this.chunk && this.chunk.srccontent && this.chunk.projectmeta.project_type_class === "helps") {
-                var completed = this.chunk.completed;
-                var content = this.$.content;
+                const completed = this.chunk.completed;
+                const content = this.$.content;
 
                 if (completed) {
                     content.classList.remove("editmode");
@@ -331,7 +331,7 @@
         },
 
         completechunk: function (event, data) {
-            var index = data.index;
+            const index = data.index;
             if (this.chunk.index === index && this.chunk.projectmeta.project_type_class === "helps") {
                 this.set('chunk.completed', true);
                 this.$.toggle.checked = true;
@@ -341,27 +341,21 @@
         },
 
         checkdone: function () {
-            var completed = this.chunk.completed;
-            var index = this.chunk.index;
-            var toggle = this.$.toggle;
-            var mythis = this;
-            var blankcheck = false;
-            var helps = this.chunk.helpscontent;
+            const completed = this.chunk.completed;
+            const index = this.chunk.index;
+            const toggle = this.$.toggle;
+            const mythis = this;
+            let blankcheck = false;
+            const helps = this.chunk.helpscontent;
 
             if (helps.length) {
-                for (var i = 0; i < helps.length; i++) {
+                for (let i = 0; i < helps.length; i++) {
                     if (helps[i].title === "" || helps[i].body === "") {
                         blankcheck = true;
                     }
                 }
             }
 
-            if (toggle.pressed) {
-                setTimeout(function() {
-                    mythis.checkdone();
-                }, 100);
-                return;
-            }
             toggle.checked = false;
 
             if (!completed) {
@@ -377,9 +371,7 @@
             }
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
 		ready: function() {
 		}

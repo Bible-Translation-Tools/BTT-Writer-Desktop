@@ -616,7 +616,7 @@
     "logout": "خروج از سیستم",
     "settings": "تنظیمات",
     "__folder21": "js",
-    "__file81": "bootstrap.js",
+    "__file81": "preload-main.js",
     "loading_mkdirp": "بارگیری خدمات...",
     "loading_db": "در حال بارگذاری پایگاه داده...",
     "loading_reporter": "بارگیری ارايه‌کننده...",

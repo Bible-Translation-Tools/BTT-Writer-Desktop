@@ -1,15 +1,14 @@
 'use strict';
 
-var _ = require('lodash'),
+const _ = require('lodash'),
     path = require('path'),
     utils = require('../js/lib/utils'),
-    archiver = require('archiver'),
-    fs = require('fs'),
+    AdmZip = require("adm-zip"),
     trash = require('trash');
 
-function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
+function ProjectsManager(dataManager, configurator, reporter, git, migrator, translate) {
 
-    var targetDir = configurator.getValue('targetTranslationsDir'),
+    const targetDir = configurator.getValue('targetTranslationsDir'),
         write = utils.fs.outputFile,
         read = utils.fs.readFile,
         mkdirp = utils.fs.mkdirs,
@@ -19,7 +18,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         toJSON = _.partialRight(JSON.stringify, null, '\t'),
         fromJSON = JSON.parse.bind(JSON);
 
-    var custom = ["Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings",
+    const custom = ["Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings",
         "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs", "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah",
         "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah",
         "Malachi", "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians",
@@ -38,15 +37,20 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                 })
                 .then(function (exists) {
                     if (exists) {
-                        utils.fs.mover(path.join(oldPath, 'automatic_backups'), path.join(newPath, 'automatic_backups'));
-                        utils.fs.mover(path.join(oldPath, 'backups'), path.join(newPath, 'backups'));
+                        return Promise.all([
+                            utils.fs.mover(path.join(oldPath, 'automatic_backups'), path.join(newPath, 'automatic_backups')),
+                            utils.fs.mover(path.join(oldPath, 'backups'), path.join(newPath, 'backups'))
+                        ]).then(function() {
+                            return true;
+                        });
                     }
+
                     return Promise.resolve(true);
                 });
         },
 
         sortProjectList: function (list) {
-            var sort = configurator.getValue("sort") || {project: "bible", order: "project"};
+            const sort = configurator.getValue("sort") || {project: "bible", order: "project"};
 
             if (sort.order === "project") {
                 if (sort.project === "bible") {
@@ -216,7 +220,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         updateManifestToMeta: function (manifest) {
-            var meta = manifest;
+            const meta = manifest;
 
             try {
                 if (manifest.project.name === "") {
@@ -227,11 +231,11 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                     meta.type.name = "Text";
                 }
 
-                var sources = [];
+                const sources = [];
 
                 if ('source_translations' in manifest) {
-                    for (var j = 0; j < manifest.source_translations.length; j++) {
-                        var details = dataManager.getSourceDetails(manifest.project.id, manifest.source_translations[j].language_id, manifest.source_translations[j].resource_id);
+                    for (let j = 0; j < manifest.source_translations.length; j++) {
+                        let details = dataManager.getSourceDetails(manifest.project.id, manifest.source_translations[j].language_id, manifest.source_translations[j].resource_id);
 
                         if (manifest.source_translations[j].resource_id === "udb" && manifest.resource.id !== "udb") {
                             details = false;
@@ -243,7 +247,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                     }
                 }
 
-                meta.source_translations = _.uniq(sources, 'unique_id');
+                meta.source_translations = _.uniqBy(sources, 'unique_id');
 
                 if (meta.source_translations.length) {
                     meta.currentsource = 0;
@@ -265,7 +269,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                     meta.finished_chunks = [];
                 }
 
-                var framenum = this.getProjectFrameNum(meta);
+                const framenum = this.getProjectFrameNum(meta);
 
                 if (meta.finished_chunks && framenum) {
                     meta.completion = Math.floor((meta.finished_chunks.length / framenum) * 100);
@@ -297,7 +301,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         makeUniqueId: function (manifest) {
-            var id = manifest.target_language.id + "_" + manifest.project.id + "_" + manifest.type.id;
+            let id = manifest.target_language.id + "_" + manifest.project.id + "_" + manifest.type.id;
             if (manifest.resource.id !== "") {
                 id += "_" + manifest.resource.id;
             }
@@ -305,11 +309,11 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         updateChunk: function (meta, chunk) {
-            var paths = utils.makeProjectPaths(targetDir, meta);
-            var projectClass = meta.project_type_class;
-            var file = path.join(paths.projectDir, chunk.chunkmeta.chapterid, chunk.chunkmeta.frameid + '.txt');
-            var standardcontent = chunk.transcontent;
-            var hasContent = false;
+            const paths = utils.makeProjectPaths(targetDir, meta);
+            const projectClass = meta.project_type_class;
+            const file = path.join(paths.projectDir, chunk.chunkmeta.chapterid, chunk.chunkmeta.frameid + '.txt');
+            let standardcontent = chunk.transcontent;
+            let hasContent = false;
 
             if (projectClass === "standard") {
                 hasContent = !!chunk.transcontent;
@@ -327,13 +331,13 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         makeChapterDir: function (meta, chunk) {
-            var paths = utils.makeProjectPaths(targetDir, meta);
+            const paths = utils.makeProjectPaths(targetDir, meta);
 
             return mkdirp(path.join(paths.projectDir, chunk.chunkmeta.chapterid));
         },
 
         saveTargetChunk: function (chunk, meta) {
-            var mythis = this;
+            const mythis = this;
 
             return mythis.makeChapterDir(meta, chunk)
                 .then(function () {
@@ -346,10 +350,10 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         saveTargetManifest: function (meta) {
-            var paths = utils.makeProjectPaths(targetDir, meta);
-            var build = configurator.getAppData().build;
+            const paths = utils.makeProjectPaths(targetDir, meta);
+            const build = configurator.getAppData().build;
 
-            var sources = meta.source_translations.map(function (source) {
+            const sources = meta.source_translations.map(function (source) {
                 return {
                     language_id: source.language_id,
                     resource_id: source.resource_id,
@@ -359,7 +363,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                 };
             });
 
-            var manifest = {
+            const manifest = {
                 package_version: meta.package_version,
                 format: meta.format,
                 generator: {
@@ -384,27 +388,27 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         createTargetTranslation: function (translation, meta, user) {
-            var mythis = this;
-            var paths = utils.makeProjectPaths(targetDir, meta);
-            var makeChapterDir = mythis.makeChapterDir.bind(this, meta);
-            var updateChunk = mythis.updateChunk.bind(this, meta);
+            const mythis = this;
+            const paths = utils.makeProjectPaths(targetDir, meta);
+            const makeChapterDir = mythis.makeChapterDir.bind(this, meta);
+            const updateChunk = mythis.updateChunk.bind(this, meta);
 
-            var makeChapterDirs = function (data) {
+            const makeChapterDirs = function (data) {
                 return function () {
                     return Promise.all(_.map(data, makeChapterDir));
                 };
             };
 
-            var updateChunks = function (data) {
+            const updateChunks = function (data) {
                 return function () {
                     return Promise.all(_.map(data, updateChunk));
                 };
             };
 
-            var setLicense = function () {
-                var srcDir = path.resolve(path.join(__dirname, '..'));
+            const setLicense = function () {
+                const srcDir = path.resolve(path.join(__dirname, '..'));
                 return read(path.join(srcDir, 'assets', 'LICENSE.md'))
-                    .then(function(data) {
+                    .then(function (data) {
                         return write(paths.license, data);
                     });
             };
@@ -414,7 +418,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                     mythis.unsetValues(meta.unique_id);
                     return mkdirp(paths.projectDir)
                 })
-                .then(setLicense())
+                .then(setLicense)
                 .then(function () {
                     return mythis.saveTargetManifest(meta);
                 })
@@ -432,19 +436,19 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         cleanProject: function (translation, meta) {
-            var paths = utils.makeProjectPaths(targetDir, meta);
+            const paths = utils.makeProjectPaths(targetDir, meta);
 
-            var cleanChapterDir = function (data, chapter) {
-                var chapterpath = path.join(paths.projectDir, chapter);
+            const cleanChapterDir = function (data, chapter) {
+                const chapterpath = path.join(paths.projectDir, chapter);
                 return readdir(chapterpath)
                     .then(function (dir) {
-                        return !dir.length ? trash([chapterpath]): true;
+                        return !dir.length ? trash([chapterpath]) : true;
                     })
                     .catch(utils.ret(true));
             };
 
-            var cleanChapterDirs = function () {
-                var data = _.groupBy(translation, function (chunk) {
+            const cleanChapterDirs = function () {
+                const data = _.groupBy(translation, function (chunk) {
                     return chunk.chunkmeta.chapterid;
                 });
                 return Promise.all(_.map(data, cleanChapterDir));
@@ -454,7 +458,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         commitProject: function (meta, user) {
-            var paths = utils.makeProjectPaths(targetDir, meta);
+            const paths = utils.makeProjectPaths(targetDir, meta);
 
             return git.init(paths.projectDir)
                 .then(function () {
@@ -467,7 +471,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         retrieveManifest: function (projectDir) {
-            var manifestPath = path.join(projectDir, 'manifest.json');
+            const manifestPath = path.join(projectDir, 'manifest.json');
 
             return read(manifestPath)
                 .then(function (data) {
@@ -477,15 +481,16 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
 
         loadTargetTranslationsList: function () {
             const mythis = this;
-            var paths = utils.makeProjectPaths.bind(utils, targetDir);
+            const paths = utils.makeProjectPaths.bind(utils, targetDir);
             return this.loadProjectsList()
                 .then(map(paths))
                 .then(map('manifest'))
                 .then(function (list) {
                     return _.filter(list, function (path) {
+                        let test;
                         try {
                             // this needs changed
-                            var test = require('fs').statSync(path);
+                            test = require('fs').statSync(path);
                         } catch (e) {
                             test = false;
                         }
@@ -517,19 +522,19 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         loadTargetTranslation: function (meta) {
-            var paths = utils.makeProjectPaths(targetDir, meta);
+            const paths = utils.makeProjectPaths(targetDir, meta);
 
-            var parseChunkName = function (f) {
-                var p = path.parse(f);
-                var ch = p.dir.split(path.sep).slice(-1)[0];
+            const parseChunkName = function (f) {
+                const p = path.parse(f);
+                const ch = p.dir.split(path.sep).slice(-1)[0];
 
                 return ch + '-' + p.name;
             };
 
-            var readChunk = function (f) {
+            const readChunk = function (f) {
                 return read(f)
                     .then(function (c) {
-                        var parsed = {
+                        const parsed = {
                             name: parseChunkName(f)
                         };
                         if (meta.project_type_class === "standard") {
@@ -541,13 +546,13 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                     });
             };
 
-            var makeFullPath = function (parent) {
+            const makeFullPath = function (parent) {
                 return function (f) {
                     return path.join(parent, f);
                 };
             };
 
-            var readdirs = function (dirs) {
+            const readdirs = function (dirs) {
                 return Promise.all(_.map(dirs, function (d) {
                     return readdir(d)
                         .then(map(function (f) {
@@ -556,23 +561,23 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                 }));
             };
 
-            var isDir = function (f) {
+            const isDir = function (f) {
                 return utils.fs.stat(f)
                     .then(function (s) {
                         return s.isDirectory();
                     });
             };
 
-            var isVisibleDir = function (f) {
+            const isVisibleDir = function (f) {
                 return isDir(f)
                     .then(function (isFolder) {
-                        var name = path.parse(f).name,
+                        const name = path.parse(f).name,
                             isHidden = /^\..*/.test(name);
                         return (isFolder && !isHidden) ? f : false;
                     });
             };
 
-            var filterDirs = function (dirs) {
+            const filterDirs = function (dirs) {
                 return Promise.all(_.map(dirs, isVisibleDir)).then(utils.lodash.compact());
             };
 
@@ -595,8 +600,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
         },
 
         deleteTargetTranslation: function (meta) {
-            var mythis = this;
-            var paths = utils.makeProjectPaths(targetDir, meta);
+            const paths = utils.makeProjectPaths(targetDir, meta);
             let projectDir = paths.projectDir;
 
             return utils.fileExists(projectDir)
@@ -611,39 +615,32 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                     if (exists) {
                         return trash([projectDir]);
                     } else {
-                        throw mythis.translate("project_dir_doesnt_exist");
+                        throw translate("project_dir_doesnt_exist");
                     }
                 })
                 .catch(function (err) {
-                    throw err || mythis.translate("unable_delete_file");
+                    throw err || translate("unable_delete_file");
                 });
         },
 
         backupProject: function (projectDir) {
-            var mythis = this;
             const projectName = path.basename(projectDir);
-            var autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
-            var filePath = path.join(autoBackupDir, `${projectName}_${utils.getDateAndTime()}.zip`);
+            const autoBackupDir = configurator.getUserPath('datalocation', 'automatic_backups');
+            const filePath = path.join(autoBackupDir, `${projectName}_${utils.getDateAndTime()}.zip`);
 
             return utils.fileExists(projectDir)
                 .then(function (exists) {
                     if (!exists) {
-                        throw mythis.translate("project_dir_doesnt_exist");
+                        throw translate("project_dir_doesnt_exist");
                     }
                 })
                 .then(function () {
-                    var output = fs.createWriteStream(filePath);
-                    var archive = archiver.create('zip');
-                    archive.pipe(output);
-                    archive.directory(projectDir, projectName + "/");
-                    return archive.finalize().then(function () {
-                        return filePath;
+                    const zip = new AdmZip(undefined, {});
+                    zip.addLocalFolder(projectDir, projectName);
+                    zip.writeZip(filePath, (err) => {
+                        if (err) reporter.logError(err);
                     });
                 });
-        },
-
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
         },
     };
 }

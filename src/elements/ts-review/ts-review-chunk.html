@@ -171,9 +171,7 @@
             this.fire('iron-signal', {name: 'fromreview', data: {index: index}});
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function() {
 

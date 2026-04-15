@@ -6,14 +6,24 @@
 
 // 1. Setup Control Flags for Mocks
 // Variable name MUST start with 'mock' to be used inside jest.mock factory
+
 let mockThrowConfiguratorError = false;
 
 // 2. Setup Mocks for Node Modules
-jest.mock('electron');
+jest.mock('electron', () => ({
+    contextBridge: {
+        exposeInMainWorld: jest.fn(k => k)
+    },
+    ipcRenderer: {
+        send: jest.fn(),
+        sendSync: jest.fn(),
+    }
+}));
 jest.mock('fs');
 jest.mock('mkdirp');
 jest.mock('door43-client-fork');
 jest.mock('fs-extra');
+jest.mock('path');
 
 // 3. Setup Mocks for Internal Modules
 const mockConfiguratorInstance = {
@@ -40,7 +50,7 @@ const mockConfiguratorInstance = {
 jest.mock('../src/js/configurator', () => {
     // FIX: Check the flag at the MODULE level, not inside the class constructor.
     // This ensures require('../src/js/configurator') throws immediately,
-    // which triggers the try/catch block in bootstrap.js.
+    // which triggers the try/catch block in preload-main.js.
     if (mockThrowConfiguratorError) {
         throw new Error('Configurator missing');
     }
@@ -80,8 +90,10 @@ jest.mock('../src/config/private.json', () => ({ privateSetting: true }), { virt
 describe('Application Bootstrap', () => {
     let fs;
     let electron;
+    let path;
+    let contextBridge;
 
-    const BOOTSTRAP_FILE = '../src/js/bootstrap.js';
+    const PRELOAD_FILE = '../src/js/preload-main.js';
 
     beforeEach(() => {
         // 1. Reset Module Registry (Clear cache)
@@ -94,6 +106,8 @@ describe('Application Bootstrap', () => {
         // 3. Re-require modules
         fs = require('fs');
         electron = require('electron');
+        contextBridge = electron.contextBridge;
+        path = require('path');
         fs.__reset();
 
         // 4. Mock Window & Console
@@ -114,11 +128,14 @@ describe('Application Bootstrap', () => {
     });
 
     afterEach(() => {
+        contextBridge.exposeInMainWorld.mockClear();
         jest.restoreAllMocks();
     });
 
     it('should bootstrap the application and assign window.App', () => {
-        require(BOOTSTRAP_FILE);
+        require(PRELOAD_FILE);
+
+        const exposedApp = contextBridge.exposeInMainWorld.mock.calls[0][1];
 
         expect(electron.ipcRenderer.send).toHaveBeenCalledWith('loading-status', 'Bootstrapping...');
         expect(electron.ipcRenderer.sendSync).toHaveBeenCalledWith('main-window', 'dataPath');
@@ -130,18 +147,22 @@ describe('Application Bootstrap', () => {
         expect(mkdirp.sync).toHaveBeenCalled();
         expect(fs.writeFileSync).toHaveBeenCalled();
 
-        expect(window.App).toBeDefined();
-        expect(window.App.appName).toBe('BTT Writer');
+        expect(contextBridge.exposeInMainWorld).toHaveBeenCalledWith('App', expect.anything());
+        expect(typeof exposedApp.translate).toBe('function');
+        expect(exposedApp.translate('test_key')).toContain('translated');
 
-        expect(window.App.window).toBeDefined();
-        window.App.window.close();
+        expect(exposedApp).toBeDefined();
+        expect(exposedApp.appName).toBe('BTT Writer');
+
+        expect(exposedApp.window).toBeDefined();
+        exposedApp.close();
         expect(electron.ipcRenderer.sendSync).toHaveBeenCalledWith('main-window', 'close');
     });
 
     it('should not overwrite library database if it already exists', () => {
         fs.__setMockStats('/mock/data/path/library/index.sqlite', { isFile: () => true });
 
-        require(BOOTSTRAP_FILE);
+        require(PRELOAD_FILE);
 
         expect(fs.writeFileSync).not.toHaveBeenCalled();
     });
@@ -152,7 +173,7 @@ describe('Application Bootstrap', () => {
 
         // Verify that the bootstrap process throws the error back up
         expect(() => {
-            require(BOOTSTRAP_FILE);
+            require(PRELOAD_FILE);
         }).toThrow();
 
         // Verify that before throwing, it tried to send the error via IPC
@@ -160,7 +181,7 @@ describe('Application Bootstrap', () => {
     });
 
     it('should initialize locale based on user settings', () => {
-        require(BOOTSTRAP_FILE);
+        require(PRELOAD_FILE);
         expect(mockI18nInstance.setLocale).toHaveBeenCalledWith('en');
     });
 });

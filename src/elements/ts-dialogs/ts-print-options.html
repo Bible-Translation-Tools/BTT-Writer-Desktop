@@ -133,12 +133,10 @@
         },
 
         translateBook: function(slug) {
-            return slug ? this.translate(`book_${slug}`): "";
+            return slug ? App.translate(`book_${slug}`): "";
         },
 
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
-        },
+        translate: App.translate,
 
         ready: function () {
         }

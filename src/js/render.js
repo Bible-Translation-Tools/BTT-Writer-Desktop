@@ -2,8 +2,10 @@
 
 const path = require('path');
 const { usfmToHtml } = require('./usfmparse');
+const _ = require("lodash");
+const sanitize = require('./lib/sanitize');
 
-function Renderer() {
+function Renderer(translate) {
 
     return {
 
@@ -109,7 +111,7 @@ function Renderer() {
 
                 const div = document.createElement('div');
                 div.className = `style-scope ${module}`;
-                div.innerHTML = paragraph;
+                div.innerHTML = sanitize(paragraph);
 
                 container.appendChild(div);
 
@@ -318,7 +320,7 @@ function Renderer() {
 
                 const header = createScopedElement("h2");
                 // Using innerHTML allows formatting within titles if necessary
-                header.innerHTML = chapter.title;
+                header.innerHTML = sanitize(chapter.title);
                 chaptersContainer.appendChild(header);
 
                 const contentClasses = [];
@@ -330,7 +332,7 @@ function Renderer() {
 
                 // Render verses content
                 const result = usfmToHtml(chapter.content, chapter.id, module);
-                chapterDiv.innerHTML = result.html;
+                chapterDiv.innerHTML = sanitize(result.html);
 
                 chaptersContainer.appendChild(chapterDiv);
 
@@ -369,7 +371,7 @@ function Renderer() {
             const output = document.createElement("div");
             output.appendChild(fragment);
 
-            return output.innerHTML;
+            return sanitize(output.innerHTML);
         },
 
         renderObsPrintPreview: function (chunks, options, imagePath) {
@@ -451,11 +453,10 @@ function Renderer() {
             h2.textContent = data.title;
             const div = document.createElement('div');
             div.className = `style-scope ${module}`;
-            div.innerHTML = this.renderResourceLinks(data.body, linksEnabled, module);
+            div.innerHTML = sanitize(this.renderResourceLinks(data.body, linksEnabled, module));
 
             container.appendChild(h2);
             container.appendChild(div);
-
             return container.innerHTML;
         },
 
@@ -470,7 +471,7 @@ function Renderer() {
                 const linkSection = tmLinkTest.exec(text)[2];
                 linkSlug = tmLinkTest.exec(text)[3];
 
-                const linkName = this.translate("translation_manual", `${linkSection}/${linkSlug}`);
+                const linkName = translate("translation_manual", `${linkSection}/${linkSlug}`);
                 let target;
 
                 if (linksEnabled) {
@@ -590,7 +591,7 @@ function Renderer() {
 
                             const footnoteHtml = this.markerToFootnote(footnote, chunk.index, noteindex);
                             const tempDiv = document.createElement("div");
-                            tempDiv.innerHTML = footnoteHtml;
+                            tempDiv.innerHTML = sanitize(footnoteHtml);
 
                             // Append all child nodes from the temporary div
                             while (tempDiv.firstChild) {
@@ -652,8 +653,8 @@ function Renderer() {
                     returnstr += "\n";
                 } else {
                     for (let i = 0; i < children.length; i++) {
-                        const type = children[i].nodeName;
                         const child = children[i];
+                        const type = child.nodeName;
 
                         if (type === "TS-VERSE-MARKER") {
                             const versenum = child.verse;
@@ -776,10 +777,6 @@ function Renderer() {
             }
 
             return walk(doc.body).trim();
-        },
-
-        translate: function (key, ...args) {
-            return App.locale.translate(key, ...args);
         },
     };
 }

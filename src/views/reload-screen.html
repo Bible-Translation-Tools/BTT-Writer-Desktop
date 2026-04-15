@@ -19,19 +19,8 @@
 
     <script>
         (function () {
-            const path = require('path');
-            const i18n = require('../js/i18n').Locale(path.resolve(path.join(__dirname, '..', '..', 'i18n')));
-            const Configurator = require('../js/configurator').Configurator;
-            
-            const configurator = new Configurator();
-            configurator.setStorage(window.localStorage);
-            const theme = configurator.getUserSetting("colortheme").name;
-
-            const loc = configurator.getUserSetting("localization");
-            i18n.setLocale(loc.id);
-
-            const splash = document.getElementById('splash');
-            splash.content = { title: i18n.translate("reloading"), subtitle: i18n.translate("please_wait"), message: "" };
+            var splash = document.getElementById('splash');
+            splash.content = { title: reloadAPI.translate("reloading"), subtitle: reloadAPI.translate("please_wait"), message: "" };
         })();
     </script>
 </body>

@@ -17,7 +17,7 @@ const gulp = require('gulp'),
     debInstaller = require('electron-installer-debian'),
     dmgInstaller = require('electron-installer-dmg'),
     packageJson = require("./package.json"),
-    archiver = require('archiver');
+    AdmZip = require('adm-zip');
 
 const APP_NAME = 'BTT-Writer',
     JS_FILES = './src/js/**/*.js',
@@ -57,15 +57,9 @@ gulp.task('prince', function(done) {
 
 function zipDirectory(sourceDir, destPath, outPath) {
     return new Promise((resolve, reject) => {
-        const archive = archiver.create('zip');
-        const output = fs.createWriteStream(outPath);
-
-        output.on('close', () => resolve());
-        archive.on('error', (err) => reject(err));
-
-        archive.pipe(output);
-        archive.directory(sourceDir, destPath);
-        archive.finalize();
+        const zip = new AdmZip(undefined, {});
+        zip.addLocalFolder(sourceDir, destPath);
+        zip.writeZip(outPath, err => err ? reject(err) : resolve());
     });
 }
 

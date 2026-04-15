@@ -616,7 +616,7 @@
     "logout": "Se Déconnecter",
     "settings": "Parametres",
     "__folder21": "js",
-    "__file81": "bootstrap.js",
+    "__file81": "preload-main.js",
     "loading_mkdirp": "Chargement de la mkdirp...",
     "loading_db": "Chargement de la Base de Données...",
     "loading_reporter": "Chargement du Rapporteur...",
