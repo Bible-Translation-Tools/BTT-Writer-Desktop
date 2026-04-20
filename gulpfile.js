@@ -205,6 +205,9 @@ function release(done){
             categories: [
                 "Translation", "Languages"
             ],
+            depends: [
+                "git"
+            ]
         }
         return debInstaller(options);
     }
