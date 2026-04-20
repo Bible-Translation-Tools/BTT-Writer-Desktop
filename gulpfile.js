@@ -207,7 +207,9 @@ function release(done){
             ],
             depends: [
                 "git"
-            ]
+            ],
+            maintainer: "<wycliffeassociates.org>",
+            homepage: "https://bibletranslationtools.org/writer"
         }
         return debInstaller(options);
     }
