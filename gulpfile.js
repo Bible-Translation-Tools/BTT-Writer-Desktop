@@ -199,6 +199,11 @@ function release(done){
             categories: [
                 "Translation", "Languages"
             ],
+            depends: [
+                "git"
+            ],
+            maintainer: "<wycliffeassociates.org>",
+            homepage: "https://bibletranslationtools.org/writer"
         }
         return debInstaller(options);
     }
