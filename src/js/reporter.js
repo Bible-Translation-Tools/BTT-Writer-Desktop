@@ -18,6 +18,10 @@ function Reporter (args) {
     let maxLogFileKb = args.maxLogFileKb || 200;
     let appVersion = args.appVersion || '0.0.0';
     let verbose = args.verbose || false;
+    const HELPDESK_HOST = 'helpdesk.techadvancement.com';
+    const HELPDESK_PATH_PREFIX = '/wp-json/fluent-support/v2/public/incoming_webhook/';
+    let helpdeskWebhookToken = args.helpdeskWebhookToken || '';
+    let defaultSenderEmail = args.helpdeskSenderEmail || 'bttwriter-desktop@noreply.local';
 
     const convertError = function (err) {
         if (!err) return '';
@@ -271,6 +275,105 @@ function Reporter (args) {
 
     _this.canReportToGithub = function () {
         return !!(repo && repoOwner && oauthToken);
+    };
+
+    /**
+     * Submits a ticket to the Fluent Support help desk webhook.
+     * Independent of the GitHub flow — both can be used in parallel.
+     *
+     * @param {string} summary  short description / first error line
+     * @param {object} [opts]
+     * @param {string} [opts.senderEmail]  email to associate the ticket with
+     * @param {boolean} [opts.isCrash]     include stack trace in body
+     * @param {string} [opts.stack]        explicit stack trace to include
+     */
+    _this.canReportToHelpdesk = function () {
+        return !!helpdeskWebhookToken;
+    };
+
+    _this.sendHelpdeskTicket = function (summary, opts) {
+        if (!_this.canReportToHelpdesk()) {
+            return Promise.reject(new Error('Helpdesk webhook token not configured'));
+        }
+        opts = opts || {};
+        const senderEmail = opts.senderEmail || defaultSenderEmail;
+        const isCrash = !!opts.isCrash;
+        const explicitStack = opts.stack;
+
+        const title = (summary && summary.length > 80)
+            ? summary.substring(0, 77) + '...'
+            : (summary || (isCrash ? 'Crash report' : 'Bug report'));
+
+        return _this.stringFromLogFile(null).catch(function () { return ''; })
+            .then(function (logTail) {
+                const lines = [];
+                if (summary) {
+                    lines.push(summary, '');
+                }
+                lines.push('## Environment');
+                lines.push('Version: ' + appVersion);
+                lines.push('OS: ' + os.type() + ' ' + os.release() + ' (' + os.platform() + ' ' + os.arch() + ')');
+                if (isCrash) {
+                    lines.push('');
+                    lines.push('## Stack Trace');
+                    lines.push('```');
+                    lines.push(explicitStack || _this.stackTrace());
+                    lines.push('```');
+                }
+                lines.push('');
+                lines.push('## Recent Log');
+                lines.push('```');
+                lines.push(logTail || '(empty)');
+                lines.push('```');
+
+                const fields = {
+                    title: title,
+                    content: lines.join('\n'),
+                    'sender[email]': senderEmail
+                };
+
+                const boundary = '----bttwriter' + Date.now().toString(16);
+                const partsArr = [];
+                Object.keys(fields).forEach(function (key) {
+                    partsArr.push(
+                        '--' + boundary + '\r\n' +
+                        'Content-Disposition: form-data; name="' + key + '"\r\n\r\n' +
+                        fields[key] + '\r\n'
+                    );
+                });
+                partsArr.push('--' + boundary + '--\r\n');
+                const payload = Buffer.from(partsArr.join(''), 'utf8');
+
+                const postOptions = {
+                    host: HELPDESK_HOST,
+                    port: 443,
+                    path: HELPDESK_PATH_PREFIX + helpdeskWebhookToken,
+                    method: 'POST',
+                    headers: {
+                        'User-Agent': 'BTT-Writer-Desktop/' + appVersion,
+                        'Content-Type': 'multipart/form-data; boundary=' + boundary,
+                        'Content-Length': payload.length
+                    }
+                };
+
+                return new Promise(function (resolve, reject) {
+                    const req = https.request(postOptions, function (res) {
+                        res.setEncoding('utf8');
+                        let data = '';
+                        res.on('data', function (chunk) { data += chunk; });
+                        res.on('end', function () {
+                            if (res.statusCode >= 400) {
+                                reject(new Error('Helpdesk submission failed: ' + res.statusCode + ' ' + data));
+                            } else {
+                                resolve(data);
+                            }
+                        });
+                    });
+                    req.on('error', reject);
+                    req.write(payload);
+                    req.end();
+                });
+            });
     };
 
     return _this;

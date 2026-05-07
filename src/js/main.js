@@ -30,6 +30,51 @@ app.setPath('userData', (function (dataDir) {
     return path.join(base, dataDir);
 })('BTT-Writer'));
 
+// Lightweight reporter for main-process crashes. Shares the renderer's log file
+// so the ticket includes the same recent context. No GitHub creds — main-process
+// crashes go to the help desk only. The renderer reads the helpdesk token via
+// the configurator; the main process has no configurator, so we pull it from
+// defaults.json directly.
+const mainReporter = (function () {
+    try {
+        const Reporter = require('./reporter').Reporter;
+        const defaults = require('../config/defaults.json');
+        const tokenEntry = defaults.find(function (e) { return e.name === 'helpdeskWebhookToken'; });
+        return new Reporter({
+            logPath: path.join(app.getPath('userData'), 'log.txt'),
+            helpdeskWebhookToken: tokenEntry && tokenEntry.value,
+            appVersion: require('../../package.json').version,
+            verbose: true
+        });
+    } catch (e) {
+        console.error('Failed to init main-process reporter:', e);
+        return null;
+    }
+})();
+
+let lastMainTicketAt = 0;
+const MAIN_TICKET_THROTTLE_MS = 60 * 1000;
+function submitMainTicket(summary, stack) {
+    if (!mainReporter) return;
+    const now = Date.now();
+    if (now - lastMainTicketAt < MAIN_TICKET_THROTTLE_MS) return;
+    lastMainTicketAt = now;
+    mainReporter.sendHelpdeskTicket(summary, { isCrash: true, stack: stack })
+        .catch(function (e) { console.error('helpdesk submit failed:', e && e.message); });
+}
+
+process.on('uncaughtException', function (err) {
+    if (mainReporter) mainReporter.logError(err, 'Uncaught exception in main process');
+    submitMainTicket('Main-process crash: ' + (err && err.message),
+                     err && err.stack);
+});
+
+process.on('unhandledRejection', function (reason) {
+    if (mainReporter) mainReporter.logError(reason, 'Unhandled rejection in main process');
+    submitMainTicket('Main-process unhandled rejection: ' + (reason && (reason.message || reason)),
+                     reason && reason.stack);
+});
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let splashScreen;
@@ -131,6 +176,18 @@ function createMainWindow () {
     mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
         details.requestHeaders['User-Agent'] = userAgent;
         callback({ cancel: false, requestHeaders: details.requestHeaders });
+    });
+
+    mainWindow.webContents.on('render-process-gone', function (event, details) {
+        const reason = (details && details.reason) || 'unknown';
+        if (mainReporter) mainReporter.logError(JSON.stringify(details), 'Renderer process gone');
+        submitMainTicket('Renderer process gone: ' + reason, null);
+    });
+
+    mainWindow.webContents.on('preload-error', function (event, preloadPath, error) {
+        if (mainReporter) mainReporter.logError(error, 'Preload error: ' + preloadPath);
+        submitMainTicket('Preload error: ' + (error && error.message),
+                         error && error.stack);
     });
 }
 

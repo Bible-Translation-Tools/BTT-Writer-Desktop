@@ -146,8 +146,35 @@ process.stdout.write = console.log.bind(console);
         repoOwner: configurator.getValue('repoOwner'),
         repo: configurator.getValue('repo'),
         maxLogFileKb: configurator.getValue('maxLogFileKb'),
+        helpdeskWebhookToken: configurator.getValue('helpdeskWebhookToken'),
         appVersion: require('../../package.json').version,
         verbose: true
+    });
+
+    // Funnel uncaught renderer errors to both the log and the help desk.
+    // Throttled so a tight error loop doesn't spam tickets.
+    let lastTicketAt = 0;
+    const TICKET_THROTTLE_MS = 60 * 1000;
+    const submitTicket = function (summary, stack) {
+        const now = Date.now();
+        if (now - lastTicketAt < TICKET_THROTTLE_MS) return;
+        lastTicketAt = now;
+        reporter.sendHelpdeskTicket(summary, { isCrash: true, stack: stack })
+            .catch(function (e) { console.error('helpdesk submit failed:', e && e.message); });
+    };
+
+    window.addEventListener('error', function (event) {
+        const err = event.error || event.message;
+        reporter.logError(err, 'Uncaught renderer error');
+        submitTicket('Renderer error: ' + (event.message || 'unknown'),
+                     event.error && event.error.stack);
+    });
+
+    window.addEventListener('unhandledrejection', function (event) {
+        const reason = event.reason;
+        reporter.logError(reason, 'Unhandled promise rejection');
+        submitTicket('Unhandled rejection: ' + (reason && (reason.message || reason)),
+                     reason && reason.stack);
     });
 
     const dataManager = (function () {
