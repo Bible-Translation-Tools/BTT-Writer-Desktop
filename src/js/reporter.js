@@ -22,6 +22,7 @@ function Reporter (args) {
     const HELPDESK_PATH_PREFIX = '/wp-json/fluent-support/v2/public/incoming_webhook/';
     let helpdeskWebhookToken = args.helpdeskWebhookToken || '';
     let defaultSenderEmail = args.helpdeskSenderEmail || 'bttwriter-desktop-feedback@techadvancement.com';
+    let getUserLogin = typeof args.getUserLogin === 'function' ? args.getUserLogin : null;
 
     const convertError = function (err) {
         if (!err) return '';
@@ -313,6 +314,15 @@ function Reporter (args) {
                 lines.push('## Environment');
                 lines.push('Version: ' + appVersion);
                 lines.push('OS: ' + os.type() + ' ' + os.release() + ' (' + os.platform() + ' ' + os.arch() + ')');
+                let userLogin = '';
+                if (getUserLogin) {
+                    try { userLogin = getUserLogin() || ''; } catch (e) { userLogin = ''; }
+                }
+                if (userLogin) {
+                    lines.push('User: ' + userLogin);
+                } else {
+                    lines.push('User: (unknown)');
+                }
                 if (isCrash) {
                     lines.push('');
                     lines.push('## Stack Trace');

@@ -147,6 +147,10 @@ process.stdout.write = console.log.bind(console);
         repo: configurator.getValue('repo'),
         maxLogFileKb: configurator.getValue('maxLogFileKb'),
         helpdeskWebhookToken: configurator.getValue('helpdeskWebhookToken'),
+        getUserLogin: function () {
+            const userdata = configurator.getValue('userdata');
+            return userdata && userdata.username || '';
+        },
         appVersion: require('../../package.json').version,
         verbose: true
     });
