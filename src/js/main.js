@@ -228,6 +228,34 @@ function createAppMenus() {
                     }
                 }
             ]
+        },
+        {
+            label: "Debug",
+            submenu: [
+                {
+                    label: "Throw error (main process)",
+                    click: function () {
+                        setImmediate(function () {
+                            throw new Error('Test crash from Debug menu (main process) at ' + new Date().toISOString());
+                        });
+                    }
+                },
+                {
+                    label: "Throw error (renderer)",
+                    click: function () {
+                        if (!mainWindow) return;
+                        mainWindow.webContents.executeJavaScript(
+                            "setTimeout(function () { throw new Error('Test crash from Debug menu (renderer) at ' + new Date().toISOString()); }, 0);"
+                        );
+                    }
+                },
+                {
+                    label: "Force-kill renderer process",
+                    click: function () {
+                        if (mainWindow) mainWindow.webContents.forcefullyCrashRenderer();
+                    }
+                }
+            ]
         }
     ];
 
