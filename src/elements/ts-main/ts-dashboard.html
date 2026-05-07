@@ -1152,7 +1152,24 @@
           mythis.closeFeedback();
           mythis.showLoadingMessage(App.translate("sending_feedback_status"));
 
-          if (App.reporter.canReportToGithub()) {
+          const canGithub = App.reporter.canReportToGithub();
+          const canHelpdesk = App.reporter.canReportToHelpdesk();
+
+          if (!canGithub && !canHelpdesk) {
+              mythis.showErrorMessage(App.translate('feedback_failed'), App.translate("token_error"), null);
+              return;
+          }
+
+          // Fire helpdesk as a parallel submission whenever it's configured.
+          // Tracked so the helpdesk-only fallback path can await its outcome.
+          let helpdeskPromise = null;
+          if (canHelpdesk) {
+              helpdeskPromise = App.reporter.sendHelpdeskTicket(message, { isCrash: false })
+                  .then(function (res) { Log.notice(res, 'helpdesk feedback sent'); return true; })
+                  .catch(function (err) { Log.warning(err && err.message, 'helpdesk feedback failed'); return false; });
+          }
+
+          if (canGithub) {
               return App.reporter.reportBug(message)
                   .then(function (res) {
                       var response;
@@ -1180,9 +1197,16 @@
                       }
                       mythis.showErrorMessage(App.translate("feedback_failed"), errorMessage, err);
                   });
-          } else {
-              mythis.showErrorMessage(App.translate('feedback_failed'), App.translate("token_error"), null);
           }
+
+          // GitHub not configured — helpdesk is the only sink, tie status to it.
+          return helpdeskPromise.then(function (ok) {
+              if (ok) {
+                  mythis.showMessage(App.translate("feedback_sent"), App.translate("feedback_sent2"));
+              } else {
+                  mythis.showErrorMessage(App.translate("feedback_failed"), App.translate("feedback_failed4"), null);
+              }
+          });
       },
 
       updateFromProject: function () {
