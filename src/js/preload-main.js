@@ -229,7 +229,7 @@ process.stdout.write = console.log.bind(console);
     const SEND_CHANNELS = [
         'fire-reload', 'theme-changed', 'theme-loaded', 'localization-changed',
         'update-spellcheck', 'loading-status', 'show-devtools', 'main-loading-done',
-        'open-manual'
+        'open-manual', 'debug-crash'
     ];
     const SEND_SYNC_CHANNELS = ['main-window', 'open-file', 'save-as'];
     const ON_CHANNELS = ['maximize', 'unmaximize'];

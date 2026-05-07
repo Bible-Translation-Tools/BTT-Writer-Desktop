@@ -349,6 +349,16 @@ ipcMain.on('open-manual', function (event, url) {
     void electron.shell.openExternal(url);
 });
 
+ipcMain.on('debug-crash', function (event, target) {
+    if (target === 'main') {
+        setImmediate(function () {
+            throw new Error('Test crash from sidebar Debug menu (main process) at ' + new Date().toISOString());
+        });
+    } else if (target === 'renderer-kill') {
+        if (mainWindow) mainWindow.webContents.forcefullyCrashRenderer();
+    }
+});
+
 ipcMain.on('update-spellcheck', function(event, enabled) {
     if (mainWindow) {
         mainWindow.webContents.session.setSpellCheckerEnabled(enabled);
