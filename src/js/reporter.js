@@ -21,7 +21,7 @@ function Reporter (args) {
     const HELPDESK_HOST = 'helpdesk.techadvancement.com';
     const HELPDESK_PATH_PREFIX = '/wp-json/fluent-support/v2/public/incoming_webhook/';
     let helpdeskWebhookToken = args.helpdeskWebhookToken || '';
-    let defaultSenderEmail = args.helpdeskSenderEmail || 'bttwriter-desktop@noreply.local';
+    let defaultSenderEmail = args.helpdeskSenderEmail || 'bttwriter-desktop-feedback@techadvancement.com';
 
     const convertError = function (err) {
         if (!err) return '';
