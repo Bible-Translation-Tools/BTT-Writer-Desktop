@@ -116,29 +116,59 @@ function clickByTextExpr(text) {
   `;
 }
 
+/** Matches i18n key \`local_user_prompt\` across shipped locales (see i18n/*.json). */
+const PROFILE_NAME_PLACEHOLDERS = new Set([
+  "Full Name or Pseudonym",
+  "Nombre Completo o Apodo",
+  "Nom Complet ou Pseudonyme",
+  "Nome Completo ou Pseudônimo",
+  "Полное имя или псевдоним",
+  "نام کامل یا مستعار",
+]);
+
 function setProfileNameExpr(name) {
   const target = escapeForTemplate(name);
+  const placeholdersJson = JSON.stringify([...PROFILE_NAME_PLACEHOLDERS]);
   return `
     (function () {
-      function findInRoot(root) {
-        const input = Array.from(root.querySelectorAll("input"))
-          .find((node) =>
-            node.placeholder === "Full Name or Pseudonym" &&
-            node.getBoundingClientRect().width > 0
-          );
-        if (input) return input;
-        for (const el of root.querySelectorAll("*")) {
-          if (!el.shadowRoot) continue;
-          const nested = findInRoot(el.shadowRoot);
-          if (nested) return nested;
-        }
-        return null;
+      var PLACEHOLDERS = new Set(${placeholdersJson});
+
+      function isProfileNameField(node) {
+        if (!node || node.tagName !== "INPUT") return false;
+        if (node.type === "password" || node.type === "hidden" || node.type === "submit") return false;
+        return PLACEHOLDERS.has(node.placeholder || "");
       }
 
-      const input = findInRoot(document);
+      function collectInputs(root, out) {
+        Array.prototype.forEach.call(root.querySelectorAll("input"), function (node) {
+          if (isProfileNameField(node)) out.push(node);
+        });
+        Array.prototype.forEach.call(root.querySelectorAll("*"), function (el) {
+          if (el.shadowRoot) collectInputs(el.shadowRoot, out);
+        });
+      }
+
+      function pickBest(candidates) {
+        function visibleEnough(node) {
+          try {
+            node.scrollIntoView({ block: "center", inline: "nearest" });
+          } catch (e) {}
+          var r = node.getBoundingClientRect();
+          return r.width > 0 && r.height > 0;
+        }
+        for (var i = 0; i < candidates.length; i++) {
+          if (visibleEnough(candidates[i])) return candidates[i];
+        }
+        return candidates.length ? candidates[0] : null;
+      }
+
+      var found = [];
+      collectInputs(document, found);
+      var input = pickBest(found);
       if (!input) return "NOT_FOUND";
 
-      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+      var setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value");
+      setter = setter && setter.set;
       if (!setter) return "SETTER_NOT_FOUND";
 
       setter.call(input, ${target});
@@ -176,7 +206,7 @@ async function run() {
       evaluate,
       () => clickByTextExpr("Create Local User Profile"),
       (state) => state === "CLICKED",
-      15000,
+      5000,
       "Failed to click Create Local User Profile"
     );
     printStep("step-1-create-local-profile", step1);
@@ -186,7 +216,7 @@ async function run() {
       evaluate,
       () => setProfileNameExpr(PROFILE_NAME),
       (state) => state.startsWith("SET:"),
-      15000,
+      5000,
       "Failed to set profile name input"
     );
     printStep("step-2-enter-username", step2);
@@ -196,7 +226,7 @@ async function run() {
       evaluate,
       () => clickByTextExpr("OK"),
       (state) => state === "CLICKED",
-      15000,
+      5000,
       "Failed to click OK"
     );
     printStep("step-3-ok", step3);
@@ -206,7 +236,7 @@ async function run() {
       evaluate,
       () => clickByTextExpr("I Agree"),
       (state) => state === "CLICKED",
-      15000,
+      5000,
       "Failed to click I Agree"
     );
     printStep("step-4-i-agree", step4);
