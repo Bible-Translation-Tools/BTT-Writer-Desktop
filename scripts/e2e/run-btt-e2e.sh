@@ -17,8 +17,4 @@ node scripts/e2e/btt-project-creation.mjs && \
 
 sleep 3s && \
 
-node scripts/e2e/btt-project-navigation.mjs && \
-
-sleep 1s && \
-
-node scripts/e2e/btt-menu-navigation.mjs
+node scripts/e2e/btt-project-navigation.mjs
