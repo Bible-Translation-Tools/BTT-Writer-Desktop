@@ -412,7 +412,8 @@ function clickVisibleDialogConfirmExpr() {
   `;
 }
 
-async function waitForChunkRefVisibleWithScroll(evaluate, chunkRef, timeoutMs = 45000) {
+// All timeouts capped to 10000ms (10s)
+async function waitForChunkRefVisibleWithScroll(evaluate, chunkRef, timeoutMs = 10000) {
   const start = Date.now();
   let lastState = "UNKNOWN";
   while (Date.now() - start < timeoutMs) {
@@ -431,7 +432,7 @@ async function waitForChunkRefVisibleWithScroll(evaluate, chunkRef, timeoutMs = 
   throw new Error(`Timed out trying to scroll to chunk ref: ${chunkRef} (last state: ${lastState})`);
 }
 
-async function waitForEvalState(evaluate, expressionFactory, expectedState, timeoutMs, failureMessage) {
+async function waitForEvalState(evaluate, expressionFactory, expectedState, timeoutMs = 10000, failureMessage) {
   const start = Date.now();
   let lastState = "UNKNOWN";
   while (Date.now() - start < timeoutMs) {
@@ -444,7 +445,7 @@ async function waitForEvalState(evaluate, expressionFactory, expectedState, time
   throw new Error(`${failureMessage} (last state: ${lastState})`);
 }
 
-async function waitForTextboxContains(evaluate, value, timeoutMs = 15000) {
+async function waitForTextboxContains(evaluate, value, timeoutMs = 10000) {
   const start = Date.now();
   let lastState = "UNKNOWN";
   while (Date.now() - start < timeoutMs) {
@@ -457,7 +458,7 @@ async function waitForTextboxContains(evaluate, value, timeoutMs = 15000) {
   throw new Error(`Textbox did not contain expected text (last state: ${lastState})`);
 }
 
-async function waitForVerseMarkerInChunk(evaluate, chunkRef, verseNumber, timeoutMs = 20000) {
+async function waitForVerseMarkerInChunk(evaluate, chunkRef, verseNumber, timeoutMs = 10000) {
   const start = Date.now();
   let lastState = "UNKNOWN";
   while (Date.now() - start < timeoutMs) {
@@ -481,13 +482,13 @@ async function run() {
 
   try {
     await send("Runtime.enable");
-    await waitForChunkRefVisibleWithScroll(evaluate, CHUNK_REF, 45000);
+    await waitForChunkRefVisibleWithScroll(evaluate, CHUNK_REF, 10000);
     printStep("chunk-ref", CHUNK_REF);
     await waitForEvalState(
       evaluate,
       () => clickEditIconForChunkExpr(CHUNK_REF),
       "CLICKED",
-      15000,
+      10000,
       `Failed to click edit icon for chunk: ${CHUNK_REF}`
     );
     printStep("edit-icon", "clicked");
@@ -497,23 +498,23 @@ async function run() {
       evaluate,
       () => setTextboxValueExpr(EDIT_TEXT),
       "SET",
-      15000,
+      10000,
       "Failed to set target edit textbox value"
     );
-    await waitForTextboxContains(evaluate, EDIT_TEXT, 15000);
+    await waitForTextboxContains(evaluate, EDIT_TEXT, 10000);
     printStep("textbox-input", EDIT_TEXT);
 
     await waitForEvalState(
       evaluate,
       clickDoneIconExpr,
       "CLICKED",
-      15000,
+      10000,
       "Failed to click done icon"
     );
     printStep("done", "clicked");
 
-    await waitForChunkRefVisibleWithScroll(evaluate, CHUNK_REF, 45000);
-    await waitForVerseMarkerInChunk(evaluate, CHUNK_REF, 15, 20000);
+    await waitForChunkRefVisibleWithScroll(evaluate, CHUNK_REF, 10000);
+    await waitForVerseMarkerInChunk(evaluate, CHUNK_REF, 15, 10000);
     printStep("verse-marker", "15");
     await sleep(1000);
 
@@ -521,7 +522,7 @@ async function run() {
       evaluate,
       () => clickMarkChunkDoneToggleExpr(CHUNK_REF),
       "CLICKED",
-      15000,
+      10000,
       "Failed to click mark-chunk-done toggle"
     );
     printStep("mark-chunk-done", "clicked");
@@ -532,7 +533,7 @@ async function run() {
       evaluate,
       clickVisibleDialogConfirmExpr,
       "CLICKED",
-      15000,
+      10000,
       "Failed to click dialog confirm button"
     );
     printStep("dialog-confirm", "clicked");

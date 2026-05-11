@@ -19,7 +19,7 @@ if (typeof WebSocket !== "function") {
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function printStep(name, result) {
-  console.log(`[smoke] ${name}: ${result}`);
+  console.log(`[project-creation] ${name}: ${result}`);
 }
 
 function escapeForTemplate(str) {
@@ -386,13 +386,13 @@ async function run() {
     await waitForClick(evaluate, "Confirm");
     printStep("confirm", "ok");
 
-    console.log("[smoke] PASS: project creation completed.");
+    console.log("[project-creation] PASS: project creation completed.");
   } finally {
     ws.close();
   }
 }
 
 run().catch((error) => {
-  console.error(`[smoke] FAIL: ${error.message}`);
+  console.error(`[project-creation] FAIL: ${error.message}`);
   process.exitCode = 1;
 });
