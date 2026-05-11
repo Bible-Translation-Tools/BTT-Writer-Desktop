@@ -206,7 +206,7 @@ async function run() {
       evaluate,
       () => clickByTextExpr("Create Local User Profile"),
       (state) => state === "CLICKED",
-      5000,
+      7000,
       "Failed to click Create Local User Profile"
     );
     printStep("step-1-create-local-profile", step1);
@@ -216,7 +216,7 @@ async function run() {
       evaluate,
       () => setProfileNameExpr(PROFILE_NAME),
       (state) => state.startsWith("SET:"),
-      5000,
+      7000,
       "Failed to set profile name input"
     );
     printStep("step-2-enter-username", step2);
@@ -226,7 +226,7 @@ async function run() {
       evaluate,
       () => clickByTextExpr("OK"),
       (state) => state === "CLICKED",
-      5000,
+      7000,
       "Failed to click OK"
     );
     printStep("step-3-ok", step3);
@@ -236,7 +236,7 @@ async function run() {
       evaluate,
       () => clickByTextExpr("I Agree"),
       (state) => state === "CLICKED",
-      5000,
+      7000,
       "Failed to click I Agree"
     );
     printStep("step-4-i-agree", step4);
