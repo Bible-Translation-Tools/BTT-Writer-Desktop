@@ -10,7 +10,7 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     continue-on-error: true
-    timeout-minutes: 30
+    timeout-minutes: 8
 
     steps:
       - name: Checkout
@@ -40,9 +40,6 @@ jobs:
 
       - name: Fetch resource index (same as release build)
         run: |
-          wget --no-verbose "https://btt-writer-resources.s3.amazonaws.com/resource_containers.zip"
-          if [ -f resource_containers.zip ]; then rm -rf ./src/index; fi
-          unzip -qq resource_containers.zip -d ./src/index/
           test -f src/index/index.sqlite
           test -d src/index/resource_containers
           rm -f src/index/resource_containers/en_ta-audio_vol2.tsrc
