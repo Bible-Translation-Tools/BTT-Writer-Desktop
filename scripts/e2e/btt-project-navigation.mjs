@@ -6,7 +6,7 @@
 const CDP_HOST = process.env.BTT_CDP_HOST || "127.0.0.1";
 const CDP_PORT = Number(process.env.BTT_CDP_PORT || "9222");
 const CHUNK_REF = process.env.BTT_CHUNK_REF || "Philemon 1:14–16";
-const EDIT_TEXT = "Nhưng tôi không muốn làm bất cứ điều gì mà không có sự ưng thuận của anh. Tôi làm điều này để bất kỳ việc tốt nào được thực hiện đều không phải do tôi ép buộc anh, nhưng vì anh muốn làm điều đó. Có lẽ lý do cậu ấy bị chia cắt khỏi anh trong một khoảng thời gian, là để anh có thể có lại cậu ấy mãi mãi. Để cậu ta không còn như một nô lệ nữa, nhưng còn hơn cả một nô lệ, như là một anh em yêu dấu, đặc biệt là với tôi và sẽ càng yêu dấu cho anh hơn nữa, cả trong xác thịt lẫn trong Chúa.";
+const EDIT_TEXT = "\\v 14 Nhưng tôi không muốn làm bất cứ điều gì mà không có sự ưng thuận của anh. Tôi làm điều này để bất kỳ việc tốt nào được thực hiện đều không phải do tôi ép buộc anh, nhưng vì anh muốn làm điều đó. \\v 15 Có lẽ lý do cậu ấy bị chia cắt khỏi anh trong một khoảng thời gian, là để anh có thể có lại cậu ấy mãi mãi. \\v 16 Để cậu ta không còn như một nô lệ nữa, nhưng còn hơn cả một nô lệ, như là một anh em yêu dấu, đặc biệt là với tôi và sẽ càng yêu dấu cho anh hơn nữa, cả trong xác thịt lẫn trong Chúa.";
 
 if (typeof fetch !== "function") {
   throw new Error("Global fetch is required. Run with Node 20+.");
@@ -353,6 +353,65 @@ function clickDoneIconExpr() {
   `;
 }
 
+function clickMarkChunkDoneToggleExpr(chunkRef) {
+  const target = escapeForTemplate(chunkRef);
+  return `
+    (function () {
+      function normalizeRef(text) {
+        return (text || "")
+          .replace(/[\\u2010-\\u2015]/g, "-")
+          .replace(/\\s+/g, " ")
+          .trim()
+          .toLowerCase();
+      }
+
+      const wanted = normalizeRef(${target});
+      const reviewList = document.querySelector("iron-list#reviewlist");
+      if (!reviewList) return "NO_REVIEW_LIST";
+
+      const cards = reviewList.querySelectorAll("ts-review-card");
+      for (const card of cards) {
+        const review = card.querySelector("ts-target-review");
+        if (!review) continue;
+        const heading = review.querySelector("#heading");
+        if (!heading) continue;
+        const spans = heading.querySelectorAll("span");
+        if (!spans.length) continue;
+        const headingText = Array.from(spans).map((s) => s.textContent || "").join("");
+        const normalized = normalizeRef(headingText);
+        if (!(normalized === wanted || normalized.includes(wanted))) continue;
+
+        const toggle = review.querySelector("paper-toggle-button#toggle");
+        if (!toggle) return "NO_TOGGLE";
+        const rect = toggle.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) return "TOGGLE_NOT_VISIBLE";
+        toggle.click();
+        return "CLICKED";
+      }
+
+      return "CHUNK_NOT_VISIBLE";
+    })()
+  `;
+}
+
+function clickVisibleDialogConfirmExpr() {
+  return `
+    (function () {
+      const buttons = Array.from(document.querySelectorAll("paper-button[dialog-confirm]"));
+      if (!buttons.length) return "NOT_FOUND";
+
+      const visible = buttons.find((btn) => {
+        const rect = btn.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      });
+      if (!visible) return "NOT_VISIBLE";
+
+      visible.click();
+      return "CLICKED";
+    })()
+  `;
+}
+
 async function waitForChunkRefVisibleWithScroll(evaluate, chunkRef, timeoutMs = 45000) {
   const start = Date.now();
   let lastState = "UNKNOWN";
@@ -456,7 +515,29 @@ async function run() {
     await waitForChunkRefVisibleWithScroll(evaluate, CHUNK_REF, 45000);
     await waitForVerseMarkerInChunk(evaluate, CHUNK_REF, 15, 20000);
     printStep("verse-marker", "15");
-    console.log("[chunk-nav] PASS: chunk navigation + edit + done completed.");
+    await sleep(1000);
+
+    await waitForEvalState(
+      evaluate,
+      () => clickMarkChunkDoneToggleExpr(CHUNK_REF),
+      "CLICKED",
+      15000,
+      "Failed to click mark-chunk-done toggle"
+    );
+    printStep("mark-chunk-done", "clicked");
+
+    await sleep(1000);
+
+    await waitForEvalState(
+      evaluate,
+      clickVisibleDialogConfirmExpr,
+      "CLICKED",
+      15000,
+      "Failed to click dialog confirm button"
+    );
+    printStep("dialog-confirm", "clicked");
+
+    console.log("[chunk-nav] PASS: chunk navigation + edit + done + toggle + confirm completed.");
   } finally {
     ws.close();
   }
