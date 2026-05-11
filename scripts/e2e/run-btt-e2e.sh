@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-DISPLAY=:0 ./node_modules/.bin/electron src/js/main.js \
+DISPLAY="${DISPLAY:-:0}" ./node_modules/.bin/electron src/js/main.js \
   --no-sandbox \
   --remote-debugging-port=9222 \
   > /tmp/btt-debug.log 2>&1 &

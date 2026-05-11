@@ -20,8 +20,6 @@ cat package.json | jq --arg variable "$ENVVER" '.version = $variable' > package.
 sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
 iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
 npm install
-npm test
-npx gulp test
 wget --no-verbose "https://btt-writer-resources.s3.amazonaws.com/resource_containers.zip"
 if [ -f resource_containers.zip ]; then rm -r ./src/index; fi
 unzip -qq resource_containers.zip -d ./src/index/

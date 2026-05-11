@@ -1,0 +1,94 @@
+name: Tests and E2E
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Jest
+        run: npm test
+
+      - name: Gulp (Mocha) unit tests
+        run: npx gulp test
+
+  e2e:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Linux runtime dependencies for Electron
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            xvfb \
+            libgtk-3-0 \
+            libnss3 \
+            libxss1 \
+            libasound2t64 \
+            libxtst6 \
+            libxrandr2 \
+            libgbm1 \
+            libxshmfence1
+
+      - name: Install app dependencies
+        run: npm install
+
+      - name: Fetch resource index (same as release build)
+        run: |
+          wget --no-verbose "https://btt-writer-resources.s3.amazonaws.com/resource_containers.zip"
+          if [ -f resource_containers.zip ]; then rm -rf ./src/index; fi
+          unzip -qq resource_containers.zip -d ./src/index/
+          test -f src/index/index.sqlite
+          test -d src/index/resource_containers
+          rm -f src/index/resource_containers/en_ta-audio_vol2.tsrc
+          rm -f src/index/resource_containers/en_ta-checking_vol1.tsrc
+          rm -f src/index/resource_containers/en_ta-checking_vol2.tsrc
+          rm -f src/index/resource_containers/en_ta-gateway_vol3.tsrc
+          rm -f src/index/resource_containers/en_ta-intro_vol1.tsrc
+          rm -f src/index/resource_containers/en_ta-process_vol1.tsrc
+          rm -f src/index/resource_containers/en_ta-translate_vol1.tsrc
+          rm -f src/index/resource_containers/en_ta-translate_vol2.tsrc
+
+      - name: Bower install
+        run: npx bower install
+
+      - name: Run e2e smoke flow (advisory)
+        env:
+          DISPLAY: ":99"
+        run: |
+          Xvfb :99 -screen 0 1920x1080x24 &
+          bash scripts/e2e/run-btt-e2e.sh
+
+      - name: Upload e2e debug artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-debug-logs
+          path: /tmp/btt-debug.log
+          if-no-files-found: warn
