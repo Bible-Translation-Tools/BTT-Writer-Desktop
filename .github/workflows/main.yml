@@ -1,0 +1,106 @@
+name: CI
+
+on:
+    push:
+    pull_request:
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+jobs:
+    e2e:
+        runs-on: ubuntu-latest
+        timeout-minutes: 8
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node 22
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+
+            - name: Install Linux runtime dependencies for Electron
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y \
+                    xvfb \
+                    libgtk-3-0 \
+                    libnss3 \
+                    libxss1 \
+                    libasound2t64 \
+                    libxtst6 \
+                    libxrandr2 \
+                    libgbm1 \
+                    libxshmfence1
+
+            - name: Install app dependencies
+              run: npm install
+
+            - name: Fetch resource index (same as release build)
+              run: |
+                  test -f src/index/index.sqlite
+                  test -d src/index/resource_containers
+                  rm -f src/index/resource_containers/en_ta-audio_vol2.tsrc
+                  rm -f src/index/resource_containers/en_ta-checking_vol1.tsrc
+                  rm -f src/index/resource_containers/en_ta-checking_vol2.tsrc
+                  rm -f src/index/resource_containers/en_ta-gateway_vol3.tsrc
+                  rm -f src/index/resource_containers/en_ta-intro_vol1.tsrc
+                  rm -f src/index/resource_containers/en_ta-process_vol1.tsrc
+                  rm -f src/index/resource_containers/en_ta-translate_vol1.tsrc
+                  rm -f src/index/resource_containers/en_ta-translate_vol2.tsrc
+
+            - name: Bower install
+              run: npx bower install
+
+            - name: Run e2e tests
+              env:
+                  DISPLAY: ":99"
+                  # Chromium / main-process logs on stderr (renderer console often included when logging is on).
+                  ELECTRON_ENABLE_LOGGING: "1"
+              run: |
+                  Xvfb :99 -screen 0 1920x1080x24 &
+                  # run-btt-e2e.sh tees Electron output here and to /tmp/btt-debug.log so the job log shows browser-side output before the Node e2e steps run.
+                  bash scripts/e2e/run-btt-e2e.sh
+
+    build:
+        needs: e2e
+        # The type of runner that the job will run on
+        runs-on: macos-latest
+
+        # Steps represent a sequence of tasks that will be executed as part of the job
+        steps:
+            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+            - uses: actions/checkout@v2
+            - uses: FranzDiebold/github-env-vars-action@v2.1.0
+
+            - name: Decrypt secret file
+              shell: bash
+              run: ./.github/scripts/decrypt_secret.sh
+              env:
+                  LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+
+            # Runs build script
+            - name: Buildscript
+              shell: bash
+              run: ./.github/scripts/build.sh
+
+            #upload builds to AWS nightlybuilds
+            - name: set s3 destination_dir for nightly-builds
+              run: echo "CURRENT_S3_DESTINATION=$CI_REPOSITORY_OWNER/$CI_REPOSITORY_NAME/$CI_REF_NAME_SLUG/$CI_RUN_NUMBER" >> $GITHUB_ENV
+            - name: Upload file to bucket
+              uses: shallwefootball/s3-upload-action@v1.1.3
+              with:
+                  aws_key_id: ${{ secrets.AWS_KEY_ID }}
+                  aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+                  aws_bucket: ${{ secrets.AWS_BUCKET }}
+                  source_dir: ./release
+                  destination_dir: ${{ env.CURRENT_S3_DESTINATION }}
+
+            - name: upload artifacts to github releases on tags
+              uses: "marvinpinto/action-automatic-releases@v1.2.1"
+              if: contains( github.ref, 'refs/tags/v' )
+              with:
+                  repo_token: "${{ secrets.GITHUB_TOKEN }}"
+                  prerelease: false
+                  files: release/*.*
