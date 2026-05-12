@@ -15,16 +15,14 @@ import {
   waitForVerseMarkerInChunk,
 } from "../support/wait.mjs";
 
-const CHUNK_REF = process.env.BTT_CHUNK_REF || "Philemon 1:14–16";
-const EDIT_TEXT =
-  process.env.BTT_EDIT_TEXT ||
-  "\\v 14 Nhưng tôi không muốn làm bất cứ điều gì mà không có sự ưng thuận của anh. Tôi làm điều này để bất kỳ việc tốt nào được thực hiện đều không phải do tôi ép buộc anh, nhưng vì anh muốn làm điều đó. \\v 15 Có lẽ lý do cậu ấy bị chia cắt khỏi anh trong một khoảng thời gian, là để anh có thể có lại cậu ấy mãi mãi. \\v 16 Để cậu ta không còn như một nô lệ nữa, nhưng còn hơn cả một nô lệ, như là một anh em yêu dấu, đặc biệt là với tôi và sẽ càng yêu dấu cho anh hơn nữa, cả trong xác thịt lẫn trong Chúa.";
+const CHUNK_REF = "Philemon 1:14–16";
+const EDIT_TEXT = "\\v 14 But I did not want to do anything without your consent. I did not want your good deed to be from necessity but from good will. \\v 15 Perhaps for this he was separated from you for a time, so that you might have him back forever. \\v 16 No longer would he be a slave, but better than a slave, a beloved brother. He is beloved especially to me, and much more so to you, in both the flesh and in the Lord.";
 
 function printStep(name, result) {
   console.log(`[chunk-nav] ${name}: ${result}`);
 }
 
-describe("BTT E2E — project navigation (review)", () => {
+describe("Draft chunk content", () => {
   test("scrolls to chunk, edits target, marks done, confirms dialog", async () => {
     await withCdpSession(async ({ evaluate, target }) => {
       printStep("target", `${target.title || "unknown"} (${target.type})`);

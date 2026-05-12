@@ -13,14 +13,14 @@ import {
   waitForTextVisible,
 } from "../support/wait.mjs";
 
-const STEP_SETTLE_MS = Number(process.env.BTT_STEP_SETTLE_MS || "700");
-const DIALOG_SETTLE_MS = Number(process.env.BTT_DIALOG_SETTLE_MS || "1200");
+const STEP_SETTLE_MS = 700;
+const DIALOG_SETTLE_MS = 1200;
 
 function printStep(name, result) {
   console.log(`[project-creation] ${name}: ${result}`);
 }
 
-describe("BTT E2E — project creation", () => {
+describe("Project creation", () => {
   test("creates a project through the wizard", async () => {
     await withCdpSession(async ({ evaluate, target }) => {
       printStep("target", `${target.title || "unknown"} (${target.type})`);

@@ -4,13 +4,13 @@ import { setProfileNameExpr } from "../expressions/profile.mjs";
 import { withCdpSession } from "../support/cdp-runtime.mjs";
 import { sleep, waitForEvalState } from "../support/wait.mjs";
 
-const PROFILE_NAME = process.env.BTT_PROFILE_NAME || "Tony (AI)";
+const PROFILE_NAME = "TEST USER";
 
 function printStep(name, result) {
   console.log(`[profile-setup] ${name}: ${result}`);
 }
 
-describe("BTT E2E — user profile", () => {
+describe("User profile setup", () => {
   test("creates local user profile", async () => {
     await withCdpSession(async ({ evaluate, target }) => {
       printStep("target", `${target.title || "unknown"} (${target.type})`);
