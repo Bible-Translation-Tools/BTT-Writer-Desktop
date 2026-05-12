@@ -1,4 +1,6 @@
 import { describe, test } from "node:test";
+import assert from "node:assert/strict";
+import { welcomeHomeVisibleExpr } from "../expressions/home.mjs";
 import { clickByTextExprDeep } from "../expressions/shadow-click.mjs";
 import { setProfileNameExpr } from "../expressions/profile.mjs";
 import { withCdpSession } from "../support/cdp-runtime.mjs";
@@ -45,6 +47,14 @@ describe("User profile setup", () => {
       printStep("step-3-ok", step3);
       await sleep(1500);
 
+      const welcomeBeforeAgree = await evaluate(welcomeHomeVisibleExpr());
+      assert.notStrictEqual(
+        welcomeBeforeAgree,
+        "VISIBLE",
+        "Home screen must not be visible before accepting terms"
+      );
+      printStep("welcome-before-i-agree", String(welcomeBeforeAgree));
+
       const step4 = await waitForEvalState(
         evaluate,
         () => clickByTextExprDeep("I Agree"),
@@ -53,7 +63,15 @@ describe("User profile setup", () => {
         "Failed to click I Agree"
       );
       printStep("step-4-i-agree", step4);
-      await sleep(1500);
+
+      await waitForEvalState(
+        evaluate,
+        () => welcomeHomeVisibleExpr(),
+        (state) => state === "VISIBLE",
+        15000,
+        "Expected ts-home #welcome to be visible (home screen, not hidden)"
+      );
+      printStep("welcome", "visible");
 
       console.log("[profile-setup] PASS: local user profile setup completed.");
     });
