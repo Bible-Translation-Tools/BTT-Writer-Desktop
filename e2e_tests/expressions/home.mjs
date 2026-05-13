@@ -1,20 +1,12 @@
-/**
- * `#welcome` lives in `ts-home` shadow DOM (see src/elements/ts-home/ts-home.html).
- * Returns a short state string for polling from CDP.
- */
 export function welcomeHomeVisibleExpr() {
   return `
     (function () {
       function findTsHomeWelcome(root) {
         for (const el of root.querySelectorAll("ts-home")) {
-          if (!el.shadowRoot) continue;
-          const w = el.shadowRoot.querySelector("#welcome");
+          const w =
+            (el.shadowRoot && el.shadowRoot.querySelector("#welcome")) ||
+            el.querySelector("#welcome");
           if (w) return { home: el, welcome: w };
-        }
-        for (const el of root.querySelectorAll("*")) {
-          if (!el.shadowRoot) continue;
-          const found = findTsHomeWelcome(el.shadowRoot);
-          if (found) return found;
         }
         return null;
       }
