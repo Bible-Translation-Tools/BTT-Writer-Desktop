@@ -17,9 +17,9 @@ import {
 } from "../support/wait.mjs";
 
 const CHUNK_REF = "Philemon 1:14–16";
-const EDIT_TEXT = "\\v 14 But I did not want to do anything without your consent. I did not want your good deed to be from necessity but from good will. \\v 15 Perhaps for this he was separated from you for a time, so that you might have him back forever. \\v 16 No longer would he be a slave, but better than a slave, a beloved brother. He is beloved especially to me, and much more so to you, in both the flesh and in the Lord.";
+const EDIT_TEXT = "\\v 14 Verse 14 \\v 15 Verse 15 \\v 16 Verse 16";
 const EXPECTED_TARGET_FINISHED_CHUNK_HTML =
-  '<sup>14</sup>But I did not want to do anything without your consent. I did not want your good deed to be from necessity but from good will. <sup>15</sup>Perhaps for this he was separated from you for a time, so that you might have him back forever. <sup>16</sup>No longer would he be a slave, but better than a slave, a beloved brother. He is beloved especially to me, and much more so to you, in both the flesh and in the Lord.';
+  '<sup>14</sup>Verse 14 <sup>15</sup>Verse 15 <sup>16</sup>Verse 16';
 const WAIT_TIMEOUT_MS = 5000;
 
 function printStep(name, result) {
@@ -95,7 +95,7 @@ describe("Draft chunk content", () => {
         () => findTargetReviewParagraphByChunkRefExpr(CHUNK_REF, EXPECTED_TARGET_FINISHED_CHUNK_HTML),
         "OK",
         WAIT_TIMEOUT_MS,
-        "Expected ts-target-review #content <p> (Philemon 1:14–16) innerHTML to match expected markup."
+        "Expected first visible ts-target-review with chunk ref span and matching <p> innerHTML."
       );
       printStep("target-review-p", "OK");
 

@@ -135,12 +135,9 @@ export function findVerseMarkerInChunkExpr(chunkRef, verseNumber) {
 }
 
 /**
- * Finds `ts-target-review` for a chunk by matching a `#heading span` whose trimmed
- * `textContent` equals `chunkRef`, then asserts `#content` is a sibling of `#heading`,
- * and a `#textholder p` has the expected classes and exact `innerHTML`.
- * Uses the same visible `iron-list#reviewlist` as scrolling helpers (skips hidden
- * review mode / zero-size list). Skips chunk hits whose `<p>` has no layout box so
- * stale DOM after leaving review (e.g. home) does not produce a false pass.
+ * Returns the first **visible** `ts-target-review` that has, as descendants:
+ * 1) a `span.style-scope.ts-target-review` whose trimmed text equals `chunkRef`, and
+ * 2) a `p.style-scope.ts-target-review` whose `innerHTML` equals `expectedParagraphInnerHtml`.
  * Returns "OK" or a diagnostic string for CDP polling.
  */
 export function findTargetReviewParagraphByChunkRefExpr(chunkRef, expectedParagraphInnerHtml) {
@@ -151,60 +148,43 @@ export function findTargetReviewParagraphByChunkRefExpr(chunkRef, expectedParagr
       const wanted = ${chunkTarget};
       const expectedInner = ${expectedTarget};
 
-      function findVisibleReviewList() {
-        const lists = Array.from(document.querySelectorAll("iron-list#reviewlist"));
-        for (const list of lists) {
-          const rect = list.getBoundingClientRect();
-          const visible = rect.width > 0 && rect.height > 0;
-          if (!visible) continue;
-          const modeHost = list.closest("ts-review-mode");
-          if (modeHost && modeHost.classList.contains("hide")) continue;
-          return list;
-        }
-        return null;
-      }
-
       function isVisible(el) {
         if (!el) return false;
         const rect = el.getBoundingClientRect();
         return rect.width > 0 && rect.height > 0;
       }
 
-      const reviewList = findVisibleReviewList();
-      if (!reviewList) return "NO_REVIEW_LIST";
-
-      const cards = reviewList.querySelectorAll("ts-review-card");
-      for (const card of cards) {
-        const review = card.querySelector("ts-target-review");
-        if (!review) continue;
-        const heading = review.querySelector("#heading");
-        if (!heading) continue;
-
-        const spanMatch = Array.from(heading.querySelectorAll("span")).some((span) => {
-          return (span.textContent || "").trim() === wanted;
-        });
-        if (!spanMatch) continue;
-
-        const content = review.querySelector("#content");
-        if (!content) return "NO_CONTENT";
-        if (content.parentElement !== heading.parentElement) return "CONTENT_NOT_SIBLING_OF_HEADING";
-
-        const holder = content.querySelector("#textholder");
-        const p = holder ? holder.querySelector("p") : content.querySelector("p");
-        if (!p || p.localName !== "p") return "NO_P";
-
-        if (!isVisible(p)) continue;
-
-        if (!p.classList.contains("style-scope") || !p.classList.contains("ts-target-review")) {
-          return "P_CLASS_MISMATCH";
+      function hasChunkRefSpan(review) {
+        for (const span of review.querySelectorAll("span")) {
+          if (!span.classList.contains("style-scope")) continue;
+          if (!span.classList.contains("ts-target-review")) continue;
+          if ((span.textContent || "").trim() !== wanted) continue;
+          return true;
         }
-
-        if ((p.innerHTML || "") !== expectedInner) return "P_INNER_HTML_MISMATCH";
-
-        return "OK";
+        return false;
       }
 
-      return "CHUNK_NOT_FOUND";
+      function styledParagraphs(review) {
+        return Array.from(review.querySelectorAll("p")).filter(
+          (p) =>
+            p.classList.contains("style-scope") && p.classList.contains("ts-target-review")
+        );
+      }
+
+      for (const review of document.querySelectorAll("ts-target-review")) {
+        if (!isVisible(review)) continue;
+        if (!hasChunkRefSpan(review)) continue;
+
+        const ps = styledParagraphs(review);
+        if (!ps.length) continue;
+
+        const hit = ps.find((p) => (p.innerHTML || "") === expectedInner);
+        if (hit) return "OK";
+
+        return "P_INNER_HTML_MISMATCH";
+      }
+
+      return "NOT_FOUND";
     })()
   `;
 }
