@@ -63,6 +63,7 @@ describe("User profile setup", () => {
         "Failed to click I Agree"
       );
       printStep("step-4-i-agree", step4);
+      await sleep(1500);
 
       await waitForEvalState(
         evaluate,
