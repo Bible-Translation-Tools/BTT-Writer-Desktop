@@ -7,6 +7,7 @@ import { withCdpSession } from "../support/cdp-runtime.mjs";
 import { sleep, waitForEvalState } from "../support/wait.mjs";
 
 const PROFILE_NAME = "TEST USER";
+const WAIT_TIMEOUT_MS = 5000;
 
 function printStep(name, result) {
   console.log(`[profile-setup] ${name}: ${result}`);
@@ -21,7 +22,7 @@ describe("User profile setup", () => {
         evaluate,
         () => clickByTextExprDeep("Create Local User Profile"),
         (state) => state === "CLICKED",
-        7000,
+        WAIT_TIMEOUT_MS,
         "Failed to click Create Local User Profile"
       );
       printStep("step-1-create-local-profile", step1);
@@ -31,7 +32,7 @@ describe("User profile setup", () => {
         evaluate,
         () => setProfileNameExpr(PROFILE_NAME),
         (state) => typeof state === "string" && state.startsWith("SET:"),
-        7000,
+        WAIT_TIMEOUT_MS,
         "Failed to set profile name input"
       );
       printStep("step-2-enter-username", step2);
@@ -41,7 +42,7 @@ describe("User profile setup", () => {
         evaluate,
         () => clickByTextExprDeep("OK"),
         (state) => state === "CLICKED",
-        7000,
+        WAIT_TIMEOUT_MS,
         "Failed to click OK"
       );
       printStep("step-3-ok", step3);
@@ -59,7 +60,7 @@ describe("User profile setup", () => {
         evaluate,
         () => clickByTextExprDeep("I Agree"),
         (state) => state === "CLICKED",
-        7000,
+        WAIT_TIMEOUT_MS,
         "Failed to click I Agree"
       );
       printStep("step-4-i-agree", step4);
@@ -69,7 +70,7 @@ describe("User profile setup", () => {
         evaluate,
         () => welcomeHomeVisibleExpr(),
         (state) => state === "VISIBLE",
-        5000,
+        WAIT_TIMEOUT_MS,
         "Expected ts-home #welcome to be visible (home screen, not hidden) when profile setup completes."
       );
       printStep("welcome", "visible");

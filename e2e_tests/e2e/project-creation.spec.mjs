@@ -17,6 +17,7 @@ import {
 
 const STEP_SETTLE_MS = 700;
 const DIALOG_SETTLE_MS = 1200;
+const WAIT_TIMEOUT_MS = 5000;
 
 function printStep(name, result) {
   console.log(`[project-creation] ${name}: ${result}`);
@@ -31,23 +32,23 @@ describe("Project creation", () => {
         evaluate,
         clickTopRightNewProjectFabExpr,
         "CLICKED",
-        12000,
+        WAIT_TIMEOUT_MS,
         "Timed out waiting for project creation interaction."
       );
       printStep("start-project", "top-right add button");
       await sleep(STEP_SETTLE_MS);
 
-      await waitForTextVisible(evaluate, "Ari", 20000);
-      await waitForClick(evaluate, "Ari");
+      await waitForTextVisible(evaluate, "Ari", WAIT_TIMEOUT_MS);
+      await waitForClick(evaluate, "Ari", WAIT_TIMEOUT_MS);
       printStep("language", "Ari");
       await sleep(STEP_SETTLE_MS);
 
-      await waitForTextVisible(evaluate, "New Testament", 20000);
-      await waitForClick(evaluate, "New Testament");
+      await waitForTextVisible(evaluate, "New Testament", WAIT_TIMEOUT_MS);
+      await waitForClick(evaluate, "New Testament", WAIT_TIMEOUT_MS);
       printStep("testament", "New Testament");
       await sleep(STEP_SETTLE_MS);
 
-      await waitForBookClickWithScroll(evaluate, "Philemon", 30000);
+      await waitForBookClickWithScroll(evaluate, "Philemon", WAIT_TIMEOUT_MS);
       printStep("book", "Philemon");
       await sleep(DIALOG_SETTLE_MS);
 
@@ -55,7 +56,7 @@ describe("Project creation", () => {
         evaluate,
         clickCenterAddButtonExpr,
         "CLICKED",
-        20000,
+        WAIT_TIMEOUT_MS,
         "Timed out waiting for project creation interaction."
       );
       printStep("open-resources", "ok");
@@ -65,14 +66,14 @@ describe("Project creation", () => {
         evaluate,
         selectUlbResourceExpr,
         "CLICKED",
-        20000,
+        WAIT_TIMEOUT_MS,
         "Timed out waiting for project creation interaction."
       );
       printStep("resource-select", "Unlocked Literal Bible");
       await sleep(DIALOG_SETTLE_MS);
 
-      await waitForTextVisible(evaluate, "Confirm", 20000);
-      await waitForClick(evaluate, "Confirm");
+      await waitForTextVisible(evaluate, "Confirm", WAIT_TIMEOUT_MS);
+      await waitForClick(evaluate, "Confirm", WAIT_TIMEOUT_MS);
       printStep("confirm", "ok");
       await sleep(DIALOG_SETTLE_MS);
 
@@ -80,7 +81,7 @@ describe("Project creation", () => {
         evaluate,
         () => firstSourceChunkTextholderContainsExpr("Philemon"),
         "OK",
-        20000,
+        WAIT_TIMEOUT_MS,
         "Expected first ts-source-chunk #textholder (div) to contain Philemon."
       );
       printStep("source-textholder", "Philemon");
