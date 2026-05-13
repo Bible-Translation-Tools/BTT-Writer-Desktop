@@ -88,6 +88,8 @@ describe("Draft chunk content", () => {
       );
       printStep("dialog-confirm", "clicked");
 
+      await sleep(1000);
+
       await waitForEvalExact(
         evaluate,
         () => findTargetReviewParagraphByChunkRefExpr(CHUNK_REF, EXPECTED_TARGET_FINISHED_CHUNK_HTML),
