@@ -69,7 +69,7 @@ describe("User profile setup", () => {
         evaluate,
         () => welcomeHomeVisibleExpr(),
         (state) => state === "VISIBLE",
-        15000,
+        5000,
         "Expected ts-home #welcome to be visible (home screen, not hidden) when profile setup completes."
       );
       printStep("welcome", "visible");

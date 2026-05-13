@@ -56,11 +56,9 @@ jobs:
             - name: Run e2e tests
               env:
                   DISPLAY: ":99"
-                  # Chromium / main-process logs on stderr (renderer console often included when logging is on).
-                  ELECTRON_ENABLE_LOGGING: "1"
+                  # ELECTRON_ENABLE_LOGGING: "1" # Print browser console output.
               run: |
                   Xvfb :99 -screen 0 1920x1080x24 &
-                  # run-btt-e2e.sh tees Electron output here and to /tmp/btt-debug.log so the job log shows browser-side output before the Node e2e steps run.
                   bash e2e_tests/run-tests.sh
 
     # build:

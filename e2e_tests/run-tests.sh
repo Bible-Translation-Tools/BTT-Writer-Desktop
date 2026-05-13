@@ -6,11 +6,11 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-# Stream main + renderer Chromium logs to CI stdout and keep a copy for the workflow artifact.
+
 DISPLAY="${DISPLAY:-:0}" ./node_modules/.bin/electron src/js/main.js \
   --no-sandbox \
   --remote-debugging-port=9222 \
-  --enable-logging \
+#  --enable-logging \
   2>&1 | tee /tmp/btt-debug.log &
 
 sleep 10s
