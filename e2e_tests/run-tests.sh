@@ -10,7 +10,7 @@ cd "$REPO_ROOT"
 DISPLAY="${DISPLAY:-:0}" ./node_modules/.bin/electron src/js/main.js \
   --no-sandbox \
   --remote-debugging-port=9222 \
-#  --enable-logging \
+  --enable-logging \
   2>&1 | tee /tmp/btt-debug.log &
 
 sleep 10s
