@@ -4,6 +4,7 @@ import {
   clickEditIconForChunkExpr,
   clickMarkChunkDoneToggleExpr,
   clickVisibleDialogConfirmExpr,
+  findTargetReviewParagraphByChunkRefExpr,
   setTextboxValueExpr,
 } from "../expressions/review.mjs";
 import { withCdpSession } from "../support/cdp-runtime.mjs";
@@ -17,6 +18,8 @@ import {
 
 const CHUNK_REF = "Philemon 1:14–16";
 const EDIT_TEXT = "\\v 14 But I did not want to do anything without your consent. I did not want your good deed to be from necessity but from good will. \\v 15 Perhaps for this he was separated from you for a time, so that you might have him back forever. \\v 16 No longer would he be a slave, but better than a slave, a beloved brother. He is beloved especially to me, and much more so to you, in both the flesh and in the Lord.";
+const EXPECTED_TARGET_FINISHED_CHUNK_HTML =
+  '<sup>14</sup>But I did not want to do anything without your consent. I did not want your good deed to be from necessity but from good will. <sup>15</sup>Perhaps for this he was separated from you for a time, so that you might have him back forever. <sup>16</sup>No longer would he be a slave, but better than a slave, a beloved brother. He is beloved especially to me, and much more so to you, in both the flesh and in the Lord.';
 const WAIT_TIMEOUT_MS = 5000;
 
 function printStep(name, result) {
@@ -84,6 +87,15 @@ describe("Draft chunk content", () => {
         "Failed to click dialog confirm button"
       );
       printStep("dialog-confirm", "clicked");
+
+      await waitForEvalExact(
+        evaluate,
+        () => findTargetReviewParagraphByChunkRefExpr(CHUNK_REF, EXPECTED_TARGET_FINISHED_CHUNK_HTML),
+        "OK",
+        WAIT_TIMEOUT_MS,
+        "Expected ts-target-review #content <p> (Philemon 1:14–16) innerHTML to match expected markup."
+      );
+      printStep("target-review-p", "OK");
 
       console.log("[chunk-nav] PASS: chunk navigation + edit + done + toggle + confirm completed.");
     });

@@ -134,6 +134,81 @@ export function findVerseMarkerInChunkExpr(chunkRef, verseNumber) {
   `;
 }
 
+/**
+ * Finds `ts-target-review` for a chunk by matching a `#heading span` whose trimmed
+ * `textContent` equals `chunkRef`, then asserts `#content` is a sibling of `#heading`,
+ * and a `#textholder p` has the expected classes and exact `innerHTML`.
+ * Uses the same visible `iron-list#reviewlist` as scrolling helpers (skips hidden
+ * review mode / zero-size list). Skips chunk hits whose `<p>` has no layout box so
+ * stale DOM after leaving review (e.g. home) does not produce a false pass.
+ * Returns "OK" or a diagnostic string for CDP polling.
+ */
+export function findTargetReviewParagraphByChunkRefExpr(chunkRef, expectedParagraphInnerHtml) {
+  const chunkTarget = escapeForTemplate(chunkRef);
+  const expectedTarget = escapeForTemplate(expectedParagraphInnerHtml);
+  return `
+    (function () {
+      const wanted = ${chunkTarget};
+      const expectedInner = ${expectedTarget};
+
+      function findVisibleReviewList() {
+        const lists = Array.from(document.querySelectorAll("iron-list#reviewlist"));
+        for (const list of lists) {
+          const rect = list.getBoundingClientRect();
+          const visible = rect.width > 0 && rect.height > 0;
+          if (!visible) continue;
+          const modeHost = list.closest("ts-review-mode");
+          if (modeHost && modeHost.classList.contains("hide")) continue;
+          return list;
+        }
+        return null;
+      }
+
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      const reviewList = findVisibleReviewList();
+      if (!reviewList) return "NO_REVIEW_LIST";
+
+      const cards = reviewList.querySelectorAll("ts-review-card");
+      for (const card of cards) {
+        const review = card.querySelector("ts-target-review");
+        if (!review) continue;
+        const heading = review.querySelector("#heading");
+        if (!heading) continue;
+
+        const spanMatch = Array.from(heading.querySelectorAll("span")).some((span) => {
+          return (span.textContent || "").trim() === wanted;
+        });
+        if (!spanMatch) continue;
+
+        const content = review.querySelector("#content");
+        if (!content) return "NO_CONTENT";
+        if (content.parentElement !== heading.parentElement) return "CONTENT_NOT_SIBLING_OF_HEADING";
+
+        const holder = content.querySelector("#textholder");
+        const p = holder ? holder.querySelector("p") : content.querySelector("p");
+        if (!p || p.localName !== "p") return "NO_P";
+
+        if (!isVisible(p)) continue;
+
+        if (!p.classList.contains("style-scope") || !p.classList.contains("ts-target-review")) {
+          return "P_CLASS_MISMATCH";
+        }
+
+        if ((p.innerHTML || "") !== expectedInner) return "P_INNER_HTML_MISMATCH";
+
+        return "OK";
+      }
+
+      return "CHUNK_NOT_FOUND";
+    })()
+  `;
+}
+
 export function clickEditIconForChunkExpr(chunkRef) {
   const target = escapeForTemplate(chunkRef);
   return `
