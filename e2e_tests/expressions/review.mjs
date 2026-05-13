@@ -137,7 +137,10 @@ export function findVerseMarkerInChunkExpr(chunkRef, verseNumber) {
 /**
  * Returns the first **visible** `ts-target-review` that has, as descendants:
  * 1) a `span.style-scope.ts-target-review` whose trimmed text equals `chunkRef`, and
- * 2) a `p.style-scope.ts-target-review` whose `innerHTML` equals `expectedParagraphInnerHtml`.
+ * 2) under `#textholder` in the same host, an element matching `.style-scope.ts-target-review`
+ *    whose `innerHTML` matches `expectedParagraphInnerHtml` after the same light normalization
+ *    applied to both (inter-tag whitespace, space after `</sup>`, NBSP to space).
+ * The chunk body may be a `<p>` or `<div>` (or other tag) as long as it carries those classes.
  * Returns "OK" or a diagnostic string for CDP polling.
  */
 export function findTargetReviewParagraphByChunkRefExpr(chunkRef, expectedParagraphInnerHtml) {
@@ -154,6 +157,16 @@ export function findTargetReviewParagraphByChunkRefExpr(chunkRef, expectedParagr
         return rect.width > 0 && rect.height > 0;
       }
 
+      function normalizeHtmlForCompare(html) {
+        return (html || "")
+          .replace(/\\u00a0/g, " ")
+          .replace(/>\\s+</g, "><")
+          .replace(/<\\/sup>\\s+/g, "</sup>")
+          .trim();
+      }
+
+      const expectedNorm = normalizeHtmlForCompare(expectedInner);
+
       function hasChunkRefSpan(review) {
         for (const span of review.querySelectorAll("span")) {
           if (!span.classList.contains("style-scope")) continue;
@@ -164,24 +177,25 @@ export function findTargetReviewParagraphByChunkRefExpr(chunkRef, expectedParagr
         return false;
       }
 
-      function styledParagraphs(review) {
-        return Array.from(review.querySelectorAll("p")).filter(
-          (p) =>
-            p.classList.contains("style-scope") && p.classList.contains("ts-target-review")
-        );
+      /** First `.style-scope.ts-target-review` under #textholder (chunk body is p or div). */
+      function chunkContentContainer(holder) {
+        return holder.querySelector(".style-scope.ts-target-review");
       }
 
       for (const review of document.querySelectorAll("ts-target-review")) {
         if (!isVisible(review)) continue;
         if (!hasChunkRefSpan(review)) continue;
 
-        const ps = styledParagraphs(review);
-        if (!ps.length) continue;
+        const holder = review.querySelector("#textholder");
+        if (!holder) continue;
 
-        const hit = ps.find((p) => (p.innerHTML || "") === expectedInner);
-        if (hit) return "OK";
+        const container = chunkContentContainer(holder);
+        if (!container) continue;
 
-        return "P_INNER_HTML_MISMATCH";
+        const got = normalizeHtmlForCompare(container.innerHTML || "");
+        if (got !== expectedNorm) return "P_INNER_HTML_MISMATCH";
+
+        return "OK";
       }
 
       return "NOT_FOUND";

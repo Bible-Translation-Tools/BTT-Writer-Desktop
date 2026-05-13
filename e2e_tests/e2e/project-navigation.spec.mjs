@@ -95,7 +95,7 @@ describe("Draft chunk content", () => {
         () => findTargetReviewParagraphByChunkRefExpr(CHUNK_REF, EXPECTED_TARGET_FINISHED_CHUNK_HTML),
         "OK",
         WAIT_TIMEOUT_MS,
-        "Expected first visible ts-target-review with chunk ref span and matching <p> innerHTML."
+        "Expected first visible ts-target-review with chunk ref span and #textholder .style-scope.ts-target-review innerHTML match."
       );
       printStep("target-review-p", "OK");
 
