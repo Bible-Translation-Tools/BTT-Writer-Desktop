@@ -177,7 +177,7 @@ export function findTargetReviewParagraphByChunkRefExpr(chunkRef, expectedParagr
         return false;
       }
 
-      /** First `.style-scope.ts-target-review` under #textholder (chunk body is p or div). */
+      // First #textholder descendant matching .style-scope.ts-target-review (chunk body: p or div).
       function chunkContentContainer(holder) {
         return holder.querySelector(".style-scope.ts-target-review");
       }
