@@ -4,11 +4,13 @@ import {
   clickTopRightNewProjectFabExpr,
   selectUlbResourceExpr,
 } from "../expressions/project-wizard.mjs";
+import { firstSourceChunkTextholderContainsExpr } from "../expressions/source-chunk.mjs";
 import { withCdpSession } from "../support/cdp-runtime.mjs";
 import {
   sleep,
   waitForBookClickWithScroll,
   waitForClick,
+  waitForEvalExact,
   waitForEvalResult,
   waitForTextVisible,
 } from "../support/wait.mjs";
@@ -72,6 +74,16 @@ describe("Project creation", () => {
       await waitForTextVisible(evaluate, "Confirm", 20000);
       await waitForClick(evaluate, "Confirm");
       printStep("confirm", "ok");
+      await sleep(DIALOG_SETTLE_MS);
+
+      await waitForEvalExact(
+        evaluate,
+        () => firstSourceChunkTextholderContainsExpr("Philemon"),
+        "OK",
+        20000,
+        "Expected first ts-source-chunk #textholder (div) to contain Philemon."
+      );
+      printStep("source-textholder", "Philemon");
 
       console.log("[project-creation] PASS: project creation completed.");
     });
