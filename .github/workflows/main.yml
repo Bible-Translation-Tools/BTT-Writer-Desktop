@@ -81,7 +81,7 @@ jobs:
             # Runs build script
             - name: Buildscript
               shell: bash
-              run: ./.github/scripts/`0205build.sh
+              run: ./.github/scripts/build.sh
 
             #upload builds to AWS nightlybuilds
             - name: set s3 destination_dir for nightly-builds
@@ -102,4 +102,3 @@ jobs:
                   repo_token: "${{ secrets.GITHUB_TOKEN }}"
                   prerelease: false
                   files: release/*.*
-       
