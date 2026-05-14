@@ -1,3 +1,6 @@
+import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 import { describe, test } from "node:test";
 import {
   clickDoneIconExpr,
@@ -98,6 +101,33 @@ describe("Draft chunk content", () => {
         "Expected first visible ts-target-review with chunk ref span and #textholder .style-scope.ts-target-review innerHTML match."
       );
       printStep("target-review-p", "OK");
+
+      assert.ok(
+        typeof process.env.HOME === "string" && process.env.HOME.length > 0,
+        "HOME must be set (e.g. Linux CI) to assert ~/.config/BTT-Writer target translation path."
+      );
+      const expectedTargetFile = path.join(
+        process.env.HOME,
+        ".config",
+        "BTT-Writer",
+        "targetTranslations",
+        "aac_phm_text_reg",
+        "01",
+        "14.txt"
+      );
+      assert.ok(
+        existsSync(expectedTargetFile),
+        `Expected on-disk target chunk file after confirm: ${expectedTargetFile}`
+      );
+      printStep("target-file-on-disk", expectedTargetFile);
+
+      const onDiskUsfm = readFileSync(expectedTargetFile, "utf8");
+      assert.equal(
+        onDiskUsfm,
+        EDIT_TEXT,
+        `14.txt USFM must match saved target (expected \\v 14 Verse 14 \\v 15 Verse 15 \\v 16 Verse 16)`
+      );
+      printStep("target-file-content", "OK");
 
       console.log("[chunk-nav] PASS: chunk navigation + edit + done + toggle + confirm completed.");
     });
