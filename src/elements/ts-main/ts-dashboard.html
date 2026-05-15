@@ -1165,8 +1165,16 @@
           let helpdeskPromise = null;
           if (canHelpdesk) {
               helpdeskPromise = App.reporter.sendHelpdeskTicket(message, { isCrash: false })
-                  .then(function (res) { Log.notice(res, 'helpdesk feedback sent'); return true; })
-                  .catch(function (err) { Log.warning(err && err.message, 'helpdesk feedback failed'); return false; });
+                  .then(function (res) {
+                      console.log(res);
+                      const ticket = JSON.parse(res.toString());
+                      Log.notice(`Ticket ID ${ticket.ticket_id || 'unknown'}`, 'Helpdesk feedback sent');
+                      return true;
+                  })
+                  .catch(function (err) {
+                      Log.warning(err && err.message, 'helpdesk feedback failed');
+                      return false;
+                  });
           }
 
           if (canGithub) {

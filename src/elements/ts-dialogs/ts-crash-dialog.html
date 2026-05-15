@@ -1,0 +1,361 @@
+<link rel="import" href="../../components/paper-button/paper-button.html">
+<link rel="import" href="../../components/iron-icons/iron-icons.html">
+<link rel="import" href="../../components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../components/neon-animation/neon-animation.html">
+<link rel="import" href="../../components/paper-spinner/paper-spinner-lite.html">
+
+<dom-module id="ts-crash-dialog">
+    <template>
+        <style>
+            :host {
+                display: flex;
+                width: 100%;
+                height: 100%;
+                background-color: var(--bg-overlay);
+                justify-content: center;
+                align-items: center;
+                font-family: sans-serif;
+            }
+
+            #container {
+                width: 640px;
+                height: 480px;
+                background: var(--popup-background-color);
+                display: flex;
+                flex-direction: column;
+                border-radius: 4px;
+                overflow: hidden;
+                border: 1px solid var(--border-color);
+                box-shadow: 0 0 30px var(--shadow-color);
+            }
+
+            header {
+                background: var(--note-card-pink);
+                padding: 15px;
+                color: var(--fixed-text-color);
+                font-weight: bold;
+            }
+
+            main {
+                padding: 25px;
+                flex: 1;
+                overflow-y: auto;
+                background: var(--popup-background-color);
+                color: var(--primary-text-color);
+            }
+
+            .error-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 10px;
+                color: var(--warning-color);
+            }
+
+            .user-feedback {
+                margin-top: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                border-top: 1px solid var(--border-color);
+                padding-top: 15px;
+            }
+
+            .stack-wrapper {
+                position: relative;
+                margin-top: 10px;
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                background: var(--background-color);
+                overflow: hidden;
+                transform: translateZ(0);
+            }
+
+            .stack-wrapper.expanded pre {
+                max-height: 800px;
+                overflow-y: auto;
+            }
+
+            .stack-wrapper:not(.expanded) pre {
+                mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+                -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+            }
+
+            .toggle-bar {
+                background-color: var(--card-background-color);
+                border-top: 1px solid var(--border-color);
+                opacity: 1;
+                border-top: 1px solid var(--border-color);
+                position: relative;
+                z-index: 10;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 10px;
+                cursor: pointer;
+                color: var(--primary-color);
+                font-size: 11px;
+            }
+
+            .toggle-bar:hover {
+                background: var(--bg-overlay);
+                color: var(--primary-text-color);
+            }
+
+            .arrow {
+                font-size: 10px;
+                transition: transform 0.2s;
+            }
+
+            .expanded .arrow {
+                transform: rotate(180deg);
+            }
+
+            pre {
+                margin: 0;
+                padding: 15px;
+                font-size: 11px;
+                color: var(--secondary-text-color);
+                white-space: pre-wrap;
+                font-family: monospace;
+                max-height: 3.6em;
+                line-height: 1.2em;
+                transition: max-height 0.2s ease-out;
+                background-color: var(--background-color);
+            }
+
+            footer {
+                padding: 15px;
+                background: var(--card-background-color);
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+
+            paper-button {
+                font-size: 0.8em;
+                color: var(--primary-text-color);
+            }
+
+            paper-button:hover {
+                color: var(--accent-color);
+            }
+
+            paper-button.btn-copy {
+                margin-right: auto;
+            }
+
+            .field-group {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            label {
+                font-size: 12px;
+                font-weight: bold;
+                color: var(--secondary-text-color);
+            }
+
+            input, textarea {
+                background: var(--background-color);
+                color: var(--primary-text-color);
+                border: 1px solid var(--border-color);
+                padding: 8px;
+                border-radius: 2px;
+                font-family: inherit;
+                outline: none;
+            }
+
+            input:focus, textarea:focus {
+                border-color: var(--accent-color);
+            }
+
+            textarea {
+                resize: none;
+                height: 80px;
+            }
+
+            paper-dialog {
+                background-color: var(--popup-background-color);
+                color: var(--primary-text-color);
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                box-shadow: 0 4px 20px var(--shadow-color);
+                min-width: 320px;
+                max-width: 400px;
+            }
+
+            paper-dialog h2 {
+                color: var(--accent-color);
+                font-size: 18px;
+            }
+            paper-dialog h2.error {
+                color: var(--warning-color);
+            }
+
+            paper-dialog div {
+                color: var(--secondary-text-color);
+                font-size: 14px;
+            }
+
+            paper-dialog paper-button {
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+            paper-dialog paper-button:hover {
+                color: var(--accent-color);
+            }
+
+            .buttons {
+                margin-top: 16px;
+            }
+
+            paper-dialog .progress-container {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                padding: 10px 16px;
+            }
+
+            paper-spinner-lite {
+                --paper-spinner-color: var(--accent-color);
+            }
+        </style>
+
+        <paper-dialog id="sendsuccess" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
+            <h2>{{translate("report_sent")}}</h2>
+            <div>{{translate("report_sent_success")}}</div>
+            <div class="buttons">
+                <paper-button on-tap="_dismiss">{{translate("ok")}}</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="sendfailed" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
+            <h2 class="error">{{translate("report_failed")}}</h2>
+            <div>{{translate("report_sent_failed")}}</div>
+            <div class="buttons">
+                <paper-button class="cancel" on-tap="_dismiss">{{translate("cancel")}}</paper-button>
+                <paper-button on-tap="_report">{{translate("retry")}}</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="uploadprogress" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
+            <h2>{{translate("sending_report")}}</h2>
+            <div class="progress-container">
+                <paper-spinner-lite active></paper-spinner-lite>
+                <span>{{translate("sending_report_desc")}}</span>
+            </div>
+        </paper-dialog>
+
+        <div id="container">
+            <header>
+                <iron-icon class="smallicon" icon="warning"></iron-icon>
+                <span>{{translate("critical_error")}}</span>
+            </header>
+            <main>
+                <div class="error-title">[[message]]</div>
+
+                <div class$="stack-wrapper [[_getExpandedClass(opened)]]">
+                    <pre id="stack">[[stack]]</pre>
+                    <div class="toggle-bar" on-tap="_toggleStack">
+                        <span class="arrow">▼</span>
+                        <span style="font-size: 10px; margin-left: 8px;">
+                            [[_getToggleText(opened)]]
+                        </span>
+                    </div>
+                </div>
+
+                <div class="user-feedback">
+                    <div class="field-group">
+                        <input type="email" value="{{userEmail::input}}" placeholder={{translate("email_optional")}}>
+                    </div>
+                    <div class="field-group">
+                        <textarea value="{{userNotes::input}}" placeholder={{translate("describe_problem")}}></textarea>
+                    </div>
+                </div>
+            </main>
+            <footer>
+                <paper-button on-tap="_copy" class="btn-copy">{{translate("copy_details")}}</paper-button>
+                <paper-button on-tap="_dismiss" class="btn-dismiss">{{translate("cancel")}}</paper-button>
+                <paper-button on-tap="_report">{{translate("send")}}</paper-button>
+            </footer>
+        </div>
+    </template>
+</dom-module>
+
+<script>
+    Polymer({
+        is: 'ts-crash-dialog',
+        properties: {
+            message: String,
+            stack: String,
+            userEmail: String,
+            userNotes: String,
+            opened: {
+                type: Boolean,
+                value: false
+            }
+        },
+
+        _dismiss: function() {
+            crashAPI.ipc.send('close-crash-dialog');
+        },
+
+        _toggleStack: function() {
+            this.opened = !this.opened;
+        },
+
+        _getExpandedClass: function(opened) {
+            return opened ? 'expanded' : '';
+        },
+
+        _getToggleText: function(opened) {
+            return opened ? this.translate("show_less") : this.translate("show_more");
+        },
+
+        _copy: function() {
+            navigator.clipboard.writeText(this.stack);
+        },
+
+        _report: function() {
+            const mythis = this;
+
+            this.$.uploadprogress.open();
+
+            crashAPI.reporter.sendHelpdeskTicket(
+                this.message, {
+                    senderEmail: this.userEmail,
+                    userNotes: this.userNotes,
+                    isCrash: true,
+                    stack: this.stack
+                })
+                .then((res) => {
+                    try {
+                        const result = JSON.parse(res);
+                        const ticketId = result.ticket_id;
+                        crashAPI.reporter.logNotice(`Helpdesk ticket created: #${ticketId}`);
+                    } catch (err) {
+                    }
+
+                    mythis.$.uploadprogress.close();
+                    mythis.$.sendsuccess.open();
+                })
+                .catch(function (e) {
+                    crashAPI.reporter.logError(e && e.message, 'Helpdesk submit failed');
+
+                    mythis.$.uploadprogress.close();
+                    mythis.$.sendfailed.open();
+                });
+        },
+
+        attached: function() {
+            crashAPI.ipc.on('error-data', (data) => {
+                this.message = data.message;
+                this.stack = data.stack;
+            });
+        },
+
+        translate: crashAPI.translate
+    });
+</script>

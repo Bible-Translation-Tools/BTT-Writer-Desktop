@@ -1,59 +1,72 @@
 'use strict';
 
-let os = require('os');
-let https = require('https');
-let utils = require('./lib/utils');
-let path = require('path');
-let moment = require('moment');
+const os = require('os');
+const https = require('https');
+const utils = require('./lib/utils');
+const path = require('path');
+const moment = require('moment');
+const appVersion = require('../../package.json').version;
 
-function Reporter (args) {
+function Reporter (options) {
 
-    args = args || {};
+    options = options || {};
 
-    let _this = this;
-    let logPath = path.normalize(args.logPath || './log.txt');
-    let oauthToken = args.oauthToken || '';
-    let repoOwner = args.repoOwner || '';
-    let repo = args.repo || '';
-    let maxLogFileKb = args.maxLogFileKb || 200;
-    let appVersion = args.appVersion || '0.0.0';
-    let verbose = args.verbose || false;
+    const _this = this;
+    const configurator = options.configurator || null;
+
+    const configLogPath = configurator && path.join(configurator.getValue('rootDir'), 'log.txt');
+
+    const logPath = path.normalize(configLogPath || options.logPath || "./log.txt");
+    const oauthToken = configurator && configurator.getValue('github-oauth') || options.oauthToken || '';
+    const repoOwner = configurator && configurator.getValue('repoOwner') || options.repoOwner || '';
+    const repo = configurator && configurator.getValue('repo') || options.repo || '';
+    const maxLogFileKb = configurator && configurator.getValue('maxLogFileKb') || options.maxLogFileKb || 200;
+    const verbose = options.verbose || false;
+    const helpdeskWebhookToken = configurator && configurator.getValue('helpdeskWebhookToken') || options.helpdeskWebhookToken || '';
+    const defaultSenderEmail = options.defaultSenderEmail || 'bttwriter-desktop-feedback@techadvancement.com';
+
     const HELPDESK_HOST = 'helpdesk.techadvancement.com';
     const HELPDESK_PATH_PREFIX = '/wp-json/fluent-support/v2/public/incoming_webhook/';
-    let helpdeskWebhookToken = args.helpdeskWebhookToken || '';
-    let defaultSenderEmail = args.helpdeskSenderEmail || 'bttwriter-desktop-feedback@techadvancement.com';
-    let getUserLogin = typeof args.getUserLogin === 'function' ? args.getUserLogin : null;
+
+    const getUserLogin = () => {
+        const userdata = configurator.getValue('userdata');
+        return userdata && userdata.username || '';
+    };
+
+    const getSelectedServer = () => {
+        return configurator.getUserSetting("serversuite").name || '';
+    };
 
     const convertError = function (err) {
         if (!err) return '';
 
-        var indentLines = function (s) {
+        const indentLines = function (s) {
             return s.split('\n').map(function (line) {
                 return '\t' + line;
             }).join('\n');
         };
 
-        var shouldStringify = Array.isArray(err) || err.toString() === '[object Object]';
-        var converted = shouldStringify ? JSON.stringify(err, null, 2) : err.toString();
+        const shouldStringify = Array.isArray(err) || err.toString() === '[object Object]';
+        const converted = shouldStringify ? JSON.stringify(err, null, 2) : err.toString();
 
         return indentLines(converted);
     };
 
     const addTitle = function (err, title) {
-        var shouldHaveNewLine = !!err;
-        var pre = (title || '') + (shouldHaveNewLine ? '\n' : '');
+        const shouldHaveNewLine = !!err;
+        const pre = (title || '') + (shouldHaveNewLine ? '\n' : '');
         return pre + err;
     };
 
     const makeMessage = function (err, title) {
-        var e = convertError(err);
+        const e = convertError(err);
         return addTitle(e, title);
     };
 
     const log = function (level, err, title, caller) {
         err = err || '';
 
-        var msg = makeMessage(err, title);
+        const msg = makeMessage(err, title);
 
         if (typeof caller === 'string') {
             return _this.toLogFile(level, msg, 0, caller);
@@ -74,7 +87,7 @@ function Reporter (args) {
     };
 
     /**
-     * Sends a bug report to github
+     * Sends a bug report to GitHub
      * @param string the bug report
      */
     _this.reportBug = function (string) {
@@ -294,92 +307,90 @@ function Reporter (args) {
 
     _this.sendHelpdeskTicket = function (summary, opts) {
         if (!_this.canReportToHelpdesk()) {
-            return Promise.reject(new Error('Helpdesk webhook token not configured'));
+            return Promise.reject(new Error("Helpdesk webhook token not configured"));
         }
         opts = opts || {};
         const senderEmail = opts.senderEmail || defaultSenderEmail;
+        const userNotes = opts.userNotes || "";
         const isCrash = !!opts.isCrash;
         const explicitStack = opts.stack;
 
         const title = (summary && summary.length > 80)
             ? summary.substring(0, 77) + '...'
-            : (summary || (isCrash ? 'Crash report' : 'Bug report'));
+            : (summary || (isCrash ? "Crash report" : "Bug report"));
 
         return _this.stringFromLogFile(null).catch(function () { return ''; })
             .then(function (logTail) {
                 const lines = [];
                 if (summary) {
-                    lines.push(summary, '');
+                    lines.push(summary, "");
                 }
-                lines.push('## Environment');
-                lines.push('Version: ' + appVersion);
-                lines.push('OS: ' + os.type() + ' ' + os.release() + ' (' + os.platform() + ' ' + os.arch() + ')');
-                let userLogin = '';
-                if (getUserLogin) {
-                    try { userLogin = getUserLogin() || ''; } catch (e) { userLogin = ''; }
+                if (userNotes) {
+                    lines.push("## User notes:")
+                    lines.push(userNotes, "");
                 }
-                if (userLogin) {
-                    lines.push('User: ' + userLogin);
-                } else {
-                    lines.push('User: (unknown)');
-                }
+                lines.push("## Environment");
+                lines.push(`Version: ${appVersion}`);
+                lines.push(`OS: ${os.type()} ${os.release()} (${os.platform()} ${os.arch()})`);
+                lines.push(`User: ${getUserLogin() || '(unknown)'}`);
+                lines.push(`Server: ${getSelectedServer() || '(unknown)'}`);
                 if (isCrash) {
-                    lines.push('');
-                    lines.push('## Stack Trace');
-                    lines.push('```');
+                    lines.push("");
+                    lines.push("## Stack Trace");
+                    lines.push("```");
                     lines.push(explicitStack || _this.stackTrace());
-                    lines.push('```');
+                    lines.push("```");
                 }
-                lines.push('');
-                lines.push('## Recent Log');
-                lines.push('```');
-                lines.push(logTail || '(empty)');
-                lines.push('```');
+                lines.push("");
+                lines.push("## Recent Log");
+                lines.push("```");
+                lines.push(logTail || "(empty)");
+                lines.push("```");
 
                 const fields = {
                     title: title,
-                    content: lines.join('\n'),
-                    'sender[email]': senderEmail
+                    content: lines.join("\n"),
+                    "sender[email]": senderEmail
                 };
 
-                const boundary = '----bttwriter' + Date.now().toString(16);
+                const boundary = `----bttwriter${Date.now().toString(16)}`;
                 const partsArr = [];
                 Object.keys(fields).forEach(function (key) {
                     partsArr.push(
-                        '--' + boundary + '\r\n' +
-                        'Content-Disposition: form-data; name="' + key + '"\r\n\r\n' +
-                        fields[key] + '\r\n'
+                        `--${boundary}\r\n` +
+                        `Content-Disposition: form-data; name="${key}"\r\n\r\n` +
+                        `${fields[key]}\r\n`
                     );
                 });
-                partsArr.push('--' + boundary + '--\r\n');
-                const payload = Buffer.from(partsArr.join(''), 'utf8');
+                partsArr.push(`--${boundary}--\r\n`);
+                const payload = Buffer.from(partsArr.join(""), "utf8");
 
                 const postOptions = {
                     host: HELPDESK_HOST,
                     port: 443,
                     path: HELPDESK_PATH_PREFIX + helpdeskWebhookToken,
-                    method: 'POST',
+                    method: "POST",
                     headers: {
-                        'User-Agent': 'BTT-Writer-Desktop/' + appVersion,
-                        'Content-Type': 'multipart/form-data; boundary=' + boundary,
-                        'Content-Length': payload.length
+                        "User-Agent": `BTT-Writer-Desktop/${appVersion}`,
+                        "Content-Type": `multipart/form-data; boundary=${boundary}`,
+                        "Content-Length": payload.length
                     }
                 };
 
                 return new Promise(function (resolve, reject) {
                     const req = https.request(postOptions, function (res) {
-                        res.setEncoding('utf8');
-                        let data = '';
-                        res.on('data', function (chunk) { data += chunk; });
-                        res.on('end', function () {
+                        res.setEncoding("utf8");
+                        let data = "";
+                        res.on("data", function (chunk) { data += chunk; });
+                        res.on("end", function () {
                             if (res.statusCode >= 400) {
-                                reject(new Error('Helpdesk submission failed: ' + res.statusCode + ' ' + data));
+                                reject(new Error(`Helpdesk submission failed: ${res.statusCode} ${data}`));
                             } else {
                                 resolve(data);
                             }
                         });
                     });
-                    req.on('error', reject);
+                    req.on("error", reject);
                     req.write(payload);
                     req.end();
                 });

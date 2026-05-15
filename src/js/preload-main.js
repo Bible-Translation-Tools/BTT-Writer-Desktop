@@ -6,7 +6,12 @@
 
 'use strict';
 
-const { contextBridge, ipcRenderer, shell, clipboard } = require('electron');
+const {
+    contextBridge,
+    ipcRenderer,
+    shell,
+    clipboard
+} = require('electron');
 
 /*
  * Redirect all standard output to the console.
@@ -141,44 +146,8 @@ process.stdout.write = console.log.bind(console);
     setMsg(i18n.translate("init_config"));
 
     const reporter = new Reporter({
-        logPath: path.join(configurator.getValue('rootDir'), 'log.txt'),
-        oauthToken: configurator.getValue('github-oauth'),
-        repoOwner: configurator.getValue('repoOwner'),
-        repo: configurator.getValue('repo'),
-        maxLogFileKb: configurator.getValue('maxLogFileKb'),
-        helpdeskWebhookToken: configurator.getValue('helpdeskWebhookToken'),
-        getUserLogin: function () {
-            const userdata = configurator.getValue('userdata');
-            return userdata && userdata.username || '';
-        },
-        appVersion: require('../../package.json').version,
+        configurator: configurator,
         verbose: true
-    });
-
-    // Funnel uncaught renderer errors to both the log and the help desk.
-    // Throttled so a tight error loop doesn't spam tickets.
-    let lastTicketAt = 0;
-    const TICKET_THROTTLE_MS = 60 * 1000;
-    const submitTicket = function (summary, stack) {
-        const now = Date.now();
-        if (now - lastTicketAt < TICKET_THROTTLE_MS) return;
-        lastTicketAt = now;
-        reporter.sendHelpdeskTicket(summary, { isCrash: true, stack: stack })
-            .catch(function (e) { console.error('helpdesk submit failed:', e && e.message); });
-    };
-
-    window.addEventListener('error', function (event) {
-        const err = event.error || event.message;
-        reporter.logError(err, 'Uncaught renderer error');
-        submitTicket('Renderer error: ' + (event.message || 'unknown'),
-                     event.error && event.error.stack);
-    });
-
-    window.addEventListener('unhandledrejection', function (event) {
-        const reason = event.reason;
-        reporter.logError(reason, 'Unhandled promise rejection');
-        submitTicket('Unhandled rejection: ' + (reason && (reason.message || reason)),
-                     reason && reason.stack);
     });
 
     const dataManager = (function () {
@@ -233,10 +202,10 @@ process.stdout.write = console.log.bind(console);
     const SEND_CHANNELS = [
         'fire-reload', 'theme-changed', 'theme-loaded', 'localization-changed',
         'update-spellcheck', 'loading-status', 'show-devtools', 'main-loading-done',
-        'open-manual', 'debug-crash'
+        'open-manual', 'debug-crash', 'renderer-exception', 'close-crash-dialog'
     ];
     const SEND_SYNC_CHANNELS = ['main-window', 'open-file', 'save-as'];
-    const ON_CHANNELS = ['maximize', 'unmaximize'];
+    const ON_CHANNELS = ['maximize', 'unmaximize', 'error-data'];
 
     const safeIpc = {
         send: function (channel) {

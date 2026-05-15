@@ -130,9 +130,16 @@
 
         debugCrashRenderer: function () {
             this.$.menu.close();
-            setTimeout(function () {
-                throw new Error('Test crash from sidebar Debug menu (renderer) at ' + new Date().toISOString());
-            }, 0);
+            //console.error("First test")
+            // throw new Error("This is just a test");
+            // setTimeout(function () {
+            //     console.log("Debug 2 crash triggered")
+            //     throw new Error('Test crash from sidebar Debug menu (renderer) at ' + new Date().toISOString());
+            // }, 0);
+            setTimeout(() => {
+                // Creating a Promise that rejects, without a .catch() block
+                Promise.reject(new Error("BTT-Writer Test: This is a simulated unhandled rejection!"));
+            }, 500);
         },
 
         debugKillRenderer: function () {
