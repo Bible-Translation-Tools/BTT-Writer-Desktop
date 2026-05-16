@@ -71,9 +71,6 @@
                 <paper-item on-tap="feedback"><iron-icon class="smallicon" icon="announcement"></iron-icon>{{translate("feedback")}}</paper-item>
                 <paper-item on-tap="logout"><iron-icon class="smallicon" icon="perm-identity"></iron-icon>{{translate("logout")}}</paper-item>
                 <paper-item on-tap="settings"><iron-icon class="smallicon" icon="settings"></iron-icon>{{translate("settings")}}</paper-item>
-                <paper-item on-tap="debugCrashMain"><iron-icon class="smallicon" icon="bug-report"></iron-icon>Debug: crash main process</paper-item>
-                <paper-item on-tap="debugCrashRenderer"><iron-icon class="smallicon" icon="bug-report"></iron-icon>Debug: crash renderer</paper-item>
-                <paper-item on-tap="debugKillRenderer"><iron-icon class="smallicon" icon="bug-report"></iron-icon>Debug: force-kill renderer</paper-item>
             </paper-menu>
         </paper-menu-button>
     </template>
@@ -121,30 +118,6 @@
         update: function() {
             this.$.menu.close();
             this.fire('iron-signal', {name: 'openupdate'});
-        },
-
-        debugCrashMain: function () {
-            this.$.menu.close();
-            App.ipc.send('debug-crash', 'main');
-        },
-
-        debugCrashRenderer: function () {
-            this.$.menu.close();
-            //console.error("First test")
-            // throw new Error("This is just a test");
-            // setTimeout(function () {
-            //     console.log("Debug 2 crash triggered")
-            //     throw new Error('Test crash from sidebar Debug menu (renderer) at ' + new Date().toISOString());
-            // }, 0);
-            setTimeout(() => {
-                // Creating a Promise that rejects, without a .catch() block
-                Promise.reject(new Error("BTT-Writer Test: This is a simulated unhandled rejection!"));
-            }, 500);
-        },
-
-        debugKillRenderer: function () {
-            this.$.menu.close();
-            App.ipc.send('debug-crash', 'renderer-kill');
         },
 
         translate: App.translate,

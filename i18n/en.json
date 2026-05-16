@@ -37,8 +37,8 @@
     "information_level": "Information",
     "warning_level": "Warnings",
     "error_level": "Errors",
-    "developer_tools": "Developer Tools",
-    "developer_tools_label": "Open the developer tools",
+    "developer_tools": "Developer Options",
+    "developer_tools_label": "Open the developer options",
     "create_account_label": "Create Account URL",
     "language_url_label": "Languages URL",
     "refresh_settings_label": "Refresh Settings",
@@ -847,6 +847,12 @@
     "retry": "Retry",
     "sending_report": "Sending Report",
     "sending_report_desc": "Sending report, please wait...",
+
+    "__file95": "ts-developer-tools-modal.html",
+    "open_dev_tools": "Open Developer Tools",
+    "debug_crash_main": "Debug: crash main process",
+    "debug_crash_renderer": "Debug: crash renderer",
+    "debug_kill_renderer": "Debug: force-kill renderer",
 
     "__book_names": "book names",
     "book_gen": "Genesis",

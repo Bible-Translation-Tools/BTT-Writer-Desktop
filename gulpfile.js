@@ -84,7 +84,7 @@ function build(done) {
         'scripts',
         '\\.'
     ]).map(function (name) {
-        return new RegExp('(^/' + name + '|' + '^/node_modules/' + name + ')');
+        return new RegExp('(^/' + name + '($|/)|^/node_modules/' + name + '($|/))');
     });
 
     packager({
