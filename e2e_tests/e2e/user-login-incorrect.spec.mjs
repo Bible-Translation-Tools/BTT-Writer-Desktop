@@ -3,7 +3,6 @@ import assert from "node:assert/strict";
 import { welcomeHomeVisibleExpr } from "../expressions/home.mjs";
 import { clickByTextExprDeep } from "../expressions/shadow-click.mjs";
 import {
-  clickServerLoginOptionExpr,
   serverLoginFailureVisibleExpr,
   setServerLoginCredentialsExpr,
 } from "../expressions/profile.mjs";
@@ -25,10 +24,10 @@ describe("User login incorrect", () => {
 
       const step1 = await waitForEvalState(
         evaluate,
-        () => clickServerLoginOptionExpr(),
+        () => clickByTextExprDeep("Login to your Server Account"),
         (state) => state === "CLICKED",
         WAIT_TIMEOUT_MS,
-        "Failed to click server login option in ts-options-menu"
+        "Failed to click Login to your Server Account"
       );
       printStep("step-1-server-login-option", step1);
       await sleep(500);

@@ -1,59 +1,12 @@
 import { escapeForTemplate } from "./shadow-click.mjs";
 
 /** English labels for profile e2e (app must run with English UI). */
-export const SERVER_LOGIN_OPTION_TITLE = "Login to your Server Account";
 export const USERNAME_LABEL = "Username";
 export const PASSWORD_LABEL = "Password";
 export const LOGIN_FAILED_TITLE = "Login Failed";
 export const BAD_LOGIN_USERNAME_MESSAGE = "Incorrect Username";
 export const BAD_LOGIN_PASSWORD_MESSAGE = "Incorrect Password";
 export const PROFILE_NAME_PLACEHOLDER = "Full Name or Pseudonym";
-
-/**
- * Clicks the server-login row in ts-options-menu (div.option with on-tap="login").
- * Targets the option container, not only the inner span.optiontitle.
- */
-export function clickServerLoginOptionExpr() {
-  const title = escapeForTemplate(SERVER_LOGIN_OPTION_TITLE);
-  return `
-    (function () {
-      var TITLE = ${title};
-
-      function findOptionContainer(titleEl) {
-        var node = titleEl;
-        while (node) {
-          if (node.classList && node.classList.contains("option")) return node;
-          node = node.parentElement;
-        }
-        return null;
-      }
-
-      function clickInRoot(root) {
-        var spans = root.querySelectorAll("span.optiontitle");
-        for (var i = 0; i < spans.length; i++) {
-          var span = spans[i];
-          if ((span.textContent || "").trim() !== TITLE) continue;
-          var option = findOptionContainer(span);
-          if (!option) continue;
-          var rect = option.getBoundingClientRect();
-          if (rect.width > 0 && rect.height > 0) {
-            option.click();
-            return "CLICKED";
-          }
-        }
-        var all = root.querySelectorAll("*");
-        for (var j = 0; j < all.length; j++) {
-          if (!all[j].shadowRoot) continue;
-          var nested = clickInRoot(all[j].shadowRoot);
-          if (nested !== "NOT_FOUND") return nested;
-        }
-        return "NOT_FOUND";
-      }
-
-      return clickInRoot(document);
-    })()
-  `;
-}
 
 export function setProfileNameExpr(name) {
   const target = escapeForTemplate(name);

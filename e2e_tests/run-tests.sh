@@ -37,7 +37,7 @@ stop_electron
 sleep 2s
 
 start_electron
-sleep 10s
+sleep 5s # subsequent launches should start faster
 
 node --test e2e_tests/e2e/user-profile-setup.spec.mjs
 node --test e2e_tests/e2e/project-creation.spec.mjs
