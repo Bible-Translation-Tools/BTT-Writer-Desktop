@@ -169,3 +169,71 @@ export function serverLoginFailureVisibleExpr() {
     })()
   `;
 }
+
+/** Returns VISIBLE when profile route (ts-profile) shows logged-out user profile screen. */
+export function profileScreenVisibleExpr() {
+  const heading = escapeForTemplate("User Profile");
+  const localLogin = escapeForTemplate("Create Local User Profile");
+  return `
+    (function () {
+      const expectedHeading = ${heading};
+      const expectedLocalLogin = ${localLogin};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const style = getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") return false;
+        if (parseFloat(style.opacity) === 0) return false;
+        if (el.classList.contains("hide")) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      const pages = document.querySelector("neon-animated-pages");
+      const route = pages && pages.selected;
+      if (route && route !== "profile") {
+        return "WRONG_ROUTE:" + route;
+      }
+
+      function hasVisibleText(root, wanted) {
+        for (const el of root.querySelectorAll("*")) {
+          const text = (el.textContent || "").replace(/\\s+/g, " ").trim();
+          if (text !== wanted) continue;
+          if (isVisible(el)) return true;
+        }
+        return false;
+      }
+
+      function checkProfileInRoot(root) {
+        const profile =
+          root.querySelector('ts-profile[data-route="profile"]') ||
+          root.querySelector("ts-profile");
+        if (!profile || !isVisible(profile)) return null;
+
+        const titleBar = profile.querySelector("#heading");
+        if (!titleBar || !isVisible(titleBar)) return "NO_HEADING";
+
+        const titleText = (titleBar.textContent || "").replace(/\\s+/g, " ").trim();
+        if (!titleText.includes(expectedHeading)) return "HEADING_MISMATCH";
+
+        if (!hasVisibleText(document, expectedLocalLogin)) return "NO_LOCAL_LOGIN";
+
+        return "VISIBLE";
+      }
+
+      function findInRoot(root) {
+        const result = checkProfileInRoot(root);
+        if (result) return result;
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
