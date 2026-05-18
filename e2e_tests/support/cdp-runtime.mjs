@@ -3,6 +3,8 @@
  * instance (--remote-debugging-port).
  */
 
+const DEFAULT_SEND_TIMEOUT_MS = 10000;
+
 export function assertCdpGlobals() {
   if (typeof fetch !== "function") {
     throw new Error("Global fetch is required. Run with Node 20+.");
@@ -53,24 +55,96 @@ export async function connectCdp(wsUrl) {
   return ws;
 }
 
+/**
+ * Poll until the CDP HTTP endpoint responds (Electron finished binding port 9222).
+ */
+export async function waitForCdpEndpoint(
+  config = loadCdpConfig(),
+  { timeoutMs = 120_000, intervalMs = 500 } = {}
+) {
+  const versionUrl = `http://${config.host}:${config.port}/json/version`;
+  const start = Date.now();
+  let lastError = "unknown";
+
+  while (Date.now() - start < timeoutMs) {
+    try {
+      const response = await fetch(versionUrl);
+      if (response.ok) {
+        return;
+      }
+      lastError = `${versionUrl} (${response.status})`;
+    } catch (err) {
+      lastError = err instanceof Error ? err.message : String(err);
+    }
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+  }
+
+  throw new Error(`CDP endpoint not ready after ${timeoutMs}ms: ${lastError}`);
+}
+
 export function createRuntime(ws) {
   let msgId = 0;
+  /** @type {Map<number, { reject: (err: Error) => void, cleanup: () => void }>} */
+  const pending = new Map();
 
-  const send = (method, params = {}) =>
+  const rejectAll = (err) => {
+    for (const { reject, cleanup } of pending.values()) {
+      cleanup();
+      reject(err);
+    }
+    pending.clear();
+  };
+
+  ws.addEventListener("close", () => {
+    rejectAll(new Error("CDP WebSocket closed"));
+  });
+
+  ws.addEventListener("error", () => {
+    rejectAll(new Error("CDP WebSocket error"));
+  });
+
+  const send = (method, params = {}, { timeoutMs = DEFAULT_SEND_TIMEOUT_MS } = {}) =>
     new Promise((resolve, reject) => {
       const id = ++msgId;
+
+      const cleanup = () => {
+        clearTimeout(timer);
+        pending.delete(id);
+        ws.removeEventListener("message", onMessage);
+      };
+
       const onMessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.id !== id) return;
-        ws.removeEventListener("message", onMessage);
+        cleanup();
         if (data.error) {
           reject(new Error(`${method} failed: ${JSON.stringify(data.error)}`));
           return;
         }
         resolve(data.result);
       };
+
+      const timer = setTimeout(() => {
+        cleanup();
+        reject(new Error(`${method} timed out after ${timeoutMs}ms`));
+      }, timeoutMs);
+
+      pending.set(id, {
+        reject: (err) => {
+          cleanup();
+          reject(err);
+        },
+        cleanup,
+      });
+
       ws.addEventListener("message", onMessage);
-      ws.send(JSON.stringify({ id, method, params }));
+      try {
+        ws.send(JSON.stringify({ id, method, params }));
+      } catch (err) {
+        cleanup();
+        pending.delete(id);
+        reject(err instanceof Error ? err : new Error(String(err)));
+      }
     });
 
   const evaluate = async (expression) => {
@@ -82,16 +156,25 @@ export function createRuntime(ws) {
     return result?.result?.value;
   };
 
-  return { send, evaluate };
+  const close = async () => {
+    rejectAll(new Error("CDP session closed"));
+    if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+      ws.close();
+    }
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  };
+
+  return { send, evaluate, close };
 }
 
 function isBenignCloseError(err) {
   const message = err instanceof Error ? err.message : String(err);
-  return /closed|closing|ECONNRESET|WebSocket is already/i.test(message);
+  return /closed|closing|ECONNRESET|WebSocket is already|session closed/i.test(message);
 }
 
 /**
  * Quits the Electron app via CDP Browser.close (requires --remote-debugging-port).
+ * Uses the browser debugger WebSocket from /json/version (not the page target used by tests).
  * Browser.close tears down immediately; a dropped socket before the CDP reply is OK.
  */
 export async function closeAppViaCdp(config = loadCdpConfig()) {
@@ -108,17 +191,13 @@ export async function closeAppViaCdp(config = loadCdpConfig()) {
   }
 
   const ws = await connectCdp(version.webSocketDebuggerUrl);
-  const { send } = createRuntime(ws);
+  const { send, close } = createRuntime(ws);
   try {
     await send("Browser.close");
   } catch (err) {
     if (!isBenignCloseError(err)) throw err;
   } finally {
-    try {
-      ws.close();
-    } catch {
-      // ignore
-    }
+    await close();
   }
 }
 
@@ -129,11 +208,11 @@ export async function withCdpSession(fn, config = loadCdpConfig()) {
   assertCdpGlobals();
   const target = await getCdpTarget(config);
   const ws = await connectCdp(target.webSocketDebuggerUrl);
-  const { send, evaluate } = createRuntime(ws);
+  const { send, evaluate, close } = createRuntime(ws);
   try {
     await send("Runtime.enable");
-    return await fn({ evaluate, send, target });
+    return await fn({ evaluate, send, target, close });
   } finally {
-    ws.close();
+    await close();
   }
 }

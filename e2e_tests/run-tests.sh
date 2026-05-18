@@ -27,16 +27,27 @@ stop_electron() {
   ELECTRON_PID=""
 }
 
+wait_for_cdp() {
+  node --input-type=module -e "
+    import { waitForCdpEndpoint } from './e2e_tests/support/cdp-runtime.mjs';
+    await waitForCdpEndpoint();
+    console.log('[e2e] CDP endpoint ready');
+  "
+}
+
 start_electron
-sleep 10s
+wait_for_cdp
+sleep 10s # cold start: past splash and initial UI load
 
 node --test e2e_tests/e2e/user-login-incorrect.spec.mjs
 
+# close-app: CDP Browser.close (separate browser socket). stop_electron: kill leftover process.
 node e2e_tests/support/close-app.mjs
 stop_electron
 sleep 2s
 
 start_electron
+wait_for_cdp
 sleep 5s # subsequent launches should start faster
 
 node --test e2e_tests/e2e/user-profile-setup.spec.mjs
