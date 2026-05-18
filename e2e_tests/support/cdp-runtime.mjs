@@ -85,6 +85,43 @@ export function createRuntime(ws) {
   return { send, evaluate };
 }
 
+function isBenignCloseError(err) {
+  const message = err instanceof Error ? err.message : String(err);
+  return /closed|closing|ECONNRESET|WebSocket is already/i.test(message);
+}
+
+/**
+ * Quits the Electron app via CDP Browser.close (requires --remote-debugging-port).
+ * Browser.close tears down immediately; a dropped socket before the CDP reply is OK.
+ */
+export async function closeAppViaCdp(config = loadCdpConfig()) {
+  assertCdpGlobals();
+  const versionUrl = `http://${config.host}:${config.port}/json/version`;
+  const response = await fetch(versionUrl);
+  if (!response.ok) {
+    throw new Error(`CDP version endpoint unavailable: ${versionUrl} (${response.status})`);
+  }
+
+  const version = await response.json();
+  if (!version?.webSocketDebuggerUrl) {
+    throw new Error("CDP version response missing webSocketDebuggerUrl.");
+  }
+
+  const ws = await connectCdp(version.webSocketDebuggerUrl);
+  const { send } = createRuntime(ws);
+  try {
+    await send("Browser.close");
+  } catch (err) {
+    if (!isBenignCloseError(err)) throw err;
+  } finally {
+    try {
+      ws.close();
+    } catch {
+      // ignore
+    }
+  }
+}
+
 /**
  * Connects to the preferred BTT page target, enables Runtime, runs `fn`, then closes the socket.
  */
