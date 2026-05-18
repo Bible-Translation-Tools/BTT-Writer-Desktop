@@ -151,7 +151,7 @@ describe("Draft chunk content", () => {
         "Failed to click Home menu item (paper-item[on-tap='gohome'])"
       );
       printStep("sidebar-home", "clicked");
-      await sleep(2000);
+      await sleep(1000);
 
       await waitForEvalState(
         evaluate,

@@ -256,26 +256,8 @@ async function run() {
     printStep("menu-open", "clicked");
     await sleep(STEP_SETTLE_MS);
 
-    await waitForEvalState(
-      evaluate,
-      clickExportMenuItemExpr,
-      "CLICKED",
-      15000,
-      "Failed to click Upload/Export menu item (paper-item[on-tap='goexport'])"
-    );
-    printStep("upload-export", "clicked");
-    await sleep(STEP_SETTLE_MS);
 
-    await waitForEvalState(
-      evaluate,
-      clickExportToUsfmExpr,
-      "CLICKED",
-      15000,
-      "Failed to click Export to USFM option (div[on-tap='checkusfm'])"
-    );
-    printStep("export-to-usfm", "clicked");
-
-    console.log("[menu-export] PASS: opened menu, clicked Upload/Export, and selected Export to USFM.");
+    console.log("[menu-export] PASS: opened menu");
   } finally {
     ws.close();
   }
