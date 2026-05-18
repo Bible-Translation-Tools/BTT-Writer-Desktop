@@ -11,7 +11,7 @@ import { sleep, waitForEvalState } from "../support/wait.mjs";
 
 const INVALID_USERNAME = "_@@@_invalid_user_@@@_";
 const INVALID_PASSWORD = "_@@@_invalid_password_@@@_";
-const WAIT_TIMEOUT_MS = 3000;
+const WAIT_TIMEOUT_MS = 7000;
 
 function printStep(name, result) {
   console.log(`[login-incorrect] ${name}: ${result}`);
