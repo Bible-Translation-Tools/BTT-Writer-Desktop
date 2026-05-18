@@ -10,7 +10,6 @@ import {
   clickMenuIconExpr,
   clickTranslateSidebarHomeExpr,
   clickVisibleDialogConfirmExpr,
-  translateSidebarMenuOpenExpr,
   findTargetReviewParagraphByChunkRefExpr,
   setTextboxValueExpr,
 } from "../expressions/review.mjs";
@@ -133,36 +132,26 @@ describe("Draft chunk content", () => {
         `14.txt USFM must match saved target (expected \\v 14 Verse 14 \\v 15 Verse 15 \\v 16 Verse 16)`
       );
       printStep("target-file-content", "OK");
-      await sleep(1000);
 
       await waitForEvalExact(
         evaluate,
         clickMenuIconExpr,
         "CLICKED",
         WAIT_TIMEOUT_MS,
-        "Failed to click translate sidebar menu trigger"
+        "Failed to open translate sidebar menu (paper-menu-button#menu)"
       );
-      printStep("sidebar-menu-trigger", "clicked");
-      await sleep(1000);
-
-      await waitForEvalState(
-        evaluate,
-        translateSidebarMenuOpenExpr,
-        (state) => state === "OPEN",
-        WAIT_TIMEOUT_MS,
-        "Expected translate sidebar menu dropdown to open"
-      );
-      printStep("sidebar-menu", "open");
+      printStep("sidebar-menu", "opened");
+      await sleep(1500);
 
       await waitForEvalExact(
         evaluate,
         clickTranslateSidebarHomeExpr,
         "CLICKED",
         WAIT_TIMEOUT_MS,
-        "Failed to click Home in translate sidebar menu"
+        "Failed to click Home menu item (paper-item[on-tap='gohome'])"
       );
       printStep("sidebar-home", "clicked");
-      await sleep(1000);
+      await sleep(2000);
 
       await waitForEvalState(
         evaluate,

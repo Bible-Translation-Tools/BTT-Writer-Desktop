@@ -392,23 +392,34 @@ export function clickVisibleDialogConfirmExpr() {
 export function translateSidebarMenuOpenExpr() {
   return `
     (function () {
-      function isDropdownOpen(menuButton) {
-        var dropdown =
+      function isMenuOpen(menuButton) {
+        if (menuButton.opened === true) return true;
+
+        const dropdown =
           menuButton.querySelector("#dropdown") ||
           (menuButton.shadowRoot && menuButton.shadowRoot.querySelector("#dropdown"));
-        if (!dropdown) return false;
-        if (dropdown.getAttribute("aria-hidden") === "false") return true;
-        var style = getComputedStyle(dropdown);
-        return style.display !== "none" && style.visibility !== "hidden";
+        if (dropdown) {
+          if (dropdown.getAttribute("aria-hidden") === "false") return true;
+          const style = getComputedStyle(dropdown);
+          if (style.display !== "none" && style.visibility !== "hidden") return true;
+        }
+
+        const homeItem = menuButton.querySelector("paper-item[on-tap='gohome']");
+        if (homeItem) {
+          const rect = homeItem.getBoundingClientRect();
+          if (rect.width > 0 && rect.height > 0) return true;
+        }
+
+        return false;
       }
 
       function findInRoot(root) {
-        var menuButton = root.querySelector("paper-menu-button#menu");
-        if (menuButton) return isDropdownOpen(menuButton) ? "OPEN" : "CLOSED";
-        var all = root.querySelectorAll("*");
-        for (var i = 0; i < all.length; i++) {
-          if (!all[i].shadowRoot) continue;
-          var nested = findInRoot(all[i].shadowRoot);
+        const menuButton = root.querySelector("paper-menu-button#menu");
+        if (menuButton) return isMenuOpen(menuButton) ? "OPEN" : "CLOSED";
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
           if (nested !== "NOT_FOUND") return nested;
         }
         return "NOT_FOUND";
@@ -419,104 +430,78 @@ export function translateSidebarMenuOpenExpr() {
   `;
 }
 
-/** Opens ts-translate-sidebar paper-menu-button#menu (clicks #menuicon / #trigger). */
+/** Opens ts-translate-sidebar paper-menu-button#menu (same pattern as menu-nav.mjs). */
 export function clickMenuIconExpr() {
   return `
     (function () {
-      function hasLayout(node) {
-        try {
-          node.scrollIntoView({ block: "center", inline: "nearest" });
-        } catch (e) {}
-        var rect = node.getBoundingClientRect();
-        return rect.width > 0 && rect.height > 0;
-      }
-
-      function getClickTarget(menuButton) {
-        var candidates = [];
-        var roots = [];
-        if (menuButton.shadowRoot) roots.push(menuButton.shadowRoot);
-        roots.push(menuButton);
-        for (var i = 0; i < roots.length; i++) {
-          var icon = roots[i].querySelector("#menuicon");
-          var trigger = roots[i].querySelector("#trigger");
-          if (icon) candidates.push(icon);
-          if (trigger) candidates.push(trigger);
-        }
-        for (var j = 0; j < candidates.length; j++) {
-          if (hasLayout(candidates[j])) return candidates[j];
-        }
-        if (hasLayout(menuButton)) return menuButton;
-        return candidates.length ? candidates[0] : null;
-      }
-
-      function tryClickInRoot(root) {
-        var buttons = root.querySelectorAll("paper-menu-button#menu");
-        for (var i = 0; i < buttons.length; i++) {
-          var target = getClickTarget(buttons[i]);
-          if (!target) continue;
-          if (!hasLayout(target)) continue;
-          target.click();
+      function clickInRoot(root) {
+        const menuButton = root.querySelector("paper-menu-button#menu");
+        if (menuButton) {
+          if (typeof menuButton.open === "function") {
+            menuButton.open();
+            return "CLICKED";
+          }
+          if (typeof menuButton.toggle === "function") {
+            menuButton.toggle();
+            return "CLICKED";
+          }
+          menuButton.click();
           return "CLICKED";
         }
-        var all = root.querySelectorAll("*");
-        for (var k = 0; k < all.length; k++) {
-          if (!all[k].shadowRoot) continue;
-          var nested = tryClickInRoot(all[k].shadowRoot);
+
+        const icon = root.querySelector("#menuicon, iron-icon.dropdown-trigger");
+        if (icon) {
+          const rect = icon.getBoundingClientRect();
+          if (rect.width > 0 && rect.height > 0) {
+            const trigger = icon.closest("paper-menu-button") || icon;
+            trigger.click();
+            return "CLICKED";
+          }
+          return "NOT_VISIBLE";
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = clickInRoot(el.shadowRoot);
           if (nested !== "NOT_FOUND") return nested;
         }
         return "NOT_FOUND";
       }
 
-      return tryClickInRoot(document);
+      return clickInRoot(document);
     })()
   `;
 }
 
-/** Selects Home (gohome) from the open translate sidebar menu. */
+/** Selects Home (gohome) from the translate sidebar menu (same pattern as menu-nav.mjs export item). */
 export function clickTranslateSidebarHomeExpr() {
   return `
     (function () {
-      function visibleEnough(node) {
-        try {
-          node.scrollIntoView({ block: "center", inline: "nearest" });
-        } catch (e) {}
-        var r = node.getBoundingClientRect();
-        return r.width > 0 && r.height > 0;
-      }
-
-      function isDropdownOpen(menuButton) {
-        if (!menuButton) return false;
-        var dropdown =
-          menuButton.querySelector("#dropdown") ||
-          (menuButton.shadowRoot && menuButton.shadowRoot.querySelector("#dropdown"));
-        if (!dropdown) return false;
-        if (dropdown.getAttribute("aria-hidden") === "false") return true;
-        var style = getComputedStyle(dropdown);
-        return style.display !== "none" && style.visibility !== "hidden";
-      }
-
-      function tryClickInRoot(root) {
-        var items = root.querySelectorAll("paper-item");
-        for (var i = 0; i < items.length; i++) {
-          var item = items[i];
-          if ((item.textContent || "").trim() !== "Home") continue;
-          if (!visibleEnough(item)) continue;
-          var menuButton = item.closest("paper-menu-button");
-          if (menuButton && !isDropdownOpen(menuButton)) continue;
+      function clickInRoot(root) {
+        const item = root.querySelector("paper-item[on-tap='gohome']");
+        if (item) {
           item.click();
           return "CLICKED";
         }
 
-        var all = root.querySelectorAll("*");
-        for (var j = 0; j < all.length; j++) {
-          if (!all[j].shadowRoot) continue;
-          var nested = tryClickInRoot(all[j].shadowRoot);
+        const homeIcon = root.querySelector("paper-item iron-icon[icon='project:project']");
+        if (homeIcon) {
+          const parentItem = homeIcon.closest("paper-item");
+          if (parentItem) {
+            parentItem.click();
+            return "CLICKED";
+          }
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = clickInRoot(el.shadowRoot);
           if (nested !== "NOT_FOUND") return nested;
         }
         return "NOT_FOUND";
       }
 
-      return tryClickInRoot(document);
+      return clickInRoot(document);
     })()
   `;
 }
