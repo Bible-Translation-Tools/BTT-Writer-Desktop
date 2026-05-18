@@ -3,7 +3,9 @@ import {
   clickProjectInfoIconExpr,
   clickExportOptionsCancelExpr,
   clickDeleteProjectConfirmExpr,
+  clickPrintOptionsCancelExpr,
   clickProjectInfoDeleteExpr,
+  clickProjectInfoPrintExpr,
   clickProjectInfoReviewExpr,
   clickProjectInfoUploadExportExpr,
   clickReviewBackArrowExpr,
@@ -11,6 +13,8 @@ import {
   deleteProjectDialogVisibleExpr,
   exportOptionsDialogDismissedExpr,
   exportOptionsDialogVisibleExpr,
+  printOptionsDialogDismissedExpr,
+  printOptionsDialogVisibleExpr,
   homeProjectBookLabelAbsentExpr,
   homeProjectBookVisibleExpr,
   projectInfoDialogVisibleExpr,
@@ -200,6 +204,63 @@ describe("Project info actions", () => {
           "Expected project info dialog to open after returning home"
         );
         printStep("info-dialog-after-home", "visible");
+
+        await waitForEvalExact(
+          evaluate,
+          clickProjectInfoPrintExpr,
+          "CLICKED",
+          WAIT_TIMEOUT_MS,
+          "Failed to click Print icon (iron-icon[icon='print']) in ts-project-info"
+        );
+        printStep("print-icon", "clicked");
+        await sleep(500);
+
+        await waitForEvalState(
+          evaluate,
+          () => printOptionsDialogVisibleExpr(),
+          (state) => state === "VISIBLE",
+          WAIT_TIMEOUT_MS,
+          'Expected visible ts-print-options h2 "Print/Export to PDF Options"'
+        );
+        printStep("print-options-title", "Print/Export to PDF Options");
+
+        await waitForEvalExact(
+          evaluate,
+          clickPrintOptionsCancelExpr,
+          "CLICKED",
+          WAIT_TIMEOUT_MS,
+          "Failed to click Cancel (paper-button[dialog-dismiss]) in ts-print-options"
+        );
+        printStep("print-options-cancel", "clicked");
+        await sleep(500);
+
+        await waitForEvalState(
+          evaluate,
+          () => printOptionsDialogDismissedExpr(),
+          (state) => state === "DISMISSED",
+          WAIT_TIMEOUT_MS,
+          "Expected print options dialog to close after Cancel"
+        );
+        printStep("print-options-dialog", "dismissed");
+
+        await waitForEvalExact(
+          evaluate,
+          () => clickProjectInfoIconExpr(PROJECT_BOOK),
+          "CLICKED",
+          WAIT_TIMEOUT_MS,
+          `Failed to click project info icon after print cancel for ${PROJECT_BOOK}`
+        );
+        printStep("info-icon-after-print-cancel", "clicked");
+        await sleep(500);
+
+        await waitForEvalState(
+          evaluate,
+          () => projectInfoDialogVisibleExpr(),
+          (state) => state === "VISIBLE",
+          WAIT_TIMEOUT_MS,
+          "Expected project info dialog to open again after print cancel"
+        );
+        printStep("info-dialog-after-print-cancel", "visible");
 
         await waitForEvalExact(
           evaluate,

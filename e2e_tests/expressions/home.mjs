@@ -267,6 +267,213 @@ export function clickProjectInfoUploadExportExpr() {
   `;
 }
 
+/** Clicks Print in the open ts-project-info dialog. */
+export function clickProjectInfoPrintExpr() {
+  return `
+    (function () {
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function clickPrintIcon(info) {
+        const icon = info.querySelector('iron-icon[icon="print"]');
+        if (!icon) return "NO_ICON";
+        if (icon.classList.contains("hide")) return "HIDDEN";
+        if (!isVisible(icon)) return "NOT_VISIBLE";
+        icon.click();
+        return "CLICKED";
+      }
+
+      function findInRoot(root) {
+        for (const info of root.querySelectorAll("ts-project-info")) {
+          const result = clickPrintIcon(info);
+          if (result === "CLICKED" || result === "NOT_VISIBLE" || result === "HIDDEN") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND" && nested !== "NO_ICON") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Returns whether print options dialog is open with visible "Print/Export to PDF Options" h2. */
+export function printOptionsDialogVisibleExpr() {
+  const title = escapeForTemplate("Print/Export to PDF Options");
+  return `
+    (function () {
+      const expectedTitle = ${title};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const style = getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") return false;
+        if (parseFloat(style.opacity) === 0) return false;
+        if (el.classList.contains("hide")) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function dialogOpen(dialog) {
+        if (dialog.opened === true) return true;
+        if (dialog.getAttribute("aria-hidden") === "false") return true;
+        return isVisible(dialog);
+      }
+
+      function checkPrintOptions(options) {
+        if (!options || !isVisible(options)) return "OPTIONS_HIDDEN";
+
+        const heading = options.querySelector("#header h2");
+        if (!heading) return "NO_TITLE";
+
+        const titleText = (heading.textContent || "").replace(/\\s+/g, " ").trim();
+        if (titleText !== expectedTitle) return "TITLE_MISMATCH";
+
+        if (!isVisible(heading)) return "TITLE_HIDDEN";
+        return "VISIBLE";
+      }
+
+      function findInRoot(root) {
+        const dialog = root.querySelector("paper-dialog#print");
+        if (dialog && dialogOpen(dialog)) {
+          const options = dialog.querySelector("ts-print-options");
+          const result = checkPrintOptions(options);
+          if (result !== "OPTIONS_HIDDEN" || !options) return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Clicks Cancel (paper-button[dialog-dismiss]) in ts-print-options. */
+export function clickPrintOptionsCancelExpr() {
+  const label = escapeForTemplate("Cancel");
+  return `
+    (function () {
+      const wanted = ${label};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function clickCancelInOptions(options) {
+        const dismiss = options.querySelector('paper-button[dialog-dismiss]');
+        if (dismiss && isVisible(dismiss)) {
+          dismiss.click();
+          return "CLICKED";
+        }
+
+        for (const btn of options.querySelectorAll("paper-button")) {
+          const text = (btn.textContent || "").replace(/\\s+/g, " ").trim();
+          if (text !== wanted) continue;
+          if (!isVisible(btn)) continue;
+          btn.click();
+          return "CLICKED";
+        }
+        return "NOT_FOUND";
+      }
+
+      function findInRoot(root) {
+        for (const options of root.querySelectorAll("ts-print-options")) {
+          const result = clickCancelInOptions(options);
+          if (result === "CLICKED") return result;
+        }
+
+        const dialog = root.querySelector("paper-dialog#print");
+        if (dialog) {
+          const options = dialog.querySelector("ts-print-options");
+          if (options) {
+            const result = clickCancelInOptions(options);
+            if (result !== "NOT_FOUND") return result;
+          }
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Returns DISMISSED when print options dialog is no longer open/visible. */
+export function printOptionsDialogDismissedExpr() {
+  const title = escapeForTemplate("Print/Export to PDF Options");
+  return `
+    (function () {
+      const expectedTitle = ${title};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const style = getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") return false;
+        if (parseFloat(style.opacity) === 0) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function dialogOpen(dialog) {
+        if (dialog.opened === true) return true;
+        if (dialog.getAttribute("aria-hidden") === "false") return true;
+        return isVisible(dialog);
+      }
+
+      function titleStillVisibleInRoot(root) {
+        for (const options of root.querySelectorAll("ts-print-options")) {
+          const heading = options.querySelector("#header h2");
+          if (!heading) continue;
+          const titleText = (heading.textContent || "").replace(/\\s+/g, " ").trim();
+          if (titleText !== expectedTitle) continue;
+          if (isVisible(heading)) return true;
+        }
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          if (titleStillVisibleInRoot(el.shadowRoot)) return true;
+        }
+        return false;
+      }
+
+      function dialogStillOpenInRoot(root) {
+        const dialog = root.querySelector("paper-dialog#print");
+        if (dialog && dialogOpen(dialog)) return true;
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          if (dialogStillOpenInRoot(el.shadowRoot)) return true;
+        }
+        return false;
+      }
+
+      if (dialogStillOpenInRoot(document)) return "STILL_OPEN";
+      if (titleStillVisibleInRoot(document)) return "STILL_OPEN";
+      return "DISMISSED";
+    })()
+  `;
+}
+
 /** Returns whether export options dialog is open with visible "Upload/Export Options" h2. */
 export function exportOptionsDialogVisibleExpr() {
   const title = escapeForTemplate("Upload/Export Options");
