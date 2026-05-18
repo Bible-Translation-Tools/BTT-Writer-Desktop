@@ -2,11 +2,15 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, test } from "node:test";
+import { welcomeHomeVisibleExpr } from "../expressions/home.mjs";
 import {
   clickDoneIconExpr,
   clickEditIconForChunkExpr,
   clickMarkChunkDoneToggleExpr,
+  clickMenuIconExpr,
+  clickTranslateSidebarHomeExpr,
   clickVisibleDialogConfirmExpr,
+  translateSidebarMenuOpenExpr,
   findTargetReviewParagraphByChunkRefExpr,
   setTextboxValueExpr,
 } from "../expressions/review.mjs";
@@ -15,6 +19,7 @@ import {
   sleep,
   waitForChunkRefVisibleWithScroll,
   waitForEvalExact,
+  waitForEvalState,
   waitForTextboxContains,
   waitForVerseMarkerInChunk,
 } from "../support/wait.mjs";
@@ -128,8 +133,49 @@ describe("Draft chunk content", () => {
         `14.txt USFM must match saved target (expected \\v 14 Verse 14 \\v 15 Verse 15 \\v 16 Verse 16)`
       );
       printStep("target-file-content", "OK");
+      await sleep(1000);
 
-      console.log("[chunk-nav] PASS: chunk navigation + edit + done + toggle + confirm completed.");
+      await waitForEvalExact(
+        evaluate,
+        clickMenuIconExpr,
+        "CLICKED",
+        WAIT_TIMEOUT_MS,
+        "Failed to click translate sidebar menu trigger"
+      );
+      printStep("sidebar-menu-trigger", "clicked");
+      await sleep(1000);
+
+      await waitForEvalState(
+        evaluate,
+        translateSidebarMenuOpenExpr,
+        (state) => state === "OPEN",
+        WAIT_TIMEOUT_MS,
+        "Expected translate sidebar menu dropdown to open"
+      );
+      printStep("sidebar-menu", "open");
+
+      await waitForEvalExact(
+        evaluate,
+        clickTranslateSidebarHomeExpr,
+        "CLICKED",
+        WAIT_TIMEOUT_MS,
+        "Failed to click Home in translate sidebar menu"
+      );
+      printStep("sidebar-home", "clicked");
+      await sleep(1000);
+
+      await waitForEvalState(
+        evaluate,
+        () => welcomeHomeVisibleExpr(),
+        (state) => state === "VISIBLE",
+        WAIT_TIMEOUT_MS,
+        "Expected home screen (#welcome) after selecting Home from sidebar menu"
+      );
+      printStep("welcome-home", "visible");
+
+      console.log(
+        "[chunk-nav] PASS: chunk navigation + edit + done + toggle + confirm + go home completed."
+      );
     });
   });
 });

@@ -387,3 +387,136 @@ export function clickVisibleDialogConfirmExpr() {
     })()
   `;
 }
+
+/** Returns whether ts-translate-sidebar #menu dropdown is open. */
+export function translateSidebarMenuOpenExpr() {
+  return `
+    (function () {
+      function isDropdownOpen(menuButton) {
+        var dropdown =
+          menuButton.querySelector("#dropdown") ||
+          (menuButton.shadowRoot && menuButton.shadowRoot.querySelector("#dropdown"));
+        if (!dropdown) return false;
+        if (dropdown.getAttribute("aria-hidden") === "false") return true;
+        var style = getComputedStyle(dropdown);
+        return style.display !== "none" && style.visibility !== "hidden";
+      }
+
+      function findInRoot(root) {
+        var menuButton = root.querySelector("paper-menu-button#menu");
+        if (menuButton) return isDropdownOpen(menuButton) ? "OPEN" : "CLOSED";
+        var all = root.querySelectorAll("*");
+        for (var i = 0; i < all.length; i++) {
+          if (!all[i].shadowRoot) continue;
+          var nested = findInRoot(all[i].shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Opens ts-translate-sidebar paper-menu-button#menu (clicks #menuicon / #trigger). */
+export function clickMenuIconExpr() {
+  return `
+    (function () {
+      function hasLayout(node) {
+        try {
+          node.scrollIntoView({ block: "center", inline: "nearest" });
+        } catch (e) {}
+        var rect = node.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function getClickTarget(menuButton) {
+        var candidates = [];
+        var roots = [];
+        if (menuButton.shadowRoot) roots.push(menuButton.shadowRoot);
+        roots.push(menuButton);
+        for (var i = 0; i < roots.length; i++) {
+          var icon = roots[i].querySelector("#menuicon");
+          var trigger = roots[i].querySelector("#trigger");
+          if (icon) candidates.push(icon);
+          if (trigger) candidates.push(trigger);
+        }
+        for (var j = 0; j < candidates.length; j++) {
+          if (hasLayout(candidates[j])) return candidates[j];
+        }
+        if (hasLayout(menuButton)) return menuButton;
+        return candidates.length ? candidates[0] : null;
+      }
+
+      function tryClickInRoot(root) {
+        var buttons = root.querySelectorAll("paper-menu-button#menu");
+        for (var i = 0; i < buttons.length; i++) {
+          var target = getClickTarget(buttons[i]);
+          if (!target) continue;
+          if (!hasLayout(target)) continue;
+          target.click();
+          return "CLICKED";
+        }
+        var all = root.querySelectorAll("*");
+        for (var k = 0; k < all.length; k++) {
+          if (!all[k].shadowRoot) continue;
+          var nested = tryClickInRoot(all[k].shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return tryClickInRoot(document);
+    })()
+  `;
+}
+
+/** Selects Home (gohome) from the open translate sidebar menu. */
+export function clickTranslateSidebarHomeExpr() {
+  return `
+    (function () {
+      function visibleEnough(node) {
+        try {
+          node.scrollIntoView({ block: "center", inline: "nearest" });
+        } catch (e) {}
+        var r = node.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
+      }
+
+      function isDropdownOpen(menuButton) {
+        if (!menuButton) return false;
+        var dropdown =
+          menuButton.querySelector("#dropdown") ||
+          (menuButton.shadowRoot && menuButton.shadowRoot.querySelector("#dropdown"));
+        if (!dropdown) return false;
+        if (dropdown.getAttribute("aria-hidden") === "false") return true;
+        var style = getComputedStyle(dropdown);
+        return style.display !== "none" && style.visibility !== "hidden";
+      }
+
+      function tryClickInRoot(root) {
+        var items = root.querySelectorAll("paper-item");
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if ((item.textContent || "").trim() !== "Home") continue;
+          if (!visibleEnough(item)) continue;
+          var menuButton = item.closest("paper-menu-button");
+          if (menuButton && !isDropdownOpen(menuButton)) continue;
+          item.click();
+          return "CLICKED";
+        }
+
+        var all = root.querySelectorAll("*");
+        for (var j = 0; j < all.length; j++) {
+          if (!all[j].shadowRoot) continue;
+          var nested = tryClickInRoot(all[j].shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return tryClickInRoot(document);
+    })()
+  `;
+}
