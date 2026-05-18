@@ -71,13 +71,6 @@ process.stdout.write = console.log.bind(console);
 
         const defaults = require('../config/defaults');
 
-        try {
-            const privateDefaults = require('../config/private.json');
-            c.loadConfig(privateDefaults);
-        } catch (e) {
-            console.info('No private settings.');
-        }
-
         c.loadConfig(defaults);
         c.setValue('rootDir', DATA_PATH, {'mutable': false});
         c.setValue('targetTranslationsDir', path.join(DATA_PATH, 'targetTranslations'), {'mutable': false});
@@ -187,7 +180,6 @@ process.stdout.write = console.log.bind(console);
     const printManager = new PrintManager(configurator, i18n);
     const projectManager = new ProjectsManager(dataManager, configurator, reporter, gitManager, migrateManager, i18n.translate);
     const userManager = new UserManager(
-        {token: configurator.getValue('gogs-token')},
         configurator.getUserSetting("dataserver"),
         navigator.userAgent,
         i18n.translate

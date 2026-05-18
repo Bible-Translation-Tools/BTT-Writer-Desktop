@@ -7,7 +7,7 @@ const _ = require('lodash'),
     utils = require('../js/lib/utils');
 
 
-function UserManager(auth, server, userAgent, translate) {
+function UserManager(server, userAgent, translate) {
 
     const apiUrl = server + '/api/v1';
     const api = new Gogs(apiUrl, userAgent, null);
@@ -88,21 +88,6 @@ function UserManager(auth, server, userAgent, translate) {
     };
 
     return {
-
-        deleteAccount: function (user) {
-            return api.deleteUser(user, auth);
-        },
-
-        createAccount: function (user) {
-            return api.createUser(user, auth, true)
-                .then(function(updatedUser) {
-                    return api.createToken(tokenStub, user)
-                        .then(function(token) {
-                            updatedUser.token = token.sha1;
-                            return updatedUser;
-                        });
-                });
-        },
 
         login: function (userObj) {
             return api.getUser(userObj, null).then(function (user) {

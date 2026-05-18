@@ -72,7 +72,7 @@
         }
     },
     {
-        "name": "helpdeskWebhookToken",
+        "name": "helpdeskToken",
         "value": "62b2b4c1-d0e9-42ad-bca0-19ec62312e28",
         "meta": {
             "mutable": false,

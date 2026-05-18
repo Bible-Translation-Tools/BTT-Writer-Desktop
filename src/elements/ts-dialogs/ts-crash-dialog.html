@@ -1,8 +1,11 @@
 <link rel="import" href="../../components/paper-button/paper-button.html">
 <link rel="import" href="../../components/iron-icons/iron-icons.html">
+<link rel="import" href="../../components/iron-icons/notification-icons.html">
 <link rel="import" href="../../components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../components/neon-animation/neon-animation.html">
 <link rel="import" href="../../components/paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../../components/iron-input/iron-input.html">
+<link rel="import" href="../../components/iron-autogrow-textarea/iron-autogrow-textarea.html">
 
 <dom-module id="ts-crash-dialog">
     <template>
@@ -18,8 +21,8 @@
             }
 
             #container {
-                width: 640px;
-                height: 480px;
+                width: 720px;
+                height: 560px;
                 background: var(--popup-background-color);
                 display: flex;
                 flex-direction: column;
@@ -53,11 +56,11 @@
 
             .user-feedback {
                 margin-top: 20px;
+                padding-top: 12px;
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
                 border-top: 1px solid var(--border-color);
-                padding-top: 15px;
             }
 
             .stack-wrapper {
@@ -157,7 +160,7 @@
                 color: var(--secondary-text-color);
             }
 
-            input, textarea {
+            input, #notes {
                 background: var(--background-color);
                 color: var(--primary-text-color);
                 border: 1px solid var(--border-color);
@@ -167,13 +170,24 @@
                 outline: none;
             }
 
-            input:focus, textarea:focus {
-                border-color: var(--accent-color);
+            #notes {
+                resize: none;
+                height: 100px;
+                width: auto;
             }
 
-            textarea {
-                resize: none;
-                height: 80px;
+            iron-autogrow-textarea {
+                --iron-autogrow-textarea: {
+                    padding: 8px;
+                    box-sizing: border-box;
+                };
+            }
+
+            .internet-warning {
+                display: flex;
+                gap: 5px;
+                flex-direction: row;
+                align-items: end;
             }
 
             paper-dialog {
@@ -267,11 +281,15 @@
                 </div>
 
                 <div class="user-feedback">
-                    <div class="field-group">
-                        <input type="email" value="{{userEmail::input}}" placeholder={{translate("email_optional")}}>
+                    <div class="field-group internet-warning">
+                        <iron-icon icon="notification:wifi"></iron-icon>
+                        <span>{{translate("internet_warning")}}</span>
                     </div>
                     <div class="field-group">
-                        <textarea value="{{userNotes::input}}" placeholder={{translate("describe_problem")}}></textarea>
+                        <input is="iron-input" type="email" bind-value="{{userEmail::input}}" placeholder={{translate("email_optional")}} />
+                    </div>
+                    <div class="field-group">
+                        <iron-autogrow-textarea id="notes" bind-value="{{userNotes::input}}" placeholder={{translate("describe_problem")}}></iron-autogrow-textarea>
                     </div>
                 </div>
             </main>

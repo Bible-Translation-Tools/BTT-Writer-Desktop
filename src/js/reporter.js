@@ -7,6 +7,18 @@ const path = require('path');
 const moment = require('moment');
 const appVersion = require('../../package.json').version;
 
+/**
+ * Reporter to save logs and send reports to the helpdesk
+ * @param {object} options
+ * @param {string} [options.configurator]           Configurator instance to get the options from settings
+ * @param {string} [options.logPath]                Path to the log file
+ * @param {string} [options.maxLogFileKb]           Maximum size of the log file in KB
+ * @param {boolean} [options.verbose]               Verbose logging
+ * @param {string} [options.helpdeskToken]          Helpdesk token
+ * @param {string} [options.defaultSenderEmail]     Default sender email if user didn't specify theirs
+ * @returns {Reporter}
+ * @constructor
+ */
 function Reporter (options) {
 
     options = options || {};
@@ -17,12 +29,9 @@ function Reporter (options) {
     const configLogPath = configurator && path.join(configurator.getValue('rootDir'), 'log.txt');
 
     const logPath = path.normalize(configLogPath || options.logPath || "./log.txt");
-    const oauthToken = configurator && configurator.getValue('github-oauth') || options.oauthToken || '';
-    const repoOwner = configurator && configurator.getValue('repoOwner') || options.repoOwner || '';
-    const repo = configurator && configurator.getValue('repo') || options.repo || '';
     const maxLogFileKb = configurator && configurator.getValue('maxLogFileKb') || options.maxLogFileKb || 200;
     const verbose = options.verbose || false;
-    const helpdeskWebhookToken = configurator && configurator.getValue('helpdeskWebhookToken') || options.helpdeskWebhookToken || '';
+    const helpdeskToken = configurator && configurator.getValue('helpdeskToken') || options.helpdeskToken || '';
     const defaultSenderEmail = options.defaultSenderEmail || 'bttwriter-desktop-feedback@techadvancement.com';
 
     const HELPDESK_HOST = 'helpdesk.techadvancement.com';
@@ -84,26 +93,6 @@ function Reporter (options) {
 
     _this.clearLog = function () {
         return utils.fs.writeFile(logPath, '');
-    };
-
-    /**
-     * Sends a bug report to GitHub
-     * @param string the bug report
-     */
-    _this.reportBug = function (string) {
-        if (!string) {
-            return Promise.reject('reporter.reportBug requires a message.')
-        }
-        return _this.formGithubIssue('bug report', string, null);
-    };
-
-    /**
-     *
-     * @param string
-     * @param crashFilePath
-     */
-    _this.reportCrash = function (string, crashFilePath) {
-        return _this.formGithubIssue('crash report', string, crashFilePath);
     };
 
     _this.stackTrace = function () {
@@ -178,117 +167,8 @@ function Reporter (options) {
         });
     };
 
-    _this.formGithubIssue = function (type, string, filePath) {
-        let issueObject = {};
-        issueObject.user = repoOwner;
-        issueObject.repo = repo;
-        issueObject.labels = [type, appVersion];
-        if (string) {
-            if (string.length > 30) {
-                issueObject.title = string.substring(0, 29) + '...';
-            } else {
-                issueObject.title = string;
-            }
-        } else {
-            issueObject.title = type;
-        }
-
-        let bodyBuilder = [];
-        /* user notes */
-        if (string) {
-            bodyBuilder.push('Notes\n======');
-            bodyBuilder.push(string);
-        }
-        /* generated notes */
-        bodyBuilder.push('\nEnvironment\n======');
-        bodyBuilder.push('Environment Key | Value');
-        bodyBuilder.push(':--: | :--:');
-        bodyBuilder.push('Version |' + appVersion);
-        bodyBuilder.push('Operating System | ' + os.type());
-        bodyBuilder.push('Platform | ' + os.platform());
-        bodyBuilder.push('Release | ' + os.release());
-        bodyBuilder.push('Architecture | ' + os.arch());
-        if (type === 'crash report') {
-            bodyBuilder.push('\nStack Trace\n======');
-            bodyBuilder.push('```javascript');
-            bodyBuilder.push(_this.stackTrace());
-            bodyBuilder.push('```');
-        }
-        bodyBuilder.push('\nLog History\n======');
-        bodyBuilder.push('```javascript');
-
-        // TODO: this code is crazy. fix it!
-        return _this.stringFromLogFile(null)
-            .then(function (results) {
-                if (filePath) {
-                    return _this.stringFromLogFile(filePath)
-                        .then(function (crashFileResults) {
-                            bodyBuilder.push(results);
-                            bodyBuilder.push('```');
-                            bodyBuilder.push('\nCrash File\n======');
-                            bodyBuilder.push('```javascript');
-                            bodyBuilder.push(crashFileResults);
-                            bodyBuilder.push('```');
-                            issueObject.body = bodyBuilder.join('\n');
-                            return _this.sendIssueToGithub(issueObject);
-                        });
-                } else {
-                    bodyBuilder.push(results);
-                    bodyBuilder.push('```');
-                    issueObject.body = bodyBuilder.join('\n');
-                    return _this.sendIssueToGithub(issueObject);
-                }
-            });
-    };
-
-    _this.sendIssueToGithub = function (issue) {
-        if(!_this.canReportToGithub()) {
-            return Promise.reject({message:'Missing credentials'});
-        }
-
-        let params = {};
-        params.title = issue.title;
-        params.body = issue.body;
-        //params.labels = issue.labels;
-        let payload = JSON.stringify(params);
-
-        let urlPath = '/repos/' + issue.user + '/' + issue.repo + '/issues';
-        let postOptions = {
-            host: 'api.github.com',
-            port: 443,
-            path: urlPath,
-            method: 'POST',
-            headers: {
-                'User-Agent': 'ts-desktop',
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(payload),
-                'Authorization': 'token ' + oauthToken
-            }
-        };
-
-        return new Promise(function(resolve, reject) {
-            let postReq = https.request(postOptions, function (res) {
-                res.setEncoding('utf8');
-                let completeData = '';
-                res.on('data', function (partialData) {
-                    completeData += partialData;
-                }).on('end', function () {
-                    if(res.statusCode >= 400) {
-                        console.log(res);
-                        reject(completeData);
-                    } else {
-                        _this.clearLog();
-                        resolve(completeData);
-                    }
-                });
-            }).on('error', reject);
-            postReq.write(payload);
-            postReq.end();
-        });
-    };
-
-    _this.canReportToGithub = function () {
-        return !!(repo && repoOwner && oauthToken);
+    _this.canReportToHelpdesk = function () {
+        return !!helpdeskToken;
     };
 
     /**
@@ -298,13 +178,10 @@ function Reporter (options) {
      * @param {string} summary  short description / first error line
      * @param {object} [opts]
      * @param {string} [opts.senderEmail]  email to associate the ticket with
+     * @param {string} [opts.userNotes]    user notes entered in the form field
      * @param {boolean} [opts.isCrash]     include stack trace in body
      * @param {string} [opts.stack]        explicit stack trace to include
      */
-    _this.canReportToHelpdesk = function () {
-        return !!helpdeskWebhookToken;
-    };
-
     _this.sendHelpdeskTicket = function (summary, opts) {
         if (!_this.canReportToHelpdesk()) {
             return Promise.reject(new Error("Helpdesk webhook token not configured"));
@@ -368,7 +245,7 @@ function Reporter (options) {
                 const postOptions = {
                     host: HELPDESK_HOST,
                     port: 443,
-                    path: HELPDESK_PATH_PREFIX + helpdeskWebhookToken,
+                    path: HELPDESK_PATH_PREFIX + helpdeskToken,
                     method: "POST",
                     headers: {
                         "User-Agent": `BTT-Writer-Desktop/${appVersion}`,

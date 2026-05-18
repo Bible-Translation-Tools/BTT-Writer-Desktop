@@ -34,9 +34,7 @@ const mockConfiguratorInstance = {
         const defaults = {
             rootDir: '/mock/data/path',
             libraryDir: '/mock/data/path/library',
-            targetTranslationsDir: '/mock/data/path/target',
-            'github-oauth': 'token',
-            'gogs-token': 'token'
+            targetTranslationsDir: '/mock/data/path/target'
         };
         return defaults[key] || `mock_${key}`;
     }),
@@ -141,7 +139,7 @@ describe('Application Bootstrap', () => {
         expect(electron.ipcRenderer.sendSync).toHaveBeenCalledWith('main-window', 'dataPath');
 
         expect(mockConfiguratorInstance.setStorage).toHaveBeenCalledWith(window.localStorage);
-        expect(mockConfiguratorInstance.loadConfig).toHaveBeenCalledTimes(2);
+        expect(mockConfiguratorInstance.loadConfig).toHaveBeenCalledTimes(1);
 
         const mkdirp = require('mkdirp');
         expect(mkdirp.sync).toHaveBeenCalled();

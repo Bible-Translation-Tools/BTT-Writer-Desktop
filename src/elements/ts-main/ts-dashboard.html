@@ -222,10 +222,6 @@
               type: Object,
               value: {}
           },
-          feedback: {
-              type: String,
-              value: ""
-          },
           currentuser: {
               type: Object,
               value: {}
@@ -1145,76 +1141,44 @@
           this.$.feedback.close();
       },
 
-      sendFeedback: function () {
-          const message = this.feedback;
-          const mythis = this;
+      sendFeedback: function (event, data) {
+          const myThis = this;
+          const { userEmail, feedback } = data;
 
-          mythis.closeFeedback();
-          mythis.showLoadingMessage(App.translate("sending_feedback_status"));
+          myThis.closeFeedback();
+          myThis.showLoadingMessage(App.translate("sending_feedback_status"));
 
-          const canGithub = App.reporter.canReportToGithub();
           const canHelpdesk = App.reporter.canReportToHelpdesk();
 
-          if (!canGithub && !canHelpdesk) {
-              mythis.showErrorMessage(App.translate('feedback_failed'), App.translate("token_error"), null);
+          if (!canHelpdesk) {
+              myThis.showErrorMessage(App.translate('feedback_failed'), App.translate("token_error"), null);
               return;
           }
 
-          // Fire helpdesk as a parallel submission whenever it's configured.
+          // Fire helpdesk whenever it's configured.
           // Tracked so the helpdesk-only fallback path can await its outcome.
-          let helpdeskPromise = null;
-          if (canHelpdesk) {
-              helpdeskPromise = App.reporter.sendHelpdeskTicket(message, { isCrash: false })
-                  .then(function (res) {
-                      console.log(res);
-                      const ticket = JSON.parse(res.toString());
-                      Log.notice(`Ticket ID ${ticket.ticket_id || 'unknown'}`, 'Helpdesk feedback sent');
-                      return true;
-                  })
-                  .catch(function (err) {
-                      Log.warning(err && err.message, 'helpdesk feedback failed');
-                      return false;
-                  });
-          }
+          App.reporter.sendHelpdeskTicket("Bug Report", {
+                  senderEmail: userEmail,
+                  userNotes: feedback,
+                  isCrash: false
+              })
+              .then(function (res) {
+                  const ticket = JSON.parse(res.toString());
+                  Log.notice(`Ticket ID ${ticket.ticket_id || 'unknown'}`, 'Helpdesk feedback sent');
 
-          if (canGithub) {
-              return App.reporter.reportBug(message)
-                  .then(function (res) {
-                      var response;
-
-                      try {
-                        response = JSON.parse(res);
-                      } catch (e) {}
-
-                      if (response && response.url && response.repository_url) {
-                          Log.notice(response.url, App.translate("feedback_sent"));
-                          mythis.showMessage(App.translate("feedback_sent"), App.translate("feedback_sent2"));
-                      } else {
-                          !response && Log.warning(res, App.translate("feedback_failed2"));
-                          mythis.showErrorMessage(App.translate("feedback_failed"), App.translate("feedback_failed3"), response || null);
-                      }
-                  })
-                  .catch(function (err) {
-                      let errorMessage;
-                      if (err.syscall === "getaddrinfo") {
-                          errorMessage = App.translate("connection_error");
-                      } else if (err.syscall === "read") {
-                          errorMessage = App.translate("read_error");
-                      } else {
-                          errorMessage = err.data?.message || err.message || err.stderr || App.translate("feedback_failed4");
-                      }
-                      mythis.showErrorMessage(App.translate("feedback_failed"), errorMessage, err);
-                  });
-          }
-
-          // GitHub not configured — helpdesk is the only sink, tie status to it.
-          return helpdeskPromise.then(function (ok) {
-              if (ok) {
-                  mythis.showMessage(App.translate("feedback_sent"), App.translate("feedback_sent2"));
-              } else {
-                  mythis.showErrorMessage(App.translate("feedback_failed"), App.translate("feedback_failed4"), null);
-              }
-          });
+                  myThis.showMessage(
+                      App.translate("feedback_sent"),
+                      App.translate("feedback_sent2")
+                  );
+              })
+              .catch(function (err) {
+                  Log.warning(err && err.message, 'helpdesk feedback failed');
+                  myThis.showErrorMessage(
+                      App.translate("feedback_failed"),
+                      App.translate("feedback_failed4"),
+                      null
+                  );
+              });
       },
 
       updateFromProject: function () {
