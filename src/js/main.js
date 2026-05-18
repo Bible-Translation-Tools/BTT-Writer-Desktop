@@ -194,17 +194,15 @@ function createCrashReportWindow(error) {
         }
     });
 
+    ipcMain.removeHandler('get-error-data');
+    ipcMain.handle('get-error-data', () => ({
+        message: error.message,
+        stack: error.stack
+    }));
+
     errorWin.loadFile(__dirname + '/../views/crash-dialog.html');
 
-    errorWin.webContents.on('did-finish-load', () => {
-        setTimeout(() => {
-            errorWin.webContents.send('error-data', {
-                message: error.message,
-                stack: error.stack
-            });
-        }, 200);
-        errorWin.show();
-    });
+    errorWin.once('ready-to-show', () => errorWin.show());
 
     const handleResize = () => {
         if (!errorWin.isDestroyed()) {
@@ -216,6 +214,7 @@ function createCrashReportWindow(error) {
     mainWindow.on('move', handleResize);
 
     errorWin.on('closed', () => {
+        ipcMain.removeHandler('get-error-data');
         mainWindow.removeListener('resize', handleResize);
         mainWindow.removeListener('move', handleResize);
     });

@@ -23,7 +23,7 @@ const loc = configurator.getUserSetting("localization");
 if (loc) i18n.setLocale(loc.id);
 
 const SEND_CHANNELS = ['close-crash-dialog'];
-const ON_CHANNELS = ['error-data'];
+const INVOKE_CHANNELS = ['get-error-data'];
 
 const safeIpc = {
     send: function (channel) {
@@ -32,13 +32,12 @@ const safeIpc = {
             ipcRenderer.send.apply(ipcRenderer, args);
         }
     },
-    on: function (channel, callback) {
-        if (ON_CHANNELS.indexOf(channel) !== -1) {
-            ipcRenderer.on(channel, function () {
-                const args = [].slice.call(arguments, 1);
-                callback.apply(null, args);
-            });
+    invoke: function (channel) {
+        if (INVOKE_CHANNELS.indexOf(channel) !== -1) {
+            const args = [].slice.call(arguments);
+            return ipcRenderer.invoke.apply(ipcRenderer, args);
         }
+        return Promise.reject(new Error('Invalid channel: ' + channel));
     }
 };
 

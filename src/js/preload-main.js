@@ -197,7 +197,7 @@ process.stdout.write = console.log.bind(console);
         'open-manual', 'debug-crash', 'renderer-exception', 'close-crash-dialog'
     ];
     const SEND_SYNC_CHANNELS = ['main-window', 'open-file', 'save-as'];
-    const ON_CHANNELS = ['maximize', 'unmaximize', 'error-data'];
+    const ON_CHANNELS = ['maximize', 'unmaximize'];
 
     const safeIpc = {
         send: function (channel) {

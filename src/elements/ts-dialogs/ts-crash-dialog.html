@@ -286,10 +286,10 @@
                         <span>{{translate("internet_warning")}}</span>
                     </div>
                     <div class="field-group">
-                        <input is="iron-input" type="email" bind-value="{{userEmail::input}}" placeholder={{translate("email_optional")}} />
+                        <input is="iron-input" type="email" bind-value="{{userEmail}}" placeholder={{translate("email_optional")}} />
                     </div>
                     <div class="field-group">
-                        <iron-autogrow-textarea id="notes" bind-value="{{userNotes::input}}" placeholder={{translate("describe_problem")}}></iron-autogrow-textarea>
+                        <iron-autogrow-textarea id="notes" bind-value="{{userNotes}}" placeholder={{translate("describe_problem")}}></iron-autogrow-textarea>
                     </div>
                 </div>
             </main>
@@ -367,8 +367,8 @@
                 });
         },
 
-        attached: function() {
-            crashAPI.ipc.on('error-data', (data) => {
+        ready: function() {
+            crashAPI.ipc.invoke('get-error-data').then((data) => {
                 this.message = data.message;
                 this.stack = data.stack;
             });
