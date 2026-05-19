@@ -65,5 +65,8 @@ sleep 3s
 
 node --test e2e_tests/e2e/home-menu.spec.mjs
 
+sleep 3s
+
+node --test e2e_tests/e2e/app-settings.spec.mjs
 
 stop_electron

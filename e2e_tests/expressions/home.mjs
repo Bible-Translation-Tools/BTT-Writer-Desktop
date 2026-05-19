@@ -818,6 +818,189 @@ export function deleteProjectDialogDismissedExpr() {
   `;
 }
 
+/** Returns VISIBLE when paper-dialog#loading shows ts-loading h2 "Project Deleted". */
+export function projectDeletedMessageVisibleExpr() {
+  const title = escapeForTemplate("Project Deleted");
+  return `
+    (function () {
+      const expectedTitle = ${title};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const style = getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") return false;
+        if (parseFloat(style.opacity) === 0) return false;
+        if (el.classList.contains("hide")) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function dialogOpen(dialog) {
+        if (dialog.opened === true) return true;
+        if (dialog.getAttribute("aria-hidden") === "false") return true;
+        return isVisible(dialog);
+      }
+
+      function checkLoading(loading) {
+        if (!loading || !isVisible(loading)) return "LOADING_HIDDEN";
+
+        const heading = loading.querySelector("#header h2");
+        if (!heading) return "NO_TITLE";
+
+        const titleText = (heading.textContent || "").replace(/\\s+/g, " ").trim();
+        if (titleText !== expectedTitle) return "TITLE_MISMATCH";
+
+        if (!isVisible(heading)) return "TITLE_HIDDEN";
+        return "VISIBLE";
+      }
+
+      function findInRoot(root) {
+        const dialog = root.querySelector("paper-dialog#loading");
+        if (dialog && dialogOpen(dialog)) {
+          const loading = dialog.querySelector("ts-loading");
+          const result = checkLoading(loading);
+          if (result !== "LOADING_HIDDEN" || !loading) return result;
+        }
+
+        for (const loading of root.querySelectorAll("ts-loading")) {
+          const result = checkLoading(loading);
+          if (result === "VISIBLE") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Clicks Close (paper-button[dialog-dismiss]) in ts-loading "Project Deleted" dialog. */
+export function clickProjectDeletedCloseExpr() {
+  const title = escapeForTemplate("Project Deleted");
+  const label = escapeForTemplate("Close");
+  return `
+    (function () {
+      const expectedTitle = ${title};
+      const wanted = ${label};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function clickCloseInLoading(loading) {
+        const heading = loading.querySelector("#header h2");
+        if (!heading) return "NO_TITLE";
+
+        const titleText = (heading.textContent || "").replace(/\\s+/g, " ").trim();
+        if (titleText !== expectedTitle) return "TITLE_MISMATCH";
+        if (!isVisible(heading)) return "NOT_VISIBLE";
+
+        const dismiss = loading.querySelector('paper-button[dialog-dismiss]');
+        if (dismiss && isVisible(dismiss)) {
+          dismiss.click();
+          return "CLICKED";
+        }
+
+        for (const btn of loading.querySelectorAll("paper-button")) {
+          const text = (btn.textContent || "").replace(/\\s+/g, " ").trim();
+          if (text !== wanted) continue;
+          if (!isVisible(btn)) continue;
+          btn.click();
+          return "CLICKED";
+        }
+        return "NOT_FOUND";
+      }
+
+      function findInRoot(root) {
+        for (const loading of root.querySelectorAll("ts-loading")) {
+          const result = clickCloseInLoading(loading);
+          if (result === "CLICKED") return result;
+        }
+
+        const dialog = root.querySelector("paper-dialog#loading");
+        if (dialog) {
+          const loading = dialog.querySelector("ts-loading");
+          if (loading) {
+            const result = clickCloseInLoading(loading);
+            if (result !== "NOT_FOUND" && result !== "TITLE_MISMATCH") return result;
+          }
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND" && nested !== "TITLE_MISMATCH") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Returns DISMISSED when ts-loading "Project Deleted" message is no longer visible. */
+export function projectDeletedMessageDismissedExpr() {
+  const title = escapeForTemplate("Project Deleted");
+  return `
+    (function () {
+      const expectedTitle = ${title};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const style = getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") return false;
+        if (parseFloat(style.opacity) === 0) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function dialogOpen(dialog) {
+        if (dialog.opened === true) return true;
+        if (dialog.getAttribute("aria-hidden") === "false") return true;
+        return isVisible(dialog);
+      }
+
+      function titleStillVisibleInRoot(root) {
+        for (const loading of root.querySelectorAll("ts-loading")) {
+          const heading = loading.querySelector("#header h2");
+          if (!heading) continue;
+          const titleText = (heading.textContent || "").replace(/\\s+/g, " ").trim();
+          if (titleText !== expectedTitle) continue;
+          if (isVisible(heading)) return true;
+        }
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          if (titleStillVisibleInRoot(el.shadowRoot)) return true;
+        }
+        return false;
+      }
+
+      function dialogStillOpenInRoot(root) {
+        const dialog = root.querySelector("paper-dialog#loading");
+        if (dialog && dialogOpen(dialog)) return true;
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          if (dialogStillOpenInRoot(el.shadowRoot)) return true;
+        }
+        return false;
+      }
+
+      if (titleStillVisibleInRoot(document)) return "STILL_OPEN";
+      if (dialogStillOpenInRoot(document)) return "STILL_OPEN";
+      return "DISMISSED";
+    })()
+  `;
+}
+
 /** Clicks Review (done-all) in the open ts-project-info dialog. */
 export function clickProjectInfoReviewExpr() {
   return `
@@ -1754,6 +1937,173 @@ export function clickSettingsBackArrowExpr() {
           if (!el.shadowRoot) continue;
           const nested = findInRoot(el.shadowRoot);
           if (nested !== "NOT_FOUND" && nested !== "NO_ICON") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Clicks the Languages URL setting (#languageurl) on ts-settings. */
+export function clickSettingsLanguageUrlExpr() {
+  const label = escapeForTemplate("Languages URL");
+  return `
+    (function () {
+      const expectedLabel = ${label};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function clickLanguageUrlInSettings(settings) {
+        const item =
+          settings.querySelector("#languageurl.setting-group-item") ||
+          settings.querySelector("#languageurl");
+        if (item) {
+          try {
+            item.scrollIntoView({ block: "center", inline: "nearest" });
+          } catch (e) {}
+          if (isVisible(item)) {
+            item.click();
+            return "CLICKED";
+          }
+          return "NOT_VISIBLE";
+        }
+
+        for (const row of settings.querySelectorAll(".setting-group-item")) {
+          const main = row.querySelector(".main-text");
+          if (!main) continue;
+          const text = (main.textContent || "").replace(/\\s+/g, " ").trim();
+          if (text !== expectedLabel) continue;
+          try {
+            row.scrollIntoView({ block: "center", inline: "nearest" });
+          } catch (e) {}
+          if (!isVisible(row)) continue;
+          row.click();
+          return "CLICKED";
+        }
+        return "ITEM_NOT_FOUND";
+      }
+
+      function findInRoot(root) {
+        const settings =
+          root.querySelector('ts-settings[data-route="settings"]') ||
+          root.querySelector("ts-settings");
+        if (settings) {
+          const result = clickLanguageUrlInSettings(settings);
+          if (result !== "ITEM_NOT_FOUND") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Returns VISIBLE when ts-setting-modal shows Languages URL editor. */
+export function languageUrlSettingModalVisibleExpr() {
+  const heading = escapeForTemplate("Languages URL");
+  return `
+    (function () {
+      const expectedHeading = ${heading};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const style = getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") return false;
+        if (parseFloat(style.opacity) === 0) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function checkModal(modal) {
+        if (!modal || !isVisible(modal)) return "MODAL_HIDDEN";
+
+        const header = modal.querySelector("#header");
+        if (!header || !isVisible(header)) return "NO_HEADER";
+
+        const headerText = (header.textContent || "").replace(/\\s+/g, " ").trim();
+        if (headerText !== expectedHeading) return "HEADING_MISMATCH";
+
+        const input = modal.querySelector("paper-input");
+        if (!input || !isVisible(input)) return "NO_INPUT";
+
+        return "VISIBLE";
+      }
+
+      function findInRoot(root) {
+        const modal =
+          root.querySelector("ts-setting-modal#setting-modal") ||
+          root.querySelector("ts-setting-modal");
+        if (modal) {
+          const result = checkModal(modal);
+          if (result !== "MODAL_HIDDEN") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Clicks Cancel (paper-button[on-tap='cancel']) in ts-setting-modal. */
+export function clickSettingModalCancelExpr() {
+  const label = escapeForTemplate("Cancel");
+  return `
+    (function () {
+      const wanted = ${label};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function clickCancelInModal(modal) {
+        const cancelBtn = modal.querySelector("paper-button[on-tap='cancel']");
+        if (cancelBtn && isVisible(cancelBtn)) {
+          cancelBtn.click();
+          return "CLICKED";
+        }
+
+        for (const btn of modal.querySelectorAll("#footer paper-button")) {
+          const text = (btn.textContent || "").replace(/\\s+/g, " ").trim();
+          if (text !== wanted) continue;
+          if (!isVisible(btn)) continue;
+          btn.click();
+          return "CLICKED";
+        }
+        return "NOT_FOUND";
+      }
+
+      function findInRoot(root) {
+        for (const modal of root.querySelectorAll("ts-setting-modal")) {
+          const result = clickCancelInModal(modal);
+          if (result === "CLICKED") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
         }
         return "NOT_FOUND";
       }

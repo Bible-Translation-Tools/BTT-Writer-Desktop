@@ -8,9 +8,11 @@ import {
   clickProjectInfoPrintExpr,
   clickProjectInfoReviewExpr,
   clickProjectInfoUploadExportExpr,
+  clickProjectDeletedCloseExpr,
   clickReviewBackArrowExpr,
-  deleteProjectDialogDismissedExpr,
   deleteProjectDialogVisibleExpr,
+  projectDeletedMessageDismissedExpr,
+  projectDeletedMessageVisibleExpr,
   exportOptionsDialogDismissedExpr,
   exportOptionsDialogVisibleExpr,
   printOptionsDialogDismissedExpr,
@@ -289,16 +291,34 @@ describe("Project info actions", () => {
           "Failed to click Confirm (paper-button[on-tap='deleteproject']) in delete dialog"
         );
         printStep("delete-confirm", "clicked");
+
+        await waitForEvalState(
+          evaluate,
+          () => projectDeletedMessageVisibleExpr(),
+          (state) => state === "VISIBLE",
+          WAIT_TIMEOUT_MS,
+          'Expected visible ts-loading h2 "Project Deleted" after delete confirm'
+        );
+        printStep("project-deleted-title", "Project Deleted");
+
+        await waitForEvalExact(
+          evaluate,
+          clickProjectDeletedCloseExpr,
+          "CLICKED",
+          WAIT_TIMEOUT_MS,
+          'Failed to click Close (paper-button[dialog-dismiss]) in ts-loading "Project Deleted" dialog'
+        );
+        printStep("project-deleted-close", "clicked");
         await sleep(500);
 
         await waitForEvalState(
           evaluate,
-          () => deleteProjectDialogDismissedExpr(),
+          () => projectDeletedMessageDismissedExpr(),
           (state) => state === "DISMISSED",
           WAIT_TIMEOUT_MS,
-          "Expected delete dialog to close after Confirm"
+          'Expected "Project Deleted" ts-loading dialog to close after Close'
         );
-        printStep("delete-dialog-dismissed", "dismissed");
+        printStep("project-deleted-dialog", "dismissed");
 
         await waitForEvalState(
           evaluate,
