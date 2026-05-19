@@ -2011,6 +2011,71 @@ export function clickSettingsLanguageUrlExpr() {
   `;
 }
 
+/** Returns MATCH when a ts-settings row shows the expected .help-text value. */
+export function settingsHelpTextVisibleExpr(settingId, label, helpText) {
+  const id = escapeForTemplate(settingId);
+  const expectedLabel = escapeForTemplate(label);
+  const expectedHelpText = escapeForTemplate(helpText);
+  return `
+    (function () {
+      const settingId = ${id};
+      const expectedLabel = ${expectedLabel};
+      const expectedHelpText = ${expectedHelpText};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const style = getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") return false;
+        if (parseFloat(style.opacity) === 0) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function checkSettings(settings) {
+        const item =
+          settings.querySelector("#" + settingId + ".setting-group-item") ||
+          settings.querySelector("#" + settingId);
+        if (!item) return "ITEM_NOT_FOUND";
+        if (!isVisible(item)) return "ITEM_HIDDEN";
+
+        const mainText = item.querySelector(".main-text");
+        if (!mainText) return "NO_MAIN_TEXT";
+
+        const mainLabel = (mainText.textContent || "").replace(/\\s+/g, " ").trim();
+        if (mainLabel !== expectedLabel) return "LABEL_MISMATCH";
+
+        const helpTextEl = item.querySelector(".help-text");
+        if (!helpTextEl) return "NO_HELP_TEXT";
+
+        const helpText = (helpTextEl.textContent || "").replace(/\\s+/g, " ").trim();
+        if (helpText !== expectedHelpText) return "HELP_TEXT_MISMATCH:" + helpText;
+        if (!isVisible(helpTextEl)) return "HELP_TEXT_HIDDEN";
+
+        return "MATCH";
+      }
+
+      function findInRoot(root) {
+        const settings =
+          root.querySelector('ts-settings[data-route="settings"]') ||
+          root.querySelector("ts-settings");
+        if (settings) {
+          const result = checkSettings(settings);
+          if (result !== "ITEM_NOT_FOUND") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
 /** Returns MATCH when #languageurl .help-text shows the expected URL on ts-settings. */
 export function languageUrlSettingHelpTextVisibleExpr(url) {
   const expectedUrl = escapeForTemplate(url);
@@ -2059,6 +2124,180 @@ export function languageUrlSettingHelpTextVisibleExpr(url) {
         if (settings) {
           const result = checkSettings(settings);
           if (result !== "ITEM_NOT_FOUND") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Clicks the Server Suite setting (#serversuite) on ts-settings. */
+export function clickSettingsServerSuiteExpr() {
+  const label = escapeForTemplate("Server Suite (e.g. WACS or DCS)");
+  return `
+    (function () {
+      const expectedLabel = ${label};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function clickServerSuiteInSettings(settings) {
+        const item =
+          settings.querySelector("#serversuite.setting-group-item") ||
+          settings.querySelector("#serversuite");
+        if (item) {
+          try {
+            item.scrollIntoView({ block: "center", inline: "nearest" });
+          } catch (e) {}
+          if (isVisible(item)) {
+            item.click();
+            return "CLICKED";
+          }
+          return "NOT_VISIBLE";
+        }
+
+        for (const row of settings.querySelectorAll(".setting-group-item")) {
+          const main = row.querySelector(".main-text");
+          if (!main) continue;
+          const text = (main.textContent || "").replace(/\\s+/g, " ").trim();
+          if (text !== expectedLabel) continue;
+          try {
+            row.scrollIntoView({ block: "center", inline: "nearest" });
+          } catch (e) {}
+          if (!isVisible(row)) continue;
+          row.click();
+          return "CLICKED";
+        }
+        return "ITEM_NOT_FOUND";
+      }
+
+      function findInRoot(root) {
+        const settings =
+          root.querySelector('ts-settings[data-route="settings"]') ||
+          root.querySelector("ts-settings");
+        if (settings) {
+          const result = clickServerSuiteInSettings(settings);
+          if (result !== "ITEM_NOT_FOUND") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Returns VISIBLE when ts-setting-modal shows Server Suite radio options. */
+export function serverSuiteSettingModalVisibleExpr() {
+  const heading = escapeForTemplate("Server Suite (e.g. WACS or DCS)");
+  return `
+    (function () {
+      const expectedHeading = ${heading};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const style = getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") return false;
+        if (parseFloat(style.opacity) === 0) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function checkModal(modal) {
+        if (!modal || !isVisible(modal)) return "MODAL_HIDDEN";
+
+        const header = modal.querySelector("#header");
+        if (!header || !isVisible(header)) return "NO_HEADER";
+
+        const headerText = (header.textContent || "").replace(/\\s+/g, " ").trim();
+        if (headerText !== expectedHeading) return "HEADING_MISMATCH";
+
+        const radioGroup = modal.querySelector("paper-radio-group");
+        if (!radioGroup || !isVisible(radioGroup)) return "NO_RADIO_GROUP";
+
+        const radios = modal.querySelectorAll("paper-radio-button");
+        if (!radios.length) return "NO_OPTIONS";
+
+        return "VISIBLE";
+      }
+
+      function findInRoot(root) {
+        const modal =
+          root.querySelector("ts-setting-modal#setting-modal") ||
+          root.querySelector("ts-setting-modal");
+        if (modal) {
+          const result = checkModal(modal);
+          if (result !== "MODAL_HIDDEN") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Clicks a paper-radio-button #radioLabel option in the open ts-setting-modal. */
+export function clickSettingModalRadioOptionExpr(optionLabel) {
+  const label = escapeForTemplate(optionLabel);
+  return `
+    (function () {
+      const wanted = ${label};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function clickOptionInModal(modal) {
+        for (const radio of modal.querySelectorAll("paper-radio-button")) {
+          const radioRoot = radio.shadowRoot || radio;
+          const radioLabel = radioRoot.querySelector("#radioLabel");
+          if (radioLabel) {
+            const text = (radioLabel.textContent || "").replace(/\\s+/g, " ").trim();
+            if (text === wanted && isVisible(radioLabel)) {
+              radioLabel.click();
+              return "CLICKED";
+            }
+          }
+
+          const rowText = (radio.textContent || "").replace(/\\s+/g, " ").trim();
+          if (rowText === wanted && isVisible(radio)) {
+            radio.click();
+            return "CLICKED";
+          }
+        }
+        return "NOT_FOUND";
+      }
+
+      function findInRoot(root) {
+        for (const modal of root.querySelectorAll("ts-setting-modal")) {
+          const result = clickOptionInModal(modal);
+          if (result === "CLICKED") return result;
         }
 
         for (const el of root.querySelectorAll("*")) {

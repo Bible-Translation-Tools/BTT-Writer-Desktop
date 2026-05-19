@@ -1,3 +1,4 @@
+import { isCdpDisconnectError, openCdpEvaluateSession } from "./cdp-runtime.mjs";
 import {
   clickByTextExprCollectFirst,
   hasVisibleTextExpr,
@@ -60,6 +61,47 @@ export async function waitForEvalExact(
     failureMessage,
     { intervalMs }
   );
+}
+
+/**
+ * Like waitForEvalState, but reconnects CDP once if the socket drops (e.g. app reload).
+ */
+export async function waitForEvalStateWithReconnect(
+  evaluate,
+  expressionFactory,
+  isDone,
+  timeoutMs,
+  failureMessage,
+  { intervalMs = 500 } = {}
+) {
+  const start = Date.now();
+  let currentEvaluate = evaluate;
+  let lastState = "UNKNOWN";
+  let reconnectedSession = null;
+
+  try {
+    while (Date.now() - start < timeoutMs) {
+      try {
+        const result = await currentEvaluate(expressionFactory());
+        const state = evalState(result);
+        lastState = state;
+        if (isDone(state, result)) return result;
+      } catch (err) {
+        if (!isCdpDisconnectError(err) || reconnectedSession) {
+          throw err;
+        }
+        reconnectedSession = await openCdpEvaluateSession();
+        currentEvaluate = reconnectedSession.evaluate;
+        continue;
+      }
+      await sleep(intervalMs);
+    }
+    throw new Error(`${failureMessage} (last state: ${lastState})`);
+  } finally {
+    if (reconnectedSession) {
+      await reconnectedSession.close();
+    }
+  }
 }
 
 /** Strict string equality polling (project creation style, 300ms interval). */

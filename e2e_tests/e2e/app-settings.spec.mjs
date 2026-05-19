@@ -1,23 +1,32 @@
 import { describe, test } from "node:test";
 import {
-  clickHomeSidebarMenuIconExpr,
-  clickHomeSidebarSettingsIconExpr,
   clickSettingModalConfirmExpr,
   clickSettingsBackArrowExpr,
   setLanguageUrlSettingInputExpr,
+  clickSettingModalRadioOptionExpr,
   clickSettingsLanguageUrlExpr,
-  homeSidebarMenuOpenExpr,
+  clickSettingsServerSuiteExpr,
+  serverSuiteSettingModalVisibleExpr,
   languageUrlSettingHelpTextVisibleExpr,
   languageUrlSettingModalVisibleExpr,
+  settingsHelpTextVisibleExpr,
   settingsScreenVisibleExpr,
   welcomeHomeVisibleExpr,
 } from "../expressions/home.mjs";
-import { profileScreenVisibleExpr } from "../expressions/profile.mjs";
+import {
+  clickProfileSidebarMenuIconExpr,
+  clickProfileSidebarSettingsIconExpr,
+  profileScreenVisibleExpr,
+  profileSidebarMenuOpenExpr,
+} from "../expressions/profile.mjs";
 import { withCdpSession } from "../support/cdp-runtime.mjs";
-import { sleep, waitForEvalExact, waitForEvalState } from "../support/wait.mjs";
+import { sleep, waitForEvalExact, waitForEvalState, waitForEvalStateWithReconnect } from "../support/wait.mjs";
 
 const WAIT_TIMEOUT_MS = 2000;
+const RELOAD_WAIT_TIMEOUT_MS = 20_000;
 const LANGUAGE_URL = "https://test-url.com/langnames.json";
+const SERVER_SUITE_OPTION = "WACS DEV";
+const DATA_SERVER_URL = "https://content.wacsdev.org";
 
 function printStep(name, result) {
   console.log(`[app-settings] ${name}: ${result}`);
@@ -25,16 +34,16 @@ function printStep(name, result) {
 
 describe("App settings", () => {
   test(
-    "opens Languages URL setting from home sidebar Settings",
-    { timeout: 20_000 },
+    "configure app settings in profile screen",
+    { timeout: 30_000 },
     async () => {
       await withCdpSession(async ({ evaluate, target }) => {
         printStep("target", `${target.title || "unknown"} (${target.type})`);
 
-        const profileState = await evaluate(profileScreenVisibleExpr());
-        if (profileState === "VISIBLE") {
+        const homeState = await evaluate(welcomeHomeVisibleExpr());
+        if (homeState === "VISIBLE") {
           throw new Error(
-            "App is logged out (profile screen). Re-run the full e2e suite from user-profile-setup before app-settings."
+            "App is logged in (home screen). Run home-menu (logout) first or run the full e2e suite so app-settings starts on the profile screen."
           );
         }
 
@@ -53,40 +62,40 @@ describe("App settings", () => {
 
         await waitForEvalState(
           evaluate,
-          () => welcomeHomeVisibleExpr(),
+          () => profileScreenVisibleExpr(),
           (state) => state === "VISIBLE",
           WAIT_TIMEOUT_MS,
-          "Expected home screen before opening settings"
+          'Expected profile setup screen (ts-profile) with "Create Local User Profile" before opening settings'
         );
-        printStep("home-screen", "visible");
+        printStep("profile-screen", "visible");
 
         await waitForEvalExact(
           evaluate,
-          clickHomeSidebarMenuIconExpr,
+          clickProfileSidebarMenuIconExpr,
           "CLICKED",
           WAIT_TIMEOUT_MS,
-          "Failed to click home sidebar menu icon"
+          "Failed to click profile sidebar menu icon"
         );
-        printStep("menuicon", "clicked");
+        printStep("profile-menuicon", "clicked");
         await sleep(500);
 
         await waitForEvalState(
           evaluate,
-          () => homeSidebarMenuOpenExpr(),
+          () => profileSidebarMenuOpenExpr(),
           (state) => state === "OPEN",
           WAIT_TIMEOUT_MS,
-          "Expected ts-home-sidebar menu to open"
+          "Expected ts-profile-sidebar menu to open"
         );
-        printStep("sidebar-menu", "open");
+        printStep("profile-sidebar-menu", "open");
 
         await waitForEvalExact(
           evaluate,
-          clickHomeSidebarSettingsIconExpr,
+          clickProfileSidebarSettingsIconExpr,
           "CLICKED",
           WAIT_TIMEOUT_MS,
-          "Failed to click Settings icon in ts-home-sidebar menu"
+          "Failed to click Settings in ts-profile-sidebar menu"
         );
-        printStep("settings-icon", "clicked");
+        printStep("profile-settings-icon", "clicked");
         await sleep(500);
 
         await waitForEvalState(
@@ -146,25 +155,102 @@ describe("App settings", () => {
 
         await waitForEvalExact(
           evaluate,
-          clickSettingsBackArrowExpr,
+          clickSettingsServerSuiteExpr,
           "CLICKED",
           WAIT_TIMEOUT_MS,
-          "Failed to click arrow-back in ts-settings header"
+          "Failed to click Server Suite setting (#serversuite) in ts-settings"
         );
-        printStep("settings-back-arrow", "clicked");
+        printStep("serversuite", "clicked");
         await sleep(500);
 
         await waitForEvalState(
           evaluate,
-          () => welcomeHomeVisibleExpr(),
+          () => serverSuiteSettingModalVisibleExpr(),
           (state) => state === "VISIBLE",
           WAIT_TIMEOUT_MS,
-          "Expected home screen after leaving settings"
+          'Expected ts-setting-modal with "Server Suite (e.g. WACS or DCS)" radio options'
         );
-        printStep("home-screen-after-settings", "visible");
+        printStep("serversuite-modal", "visible");
+
+        await waitForEvalExact(
+          evaluate,
+          () => clickSettingModalRadioOptionExpr(SERVER_SUITE_OPTION),
+          "CLICKED",
+          WAIT_TIMEOUT_MS,
+          `Failed to click "${SERVER_SUITE_OPTION}" radio option in ts-setting-modal`
+        );
+        printStep("serversuite-option", SERVER_SUITE_OPTION);
+
+        await waitForEvalExact(
+          evaluate,
+          clickSettingModalConfirmExpr,
+          "CLICKED",
+          WAIT_TIMEOUT_MS,
+          "Failed to click Confirm in Server Suite ts-setting-modal"
+        );
+        printStep("serversuite-modal-confirm", "clicked");
+        await sleep(500);
+
+        await waitForEvalStateWithReconnect(
+          evaluate,
+          () => profileScreenVisibleExpr(),
+          (state) => state === "VISIBLE",
+          RELOAD_WAIT_TIMEOUT_MS,
+          'Expected profile setup screen (ts-profile) with "Create Local User Profile" after server suite relaunch'
+        );
+        printStep("profile-screen-after-relaunch", "visible");
+        await sleep(1000);
+        
+        await waitForEvalExact(
+          evaluate,
+          clickProfileSidebarMenuIconExpr,
+          "CLICKED",
+          WAIT_TIMEOUT_MS,
+          "Failed to click profile sidebar menu icon after relaunch"
+        );
+        printStep("profile-menuicon-after-relaunch", "clicked");
+        await sleep(500);
+
+        await waitForEvalState(
+          evaluate,
+          () => profileSidebarMenuOpenExpr(),
+          (state) => state === "OPEN",
+          WAIT_TIMEOUT_MS,
+          "Expected ts-profile-sidebar menu to open after relaunch"
+        );
+        printStep("profile-sidebar-menu-after-relaunch", "open");
+
+        await waitForEvalExact(
+          evaluate,
+          clickProfileSidebarSettingsIconExpr,
+          "CLICKED",
+          WAIT_TIMEOUT_MS,
+          "Failed to click Settings in ts-profile-sidebar menu after relaunch"
+        );
+        printStep("profile-settings-icon-after-relaunch", "clicked");
+        await sleep(500);
+
+        await waitForEvalState(
+          evaluate,
+          () => settingsScreenVisibleExpr(),
+          (state) => state === "VISIBLE",
+          WAIT_TIMEOUT_MS,
+          'Expected settings screen after reopening from profile screen'
+        );
+        printStep("settings-screen-after-relaunch", "visible");
+
+        await waitForEvalState(
+          evaluate,
+          () =>
+            settingsHelpTextVisibleExpr("dataserver", "Data Server", DATA_SERVER_URL),
+          (state) => state === "MATCH",
+          WAIT_TIMEOUT_MS,
+          `Expected #dataserver .help-text to show ${DATA_SERVER_URL} after WACS DEV server suite`
+        );
+        printStep("dataserver-help-text", DATA_SERVER_URL);
 
         console.log(
-          "[app-settings] PASS: Languages URL setting updated and confirmed from app settings."
+          "[app-settings] PASS: Languages URL, Server Suite, and Data Server URL verified from app settings."
         );
       });
     }

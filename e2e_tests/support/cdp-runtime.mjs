@@ -201,6 +201,22 @@ export async function closeAppViaCdp(config = loadCdpConfig()) {
   }
 }
 
+export function isCdpDisconnectError(err) {
+  const message = err instanceof Error ? err.message : String(err);
+  return /CDP WebSocket closed|CDP WebSocket error|session closed|ECONNRESET|WebSocket is already/i.test(
+    message
+  );
+}
+
+/** Opens a new CDP page session (caller must call `close()` when done). */
+export async function openCdpEvaluateSession(config = loadCdpConfig()) {
+  const target = await getCdpTarget(config);
+  const ws = await connectCdp(target.webSocketDebuggerUrl);
+  const runtime = createRuntime(ws);
+  await runtime.send("Runtime.enable");
+  return { ...runtime, target };
+}
+
 /**
  * Connects to the preferred BTT page target, enables Runtime, runs `fn`, then closes the socket.
  */

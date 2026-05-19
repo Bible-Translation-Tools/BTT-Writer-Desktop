@@ -237,3 +237,182 @@ export function profileScreenVisibleExpr() {
     })()
   `;
 }
+
+/** Clicks iron-icon#menuicon on ts-profile-sidebar (more-vert dropdown trigger). */
+export function clickProfileSidebarMenuIconExpr() {
+  return `
+    (function () {
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function clickInSidebar(sidebar) {
+        const sidebarRoot = sidebar.shadowRoot || sidebar;
+        const menuButton = sidebarRoot.querySelector("paper-menu-button#menu");
+        if (menuButton) {
+          if (menuButton.opened === true) return "CLICKED";
+          if (typeof menuButton.open === "function") {
+            menuButton.open();
+            return "CLICKED";
+          }
+          const icon =
+            sidebarRoot.querySelector("iron-icon#menuicon.dropdown-trigger") ||
+            sidebarRoot.querySelector("#menuicon");
+          if (icon && isVisible(icon)) {
+            icon.click();
+            return "CLICKED";
+          }
+          if (typeof menuButton.toggle === "function") {
+            menuButton.toggle();
+            return "CLICKED";
+          }
+          menuButton.click();
+          return "CLICKED";
+        }
+        return "NO_MENU";
+      }
+
+      function findInRoot(root) {
+        const profile =
+          root.querySelector('ts-profile[data-route="profile"]') ||
+          root.querySelector("ts-profile");
+        if (profile) {
+          const sidebar = profile.querySelector("ts-profile-sidebar");
+          if (sidebar) {
+            const result = clickInSidebar(sidebar);
+            if (result !== "NO_MENU") return result;
+          }
+        }
+
+        const sidebar = root.querySelector("ts-profile-sidebar");
+        if (sidebar) return clickInSidebar(sidebar);
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Returns OPEN when ts-profile-sidebar paper-menu-button#menu dropdown is open. */
+export function profileSidebarMenuOpenExpr() {
+  return `
+    (function () {
+      function isVisible(el) {
+        if (!el) return false;
+        const style = getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") return false;
+        if (parseFloat(style.opacity) === 0) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function isMenuOpen(menuButton) {
+        if (menuButton.opened === true) return true;
+
+        const dropdown =
+          menuButton.querySelector("#dropdown") ||
+          (menuButton.shadowRoot && menuButton.shadowRoot.querySelector("#dropdown"));
+        if (dropdown) {
+          if (dropdown.getAttribute("aria-hidden") === "false") return true;
+          const style = getComputedStyle(dropdown);
+          if (style.display !== "none" && style.visibility !== "hidden") return true;
+        }
+
+        const settingsItem = menuButton.querySelector("paper-item[on-tap='settings']");
+        if (settingsItem && isVisible(settingsItem)) return true;
+
+        return false;
+      }
+
+      function findInRoot(root) {
+        const sidebar = root.querySelector("ts-profile-sidebar");
+        if (sidebar) {
+          const sidebarRoot = sidebar.shadowRoot || sidebar;
+          const menuButton = sidebarRoot.querySelector("paper-menu-button#menu");
+          if (menuButton) return isMenuOpen(menuButton) ? "OPEN" : "CLOSED";
+          return "NO_MENU";
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Clicks Settings (paper-item[on-tap='settings']) in ts-profile-sidebar. */
+export function clickProfileSidebarSettingsIconExpr() {
+  return `
+    (function () {
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function clickSettingsInSidebar(sidebar) {
+        const sidebarRoot = sidebar.shadowRoot || sidebar;
+        const menuButton = sidebarRoot.querySelector("paper-menu-button#menu");
+        const searchRoot = menuButton || sidebarRoot;
+
+        const icon =
+          searchRoot.querySelector('iron-icon.smallicon[icon="settings"]') ||
+          searchRoot.querySelector('iron-icon[icon="settings"]');
+        if (icon && isVisible(icon)) {
+          icon.click();
+          return "CLICKED";
+        }
+
+        const item =
+          searchRoot.querySelector("paper-item[on-tap='settings']") ||
+          (icon && icon.closest("paper-item"));
+        if (item && isVisible(item)) {
+          item.click();
+          return "CLICKED";
+        }
+
+        return icon ? "NOT_VISIBLE" : "ITEM_NOT_FOUND";
+      }
+
+      function findInRoot(root) {
+        const profile =
+          root.querySelector('ts-profile[data-route="profile"]') ||
+          root.querySelector("ts-profile");
+        if (profile) {
+          const sidebar = profile.querySelector("ts-profile-sidebar");
+          if (sidebar) {
+            const result = clickSettingsInSidebar(sidebar);
+            if (result !== "ITEM_NOT_FOUND") return result;
+          }
+        }
+
+        const sidebar = root.querySelector("ts-profile-sidebar");
+        if (sidebar) return clickSettingsInSidebar(sidebar);
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
