@@ -30,7 +30,7 @@ function printStep(name, result) {
 describe("Home menu", () => {
   test(
     "opens the home sidebar menu",
-    { timeout: 45_000 },
+    { timeout: 20_000 },
     async () => {
       await withCdpSession(async ({ evaluate, target }) => {
         printStep("target", `${target.title || "unknown"} (${target.type})`);

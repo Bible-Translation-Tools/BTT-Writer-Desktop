@@ -2,10 +2,12 @@ import { describe, test } from "node:test";
 import {
   clickHomeSidebarMenuIconExpr,
   clickHomeSidebarSettingsIconExpr,
-  clickSettingModalCancelExpr,
+  clickSettingModalConfirmExpr,
   clickSettingsBackArrowExpr,
+  setLanguageUrlSettingInputExpr,
   clickSettingsLanguageUrlExpr,
   homeSidebarMenuOpenExpr,
+  languageUrlSettingHelpTextVisibleExpr,
   languageUrlSettingModalVisibleExpr,
   settingsScreenVisibleExpr,
   welcomeHomeVisibleExpr,
@@ -15,6 +17,7 @@ import { withCdpSession } from "../support/cdp-runtime.mjs";
 import { sleep, waitForEvalExact, waitForEvalState } from "../support/wait.mjs";
 
 const WAIT_TIMEOUT_MS = 2000;
+const LANGUAGE_URL = "https://test-url.com/langnames.json";
 
 function printStep(name, result) {
   console.log(`[app-settings] ${name}: ${result}`);
@@ -114,15 +117,32 @@ describe("App settings", () => {
         );
         printStep("languageurl-modal", "visible");
 
+        await waitForEvalState(
+          evaluate,
+          () => setLanguageUrlSettingInputExpr(LANGUAGE_URL),
+          (state) => typeof state === "string" && state === `SET:${LANGUAGE_URL}`,
+          WAIT_TIMEOUT_MS,
+          `Failed to set Languages URL input to ${LANGUAGE_URL}`
+        );
+        printStep("languageurl-input", LANGUAGE_URL);
+
         await waitForEvalExact(
           evaluate,
-          clickSettingModalCancelExpr,
+          clickSettingModalConfirmExpr,
           "CLICKED",
           WAIT_TIMEOUT_MS,
-          "Failed to click Cancel in ts-setting-modal"
+          "Failed to click Confirm in ts-setting-modal"
         );
-        printStep("languageurl-modal-cancel", "clicked");
-        await sleep(500);
+        printStep("languageurl-modal-confirm", "clicked");
+
+        await waitForEvalState(
+          evaluate,
+          () => languageUrlSettingHelpTextVisibleExpr(LANGUAGE_URL),
+          (state) => state === "MATCH",
+          WAIT_TIMEOUT_MS,
+          `Expected #languageurl .help-text to show ${LANGUAGE_URL} on settings screen`
+        );
+        printStep("languageurl-help-text", LANGUAGE_URL);
 
         await waitForEvalExact(
           evaluate,
@@ -143,7 +163,9 @@ describe("App settings", () => {
         );
         printStep("home-screen-after-settings", "visible");
 
-        console.log("[app-settings] PASS: Languages URL setting modal opened from app settings.");
+        console.log(
+          "[app-settings] PASS: Languages URL setting updated and confirmed from app settings."
+        );
       });
     }
   );

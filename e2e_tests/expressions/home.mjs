@@ -2011,6 +2011,69 @@ export function clickSettingsLanguageUrlExpr() {
   `;
 }
 
+/** Returns MATCH when #languageurl .help-text shows the expected URL on ts-settings. */
+export function languageUrlSettingHelpTextVisibleExpr(url) {
+  const expectedUrl = escapeForTemplate(url);
+  const label = escapeForTemplate("Languages URL");
+  return `
+    (function () {
+      const expectedUrl = ${expectedUrl};
+      const expectedLabel = ${label};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const style = getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") return false;
+        if (parseFloat(style.opacity) === 0) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function checkSettings(settings) {
+        const item =
+          settings.querySelector("#languageurl.setting-group-item") ||
+          settings.querySelector("#languageurl");
+        if (!item) return "ITEM_NOT_FOUND";
+        if (!isVisible(item)) return "ITEM_HIDDEN";
+
+        const mainText = item.querySelector(".main-text");
+        if (!mainText) return "NO_MAIN_TEXT";
+
+        const mainLabel = (mainText.textContent || "").replace(/\\s+/g, " ").trim();
+        if (mainLabel !== expectedLabel) return "LABEL_MISMATCH";
+
+        const helpText = item.querySelector(".help-text");
+        if (!helpText) return "NO_HELP_TEXT";
+
+        const urlText = (helpText.textContent || "").replace(/\\s+/g, " ").trim();
+        if (urlText !== expectedUrl) return "URL_MISMATCH:" + urlText;
+        if (!isVisible(helpText)) return "HELP_TEXT_HIDDEN";
+
+        return "MATCH";
+      }
+
+      function findInRoot(root) {
+        const settings =
+          root.querySelector('ts-settings[data-route="settings"]') ||
+          root.querySelector("ts-settings");
+        if (settings) {
+          const result = checkSettings(settings);
+          if (result !== "ITEM_NOT_FOUND") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
 /** Returns VISIBLE when ts-setting-modal shows Languages URL editor. */
 export function languageUrlSettingModalVisibleExpr() {
   const heading = escapeForTemplate("Languages URL");
@@ -2049,6 +2112,130 @@ export function languageUrlSettingModalVisibleExpr() {
         if (modal) {
           const result = checkModal(modal);
           if (result !== "MODAL_HIDDEN") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND") return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Sets Languages URL text in the open ts-setting-modal paper-input. */
+export function setLanguageUrlSettingInputExpr(url) {
+  const expectedUrl = escapeForTemplate(url);
+  const heading = escapeForTemplate("Languages URL");
+  return `
+    (function () {
+      const url = ${expectedUrl};
+      const expectedHeading = ${heading};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function setTextInModal(modal) {
+        const header = modal.querySelector("#header");
+        if (!header || !isVisible(header)) return "NO_HEADER";
+
+        const headerText = (header.textContent || "").replace(/\\s+/g, " ").trim();
+        if (headerText !== expectedHeading) return "HEADING_MISMATCH";
+
+        if (typeof modal.set === "function") {
+          modal.set("text", url);
+        } else {
+          modal.text = url;
+        }
+
+        const paperInput = modal.querySelector("paper-input");
+        if (paperInput) {
+          if (typeof paperInput.set === "function") {
+            paperInput.set("value", url);
+          } else {
+            paperInput.value = url;
+          }
+
+          const inputRoot = paperInput.shadowRoot;
+          const nativeInput = inputRoot && inputRoot.querySelector("input");
+          if (nativeInput) {
+            const setter = Object.getOwnPropertyDescriptor(
+              HTMLInputElement.prototype,
+              "value"
+            );
+            if (setter && setter.set) {
+              setter.set.call(nativeInput, url);
+              nativeInput.dispatchEvent(new Event("input", { bubbles: true }));
+              nativeInput.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+          }
+        }
+
+        const current = (modal.text || "").trim();
+        if (current !== url) return "MISMATCH:" + current;
+        return "SET:" + url;
+      }
+
+      function findInRoot(root) {
+        for (const modal of root.querySelectorAll("ts-setting-modal")) {
+          const result = setTextInModal(modal);
+          if (result !== "HEADING_MISMATCH" && result !== "NO_HEADER") return result;
+        }
+
+        for (const el of root.querySelectorAll("*")) {
+          if (!el.shadowRoot) continue;
+          const nested = findInRoot(el.shadowRoot);
+          if (nested !== "NOT_FOUND" && !nested.startsWith("HEADING_MISMATCH")) return nested;
+        }
+        return "NOT_FOUND";
+      }
+
+      return findInRoot(document);
+    })()
+  `;
+}
+
+/** Clicks Confirm (paper-button[on-tap='confirm']) in ts-setting-modal. */
+export function clickSettingModalConfirmExpr() {
+  const label = escapeForTemplate("Confirm");
+  return `
+    (function () {
+      const wanted = ${label};
+
+      function isVisible(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      }
+
+      function clickConfirmInModal(modal) {
+        const confirmBtn = modal.querySelector("paper-button[on-tap='confirm']");
+        if (confirmBtn && isVisible(confirmBtn)) {
+          confirmBtn.click();
+          return "CLICKED";
+        }
+
+        for (const btn of modal.querySelectorAll("#footer paper-button")) {
+          const text = (btn.textContent || "").replace(/\\s+/g, " ").trim();
+          if (text !== wanted) continue;
+          if (!isVisible(btn)) continue;
+          btn.click();
+          return "CLICKED";
+        }
+        return "NOT_FOUND";
+      }
+
+      function findInRoot(root) {
+        for (const modal of root.querySelectorAll("ts-setting-modal")) {
+          const result = clickConfirmInModal(modal);
+          if (result === "CLICKED") return result;
         }
 
         for (const el of root.querySelectorAll("*")) {
