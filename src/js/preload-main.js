@@ -71,6 +71,13 @@ process.stdout.write = console.log.bind(console);
 
         const defaults = require('../config/defaults');
 
+        try {
+            const privateDefaults = require('../config/private.json');
+            c.loadConfig(privateDefaults);
+        } catch (e) {
+            console.info('No private settings.');
+        }
+
         c.loadConfig(defaults);
         c.setValue('rootDir', DATA_PATH, {'mutable': false});
         c.setValue('targetTranslationsDir', path.join(DATA_PATH, 'targetTranslations'), {'mutable': false});
