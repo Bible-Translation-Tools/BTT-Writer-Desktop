@@ -139,7 +139,7 @@ describe('Application Bootstrap', () => {
         expect(electron.ipcRenderer.sendSync).toHaveBeenCalledWith('main-window', 'dataPath');
 
         expect(mockConfiguratorInstance.setStorage).toHaveBeenCalledWith(window.localStorage);
-        expect(mockConfiguratorInstance.loadConfig).toHaveBeenCalledTimes(1);
+        expect(mockConfiguratorInstance.loadConfig).toHaveBeenCalledTimes(2);
 
         const mkdirp = require('mkdirp');
         expect(mkdirp.sync).toHaveBeenCalled();
