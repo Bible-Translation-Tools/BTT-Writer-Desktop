@@ -192,6 +192,22 @@ function Reporter (options) {
         const isCrash = !!opts.isCrash;
         const explicitStack = opts.stack;
 
+        const BOUNDARY_PREFIX = "----bttwriter";
+
+        function stripBoundaryTokens(v) {
+            const boundaryTokenRe = new RegExp(
+                BOUNDARY_PREFIX.replace(/[.*+?^${}()|[\]\\-]/g,
+                    "\\$&") + "[0-9a-f]*",
+                "gi"
+            );
+            return String(v == null ? "" : v).replace(boundaryTokenRe, "");
+        }
+
+        function sanitizeHeaderField(v) {
+            // For values placed in Content-Disposition: strip CR/LF and quotes
+            return stripBoundaryTokens(v).replace(/[\r\n"]/g, " ").trim();
+        }
+
         const title = (summary && summary.length > 80)
             ? summary.substring(0, 77) + '...'
             : (summary || (isCrash ? "Crash report" : "Bug report"));
@@ -225,12 +241,13 @@ function Reporter (options) {
                 lines.push("```");
 
                 const fields = {
-                    title: title,
-                    content: lines.join("\n"),
-                    "sender[email]": senderEmail
+                    title: sanitizeHeaderField(title),
+                    content: stripBoundaryTokens(lines.join("\n")),
+                    "sender[email]": sanitizeHeaderField(senderEmail)
                 };
 
-                const boundary = `----bttwriter${Date.now().toString(16)}`;
+                const boundary = `${BOUNDARY_PREFIX}${Date.now().toString(16)}`;
+
                 const partsArr = [];
                 Object.keys(fields).forEach(function (key) {
                     partsArr.push(

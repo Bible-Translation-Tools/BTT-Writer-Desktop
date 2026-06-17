@@ -18,7 +18,9 @@
         const location = `${filename}:${lineno}`;
         const stack = error ? error.stack : `Error: ${message}\n    at ${source}:${lineno}:${colno}`;
 
-        App.reporter.logWithCaller('E', error, "Unhandled renderer exception", location);
+        if (window.App && App.reporter) {
+            App.reporter.logWithCaller('E', error, "Unhandled renderer exception", location);
+        }
 
         if (window.App && App.ipc) {
             App.ipc.send('renderer-exception', {message, stack});
@@ -64,7 +66,9 @@
         const filename = source.substring(source.lastIndexOf('/') + 1);
         const location = `${filename}:${lineno}:${colno}`;
 
-        App.reporter.logWithCaller('E', error, "Unhandled renderer exception", location);
+        if (window.App && App.reporter) {
+            App.reporter.logWithCaller('E', error, "Unhandled renderer exception", location);
+        }
 
         if (window.App && App.ipc) {
             App.ipc.send('renderer-exception', { message, stack });

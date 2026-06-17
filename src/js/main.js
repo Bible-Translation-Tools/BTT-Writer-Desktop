@@ -154,7 +154,7 @@ function createMainWindow () {
         const error = new Error(message);
         error.stack = `Reason: ${details.reason}\nExit Code: ${details.exitCode}`;
 
-        mainReporter.logWithCaller('E', error, message, "Unknown");
+        mainReporter?.logWithCaller('E', error, message, "Unknown");
 
         createCrashReportWindow(error);
     });
@@ -164,7 +164,7 @@ function createMainWindow () {
         const updatedError = new Error(message);
         updatedError.stack = error.stack;
 
-        mainReporter.logWithCaller('E', error, message, preloadPath.split(/[\/\\]/).pop());
+        mainReporter?.logWithCaller('E', error, message, preloadPath.split(/[\/\\]/).pop());
 
         createCrashReportWindow(updatedError);
     });
@@ -430,7 +430,7 @@ app.on('second-instance', function () {
 // Global exception handler
 unhandled({
     logger: error => {
-        mainReporter.logError(error, error.message);
+        mainReporter?.logError(error, error.message);
         createCrashReportWindow(error);
     },
     showDialog: false
