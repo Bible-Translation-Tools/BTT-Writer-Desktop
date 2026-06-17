@@ -13,7 +13,7 @@ DOMPurify.addHook('uponSanitizeElement', function (node, data) {
 });
 
 // Allow attributes used by custom elements
-const CUSTOM_ATTRS = ['verse', 'text', 'chunkindex', 'noteindex', 'data-type', 'data-section', 'data-slug'];
+const CUSTOM_ATTRS = ['verse', 'text', 'chunkindex', 'noteindex', 'data-type', 'data-section', 'data-slug', 'id', 'draggable'];
 
 DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
     if (CUSTOM_ATTRS.indexOf(data.attrName) !== -1) {
