@@ -19,9 +19,13 @@
 
     <script>
         (function () {
-            var splash = document.getElementById('splash');
-            var versiontext = splashAPI.translate("version_title", splashAPI.version);
-            splash.content = { title: "BTT Writer", subtitle: versiontext, message: splashAPI.translate("loading_text") };
+            const splash = document.getElementById('splash');
+            const versiontext = splashAPI.translate("version_title", splashAPI.version);
+            splash.content = {
+                title: "BTT Writer",
+                subtitle: versiontext,
+                message: splashAPI.translate("loading_text")
+            };
 
             splashAPI.sendThemeLoaded();
 

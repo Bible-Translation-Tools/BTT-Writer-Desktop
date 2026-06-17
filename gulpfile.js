@@ -72,42 +72,45 @@ function build(done) {
     if (argv.linux) platforms.push('linux');
     if (!platforms.length) platforms.push('win32', 'darwin', 'linux');
 
-    const ignored = Object.keys(packageJson['devDependencies']).concat([
+    const ignored = [
         'unit_tests',
         'acceptance_tests',
         '__tests__',
         '__mocks__',
         'out',
-        BUILD_DIR,
-        RELEASE_DIR,
+        'release',
         'vendor',
         'scripts',
-        '\\.'
-    ]).map(function (name) {
-        return new RegExp('(^/' + name + '|' + '^/node_modules/' + name + ')');
+        'bower.json',
+        'crowdin.yml',
+        'Dockerfile',
+        'gogs-client-lib-request.diff',
+        'gulpfile.js',
+        'jest.config.js',
+        'makefile',
+        'win64_installer.iss',
+        'pioneer.json',
+        'config.json.enc'
+    ].map(function (name) {
+        return new RegExp('^/' + name + '($|/)');
     });
 
+    // Also ignore all dot files and folders
+    ignored.push(/[/\\]\.[^/\\]+/);
+
     packager({
-        'arch': ['x64', 'universal'],
-        'platform': platforms,
-        'dir': '.',
-        'ignore': function (name) {
-            let i = 0, len = ignored.length;
-            for (; i < len; ++i) {
-                if (ignored[i].test(name)) {
-                    // console.log('\t(Ignoring)\t', name); // Commented out for speed
-                    return true;
-                }
-            }
-            return false;
-        },
-        'out': BUILD_DIR,
-        'appVersion': packageJson.version,
-        'icon': './icons/icon',
-        'osxUniversal': {
+        arch: ['x64', 'universal'],
+        platform: platforms,
+        dir: '.',
+        prune: true,
+        ignore: ignored,
+        out: BUILD_DIR,
+        appVersion: packageJson.version,
+        icon: './icons/icon',
+        osxUniversal: {
             'x64ArchFiles': '*'
         },
-        'afterCopy': [
+        afterCopy: [
             (buildPath, electronVersion, platform, arch, callback) => {
                 rebuild.rebuild({ buildPath, electronVersion, arch })
                     .then(() => callback())

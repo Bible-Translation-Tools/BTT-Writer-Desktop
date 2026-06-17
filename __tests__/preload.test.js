@@ -34,9 +34,7 @@ const mockConfiguratorInstance = {
         const defaults = {
             rootDir: '/mock/data/path',
             libraryDir: '/mock/data/path/library',
-            targetTranslationsDir: '/mock/data/path/target',
-            'github-oauth': 'token',
-            'gogs-token': 'token'
+            targetTranslationsDir: '/mock/data/path/target'
         };
         return defaults[key] || `mock_${key}`;
     }),

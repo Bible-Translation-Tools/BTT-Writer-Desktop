@@ -25,7 +25,6 @@ describe('UserManager', () => {
     let mockApi;
     let mockRequester;
 
-    const MOCK_AUTH = { username: 'admin', password: 'password' };
     const MOCK_SERVER = 'https://git.server.com';
 
     beforeEach(() => {
@@ -37,7 +36,7 @@ describe('UserManager', () => {
 
         const UserModule = require('../src/js/user');
         UserManager = UserModule.UserManager;
-        userManager = new UserManager(MOCK_AUTH, MOCK_SERVER);
+        userManager = new UserManager(MOCK_SERVER);
 
         mockApi = Gogs.mock.results[0].value;
 
@@ -47,16 +46,6 @@ describe('UserManager', () => {
     });
 
     describe('Account Management', () => {
-        it('should create an account and generate a token', async () => {
-            mockApi.createUser.mockResolvedValue({ username: 'bob', id: 10 });
-            mockApi.createToken.mockResolvedValue({ sha1: 'token-sha1', id: 99 });
-
-            const result = await userManager.createAccount({ username: 'bob' });
-
-            expect(mockApi.createUser).toHaveBeenCalled();
-            expect(result.token).toBe('token-sha1');
-        });
-
         it('should handle login and refresh tokens', async () => {
             const userObj = { username: 'bob', password: 'password' };
             // Platform in JSDOM/Node usually returns 'linux' or 'darwin'

@@ -4,6 +4,7 @@
 <link rel="import" href="../../components/iron-icon/iron-icon.html">
 
 <link rel="import" href="./ts-setting-modal.html">
+<link rel="import" href="./ts-developer-tools-modal.html">
 
 <dom-module id="ts-settings">
 
@@ -270,7 +271,7 @@
             const name = event.model.setting.name;
             const value = event.model.setting.value;
             if (name === 'developertools') {
-                App.showDevTools();
+                this.openDeveloperToolsModal(event);
             } else if (name === "refreshsettings") {
                 this.set('settings', App.configurator.refreshUserSetting());
                 this.saveSettings();
@@ -408,6 +409,19 @@
         closeSettingModal: function () {
             const modal = document.querySelector('ts-setting-modal');
             this.removeChild(modal);
+        },
+
+        openDeveloperToolsModal: function (event) {
+            const modal = document.createElement('ts-developer-tools-modal');
+            modal.id = "developer-tools-modal";
+            modal.style.display = 'block';
+            modal.heading = App.translate(event.model.setting.mainText);
+            const onClose = () => {
+                modal.removeEventListener('modal-close', onClose);
+                this.removeChild(modal);
+            };
+            modal.addEventListener('modal-close', onClose);
+            this.appendChild(modal);
         },
 
         saveSettings: function () {
