@@ -79,7 +79,6 @@
             <neon-animated-pages selected="{{selected}}" exit-animation="scale-down-animation" entry-animation="scale-up-animation">
                 <ts-options-menu selected="{{selected}}"></ts-options-menu>
                 <ts-login-option selected="{{selected}}" newinfo="{{newinfo}}" on-login="sendlogin"></ts-login-option>
-                <ts-create-option selected="{{selected}}" newinfo="{{newinfo}}" on-create="sendcreate"></ts-create-option>
                 <ts-local-option selected="{{selected}}" newinfo="{{newinfo}}" on-local="sendlocal"></ts-local-option>
             </neon-animated-pages>
 
@@ -194,60 +193,6 @@
                         errmessage = App.translate("bad_password");
                     }
                     mythis.set('options.title', App.translate("login_failed"));
-                    mythis.set('options.body', errmessage);
-                    mythis.set('options.loading', false);
-                    mythis.set('newinfo', {});
-                });
-        },
-
-        sendcreate: function () {
-            var mythis = this;
-            var user = this.newinfo;
-
-            if (!user.username || !user.password || !user.full_name || !user.email) {
-                mythis.set('options', {});
-                mythis.set('options.title', App.translate("incomplete_data"));
-                mythis.set('options.body', App.translate("complete_fields"));
-                mythis.set('options.loading', false);
-                mythis.fire('iron-signal', {name: 'openloading'});
-                return;
-            }
-
-            if (user.password !== user.password2) {
-                mythis.set('options', {});
-                mythis.set('options.title', "Password Invalid");
-                mythis.set('options.body', "Your password verification does not match");
-                mythis.set('options.loading', false);
-                mythis.fire('iron-signal', {name: 'openloading'});
-                return;
-            }
-
-            mythis.set('options', {});
-            mythis.set('options.body', "Creating Account.  Please wait...");
-            mythis.set('options.loading', true);
-            mythis.fire('iron-signal', {name: 'openloading'});
-
-            return App.userManager.createAccount(user)
-                .then(function (user) {
-                    mythis.set('options.body', "Account Created");
-                    user.full_name = user.full_name === '' ? user.username : user.full_name;
-                    setTimeout(function() {
-                        mythis.reset();
-                        mythis.fire('iron-signal', {name: 'updateuser', data: user});
-                    }, 500);
-                })
-                .catch(function (err) {
-                    var errmessage = "An error occurred while trying to create account";
-                    if (err.syscall === "getaddrinfo") {
-                        errmessage = "Unable to connect to server";
-                    } else if (err.status === 422 && err.data.includes("user already exists")) {
-                        errmessage = "Account already exists for this username";
-                    } else if (err.status === 422 && err.data.includes("EmailError")) {
-                        errmessage = "Not a valid email address";
-                    } else if (err.status === 422) {
-                        errmessage = "Account already exists for this email address";
-                    }
-                    mythis.set('options.title', "Account Creation Failed");
                     mythis.set('options.body', errmessage);
                     mythis.set('options.loading', false);
                     mythis.set('newinfo', {});

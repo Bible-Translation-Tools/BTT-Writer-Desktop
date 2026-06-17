@@ -1,0 +1,158 @@
+
+<link rel="import" href="../../components/paper-button/paper-button.html">
+<link rel="import" href="../../components/iron-icon/iron-icon.html">
+<link rel="import" href="../../components/iron-icons/iron-icons.html">
+
+<dom-module id="ts-developer-tools-modal">
+
+    <style>
+
+        :host {
+            margin: auto;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: auto;
+            max-height: 412px;
+            width: 400px;
+            z-index: 1000;
+            color: var(--primary-text-color);
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            background: var(--card-background-color);
+            box-shadow: 0 6px 30px var(--shadow-color);
+        }
+
+        #header {
+            flex: 0 0 56px;
+            padding: 0 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--secondary-text-color);
+            font-size: 110%;
+            display: flex;
+            align-items: center;
+        }
+
+        #body {
+            flex: 1 1 auto;
+            overflow-y: auto;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background .3s, color .3s;
+            cursor: pointer;
+        }
+
+        .row:hover {
+            background: var(--card-hover-color);
+        }
+
+        .row iron-icon {
+            color: var(--secondary-text-color);
+            margin-right: 15px;
+        }
+
+        #footer {
+            flex: 0 0 56px;
+            border-top: 1px solid var(--border-color);
+            color: var(--secondary-text-color);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        paper-button:hover {
+            color: var(--accent-color);
+        }
+
+    </style>
+
+    <template>
+
+        <div id="container">
+            <div id="header">{{heading}}</div>
+            <div id="body">
+                <div class="row" on-tap="openDevTools">
+                    <iron-icon icon="build"></iron-icon>
+                    <span>{{translate("open_dev_tools")}}</span>
+                </div>
+                <div class="row" on-tap="crashMain">
+                    <iron-icon icon="bug-report"></iron-icon>
+                    <span>{{translate("debug_crash_main")}}</span>
+                </div>
+                <div class="row" on-tap="crashRenderer">
+                    <iron-icon icon="bug-report"></iron-icon>
+                    <span>{{translate("debug_crash_renderer")}}</span>
+                </div>
+                <div class="row" on-tap="killRenderer">
+                    <iron-icon icon="bug-report"></iron-icon>
+                    <span>{{translate("debug_kill_renderer")}}</span>
+                </div>
+            </div>
+            <div id="footer">
+                <paper-button on-tap="close">{{translate("close")}}</paper-button>
+            </div>
+        </div>
+
+    </template>
+
+</dom-module>
+
+<script>
+
+    Polymer({
+
+        is: 'ts-developer-tools-modal',
+
+        behaviors: [
+            Polymer.IronResizableBehavior
+        ],
+
+        properties: {
+            heading: {
+                type: String
+            }
+        },
+
+        translate: App.translate,
+
+        openDevTools: function () {
+            App.showDevTools();
+            this.close();
+        },
+
+        crashMain: function () {
+            App.ipc.send('debug-crash', 'main');
+            this.close();
+        },
+
+        crashRenderer: function () {
+            setTimeout(() => {
+                Promise.reject(
+                    new Error("BTT-Writer Test: This is a simulated unhandled rejection!")
+                );
+            }, 300);
+            this.close();
+        },
+
+        killRenderer: function () {
+            App.ipc.send('debug-crash', 'renderer-kill');
+            this.close();
+        },
+
+        close: function () {
+            this.fire('modal-close');
+        }
+    });
+
+</script>

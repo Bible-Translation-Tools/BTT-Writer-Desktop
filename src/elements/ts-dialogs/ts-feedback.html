@@ -1,6 +1,7 @@
 
 <link rel="import" href="../../components/paper-button/paper-button.html">
 <link rel="import" href="../../components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../components/iron-input/iron-input.html">
 <link rel="import" href="../../components/iron-icons/iron-icons.html">
 <link rel="import" href="../../components/iron-icons/notification-icons.html">
 
@@ -21,11 +22,12 @@
         }
 
         #body {
+            margin-top: 20px;
             display: flex;
             flex-direction: column;
-            border-bottom: 1px solid var(--border-color);
+            gap: 10px;
             border-top: 1px solid var(--border-color);
-            padding: 20px;
+            padding-top: 15px;
         }
 
         #footer {
@@ -39,6 +41,12 @@
             color: var(--accent-color);
         }
 
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
         #feedback {
             font-size: 120%;
             padding: 10px;
@@ -47,6 +55,22 @@
             height: 200px;
         }
 
+        input, #feedback {
+            background: var(--background-color);
+            color: var(--primary-text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            border-radius: 2px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        iron-autogrow-textarea {
+            --iron-autogrow-textarea: {
+                padding: 8px;
+                box-sizing: border-box;
+            };
+        }
     </style>
 
     <template>
@@ -56,7 +80,12 @@
             <p><iron-icon icon="notification:wifi"></iron-icon> {{translate("internet_warning")}}</p>
         </div>
         <div id="body">
-            <iron-autogrow-textarea id="feedback" bind-value="{{feedback}}" placeholder="{{translate('describe_problem')}}">
+            <div class="field-group">
+                <input is="iron-input" type="email" bind-value="{{userEmail}}" placeholder={{translate("email_optional")}}>
+            </div>
+            <div class="field-group">
+                <iron-autogrow-textarea id="feedback" bind-value="{{feedback}}" placeholder="{{translate('describe_problem')}}"></iron-autogrow-textarea>
+            </div>
         </div>
         <div id="footer">
             <paper-button on-tap="close">{{translate("cancel")}}</paper-button>
@@ -74,6 +103,11 @@
         is: 'ts-feedback',
 
         properties: {
+            userEmail: {
+                type: String,
+                value: "",
+                notify: true
+            },
             feedback: {
                 type: String,
                 value: "",
@@ -83,10 +117,17 @@
 
         close: function () {
             this.fire('close');
+            this.cleanup();
         },
 
         send: function () {
-            this.fire('send');
+            this.fire('send', {userEmail: this.userEmail, feedback: this.feedback});
+            this.cleanup();
+        },
+
+        cleanup: function () {
+            this.userEmail = "";
+            this.feedback = "";
         },
 
         translate: App.translate,
