@@ -1,4 +1,4 @@
-.PHONY: edit build rebuild run logs logs-follow attach stop test clean release
+.PHONY: edit build rebuild run logs logs-follow attach stop test test-e2e clean release
 
 IMAGE_LABEL := bw-local-dev
 VOLUME_LABEL := $(IMAGE_LABEL)-volume
@@ -53,6 +53,15 @@ test:
 	# Runs tests in the container
 	test ! $(CONTAINER_ID) # If not blank, then container is already running
 	docker run --interactive --tty --rm $(IMAGE_LABEL) bash -c "npm test"
+
+test-e2e:
+	# Runs end-to-end tests against the Electron app (needs an X display)
+	test $(DISPLAY) # If blank, then $$DISPLAY is not set
+	test ! $(CONTAINER_ID) # If not blank, then container is already running
+	docker run --rm --net=host --ipc=host \
+	           --volume="${XAUTHORITY}:/root/.Xauthority:rw" \
+	           --env DISPLAY="${DISPLAY}" \
+	           $(IMAGE_LABEL) bash -c "bash e2e_tests/run-tests.sh"
 
 clean:
 	# Removes volume
