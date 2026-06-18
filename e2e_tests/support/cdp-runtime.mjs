@@ -10,7 +10,7 @@ export function assertCdpGlobals() {
     throw new Error("Global fetch is required. Run with Node 20+.");
   }
   if (typeof WebSocket !== "function") {
-    throw new Error("Global WebSocket is required. Run with Node 20+.");
+    throw new Error("Global WebSocket is required. Run with Node 22.4+.");
   }
 }
 
