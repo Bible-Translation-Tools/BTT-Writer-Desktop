@@ -263,7 +263,7 @@ function DataManager(db, resourceDir, sourceDir, configurator, translate) {
                                             return Promise.resolve(true);
                                         });
                                 }
-                                return Promise.resolve(translate("rc_doesnt_exist"));
+                                return Promise.resolve(translate("rc_doesnt_exist", container));
                             });
                     }
                     return Promise.resolve(true);

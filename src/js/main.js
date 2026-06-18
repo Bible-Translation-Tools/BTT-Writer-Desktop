@@ -8,7 +8,23 @@ const electron = require('electron'),
     BrowserWindow = electron.BrowserWindow,
     ipcMain = electron.ipcMain,
     nativeTheme = electron.nativeTheme,
-    _ = require('lodash');
+    _ = require('lodash'),
+    unhandled = require('electron-unhandled');
+
+// Lightweight reporter for logging main-process crashes only.
+// Sending crash reports won't work
+const mainReporter = (function () {
+    try {
+        const Reporter = require('../js/reporter').Reporter;
+        return new Reporter({
+            logPath: path.join(app.getPath('userData'), 'log.txt'),
+            verbose: true
+        });
+    } catch (e) {
+        console.error('Failed to init main-process reporter:', e);
+        return null;
+    }
+})();
 
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -132,6 +148,76 @@ function createMainWindow () {
         details.requestHeaders['User-Agent'] = userAgent;
         callback({ cancel: false, requestHeaders: details.requestHeaders });
     });
+
+    mainWindow.webContents.on('render-process-gone', function (event, details) {
+        const message = "The application rendering process has crashed."
+        const error = new Error(message);
+        error.stack = `Reason: ${details.reason}\nExit Code: ${details.exitCode}`;
+
+        mainReporter?.logWithCaller('E', error, message, "Unknown");
+
+        createCrashReportWindow(error);
+    });
+
+    mainWindow.webContents.on('preload-error', function (event, preloadPath, error) {
+        const message = "Preload script has crashed"
+        const updatedError = new Error(message);
+        updatedError.stack = error.stack;
+
+        mainReporter?.logWithCaller('E', error, message, preloadPath.split(/[\/\\]/).pop());
+
+        createCrashReportWindow(updatedError);
+    });
+}
+
+function createCrashReportWindow(error) {
+    const bounds = mainWindow.getBounds();
+
+    const errorWin = new BrowserWindow({
+        x: bounds.x,
+        y: bounds.y,
+        width: bounds.width,
+        height: bounds.height,
+        show: false,
+        resizable: false,
+        frame: false,
+        transparent: true,
+        movable: false,
+        modal: true,
+        parent: mainWindow,
+        backgroundColor: '#00000000',
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            sandbox: false,
+            preload: path.join(__dirname, 'preload-crash.js')
+        }
+    });
+
+    ipcMain.removeHandler('get-error-data');
+    ipcMain.handle('get-error-data', () => ({
+        message: error.message,
+        stack: error.stack
+    }));
+
+    errorWin.loadFile(__dirname + '/../views/crash-dialog.html');
+
+    errorWin.once('ready-to-show', () => errorWin.show());
+
+    const handleResize = () => {
+        if (!errorWin.isDestroyed()) {
+            errorWin.setBounds(mainWindow.getBounds());
+        }
+    };
+
+    mainWindow.on('resize', handleResize);
+    mainWindow.on('move', handleResize);
+
+    errorWin.on('closed', () => {
+        ipcMain.removeHandler('get-error-data');
+        mainWindow.removeListener('resize', handleResize);
+        mainWindow.removeListener('move', handleResize);
+    });
 }
 
 function createAppMenus() {
@@ -193,6 +279,8 @@ function reloadApplication() {
         }, 500);
     }, 500);
 }
+
+// IPC Main listeners
 
 ipcMain.on('main-window', function (event, arg) {
     const allowed = {
@@ -264,11 +352,45 @@ ipcMain.on('open-manual', function (event, url) {
     void electron.shell.openExternal(url);
 });
 
+ipcMain.on('debug-crash', function (event, target) {
+    console.log("debug crash triggered")
+    if (target === 'main') {
+        setImmediate(function () {
+            throw new Error('Test crash from sidebar Debug menu (main process) at ' + new Date().toISOString());
+        });
+    } else if (target === 'renderer-kill') {
+        setTimeout(function () {
+            if (mainWindow && !mainWindow.isDestroyed()) {
+                mainWindow.webContents.forcefullyCrashRenderer();
+            }
+        }, 50);
+    }
+});
+
 ipcMain.on('update-spellcheck', function(event, enabled) {
     if (mainWindow) {
         mainWindow.webContents.session.setSpellCheckerEnabled(enabled);
     }
 });
+
+ipcMain.on('renderer-exception', function (event, data) {
+    const {message, stack} = data;
+    const error = new Error(message);
+    error.stack = stack;
+
+    createCrashReportWindow(error)
+});
+
+ipcMain.on('close-crash-dialog', () => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) win.close();
+
+    if (mainWindow) {
+        mainWindow.reload()
+    }
+});
+
+// App listeners
 
 app.on('ready', function () {
     createAppMenus();
@@ -303,4 +425,13 @@ app.on('second-instance', function () {
         }
         mainWindow.focus();
     }
+});
+
+// Global exception handler
+unhandled({
+    logger: error => {
+        mainReporter?.logError(error, error.message);
+        createCrashReportWindow(error);
+    },
+    showDialog: false
 });

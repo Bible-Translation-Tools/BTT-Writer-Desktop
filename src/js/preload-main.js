@@ -6,7 +6,12 @@
 
 'use strict';
 
-const { contextBridge, ipcRenderer, shell, clipboard } = require('electron');
+const {
+    contextBridge,
+    ipcRenderer,
+    shell,
+    clipboard
+} = require('electron');
 
 /*
  * Redirect all standard output to the console.
@@ -141,12 +146,7 @@ process.stdout.write = console.log.bind(console);
     setMsg(i18n.translate("init_config"));
 
     const reporter = new Reporter({
-        logPath: path.join(configurator.getValue('rootDir'), 'log.txt'),
-        oauthToken: configurator.getValue('github-oauth'),
-        repoOwner: configurator.getValue('repoOwner'),
-        repo: configurator.getValue('repo'),
-        maxLogFileKb: configurator.getValue('maxLogFileKb'),
-        appVersion: require('../../package.json').version,
+        configurator: configurator,
         verbose: true
     });
 
@@ -187,7 +187,6 @@ process.stdout.write = console.log.bind(console);
     const printManager = new PrintManager(configurator, i18n);
     const projectManager = new ProjectsManager(dataManager, configurator, reporter, gitManager, migrateManager, i18n.translate);
     const userManager = new UserManager(
-        {token: configurator.getValue('gogs-token')},
         configurator.getUserSetting("dataserver"),
         navigator.userAgent,
         i18n.translate
@@ -202,7 +201,7 @@ process.stdout.write = console.log.bind(console);
     const SEND_CHANNELS = [
         'fire-reload', 'theme-changed', 'theme-loaded', 'localization-changed',
         'update-spellcheck', 'loading-status', 'show-devtools', 'main-loading-done',
-        'open-manual'
+        'open-manual', 'debug-crash', 'renderer-exception', 'close-crash-dialog'
     ];
     const SEND_SYNC_CHANNELS = ['main-window', 'open-file', 'save-as'];
     const ON_CHANNELS = ['maximize', 'unmaximize'];
