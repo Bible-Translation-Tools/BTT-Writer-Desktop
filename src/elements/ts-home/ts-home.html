@@ -264,7 +264,7 @@
         </div>
 
         <paper-dialog id="info" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
-            <ts-project-info currentproject="[[currentproject]]" locale="[[locale]]" on-closeinfo="closeinfo" on-opendelete="opendelete" on-openresource="openresource"></ts-project-info>
+            <ts-project-info id="projectInfo" currentproject="[[currentproject]]" locale="[[locale]]" on-closeinfo="closeinfo" on-opendelete="opendelete" on-openresource="openresource"></ts-project-info>
         </paper-dialog>
 
         <paper-dialog id="delete" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
@@ -450,6 +450,7 @@
 
         openinfo: function (e) {
             this.set('currentproject', {projectmeta: e.model.project});
+            this.$.projectInfo.refresh();
             this.$.info.open();
         },
 

@@ -103,6 +103,8 @@
             <p>{{translate("target_language")}}: <strong><span>[[currentproject.projectmeta.target_language.name]]</span> (<span>[[currentproject.projectmeta.target_language.id]]</span>)</strong><span class="link" on-tap="changelanguage">{{translate("change")}}</span></p>
             <p class$="[[idclass(currentproject.projectmeta.resource.id)]]">{{translate("resource_type")}}: <strong><span>[[currentproject.projectmeta.resource.id]]</span></strong><span class="link" on-tap="openresource">{{translate("change")}}</span></p>
             <p>{{translate("progress")}}: <strong><span>[[currentproject.projectmeta.completion]]</span>%</strong></p>
+            <p>{{translate("last_backup")}}: <strong><span>[[lastBackup]]</span></strong></p>
+            <p>{{translate("last_uploaded")}}: <strong><span>[[lastUploaded]]</span></strong></p>
             <p>{{translate("translators")}}:</p>
             <template is="dom-if" if="{{currentproject.projectmeta.translators.length}}">
                 <div id="namebox">
@@ -139,6 +141,70 @@
             currentproject: {
                 type: Object,
                 value: {}
+            },
+            lastBackup: {
+                type: String,
+                value: ''
+            },
+            lastUploaded: {
+                type: String,
+                value: ''
+            }
+        },
+
+        observers: [
+            '_projectChanged(currentproject.projectmeta)'
+        ],
+
+        refresh: function () {
+            this._projectChanged(this.currentproject ? this.currentproject.projectmeta : null);
+        },
+
+        _projectChanged: function (projectmeta) {
+            if (!projectmeta) {
+                this.lastBackup = this.translate('unknown');
+                this.lastUploaded = this.translate('unknown');
+                return;
+            }
+
+            const self = this;
+            const uniqueId = projectmeta.unique_id;
+
+            let savedUpload = App.configurator.getValue('last_uploaded_' + uniqueId);
+            if (savedUpload) {
+                const parsedUpload = App.utils.parseDateTimeString(savedUpload);
+                if (parsedUpload) {
+                    self.lastUploaded = parsedUpload.toLocaleString();
+                } else {
+                    self.lastUploaded = savedUpload;
+                }
+            } else {
+                self.lastUploaded = this.translate('unknown');
+            }
+
+            let savedBackup = App.configurator.getValue('last_backup_' + uniqueId);
+            if (savedBackup) {
+                const parsedBackup = App.utils.parseDateTimeString(savedBackup);
+                if (parsedBackup) {
+                    self.lastBackup = parsedBackup.toLocaleString();
+                } else {
+                    self.lastBackup = savedBackup;
+                }
+            } else {
+                // Fallback to .tstudio file's modified date in backups directory
+                const autoBackupDir = App.configurator.getUserPath('datalocation', 'automatic_backups');
+                const backupFilePath = App.path.join(autoBackupDir, uniqueId + '.tstudio');
+
+                App.utils.fs.stat(backupFilePath).then(function (stats) {
+                    if (stats && stats.mtime) {
+                        const date = new Date(stats.mtime);
+                        self.lastBackup = date.toLocaleString();
+                    } else {
+                        self.lastBackup = self.translate('unknown');
+                    }
+                }).catch(function () {
+                    self.lastBackup = self.translate('unknown');
+                });
             }
         },
 

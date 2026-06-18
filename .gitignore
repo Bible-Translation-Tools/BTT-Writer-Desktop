@@ -32,3 +32,6 @@ pnpm-*.yaml
 .vscode
 .fleet
 .tmp
+
+.claude
+graphify-out/

@@ -47,7 +47,8 @@ describe('ExportManager', () => {
                 if (key === 'targetTranslationsDir') return '/mock/target';
                 return '';
             }),
-            getUserPath: jest.fn((key, subdir) => `/mock/user/${subdir}`)
+            getUserPath: jest.fn((key, subdir) => `/mock/user/${subdir}`),
+            setValue: jest.fn()
         };
 
         mockReporter = { logError: jest.fn() };
