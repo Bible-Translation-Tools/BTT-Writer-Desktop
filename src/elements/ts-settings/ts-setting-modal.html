@@ -94,14 +94,14 @@
         <div id="container">
             <div id="header">{{heading}}</div>
             <div id="body">
-            	<template is="dom-if" if="{{selected}}">
+            	<template is="dom-if" if="{{_isMode(mode, 'select')}}">
 	            	<paper-radio-group selected="[[selected]]">
 		                <template is="dom-repeat" items="[[options]]" as="option">
 	                        <paper-radio-button name$="[[option]]" data-value$="{{option}}" class="row" on-tap="selectOption" checked$="{{_checkSelected(selected,option)}}">[[computeOptionText(option,translatable)]]</paper-radio-button>
 		                </template>
 	                </paper-radio-group>
                 </template>
-                <template is="dom-if" if="{{text}}">
+                <template is="dom-if" if="{{_isMode(mode, 'text')}}">
                 	<paper-input value="{{text}}"></paper-input>
                     <template is="dom-if" if="{{default}}">
                         <div id="default">
@@ -135,6 +135,9 @@
         ],
 
         properties: {
+            mode: {
+                type: String
+            },
             heading: {
             	type: String
             },
@@ -156,10 +159,14 @@
 
         ready: function () {
         	this.async(function () {
-				if (!this.options) {
+				if (this.mode === 'text') {
 					document.querySelector('paper-input').$.input.focus();
 				}
         	}, 30);
+        },
+
+        _isMode: function (mode, expected) {
+            return mode === expected;
         },
 
         onOpen: function () {

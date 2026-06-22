@@ -301,7 +301,8 @@
         },
 
         _onSettingConfirm: function (path, name) {
-            const value = document.querySelector('ts-setting-modal').selected || document.querySelector('ts-setting-modal').text;
+            const modal = document.querySelector('ts-setting-modal');
+            const value = modal.mode === 'select' ? modal.selected : modal.text;
             this.set(path, value);
             this.closeSettingModal();
             this.saveSettings();
@@ -361,9 +362,8 @@
             modal.id = "setting-modal";
             modal.style.display = 'block';
             modal.heading = App.translate(setting.mainText);
-            // The following assignments will determine what kind of interface the modal
-            // will have (Edit for text, select for selected.)
             if (setting.options) {
+                modal.mode = 'select';
                 modal.options = setting.options;
                 modal.selected = setting.value;
                 modal.translatable = setting.translatable || false;
@@ -391,6 +391,7 @@
                     mythis.openModal(modal, event);
                 }
             } else {
+                modal.mode = 'text';
                 modal.text = setting.value;
                 modal.default = setting.default;
                 mythis.openModal(modal, event);
