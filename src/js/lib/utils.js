@@ -469,6 +469,22 @@ const utils = {
         return year + '-' + month + '-' + day + '_' + hour + '.' + minutes + '.' + seconds;
     },
 
+    parseDateTimeString: function (str) {
+        if (!str) return null;
+        const match = str.match(/^(\d{4})-(\d{2})-(\d{2})_(\d{2})\.(\d{2})\.(\d{2})$/);
+        if (match) {
+            return new Date(
+                parseInt(match[1]),
+                parseInt(match[2]) - 1,
+                parseInt(match[3]),
+                parseInt(match[4]),
+                parseInt(match[5]),
+                parseInt(match[6])
+            );
+        }
+        return null;
+    },
+
     getPaths: function(root) {
         let dirsToCheck = [root];
         let paths = [];

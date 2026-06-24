@@ -948,7 +948,10 @@
                   return App.userManager.createRepo(user, repo);
               })
               .then(function (repo) {
-                  return App.gitManager.push(user, paths.projectDir, repo).then(App.utils.ret(repo.full_name));
+                  return App.gitManager.push(user, paths.projectDir, repo).then(function (res) {
+                      App.configurator.setValue('last_uploaded_' + projectmeta.unique_id, App.utils.getTimeStamp());
+                      return repo.full_name;
+                  });
               })
               .then(function (fullname) {
                   const readServer = App.configurator.getUserSetting("readerserver");

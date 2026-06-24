@@ -34,11 +34,17 @@ function ExportManager(configurator, git, reporter, translate) {
                     zip.addLocalFolder(paths.projectDir, name);
                     const manifestContent = JSON.stringify(manifest, null, '\t');
                     zip.addFile("manifest.json", Buffer.from(manifestContent));
-                    zip.writeZip(filePath, (err) => {
-                        if (err) reporter.logError(err);
+                    return new Promise((resolve, reject) => {
+                        zip.writeZip(filePath, (err) => {
+                            if (err) {
+                                reporter.logError(err);
+                                reject(err);
+                            } else {
+                                configurator.setValue('last_backup_' + meta.unique_id, utils.getTimeStamp());
+                                resolve(filePath);
+                            }
+                        });
                     });
-
-                    return filePath;
                 })
                 .catch(function (err) {
                     throw "Error creating backup: " + err;

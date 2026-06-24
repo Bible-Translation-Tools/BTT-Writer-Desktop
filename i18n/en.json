@@ -173,6 +173,9 @@
     "__file14": "ts-new-project-button.html",
 
     "__file15": "ts-project-info.html",
+    "last_backup": "Last Backup",
+    "last_uploaded": "Last Uploaded",
+    "unknown": "Unknown",
     "target_language": "Target Language",
     "translators": "Translators",
     "dismiss": "Dismiss",

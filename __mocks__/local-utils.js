@@ -33,6 +33,22 @@ module.exports = {
     padZero: jest.fn(n => (n < 10 ? '0' + n : n)),
     logr: jest.fn(msg => () => msg), // Returns a function that returns the message,
     getDateAndTime: jest.fn(() => '2026-02-18_16-00-00'),
+    getTimeStamp: jest.fn(() => '2026-06-18_19.16.48'),
+    parseDateTimeString: jest.fn(str => {
+        if (!str) return null;
+        const match = str.match(/^(\d{4})-(\d{2})-(\d{2})_(\d{2})\.(\d{2})\.(\d{2})$/);
+        if (match) {
+            return new Date(
+                parseInt(match[1]),
+                parseInt(match[2]) - 1,
+                parseInt(match[3]),
+                parseInt(match[4]),
+                parseInt(match[5]),
+                parseInt(match[6])
+            );
+        }
+        return null;
+    }),
     fileExists: jest.fn().mockResolvedValue(true),
     lodash: {
         map: lodash.map,
