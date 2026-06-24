@@ -66,6 +66,28 @@ describe('Renderer', () => {
             expect(marker.getAttribute('verse')).toBe('1');
             expect(marker.classList.contains('markers')).toBe(true);
         });
+
+        it('should render footnotes as draggable markers in the review view', () => {
+            const chunk = {
+                chunkmeta: { chapter: 1, verses: [1] },
+                transcontent: '\\v 1 Hello \\f + \\ft my note \\f* world',
+                index: 3
+            };
+
+            const html = renderer.markersToBalloons(chunk, 'ts-module');
+            const container = document.createElement('div');
+            container.innerHTML = html;
+
+            const note = container.querySelector('ts-target-note-marker');
+            expect(note).not.toBeNull();
+            // Draggable like verse markers, with an id so drag/drop can locate it
+            expect(note.classList.contains('markers')).toBe(true);
+            expect(note.getAttribute('draggable')).toBe('true');
+            expect(note.id).toBe('note3-0');
+            // Still a drop target so verse markers can be dropped before it
+            expect(note.classList.contains('targets')).toBe(true);
+            expect(note.getAttribute('text')).toBe('my note');
+        });
     });
 
     describe('Sanitization & Safety', () => {

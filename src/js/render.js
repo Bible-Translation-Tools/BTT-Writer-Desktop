@@ -589,7 +589,7 @@ function Renderer(translate) {
                                 i++;
                             }
 
-                            const footnoteHtml = this.markerToFootnote(footnote, chunk.index, noteindex);
+                            const footnoteHtml = this.markerToFootnote(footnote, chunk.index, noteindex, false, true);
                             const tempDiv = document.createElement("div");
                             tempDiv.innerHTML = sanitize(footnoteHtml);
 
@@ -714,8 +714,9 @@ function Renderer(translate) {
             return text;
         },
 
-        markerToFootnote: function (marker, chunkIndex, noteIndex, readonly) {
+        markerToFootnote: function (marker, chunkIndex, noteIndex, readonly, draggable) {
             readonly = readonly || false;
+            draggable = draggable || false;
             const wrapperRegex = /\\f\s+\S+\s+([\s\S]+?)\\f\*/;
             const match = wrapperRegex.exec(marker);
             let note = "";
@@ -734,6 +735,12 @@ function Renderer(translate) {
                 footnote.classList.add("targets");
                 footnote.setAttribute("chunkindex", chunkIndex);
                 footnote.setAttribute("noteindex", noteIndex);
+
+                if (draggable) {
+                    footnote.setAttribute("id", `note${chunkIndex}-${noteIndex}`);
+                    footnote.setAttribute("draggable", "true");
+                    footnote.classList.add("markers");
+                }
             }
             footnote.setAttribute("text", note);
 
