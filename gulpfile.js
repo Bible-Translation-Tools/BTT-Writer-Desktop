@@ -22,7 +22,8 @@ const APP_NAME = 'BTT-Writer',
     JS_FILES = './src/js/**/*.js',
     UNIT_TEST_FILES = './unit_tests/**/*.js',
     BUILD_DIR = 'out/',
-    RELEASE_DIR = 'release/';
+    RELEASE_DIR = 'release/',
+    MAC_ARCHS = ['arm64', 'x64'];
 
 
 function clean(done) {
@@ -91,7 +92,7 @@ function build(done) {
 
     const packagePlatform = function (platform) {
         return packager({
-            arch: platform === 'darwin' ? ['arm64'] : ['x64'],
+            arch: platform === 'darwin' ? MAC_ARCHS : ['x64'],
             platform: platform,
             dir: '.',
             prune: true,
@@ -231,20 +232,20 @@ function release(done){
                         return await releaseWin('64', os);
 
                     case 'darwin':
-                        const arch = 'arm64';
-                        const macBuildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/`;
+                        const macPaths = [];
 
-                        if (!fs.existsSync(macBuildPath)) {
-                            throw new Error('Missing build');
+                        // TRICKY: appdmg mounts a volume per dmg, so the archs are
+                        // released one after the other instead of in parallel
+                        for (const arch of MAC_ARCHS) {
+                            if (!fs.existsSync(BUILD_DIR + `BTT-Writer-darwin-${arch}/`)) {
+                                throw new Error(`Missing ${arch} build`);
+                            }
+
+                            await releaseDmg(arch);
+                            macPaths.push(`${RELEASE_DIR}BTT-Writer-${packageJson.version}-osx-${arch}.dmg`);
                         }
 
-                        await releaseDmg(arch);
-
-                        return {
-                            os: os,
-                            status: 'ok',
-                            path: `${RELEASE_DIR}BTT-Writer-${packageJson.version}-osx-${arch}.dmg`
-                        };
+                        return {os: os, status: 'ok', path: macPaths.join(', ')};
 
                     case 'linux':
                         const linuxBuildPath = BUILD_DIR + 'BTT-Writer-linux-x64/';
