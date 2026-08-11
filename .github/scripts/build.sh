@@ -4,21 +4,19 @@ set -x
 set -e
 
 brew install --cask wine-stable
-brew install innoextract
 brew install fakeroot
 brew install dpkg
 
 wine --version
-innoextract --version
 
 #update version number in package.json with build number
 PACKAGEJSONVER=$(cat package.json | jq --compact-output --raw-output '.version') && VER_ARRAY=($(echo $PACKAGEJSONVER | tr "+" "\n")) && ENVVER="${VER_ARRAY[0]}+$GITHUB_RUN_NUMBER"
 export ENVVER
 cat package.json | jq --arg variable "$ENVVER" '.version = $variable' > package.json.tmp && cp package.json.tmp package.json && rm package.json.tmp
 
-"./scripts/innosetup/innoinstall.sh"
-sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
-iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
+# expose the built version to later jobs (windows installer build/signing)
+if [ -n "$GITHUB_OUTPUT" ]; then echo "APP_VERSION=$ENVVER" >> "$GITHUB_OUTPUT"; fi
+
 npm install
 npm test
 npx gulp test
@@ -42,4 +40,6 @@ test -d src/prince
 npx gulp build --win
 npx gulp build --linux
 npx gulp build --osx
-npx gulp release
+# TRICKY: the windows installer is built on a windows runner instead, so that both the
+# packaged app binaries and the installer itself can be code signed (see sign-windows job).
+npx gulp release --linux --osx
