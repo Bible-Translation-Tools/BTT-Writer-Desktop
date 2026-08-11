@@ -16,8 +16,7 @@ const gulp = require('gulp'),
     princePackager = require('./src/js/prince-packager'),
     debInstaller = require('electron-installer-debian'),
     dmgInstaller = require('electron-installer-dmg'),
-    packageJson = require("./package.json"),
-    AdmZip = require('adm-zip');
+    packageJson = require("./package.json");
 
 const APP_NAME = 'BTT-Writer',
     JS_FILES = './src/js/**/*.js',
@@ -54,14 +53,6 @@ gulp.task('prince', function(done) {
         })
         .catch(() => done());
 });
-
-function zipDirectory(sourceDir, destPath, outPath) {
-    return new Promise((resolve, reject) => {
-        const zip = new AdmZip(undefined, {});
-        zip.addLocalFolder(sourceDir, destPath);
-        zip.writeZip(outPath, err => err ? reject(err) : resolve());
-    });
-}
 
 function build(done) {
 
@@ -219,6 +210,7 @@ function release(done){
         const options = {
             appPath: buildPath,
             name: name,
+            title: APP_NAME,
             out: RELEASE_DIR,
             icon: "icons/icon.icns"
         }
@@ -246,12 +238,13 @@ function release(done){
                             throw new Error('Missing build');
                         }
 
-                        const macDest = `${RELEASE_DIR}BTT-Writer-${packageJson.version}-osx-${arch}.zip`;
-
-                        await zipDirectory(macBuildPath + 'BTT-Writer.app/', 'BTT-Writer.app', macDest);
                         await releaseDmg(arch);
 
-                        return {os: os, status: 'ok', path: macDest};
+                        return {
+                            os: os,
+                            status: 'ok',
+                            path: `${RELEASE_DIR}BTT-Writer-${packageJson.version}-osx-${arch}.dmg`
+                        };
 
                     case 'linux':
                         const linuxBuildPath = BUILD_DIR + 'BTT-Writer-linux-x64/';
@@ -259,12 +252,13 @@ function release(done){
                             throw new Error('Missing build');
                         }
 
-                        const linuxDest = `${RELEASE_DIR}BTT-Writer-${packageJson.version}-linux-x64.zip`;
-
-                        await zipDirectory(linuxBuildPath, 'BTT-Writer', linuxDest);
                         await releaseDeb("amd64", os);
 
-                        return {os: os, status: 'ok', path: linuxDest};
+                        return {
+                            os: os,
+                            status: 'ok',
+                            path: `${RELEASE_DIR}btt-writer_${packageJson.version}_amd64.deb`
+                        };
 
                     default:
                         console.warn('No release procedure for ' + os);
