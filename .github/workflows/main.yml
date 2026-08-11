@@ -144,7 +144,7 @@ jobs:
                   files-folder-filter: exe,dll
                   files-folder-recurse: false
                   file-digest: SHA256
-                  timestamp-rfc3161: https://timestamp.acs.microsoft.com
+                  timestamp-rfc3161: http://timestamp.acs.microsoft.com
                   timestamp-digest: SHA256
 
             - name: Build windows installer
@@ -167,7 +167,7 @@ jobs:
                   files-folder-filter: exe
                   files-folder-recurse: false
                   file-digest: SHA256
-                  timestamp-rfc3161: https://timestamp.acs.microsoft.com
+                  timestamp-rfc3161: http://timestamp.acs.microsoft.com
                   timestamp-digest: SHA256
 
             - name: Upload signed windows installer
