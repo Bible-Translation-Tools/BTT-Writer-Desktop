@@ -98,26 +98,28 @@ function build(done) {
     // Also ignore all dot files and folders
     ignored.push(/[/\\]\.[^/\\]+/);
 
-    packager({
-        arch: ['x64', 'universal'],
-        platform: platforms,
-        dir: '.',
-        prune: true,
-        ignore: ignored,
-        out: BUILD_DIR,
-        appVersion: packageJson.version,
-        icon: './icons/icon',
-        osxUniversal: {
-            'x64ArchFiles': '*'
-        },
-        afterCopy: [
-            (buildPath, electronVersion, platform, arch, callback) => {
-                rebuild.rebuild({ buildPath, electronVersion, arch })
-                    .then(() => callback())
-                    .catch((error) => callback(error));
-            },
-        ],
-    }).then(() => done())
+    const packagePlatform = function (platform) {
+        return packager({
+            arch: platform === 'darwin' ? ['arm64'] : ['x64'],
+            platform: platform,
+            dir: '.',
+            prune: true,
+            ignore: ignored,
+            out: BUILD_DIR,
+            appVersion: packageJson.version,
+            icon: './icons/icon',
+            afterCopy: [
+                (buildPath, electronVersion, platform, arch, callback) => {
+                    rebuild.rebuild({ buildPath, electronVersion, arch })
+                        .then(() => callback())
+                        .catch((error) => callback(error));
+                },
+            ],
+        });
+    };
+
+    Promise.all(platforms.map(packagePlatform))
+    .then(() => done())
     .catch(err => {
         console.log(err)
         done()
@@ -212,7 +214,7 @@ function release(done){
     }
 
     const releaseDmg = function (arch) {
-        const name = `BTT-Writer-${packageJson.version}-osx`;
+        const name = `BTT-Writer-${packageJson.version}-osx-${arch}`;
         let buildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/BTT-Writer.app`;
         const options = {
             appPath: buildPath,
@@ -237,13 +239,8 @@ function release(done){
                         return await releaseWin('64', os);
 
                     case 'darwin':
-                        let arch = 'universal';
-                        let macBuildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/`;
-                        if (!fs.existsSync(macBuildPath)) {
-                            // fallback to x64 arch
-                            arch = "x64";
-                            macBuildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/`;
-                        }
+                        const arch = 'arm64';
+                        const macBuildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/`;
 
                         if (!fs.existsSync(macBuildPath)) {
                             throw new Error('Missing build');
