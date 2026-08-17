@@ -16,7 +16,8 @@ const gulp = require('gulp'),
     princePackager = require('./src/js/prince-packager'),
     debInstaller = require('electron-installer-debian'),
     dmgInstaller = require('electron-installer-dmg'),
-    packageJson = require("./package.json");
+    packageJson = require("./package.json"),
+    AdmZip = require('adm-zip');
 
 const APP_NAME = 'BTT-Writer',
     JS_FILES = './src/js/**/*.js',
@@ -54,6 +55,14 @@ gulp.task('prince', function(done) {
         })
         .catch(() => done());
 });
+
+function zipDirectory(sourceDir, destPath, outPath) {
+    return new Promise((resolve, reject) => {
+        const zip = new AdmZip(undefined, {});
+        zip.addLocalFolder(sourceDir, destPath);
+        zip.writeZip(outPath, err => err ? reject(err) : resolve());
+    });
+}
 
 function build(done) {
 
@@ -112,10 +121,7 @@ function build(done) {
 
     Promise.all(platforms.map(packagePlatform))
     .then(() => done())
-    .catch(err => {
-        console.log(err)
-        done()
-    });
+    .catch(err => done(err));
 }
 
 // pass parameters like: gulp build --win --osx --linux
@@ -211,13 +217,14 @@ function release(done){
         const options = {
             appPath: buildPath,
             name: name,
-            title: APP_NAME,
+            // TRICKY: appdmg rejects volume names over 27 chars, so the
+            // versioned file name can't be used here. The arch suffix keeps
+            // the mounted volume names unique so the dmgs build in parallel.
+            title: `${APP_NAME}-${arch}`,
             out: RELEASE_DIR,
             icon: "icons/icon.icns"
         }
-        return new Promise(function(resolve, reject) {
-            resolve(dmgInstaller.createDMG(options))
-        });
+        return dmgInstaller.createDMG(options);
     }
 
     function _release() {
@@ -232,18 +239,16 @@ function release(done){
                         return await releaseWin('64', os);
 
                     case 'darwin':
-                        const macPaths = [];
-
-                        // TRICKY: appdmg mounts a volume per dmg, so the archs are
-                        // released one after the other instead of in parallel
-                        for (const arch of MAC_ARCHS) {
+                        MAC_ARCHS.forEach((arch) => {
                             if (!fs.existsSync(BUILD_DIR + `BTT-Writer-darwin-${arch}/`)) {
                                 throw new Error(`Missing ${arch} build`);
                             }
+                        });
 
-                            await releaseDmg(arch);
-                            macPaths.push(`${RELEASE_DIR}BTT-Writer-${packageJson.version}-osx-${arch}.dmg`);
-                        }
+                        await Promise.all(MAC_ARCHS.map(releaseDmg));
+
+                        const macPaths = MAC_ARCHS.map((arch) =>
+                            `${RELEASE_DIR}BTT-Writer-${packageJson.version}-osx-${arch}.dmg`);
 
                         return {os: os, status: 'ok', path: macPaths.join(', ')};
 
@@ -253,12 +258,17 @@ function release(done){
                             throw new Error('Missing build');
                         }
 
+                        // TRICKY: the .deb only covers Debian-based distros,
+                        // so a plain .zip is shipped for the rest
+                        const linuxDest = `${RELEASE_DIR}BTT-Writer-${packageJson.version}-linux-x64.zip`;
+
+                        await zipDirectory(linuxBuildPath, 'BTT-Writer', linuxDest);
                         await releaseDeb("amd64", os);
 
                         return {
                             os: os,
                             status: 'ok',
-                            path: `${RELEASE_DIR}btt-writer_${packageJson.version}_amd64.deb`
+                            path: `${linuxDest}, ${RELEASE_DIR}btt-writer_${packageJson.version}_amd64.deb`
                         };
 
                     default:
@@ -271,7 +281,14 @@ function release(done){
             }
         });
 
-        Promise.all(tasks).then(() => done());
+        Promise.all(tasks).then((results) => {
+            const failed = results.filter((result) => result && result.status === 'error');
+            if (failed.length) {
+                done(new Error('Release failed for: ' + failed.map((result) => result.os).join(', ')));
+            } else {
+                done();
+            }
+        });
     }
 
     mkdirp.sync('release')
