@@ -23,7 +23,8 @@ const APP_NAME = 'BTT-Writer',
     JS_FILES = './src/js/**/*.js',
     UNIT_TEST_FILES = './unit_tests/**/*.js',
     BUILD_DIR = 'out/',
-    RELEASE_DIR = 'release/';
+    RELEASE_DIR = 'release/',
+    MAC_ARCHS = ['arm64', 'x64'];
 
 
 function clean(done) {
@@ -98,30 +99,29 @@ function build(done) {
     // Also ignore all dot files and folders
     ignored.push(/[/\\]\.[^/\\]+/);
 
-    packager({
-        arch: ['x64', 'universal'],
-        platform: platforms,
-        dir: '.',
-        prune: true,
-        ignore: ignored,
-        out: BUILD_DIR,
-        appVersion: packageJson.version,
-        icon: './icons/icon',
-        osxUniversal: {
-            'x64ArchFiles': '*'
-        },
-        afterCopy: [
-            (buildPath, electronVersion, platform, arch, callback) => {
-                rebuild.rebuild({ buildPath, electronVersion, arch })
-                    .then(() => callback())
-                    .catch((error) => callback(error));
-            },
-        ],
-    }).then(() => done())
-    .catch(err => {
-        console.log(err)
-        done()
-    });
+    const packagePlatform = function (platform) {
+        return packager({
+            arch: platform === 'darwin' ? MAC_ARCHS : ['x64'],
+            platform: platform,
+            dir: '.',
+            prune: true,
+            ignore: ignored,
+            out: BUILD_DIR,
+            appVersion: packageJson.version,
+            icon: './icons/icon',
+            afterCopy: [
+                (buildPath, electronVersion, platform, arch, callback) => {
+                    rebuild.rebuild({ buildPath, electronVersion, arch })
+                        .then(() => callback())
+                        .catch((error) => callback(error));
+                },
+            ],
+        });
+    };
+
+    Promise.all(platforms.map(packagePlatform))
+    .then(() => done())
+    .catch(err => done(err));
 }
 
 // pass parameters like: gulp build --win --osx --linux
@@ -212,17 +212,19 @@ function release(done){
     }
 
     const releaseDmg = function (arch) {
-        const name = `BTT-Writer-${packageJson.version}-osx`;
+        const name = `BTT-Writer-${packageJson.version}-osx-${arch}`;
         let buildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/BTT-Writer.app`;
         const options = {
             appPath: buildPath,
             name: name,
+            // TRICKY: appdmg rejects volume names over 27 chars, so the
+            // versioned file name can't be used here. The arch suffix keeps
+            // the mounted volume names unique so the dmgs build in parallel.
+            title: `${APP_NAME}-${arch}`,
             out: RELEASE_DIR,
             icon: "icons/icon.icns"
         }
-        return new Promise(function(resolve, reject) {
-            resolve(dmgInstaller.createDMG(options))
-        });
+        return dmgInstaller.createDMG(options);
     }
 
     function _release() {
@@ -237,24 +239,18 @@ function release(done){
                         return await releaseWin('64', os);
 
                     case 'darwin':
-                        let arch = 'universal';
-                        let macBuildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/`;
-                        if (!fs.existsSync(macBuildPath)) {
-                            // fallback to x64 arch
-                            arch = "x64";
-                            macBuildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/`;
-                        }
+                        MAC_ARCHS.forEach((arch) => {
+                            if (!fs.existsSync(BUILD_DIR + `BTT-Writer-darwin-${arch}/`)) {
+                                throw new Error(`Missing ${arch} build`);
+                            }
+                        });
 
-                        if (!fs.existsSync(macBuildPath)) {
-                            throw new Error('Missing build');
-                        }
+                        await Promise.all(MAC_ARCHS.map(releaseDmg));
 
-                        const macDest = `${RELEASE_DIR}BTT-Writer-${packageJson.version}-osx-${arch}.zip`;
+                        const macPaths = MAC_ARCHS.map((arch) =>
+                            `${RELEASE_DIR}BTT-Writer-${packageJson.version}-osx-${arch}.dmg`);
 
-                        await zipDirectory(macBuildPath + 'BTT-Writer.app/', 'BTT-Writer.app', macDest);
-                        await releaseDmg(arch);
-
-                        return {os: os, status: 'ok', path: macDest};
+                        return {os: os, status: 'ok', path: macPaths.join(', ')};
 
                     case 'linux':
                         const linuxBuildPath = BUILD_DIR + 'BTT-Writer-linux-x64/';
@@ -262,12 +258,18 @@ function release(done){
                             throw new Error('Missing build');
                         }
 
+                        // TRICKY: the .deb only covers Debian-based distros,
+                        // so a plain .zip is shipped for the rest
                         const linuxDest = `${RELEASE_DIR}BTT-Writer-${packageJson.version}-linux-x64.zip`;
 
                         await zipDirectory(linuxBuildPath, 'BTT-Writer', linuxDest);
                         await releaseDeb("amd64", os);
 
-                        return {os: os, status: 'ok', path: linuxDest};
+                        return {
+                            os: os,
+                            status: 'ok',
+                            path: `${linuxDest}, ${RELEASE_DIR}btt-writer_${packageJson.version}_amd64.deb`
+                        };
 
                     default:
                         console.warn('No release procedure for ' + os);
@@ -279,7 +281,14 @@ function release(done){
             }
         });
 
-        Promise.all(tasks).then(() => done());
+        Promise.all(tasks).then((results) => {
+            const failed = results.filter((result) => result && result.status === 'error');
+            if (failed.length) {
+                done(new Error('Release failed for: ' + failed.map((result) => result.os).join(', ')));
+            } else {
+                done();
+            }
+        });
     }
 
     mkdirp.sync('release')
