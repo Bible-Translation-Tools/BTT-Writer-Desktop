@@ -79,9 +79,10 @@ describe('Commander (cmdr)', () => {
             builder = cmdr([]);
         });
 
-        it('should chain .cd() commands with quotes', () => {
-            const result = builder('').cd('/tmp').toString();
-            expect(result).toBe("cd '/tmp'");
+        it('should store .cd() as the working directory instead of a shell cd', () => {
+            const chained = builder('').cd('/tmp');
+            expect(chained.toString()).toBe('[cwd /tmp] ');
+            expect(chained.and.do('ls').toString()).toBe('[cwd /tmp] ls');
         });
 
         it('should chain .and (&&)', () => {
@@ -142,21 +143,31 @@ describe('Commander (cmdr)', () => {
 
         it('should execute the command string', async () => {
             // Mock successful execution
-            mockExec.mockImplementation((cmd, callback) => {
+            mockExec.mockImplementation((cmd, opts, callback) => {
                 callback(null, 'success output', '');
             });
 
             const result = await builder('echo test').run();
 
-            expect(mockExec).toHaveBeenCalledWith('echo test', expect.any(Function));
+            expect(mockExec).toHaveBeenCalledWith('echo test', {}, expect.any(Function));
             expect(result.stdout).toBe('success output');
             expect(result.error).toBeNull();
+        });
+
+        it('should pass the .cd() directory to exec as cwd', async () => {
+            mockExec.mockImplementation((cmd, opts, callback) => {
+                callback(null, '', '');
+            });
+
+            await builder('').cd('/tmp').and.do('git init').run();
+
+            expect(mockExec).toHaveBeenCalledWith('git init', {cwd: '/tmp'}, expect.any(Function));
         });
 
         it('should reject promise on execution error', async () => {
             const error = new Error('Command failed');
             // Mock failed execution
-            mockExec.mockImplementation((cmd, callback) => {
+            mockExec.mockImplementation((cmd, opts, callback) => {
                 callback(error, '', 'error output');
             });
 
@@ -183,8 +194,8 @@ describe('Commander (cmdr)', () => {
                 .do('npm install')
                 .toString();
 
-            // Expected: cd '/var/www' && ENV='prod' PATH=/bin:$PATH npm install
-            expect(result).toBe("cd '/var/www' && ENV='prod' PATH=/bin:$PATH npm install");
+            // cd is carried as the exec cwd, not as shell text
+            expect(result).toBe("[cwd /var/www] ENV='prod' PATH=/bin:$PATH npm install");
         });
     });
 });

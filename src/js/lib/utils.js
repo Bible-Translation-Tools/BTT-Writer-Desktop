@@ -549,6 +549,11 @@ const utils = {
 
     shellEscape: function (s) {
         if (typeof s !== 'string') s = String(s);
+        if (process.platform === 'win32') {
+            // cmd.exe does not recognize single quotes; use double quotes,
+            // which are also what git.exe's argument parser expects.
+            return '"' + s.replace(/"/g, '""') + '"';
+        }
         return "'" + s.replace(/'/g, "'\\''") + "'";
     }
 };
