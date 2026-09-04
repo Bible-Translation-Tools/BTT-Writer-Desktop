@@ -51,6 +51,44 @@ app.setPath('userData', (function (dataDir) {
 let splashScreen;
 let mainWindow;
 
+function isSafeExternalUrl(url) {
+    if (typeof url !== 'string' || !url.trim()) {
+        return false;
+    }
+
+    try {
+        const parsed = new URL(url);
+        return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+    } catch (e) {
+        return false;
+    }
+}
+
+function hardenWebContents(webContents) {
+    webContents.setWindowOpenHandler(function ({ url }) {
+        if (isSafeExternalUrl(url)) {
+            void electron.shell.openExternal(url);
+        }
+        return { action: 'deny' };
+    });
+
+    webContents.on('will-navigate', function (event, url) {
+        if (!url.startsWith('file://')) {
+            event.preventDefault();
+        }
+    });
+
+    webContents.on('will-attach-webview', function (event) {
+        event.preventDefault();
+    });
+
+    webContents.on('did-fail-load', function (event, errorCode, errorDescription, validatedURL, isMainFrame) {
+        const error = new Error(errorDescription);
+        error.stack = `Error Code: ${errorCode}\nURL: ${validatedURL}\nMain Frame: ${isMainFrame}`;
+        mainReporter?.logWithCaller('E', error, 'Window failed to load content', 'main.js');
+    });
+}
+
 function createMainSplash() {
     splashScreen = new BrowserWindow({
         width: 400,
@@ -71,6 +109,7 @@ function createMainSplash() {
 
     //splashScreen.webContents.openDevTools();
 
+    hardenWebContents(splashScreen.webContents);
     splashScreen.loadURL('file://' + __dirname + '/../views/splash-screen.html', { userAgent });
 
     splashScreen.on('closed', function() {
@@ -98,6 +137,7 @@ function createReloadSplash() {
 
     //splashScreen.webContents.openDevTools();
 
+    hardenWebContents(splashScreen.webContents);
     splashScreen.loadURL('file://' + __dirname + '/../views/reload-screen.html', { userAgent });
 
     splashScreen.on('closed', function() {
@@ -130,6 +170,7 @@ function createMainWindow () {
     mainWindow.dataPath = app.getPath('userData');
     // mainWindow.webContents.openDevTools({ mode: 'detach' });
 
+    hardenWebContents(mainWindow.webContents);
     mainWindow.loadURL('file://' + __dirname + '/../views/index.html', { userAgent });
 
     mainWindow.on('closed', function() {
@@ -200,6 +241,7 @@ function createCrashReportWindow(error) {
         stack: error.stack
     }));
 
+    hardenWebContents(errorWin.webContents);
     errorWin.loadFile(__dirname + '/../views/crash-dialog.html');
 
     errorWin.once('ready-to-show', () => errorWin.show());
@@ -349,7 +391,9 @@ ipcMain.on('show-devtools', () => {
 });
 
 ipcMain.on('open-manual', function (event, url) {
-    void electron.shell.openExternal(url);
+    if (isSafeExternalUrl(url)) {
+        void electron.shell.openExternal(url);
+    }
 });
 
 ipcMain.on('debug-crash', function (event, target) {

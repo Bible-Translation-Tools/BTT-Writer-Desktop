@@ -9,6 +9,13 @@ function ExportManager(configurator, git, reporter, translate) {
 
     const targetDir = configurator.getValue('targetTranslationsDir');
 
+    function normalizeCommitHash(hash) {
+        if (hash && typeof hash === 'object' && typeof hash.stdout === 'string') {
+            return hash.stdout.trim();
+        }
+        return typeof hash === 'string' ? hash.trim() : hash;
+    }
+
     return {
 
         backupTranslation: function (meta, filePath) {
@@ -20,14 +27,20 @@ function ExportManager(configurator, git, reporter, translate) {
 
             return git.getHash(paths.projectDir)
                 .then(function (hash) {
+                    const appData = configurator.getAppData();
                     const manifest = {
                         generator: {
                             name: 'ts-desktop',
-                            build: ''
+                            build: appData && appData.build || ''
                         },
                         package_version: 2,
                         timestamp: new Date().getTime(),
-                        target_translations: [{path: name, id: name, commit_hash: hash, direction: meta.target_language.direction}]
+                        target_translations: [{
+                            path: name,
+                            id: name,
+                            commit_hash: normalizeCommitHash(hash),
+                            direction: meta.target_language.direction
+                        }]
                     };
 
                     const zip = new AdmZip(undefined, {});

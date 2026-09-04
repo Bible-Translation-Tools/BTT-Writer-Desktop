@@ -48,7 +48,8 @@ describe('ExportManager', () => {
                 return '';
             }),
             getUserPath: jest.fn((key, subdir) => `/mock/user/${subdir}`),
-            setValue: jest.fn()
+            setValue: jest.fn(),
+            getAppData: jest.fn(() => ({ version: '1.6.0+x', build: 'x' }))
         };
 
         mockReporter = { logError: jest.fn() };
