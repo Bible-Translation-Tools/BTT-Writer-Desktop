@@ -60,7 +60,7 @@ function ExportManager(configurator, git, reporter, translate) {
                     });
                 })
                 .catch(function (err) {
-                    throw "Error creating backup: " + err;
+                    throw "Error creating backup: " + ((err && err.error && err.error.message) || err);
                 });
         },
 

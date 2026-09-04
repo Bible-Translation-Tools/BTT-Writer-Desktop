@@ -431,7 +431,7 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator, tra
                     return mythis.commitProject(meta, user);
                 })
                 .catch(function (err) {
-                    throw "Error creating new project: " + err;
+                    throw "Error creating new project: " + ((err && err.error && err.error.message) || err);
                 });
         },
 
