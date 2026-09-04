@@ -6,7 +6,12 @@ const AdmZip = require('adm-zip');
 const fs = require('fs');
 const readline = require('readline');
 const utils = require('../js/lib/utils');
-const {USFMParser, HMarker, CLMarker, CMarker, VMarker} = require("usfmtools");
+const {USFMParser, USFMRenderer, HMarker, CLMarker, CMarker, VMarker} = require("usfmtools");
+
+const chunkRenderer = new USFMRenderer({
+    unwrapWordEntries: true,
+    excludeMarkers: ["s"]
+});
 
 function ImportManager(configurator, migrator, dataManager, translate) {
 
@@ -136,7 +141,7 @@ function ImportManager(configurator, migrator, dataManager, translate) {
                             const verses = chapterObj.getChildMarkers(VMarker);
                             let transContent = _.chain(verses).filter(function (verse) {
                                 return verse.endingVerse <= last && verse.startingVerse >= first;
-                            }).map(v => v.getRawContents()).value().join(" ");
+                            }).map(v => chunkRenderer.render(v)).value().join(" ");
 
                             if (verses.length > 0 && first === 1) {
                                 // Retrieve markers that precede the first verse marker
@@ -146,7 +151,7 @@ function ImportManager(configurator, migrator, dataManager, translate) {
                                 for (const marker of siblingsBefore) {
                                     if (marker instanceof CMarker) continue;
                                     if (marker instanceof CLMarker) continue;
-                                    contentsBefore += marker.getRawContents()
+                                    contentsBefore += chunkRenderer.render(marker)
                                 }
                                 transContent = contentsBefore + transContent;
                             }
