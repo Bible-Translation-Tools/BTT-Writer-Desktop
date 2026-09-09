@@ -21,7 +21,7 @@
     ]
   },
   "dependencies": {
-    "adm-zip": "0.5.16",
+    "adm-zip": "0.6.0",
     "archiver": "5.3.1",
     "async": "1.5.2",
     "chmodr": "1.0.2",
