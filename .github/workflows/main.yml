@@ -19,7 +19,6 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 22
-                  cache: npm
 
             - name: Install Linux runtime dependencies for Electron
               run: |
@@ -93,7 +92,6 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 22
-                  cache: npm
 
             # scripts/win_installer.iss is written for Inno Setup 5 ({pf}, the
             # "0,6.1" version syntax and the Greek/Serbian .isl files that
