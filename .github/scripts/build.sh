@@ -4,7 +4,7 @@ set -x
 set -e
 
 brew tap gcenx/wine
-HOMEBREW_CASK_OPTS="--no-quarantine" brew install --cask wine-crossover
+brew install --cask gcenx/wine/wine-crossover
 brew install innoextract
 brew install fakeroot
 brew install dpkg
