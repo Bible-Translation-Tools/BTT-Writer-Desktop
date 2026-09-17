@@ -12,6 +12,7 @@ const gulp = require('gulp'),
     rebuild = require('@electron/rebuild'),
     mkdirp = require('mkdirp'),
     fs = require('fs'),
+    path = require('path'),
     util = require('./src/js/lib/utils'),
     princePackager = require('./src/js/prince-packager'),
     debInstaller = require('electron-installer-debian'),
@@ -141,22 +142,32 @@ function release(done){
     if (!platforms.length) platforms.push('win64', 'darwin', 'linux');
 
     /**
+     * Downloads the Git for Windows installer that win_installer.iss bundles.
+     * Pure Node so it works on the Windows runner too (no wget/sh there).
      *
      * @param version 2.33.0
      * @param arch 64|32
      * @returns {Promise}
      */
-    const downloadGit = function (version, arch) {
-        return new Promise(function (resolve, reject) {
-            const cmd = `./scripts/git/download_git.sh ./vendor ${version} ${arch}`;
-            exec(cmd, function(err, stdout, stderr) {
-                if(err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            });
-        });
+    const downloadGit = async function (version, arch) {
+        const dir = 'vendor';
+        const file = `Git-${version}-${arch}-bit.exe`;
+        const dest = path.join(dir, file);
+
+        if (fs.existsSync(dest)) return;
+
+        const url = `https://github.com/git-for-windows/git/releases/download/v${version}.windows.1/${file}`;
+        console.log(`downloading git ${version} for win${arch}`);
+        mkdirp.sync(dir);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to download ${url}: ${response.status} ${response.statusText}`);
+        }
+
+        const tmp = dest + '.download';
+        fs.writeFileSync(tmp, Buffer.from(await response.arrayBuffer()));
+        fs.renameSync(tmp, dest);
     };
 
     /**

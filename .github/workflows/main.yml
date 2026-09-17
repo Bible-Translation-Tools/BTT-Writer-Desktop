@@ -7,9 +7,9 @@ on:
     workflow_dispatch:
 
 jobs:
-    e2e:
+    test:
         runs-on: ubuntu-latest
-        timeout-minutes: 8
+        timeout-minutes: 15
 
         steps:
             - name: Checkout
@@ -19,6 +19,7 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 22
+                  cache: npm
 
             - name: Install Linux runtime dependencies for Electron
               run: |
@@ -36,6 +37,11 @@ jobs:
 
             - name: Install app dependencies
               run: npm install
+
+            - name: Run unit tests
+              run: |
+                  npm test
+                  npx gulp test
 
             - name: Fetch resource index (same as release build)
               run: |
@@ -61,27 +67,94 @@ jobs:
                   Xvfb :99 -screen 0 1920x1080x24 &
                   bash e2e_tests/run-tests.sh
 
+    # Each platform is packaged on its own OS, so no wine / cross-tooling is needed.
     build:
-        needs: e2e
-        # The type of runner that the job will run on
-        runs-on: macos-latest
+        needs: test
+        name: build (${{ matrix.target }})
+        runs-on: ${{ matrix.os }}
+        timeout-minutes: 60
 
-        # Steps represent a sequence of tasks that will be executed as part of the job
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - target: win
+                      os: windows-latest
+                    - target: linux
+                      os: ubuntu-latest
+                    - target: osx
+                      os: macos-latest
+
         steps:
-            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-            - uses: actions/checkout@v2
-            - uses: FranzDiebold/github-env-vars-action@v2.1.0
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node 22
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: npm
+
+            # scripts/win_installer.iss is written for Inno Setup 5 ({pf}, the
+            # "0,6.1" version syntax and the Greek/Serbian .isl files that
+            # Inno Setup 6 dropped), so pin the same 5.5.3 the old wine-based
+            # build used (scripts/innosetup/innoinstall.sh).
+            - name: Install Inno Setup 5.5.3
+              if: runner.os == 'Windows'
+              shell: pwsh
+              run: |
+                  $installer = Join-Path $env:RUNNER_TEMP 'isetup-5.5.3.exe'
+                  Invoke-WebRequest -Uri 'https://files.jrsoftware.org/is/5/isetup-5.5.3.exe' -OutFile $installer
+                  $proc = Start-Process -FilePath $installer -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', '/DIR=C:\inno' -Wait -PassThru
+                  if ($proc.ExitCode -ne 0) { throw "Inno Setup installer failed with exit code $($proc.ExitCode)" }
+                  Add-Content -Path $env:GITHUB_PATH -Value 'C:\inno'
+
+            - name: Install .deb packaging tools
+              if: runner.os == 'Linux'
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y fakeroot dpkg
 
             - name: Decrypt secret file
               shell: bash
-              run: ./.github/scripts/decrypt_secret.sh
+              run: bash ./.github/scripts/decrypt_secret.sh
               env:
                   LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
 
-            # Runs build script
-            - name: Buildscript
+            - name: Build and package
               shell: bash
-              run: ./.github/scripts/build.sh
+              run: bash ./.github/scripts/build.sh ${{ matrix.target }}
+
+            # Installers are already compressed, so skip artifact compression.
+            # The publish job picks these up; S3 is the long-term store.
+            - name: Upload build artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: release-${{ matrix.target }}
+                  path: release/
+                  if-no-files-found: error
+                  compression-level: 0
+                  retention-days: 3
+
+    publish:
+        needs: build
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        permissions:
+            contents: write
+
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+
+            - name: Download build artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  pattern: release-*
+                  merge-multiple: true
+                  path: release
+
+            - name: List release files
+              run: ls -la release/
 
             #upload builds to AWS nightlybuilds
             - name: set s3 destination_dir for nightly-builds
@@ -96,9 +169,9 @@ jobs:
                   destination_dir: ${{ env.CURRENT_S3_DESTINATION }}
 
             - name: upload artifacts to github releases on tags
-              uses: "marvinpinto/action-automatic-releases@v1.2.1"
-              if: contains( github.ref, 'refs/tags/v' )
+              uses: softprops/action-gh-release@v2
+              if: startsWith(github.ref, 'refs/tags/v')
               with:
-                  repo_token: "${{ secrets.GITHUB_TOKEN }}"
+                  files: release/*
                   prerelease: false
-                  files: release/*.*
+                  generate_release_notes: true
