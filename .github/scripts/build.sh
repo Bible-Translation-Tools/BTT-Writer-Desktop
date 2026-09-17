@@ -3,12 +3,13 @@
 set -x
 set -e
 
-brew install --cask wine-stable
+brew tap gcenx/wine
+brew install --cask --no-quarantine wine-crossover
 brew install innoextract
 brew install fakeroot
 brew install dpkg
 
-wine --version
+wine64 --version
 innoextract --version
 
 #update version number in package.json with build number
