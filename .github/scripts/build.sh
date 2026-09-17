@@ -4,7 +4,7 @@ set -x
 set -e
 
 brew tap gcenx/wine
-brew install --cask gcenx/wine/wine-crossover
+brew install --cask gcenx/wine/wine-staging
 brew install innoextract
 brew install fakeroot
 brew install dpkg
