@@ -12,10 +12,9 @@ const gulp = require('gulp'),
     rebuild = require('@electron/rebuild'),
     mkdirp = require('mkdirp'),
     fs = require('fs'),
+    path = require('path'),
     util = require('./src/js/lib/utils'),
     princePackager = require('./src/js/prince-packager'),
-    debInstaller = require('electron-installer-debian'),
-    dmgInstaller = require('electron-installer-dmg'),
     packageJson = require("./package.json"),
     AdmZip = require('adm-zip');
 
@@ -129,7 +128,7 @@ gulp.task('build', gulp.series(clean, build));
 
 function release(done){
 
-    const exec = require('child_process').exec;
+    const spawn = require('child_process').spawn;
 
     const promises = [];
     const platforms = [];
@@ -141,22 +140,32 @@ function release(done){
     if (!platforms.length) platforms.push('win64', 'darwin', 'linux');
 
     /**
+     * Downloads the Git for Windows installer that win_installer.iss bundles.
+     * Pure Node so it works on the Windows runner too (no wget/sh there).
      *
      * @param version 2.33.0
      * @param arch 64|32
      * @returns {Promise}
      */
-    const downloadGit = function (version, arch) {
-        return new Promise(function (resolve, reject) {
-            const cmd = `./scripts/git/download_git.sh ./vendor ${version} ${arch}`;
-            exec(cmd, function(err, stdout, stderr) {
-                if(err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            });
-        });
+    const downloadGit = async function (version, arch) {
+        const dir = 'vendor';
+        const file = `Git-${version}-${arch}-bit.exe`;
+        const dest = path.join(dir, file);
+
+        if (fs.existsSync(dest)) return;
+
+        const url = `https://github.com/git-for-windows/git/releases/download/v${version}.windows.1/${file}`;
+        console.log(`downloading git ${version} for win${arch}`);
+        mkdirp.sync(dir);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to download ${url}: ${response.status} ${response.statusText}`);
+        }
+
+        const tmp = dest + '.download';
+        fs.writeFileSync(tmp, Buffer.from(await response.arrayBuffer()));
+        fs.renameSync(tmp, dest);
     };
 
     /**
@@ -168,17 +177,39 @@ function release(done){
     const releaseWin = function (arch, os) {
         // TRICKY: the iss script cannot take the .exe extension on the file name
         const file = `BTT-Writer-${packageJson.version}-win-x${arch}`;
-        const cmd = `iscc scripts/win_installer.iss /DArch=${arch === '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${packageJson.version} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
-        console.log(cmd);
-        return new Promise(function(resolve, reject) {
-            exec(cmd, function(err, stdout, stderr) {
-                if(err) {
-                    console.error(err);
-                    resolve({
-                        os: os,
-                        status: 'error',
-                        path: null
-                    });
+        // /Q = quiet compile (errors only). Without it ISCC logs a line per
+        // packed file, far more than exec()'s stdout buffer allows, so the
+        // output is streamed through with spawn instead of being collected.
+        const args = [
+            '/Q',
+            'scripts/win_installer.iss',
+            `/DArch=${arch === '64' ? 'x64' : 'x86'}`,
+            '/DRootPath=../',
+            `/DVersion=${packageJson.version}`,
+            `/DGitVersion=${gitVersion}`,
+            `/DDestFile=${file}`,
+            `/DDestDir=${RELEASE_DIR}`,
+            `/DBuildDir=${BUILD_DIR}`
+        ];
+        console.log(['iscc'].concat(args).join(' '));
+        return new Promise(function(resolve) {
+            let settled = false;
+            const failed = function (reason) {
+                // 'error' (e.g. ENOENT) is followed by 'close', report once
+                if (settled) return;
+                settled = true;
+                console.error(`iscc failed: ${reason}`);
+                resolve({
+                    os: os,
+                    status: 'error',
+                    path: null
+                });
+            };
+            const child = spawn('iscc', args, { stdio: 'inherit' });
+            child.on('error', (err) => failed(err.message));
+            child.on('close', (code) => {
+                if (code !== 0) {
+                    failed(`exit code ${code}`);
                 } else {
                     resolve({
                         os: 'win' + arch,
@@ -191,6 +222,9 @@ function release(done){
     };
 
     const releaseDeb = function (arch) {
+        // TRICKY: loaded lazily - electron-installer-debian declares
+        // os: [darwin, linux], so it is not installed on the Windows runner
+        const debInstaller = require('electron-installer-debian');
         let buildPath = BUILD_DIR + `BTT-Writer-linux-x64/`;
         const options = {
             name: "btt-writer",
@@ -212,6 +246,8 @@ function release(done){
     }
 
     const releaseDmg = function (arch) {
+        // loaded lazily for the same reason as the .deb installer
+        const dmgInstaller = require('electron-installer-dmg');
         const name = `BTT-Writer-${packageJson.version}-osx-${arch}`;
         let buildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/BTT-Writer.app`;
         const options = {

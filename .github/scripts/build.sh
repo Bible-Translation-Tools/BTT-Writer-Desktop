@@ -1,30 +1,61 @@
 #!/bin/bash
+#
+# Builds and packages BTT-Writer for ONE platform, on that platform's own runner.
+#
+#   Usage: build.sh <win|linux|osx>
+#
+# Runs under bash on every runner (Git Bash on Windows). Platform tooling is
+# installed by the workflow beforehand:
+#   win   - Inno Setup 5.5.3 on PATH (iscc)
+#   linux - fakeroot + dpkg (for the .deb)
+#   osx   - nothing extra (dmg tooling comes from npm)
+#
+# Unit and e2e tests run in the separate `test` job of the workflow.
 
 set -x
 set -e
 
-brew install --cask wine-stable
-brew install innoextract
-brew install fakeroot
-brew install dpkg
+TARGET="$1"
+case "$TARGET" in
+    win|linux|osx) ;;
+    *)
+        echo "Usage: $0 <win|linux|osx>" >&2
+        exit 1
+        ;;
+esac
 
-wine --version
-innoextract --version
+if [ "$TARGET" = "win" ]; then
+    # The .iss script uses preprocessor directives, so ISPP must be present
+    iscc '/?' 2> /dev/null | grep "Inno Setup Preprocessor"
+fi
 
-#update version number in package.json with build number
-PACKAGEJSONVER=$(cat package.json | jq --compact-output --raw-output '.version') && VER_ARRAY=($(echo $PACKAGEJSONVER | tr "+" "\n")) && ENVVER="${VER_ARRAY[0]}+$GITHUB_RUN_NUMBER"
+# Stamp the build number into package.json: 1.6.0+x -> 1.6.0+<run number>
+PACKAGEJSONVER=$(jq --raw-output '.version' package.json)
+ENVVER="${PACKAGEJSONVER%%+*}+${GITHUB_RUN_NUMBER}"
 export ENVVER
-cat package.json | jq --arg variable "$ENVVER" '.version = $variable' > package.json.tmp && cp package.json.tmp package.json && rm package.json.tmp
+jq --arg variable "$ENVVER" '.version = $variable' package.json > package.json.tmp && mv package.json.tmp package.json
 
-"./scripts/innosetup/innoinstall.sh"
-sudo cp scripts/innosetup/iscc /usr/local/bin/iscc
-iscc /? 2> /dev/null | grep "Inno Setup Preprocessor"
+if [ "$TARGET" = "win" ]; then
+    # electron-installer-debian declares os: [darwin, linux] and npm refuses to
+    # install it on win32 (EBADPLATFORM). Not needed for the Windows build, and
+    # gulpfile.js only requires it inside the .deb release step.
+    jq 'del(.devDependencies["electron-installer-debian"])' package.json > package.json.tmp && mv package.json.tmp package.json
+fi
+
 npm install
-npm test
-npx gulp test
-wget --no-verbose "https://btt-writer-resources.s3.amazonaws.com/resource_containers.zip"
-if [ -f resource_containers.zip ]; then rm -r ./src/index; fi
-unzip -qq resource_containers.zip -d ./src/index/
+
+# Resource index (shared by every platform)
+curl --fail --silent --show-error --location \
+    --output resource_containers.zip \
+    "https://btt-writer-resources.s3.amazonaws.com/resource_containers.zip"
+rm -rf ./src/index
+mkdir -p ./src/index
+if command -v unzip > /dev/null 2>&1; then
+    unzip -qq resource_containers.zip -d ./src/index/
+else
+    # Git Bash on the Windows runner has no unzip; 7-Zip is on the image
+    7z x -y -o./src/index resource_containers.zip > /dev/null
+fi
 test -f src/index/index.sqlite
 test -d src/index/resource_containers
 rm src/index/resource_containers/en_ta-audio_vol2.tsrc
@@ -35,11 +66,20 @@ rm src/index/resource_containers/en_ta-intro_vol1.tsrc
 rm src/index/resource_containers/en_ta-process_vol1.tsrc
 rm src/index/resource_containers/en_ta-translate_vol1.tsrc
 rm src/index/resource_containers/en_ta-translate_vol2.tsrc
+
 npx bower install
 test -d src/components
+
+# The prince task swallows download errors, so verify the binary this
+# platform actually ships (paths per src/js/prince-packager.js info())
 npx gulp prince
-test -d src/prince
-npx gulp build --win
-npx gulp build --linux
-npx gulp build --osx
-npx gulp release
+case "$TARGET" in
+    win)   test -f src/prince/win/bin/prince.exe ;;
+    linux) test -x src/prince/linux/lib/prince/bin/prince ;;
+    osx)   test -x src/prince/osx/lib/prince/bin/prince ;;
+esac
+
+npx gulp build "--$TARGET"
+npx gulp release "--$TARGET"
+
+ls -la release/
