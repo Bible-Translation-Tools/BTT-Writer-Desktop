@@ -35,6 +35,13 @@ ENVVER="${PACKAGEJSONVER%%+*}+${GITHUB_RUN_NUMBER}"
 export ENVVER
 jq --arg variable "$ENVVER" '.version = $variable' package.json > package.json.tmp && mv package.json.tmp package.json
 
+if [ "$TARGET" = "win" ]; then
+    # electron-installer-debian declares os: [darwin, linux] and npm refuses to
+    # install it on win32 (EBADPLATFORM). Not needed for the Windows build, and
+    # gulpfile.js only requires it inside the .deb release step.
+    jq 'del(.devDependencies["electron-installer-debian"])' package.json > package.json.tmp && mv package.json.tmp package.json
+fi
+
 npm install
 
 # Resource index (shared by every platform)

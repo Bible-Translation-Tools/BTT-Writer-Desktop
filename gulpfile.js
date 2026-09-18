@@ -15,8 +15,6 @@ const gulp = require('gulp'),
     path = require('path'),
     util = require('./src/js/lib/utils'),
     princePackager = require('./src/js/prince-packager'),
-    debInstaller = require('electron-installer-debian'),
-    dmgInstaller = require('electron-installer-dmg'),
     packageJson = require("./package.json"),
     AdmZip = require('adm-zip');
 
@@ -202,6 +200,9 @@ function release(done){
     };
 
     const releaseDeb = function (arch) {
+        // TRICKY: loaded lazily - electron-installer-debian declares
+        // os: [darwin, linux], so it is not installed on the Windows runner
+        const debInstaller = require('electron-installer-debian');
         let buildPath = BUILD_DIR + `BTT-Writer-linux-x64/`;
         const options = {
             name: "btt-writer",
@@ -223,6 +224,8 @@ function release(done){
     }
 
     const releaseDmg = function (arch) {
+        // loaded lazily for the same reason as the .deb installer
+        const dmgInstaller = require('electron-installer-dmg');
         const name = `BTT-Writer-${packageJson.version}-osx-${arch}`;
         let buildPath = BUILD_DIR + `BTT-Writer-darwin-${arch}/BTT-Writer.app`;
         const options = {
