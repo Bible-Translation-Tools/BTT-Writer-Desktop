@@ -128,7 +128,7 @@ gulp.task('build', gulp.series(clean, build));
 
 function release(done){
 
-    const exec = require('child_process').exec;
+    const spawn = require('child_process').spawn;
 
     const promises = [];
     const platforms = [];
@@ -177,17 +177,39 @@ function release(done){
     const releaseWin = function (arch, os) {
         // TRICKY: the iss script cannot take the .exe extension on the file name
         const file = `BTT-Writer-${packageJson.version}-win-x${arch}`;
-        const cmd = `iscc scripts/win_installer.iss /DArch=${arch === '64' ? 'x64' : 'x86'} /DRootPath=../ /DVersion=${packageJson.version} /DGitVersion=${gitVersion} /DDestFile=${file} /DDestDir=${RELEASE_DIR} /DBuildDir=${BUILD_DIR}`;
-        console.log(cmd);
-        return new Promise(function(resolve, reject) {
-            exec(cmd, function(err, stdout, stderr) {
-                if(err) {
-                    console.error(err);
-                    resolve({
-                        os: os,
-                        status: 'error',
-                        path: null
-                    });
+        // /Q = quiet compile (errors only). Without it ISCC logs a line per
+        // packed file, far more than exec()'s stdout buffer allows, so the
+        // output is streamed through with spawn instead of being collected.
+        const args = [
+            '/Q',
+            'scripts/win_installer.iss',
+            `/DArch=${arch === '64' ? 'x64' : 'x86'}`,
+            '/DRootPath=../',
+            `/DVersion=${packageJson.version}`,
+            `/DGitVersion=${gitVersion}`,
+            `/DDestFile=${file}`,
+            `/DDestDir=${RELEASE_DIR}`,
+            `/DBuildDir=${BUILD_DIR}`
+        ];
+        console.log(['iscc'].concat(args).join(' '));
+        return new Promise(function(resolve) {
+            let settled = false;
+            const failed = function (reason) {
+                // 'error' (e.g. ENOENT) is followed by 'close', report once
+                if (settled) return;
+                settled = true;
+                console.error(`iscc failed: ${reason}`);
+                resolve({
+                    os: os,
+                    status: 'error',
+                    path: null
+                });
+            };
+            const child = spawn('iscc', args, { stdio: 'inherit' });
+            child.on('error', (err) => failed(err.message));
+            child.on('close', (code) => {
+                if (code !== 0) {
+                    failed(`exit code ${code}`);
                 } else {
                     resolve({
                         os: 'win' + arch,
