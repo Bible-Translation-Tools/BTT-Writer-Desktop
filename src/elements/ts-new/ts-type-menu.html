@@ -145,7 +145,8 @@
                 typearray.push({ type: { id: "text", name: "Text" }, resource: { id: "obs", name: "Open Bible Stories" }, format: "markdown", allowed: true });
             } else {
                 typearray.push({ type: { id: "text", name: "Text" }, resource: { id: "ulb", name: "Unlocked Literal Bible" }, format: "usfm", allowed: true });
-                typearray.push({ type: { id: "text", name: "Text" }, resource: { id: "udb", name: "Unlocked Dynamic Bible" }, format: "usfm", allowed: true });
+                // UDB hidden from UI
+                // typearray.push({ type: { id: "text", name: "Text" }, resource: { id: "udb", name: "Unlocked Dynamic Bible" }, format: "usfm", allowed: true });
             }
             if (!this.importdata.importing) {
                 typearray.push({ type: { id: "tn", name: "Notes" }, resource: { id: "", name: "" }, format: "markdown", allowed: standardexists });
