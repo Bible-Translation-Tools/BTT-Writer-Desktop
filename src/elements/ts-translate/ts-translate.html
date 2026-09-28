@@ -1297,7 +1297,8 @@
                 question = _.uniqBy(question, 'title');
             }
             if (question.length) {
-                resources.push({title: App.translate("resource_questions"), array: true, data: question});
+                // TQ hidden from helps pane
+                // resources.push({title: App.translate("resource_questions"), array: true, data: question});
             }
 
             const frameudb = udb.filter(function (chunk) {
