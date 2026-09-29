@@ -681,11 +681,10 @@
                 return App.dataManager.getSourcesByProject(projectmeta.project.id)
                     .then(function (sources) {
                         if (sources.length) {
-                            if (projectmeta.resource.id !== "udb") {
-                                sources = _.filter(sources, function(source) {
-                                    return source.resource_id !== "udb";
-                                });
-                            }
+                            // UDB hidden from UI, unless already selected so it can be deselected
+                            sources = _.filter(sources, function(source) {
+                                return source.resource_id !== "udb" || _.some(projectmeta.source_translations, {unique_id: source.unique_id});
+                            });
 
                             sources.forEach(function (source) {
                                 let inarray = false;

@@ -150,7 +150,8 @@
                 var translations = App.dataManager.getTranslations();
 
                 translations = translations.filter(function (item) {
-                    return item.resource.status.checking_level === "3" && item.resource.type !== "help" && item.project.category_slug !== "ta";
+                    // UDB hidden from UI
+                    return item.resource.status.checking_level === "3" && item.resource.type !== "help" && item.project.category_slug !== "ta" && item.resource.slug !== "udb";
                 });
 
                 translations.forEach(function (item) {
