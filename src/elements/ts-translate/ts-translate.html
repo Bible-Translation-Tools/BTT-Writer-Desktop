@@ -681,11 +681,10 @@
                 return App.dataManager.getSourcesByProject(projectmeta.project.id)
                     .then(function (sources) {
                         if (sources.length) {
-                            if (projectmeta.resource.id !== "udb") {
-                                sources = _.filter(sources, function(source) {
-                                    return source.resource_id !== "udb";
-                                });
-                            }
+                            // UDB hidden from UI, unless already selected so it can be deselected
+                            sources = _.filter(sources, function(source) {
+                                return source.resource_id !== "udb" || _.some(projectmeta.source_translations, {unique_id: source.unique_id});
+                            });
 
                             sources.forEach(function (source) {
                                 let inarray = false;
@@ -1307,14 +1306,15 @@
             if (frameudb.length && frame.chunk !== "title") {
                 udbtext = frameudb[0].content;
             }
-            if (udbtext) {
-                udbtext = App.renderer.convertVerseMarkers(udbtext).text;
-                udbtext = App.renderer.convertNoteMarkers(udbtext);
-                udbtext = App.renderer.removeParaTags(udbtext);
-                udbtext = App.renderer.removeCharTags(udbtext);
-                udbtext = App.renderer.renderSuperscriptVerses(udbtext);
-                resources.push({title: "UDB", array: false, data: [udbtext]});
-            }
+            // UDB hidden from helps pane
+            // if (udbtext) {
+            //     udbtext = App.renderer.convertVerseMarkers(udbtext).text;
+            //     udbtext = App.renderer.convertNoteMarkers(udbtext);
+            //     udbtext = App.renderer.removeParaTags(udbtext);
+            //     udbtext = App.renderer.removeCharTags(udbtext);
+            //     udbtext = App.renderer.renderSuperscriptVerses(udbtext);
+            //     resources.push({title: "UDB", array: false, data: [udbtext]});
+            // }
 
             return resources;
         },
