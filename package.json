@@ -37,7 +37,7 @@
     "lodash": "4.17.23",
     "md5": "2.1.0",
     "mkdirp": "1.0.4",
-    "moment": "2.29.4",
+    "moment": "2.31.0",
     "node-forge": "0.10.0",
     "node-machine-id": "^1.1.12",
     "prince": "1.11.7",
