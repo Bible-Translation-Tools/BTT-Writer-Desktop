@@ -1,0 +1,364 @@
+
+<link rel="import" href="../../components/paper-button/paper-button.html">
+<link rel="import" href="../../components/paper-input/paper-input.html">
+<link rel="import" href="../../components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../components/iron-icon/iron-icon.html">
+<link rel="import" href="../../components/iron-icons/iron-icons.html">
+<link rel="import" href="../../components/iron-input/iron-input.html">
+<link rel="import" href="../../components/iron-list/iron-list.html">
+
+<dom-module id="ts-edit-library-modal">
+
+    <style>
+
+        :host {
+            margin: auto;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70vh;
+            width: 450px;
+            z-index: 1000;
+            color: var(--primary-text-color);
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: var(--card-background-color);
+            box-shadow: 0 6px 30px var(--shadow-color);
+        }
+
+        #header {
+            flex: 0 0 56px;
+            padding: 0 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--secondary-text-color);
+            font-size: 110%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #header input {
+            border: none;
+            font-size: 100%;
+            font-style: italic;
+            font-family: sans-serif;
+            width: 80%;
+            background: transparent;
+            color: var(--primary-text-color);
+        }
+
+        #body {
+            flex: 1 1 auto;
+            overflow-y: auto;
+        }
+
+        #list {
+            height: 100%;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background .3s, color .3s;
+            cursor: pointer;
+        }
+
+        .row:hover {
+            background: var(--card-hover-color);
+        }
+
+        .code {
+            color: var(--secondary-text-color);
+            font-style: italic;
+            font-size: 80%;
+        }
+
+        .form {
+            padding: 0 25px 15px;
+        }
+
+        .label {
+            color: var(--secondary-text-color);
+            margin-top: 15px;
+        }
+
+        .message {
+            padding: 15px 25px;
+        }
+
+        .error {
+            color: var(--error-color, #d32f2f);
+        }
+
+        paper-radio-button {
+            display: block;
+            --paper-radio-button-checked-color: var(--accent-color-dark);
+            --paper-radio-button-unchecked-color: var(--accent-color-dark);
+        }
+
+        paper-checkbox {
+            display: block;
+            margin-top: 15px;
+            --paper-checkbox-checked-color: var(--accent-color-dark);
+            --paper-checkbox-unchecked-color: var(--accent-color-dark);
+        }
+
+        #footer {
+            flex: 0 0 56px;
+            border-top: 1px solid var(--border-color);
+            color: var(--secondary-text-color);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        paper-button:hover {
+            color: var(--accent-color);
+        }
+
+    </style>
+
+    <template>
+
+        <div id="container">
+            <div id="header">
+                <template is="dom-if" if="[[_is(step, 'warning')]]">
+                    <span>{{translate("edit_library_warning_title")}}</span>
+                </template>
+                <template is="dom-if" if="[[_is(step, 'list')]]">
+                    <input is="iron-input" bind-value="{{query}}" on-input="updateList" placeholder="{{translate('search')}}">
+                    <iron-icon icon="search"></iron-icon>
+                </template>
+                <template is="dom-if" if="[[_is(step, 'edit')]]">
+                    <span>[[language.slug]]</span>
+                </template>
+                <template is="dom-if" if="[[_is(step, 'confirm')]]">
+                    <span>{{translate("confirm")}}</span>
+                </template>
+            </div>
+
+            <div id="body">
+                <template is="dom-if" if="[[_is(step, 'warning')]]">
+                    <div class="message">
+                        <p>{{translate("edit_library_warning_message")}}</p>
+                        <paper-checkbox checked="{{hideWarning}}">{{translate("edit_library_dont_show_again")}}</paper-checkbox>
+                    </div>
+                </template>
+
+                <template is="dom-if" if="[[_is(step, 'list')]]">
+                    <iron-list id="list" items="[[filtered]]" as="item">
+                        <template>
+                            <div class="row" on-tap="select">
+                                <span>[[item.name]]</span>
+                                <span class="code">[[item.id]]</span>
+                            </div>
+                        </template>
+                    </iron-list>
+                </template>
+
+                <template is="dom-if" if="[[_is(step, 'edit')]]">
+                    <div class="form">
+                        <paper-input label="{{translate('field_slug')}}" value="[[language.slug]]" disabled></paper-input>
+                        <paper-input label="{{translate('field_name')}}" value="{{form.name}}"></paper-input>
+                        <paper-input label="{{translate('field_anglicized_name')}}" value="{{form.anglicized_name}}"></paper-input>
+
+                        <div class="label">{{translate("field_direction")}}</div>
+                        <paper-radio-group selected="{{form.direction}}" attr-for-selected="name">
+                            <paper-radio-button name="ltr">{{translate("direction_ltr")}}</paper-radio-button>
+                            <paper-radio-button name="rtl">{{translate("direction_rtl")}}</paper-radio-button>
+                        </paper-radio-group>
+
+                        <div class="label">{{translate("field_region")}}</div>
+                        <paper-radio-group selected="{{form.region}}" attr-for-selected="name">
+                            <template is="dom-repeat" items="[[regions]]" as="region">
+                                <paper-radio-button name$="[[region]]">[[region]]</paper-radio-button>
+                            </template>
+                        </paper-radio-group>
+
+                        <paper-checkbox checked="{{form.is_gateway_language}}">{{translate("field_is_gateway_language")}}</paper-checkbox>
+
+                        <template is="dom-if" if="[[error]]">
+                            <p class="error">[[error]]</p>
+                        </template>
+                    </div>
+                </template>
+
+                <template is="dom-if" if="[[_is(step, 'confirm')]]">
+                    <p class="message">{{translate("edit_library_confirm_save")}}</p>
+                </template>
+            </div>
+
+            <div id="footer">
+                <template is="dom-if" if="[[_is(step, 'warning')]]">
+                    <paper-button on-tap="close">{{translate("cancel")}}</paper-button>
+                    <paper-button on-tap="acceptWarning">{{translate("continue")}}</paper-button>
+                </template>
+                <template is="dom-if" if="[[_is(step, 'list')]]">
+                    <paper-button on-tap="close">{{translate("close")}}</paper-button>
+                </template>
+                <template is="dom-if" if="[[_is(step, 'edit')]]">
+                    <paper-button on-tap="showList">{{translate("cancel")}}</paper-button>
+                    <paper-button on-tap="showConfirm">{{translate("edit_library_save")}}</paper-button>
+                </template>
+                <template is="dom-if" if="[[_is(step, 'confirm')]]">
+                    <paper-button on-tap="showEdit">{{translate("cancel")}}</paper-button>
+                    <paper-button on-tap="save">{{translate("continue")}}</paper-button>
+                </template>
+            </div>
+        </div>
+
+    </template>
+
+</dom-module>
+
+<script>
+
+    Polymer({
+
+        is: 'ts-edit-library-modal',
+
+        properties: {
+            step: {
+                type: String,
+                value: 'warning'
+            },
+            hideWarning: {
+                type: Boolean,
+                value: false
+            },
+            query: {
+                type: String,
+                value: ''
+            },
+            languages: {
+                type: Array,
+                value: []
+            },
+            filtered: {
+                type: Array,
+                value: []
+            },
+            regions: {
+                type: Array,
+                value: []
+            },
+            language: {
+                type: Object,
+                value: null
+            },
+            form: {
+                type: Object,
+                value: {}
+            },
+            error: {
+                type: String,
+                value: ''
+            }
+        },
+
+        translate: App.translate,
+
+        attached: function () {
+            this.set('languages', App.dataManager.getTargetLanguages());
+            this.set('regions', App.dataManager.getTargetLanguageRegions());
+            if (App.configurator.getValue('hideEditLibraryWarning')) {
+                this.showList();
+            }
+        },
+
+        _is: function (step, name) {
+            return step === name;
+        },
+
+        acceptWarning: function () {
+            if (this.hideWarning) {
+                App.configurator.setValue('hideEditLibraryWarning', true);
+            }
+            this.showList();
+        },
+
+        showList: function () {
+            this.set('step', 'list');
+            this.updateList();
+            this.async(function () {
+                const list = this.$$('#list');
+                if (list) list.fire('iron-resize');
+            });
+        },
+
+        updateList: function () {
+            const search = App.utils.startsWithBase.bind(null, this.query);
+            const filtered = this.query
+                ? this.languages.filter(function (item) {
+                    return search(item.id) || search(item.name);
+                })
+                : this.languages;
+            this.set('filtered', filtered);
+        },
+
+        select: function (event) {
+            const language = App.dataManager.getTargetLanguage(event.model.item.id);
+            if (!language) return;
+            this.set('language', language);
+            this.set('form', {
+                name: language.name,
+                anglicized_name: language.anglicized_name || '',
+                direction: language.direction,
+                region: language.region || '',
+                is_gateway_language: !!language.is_gateway_language
+            });
+            this.set('error', '');
+            this.showEdit();
+        },
+
+        showEdit: function () {
+            this.set('step', 'edit');
+        },
+
+        showConfirm: function () {
+            this.set('step', 'confirm');
+        },
+
+        save: function () {
+            const mythis = this;
+            const language = Object.assign({slug: this.language.slug}, this.form);
+            let saved;
+            try {
+                saved = App.dataManager.updateTargetLanguage(language);
+            } catch (err) {
+                console.error(err);
+                saved = false;
+            }
+            if (!saved) {
+                this.set('error', this.translate('edit_library_save_failed'));
+                this.showEdit();
+                return;
+            }
+            App.projectsManager.updateTargetLanguage(language)
+                .then(function () {
+                    App.ipc.send('fire-reload');
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    mythis.set('error', mythis.translate('edit_library_save_failed'));
+                    mythis.showEdit();
+                });
+        },
+
+        close: function () {
+            this.fire('modal-close');
+        }
+    });
+
+</script>
