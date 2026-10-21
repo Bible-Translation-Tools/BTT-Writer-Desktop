@@ -62,16 +62,9 @@
     "mocha": "3.0.2",
     "yargs": "4.8.1"
   },
-  "devEngines": {
-    "runtime": {
-      "name": "node",
-      "version": "^22.4.0",
-      "onFail": "download"
-    }
-  },
   "engines": {
     "electron": "30.5.1",
-    "node": "^22.4.0"
+    "node": "^20.9.0"
   },
   "scripts": {
     "start": "electron . --no-sandbox",
