@@ -2,6 +2,8 @@
 <link rel="import" href="../../components/paper-button/paper-button.html">
 <link rel="import" href="../../components/iron-icon/iron-icon.html">
 <link rel="import" href="../../components/iron-icons/iron-icons.html">
+<link rel="import" href="../../components/iron-icons/editor-icons.html">
+<link rel="import" href="./ts-edit-library-modal.html">
 
 <dom-module id="ts-developer-tools-modal">
 
@@ -86,6 +88,10 @@
                     <iron-icon icon="build"></iron-icon>
                     <span>{{translate("open_dev_tools")}}</span>
                 </div>
+                <div class="row" on-tap="openEditLibrary">
+                    <iron-icon icon="editor:mode-edit"></iron-icon>
+                    <span>{{translate("edit_library")}}</span>
+                </div>
                 <div class="row" on-tap="crashMain">
                     <iron-icon icon="bug-report"></iron-icon>
                     <span>{{translate("debug_crash_main")}}</span>
@@ -128,6 +134,15 @@
 
         openDevTools: function () {
             App.showDevTools();
+            this.close();
+        },
+
+        openEditLibrary: function () {
+            const modal = document.createElement('ts-edit-library-modal');
+            modal.addEventListener('modal-close', function () {
+                document.body.removeChild(modal);
+            });
+            document.body.appendChild(modal);
             this.close();
         },
 

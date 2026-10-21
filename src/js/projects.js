@@ -466,6 +466,33 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator, tra
                 });
         },
 
+        /**
+         * Writes new target language details into every project that uses it
+         * @param language {{slug, name, direction}}
+         * @returns {Promise}
+         */
+        updateTargetLanguage: function (language) {
+            const mythis = this;
+            return this.loadTargetTranslationsList()
+                .then(function (list) {
+                    const projects = list.filter(function (meta) {
+                        return meta && meta.target_language.id === language.slug;
+                    });
+                    return Promise.all(projects.map(function (meta) {
+                        return mythis.retrieveManifest(meta.projectDir)
+                            .then(function (manifest) {
+                                manifest.target_language.name = language.name;
+                                manifest.target_language.direction = language.direction;
+                                return write(path.join(meta.projectDir, 'manifest.json'), toJSON(manifest));
+                            })
+                            .catch(function (err) {
+                                // keep going: one broken project must not block the others
+                                reporter.logError(`Failed to update `, err);
+                            });
+                    }));
+                });
+        },
+
         loadProjectsList: function () {
             return readdir(targetDir);
         },

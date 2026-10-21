@@ -157,4 +157,34 @@ describe('ProjectsManager', () => {
             expect(mockUtils.fs.mover).toHaveBeenCalled();
         });
     });
+    describe('Target language update', () => {
+        const language = { slug: 'aa', name: 'Afar', direction: 'rtl' };
+
+        beforeEach(() => {
+            projectsManager.loadTargetTranslationsList = jest.fn().mockResolvedValue([
+                { projectDir: '/p/aa_gen', target_language: { id: 'aa' } },
+                { projectDir: '/p/bb_gen', target_language: { id: 'bb' } },
+                { projectDir: '/p/aa_mrk', target_language: { id: 'aa' } }
+            ]);
+            projectsManager.retrieveManifest = jest.fn((dir) => dir === '/p/aa_mrk'
+                ? Promise.reject(new Error('disk'))
+                : Promise.resolve({ target_language: { id: 'aa', name: 'Old', direction: 'ltr' }, project: { id: 'gen' } }));
+        });
+
+        it('should rewrite manifests of matching projects only', async () => {
+            await projectsManager.updateTargetLanguage(language);
+
+            expect(mockUtils.fs.outputFile).toHaveBeenCalledTimes(1);
+            const [file, content] = mockUtils.fs.outputFile.mock.calls[0];
+            expect(file).toBe('/p/aa_gen/manifest.json');
+            expect(JSON.parse(content).target_language).toEqual({ id: 'aa', name: 'Afar', direction: 'rtl' });
+            expect(JSON.parse(content).project.id).toBe('gen');
+        });
+
+        it('should log and continue when one project fails', async () => {
+            await projectsManager.updateTargetLanguage(language);
+            expect(mockReporter.logError).toHaveBeenCalledTimes(1);
+        });
+    });
+
 });
