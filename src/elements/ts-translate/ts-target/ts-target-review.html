@@ -304,7 +304,7 @@
             const index = data.index;
             const mythis = this;
 
-            if (this.chunk.index === index && this.chunk.projectmeta.project_type_class === "standard") {
+            if (this.chunk.index === index && this.chunk.projectmeta.unique_id === data.id && this.chunk.projectmeta.project_type_class === "standard") {
                 mythis.set('chunk.completed', true);
                 mythis.$.toggle.checked = true;
                 setTimeout(function() {

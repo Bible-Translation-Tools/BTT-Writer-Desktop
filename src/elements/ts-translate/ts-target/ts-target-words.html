@@ -218,7 +218,7 @@
 
         completechunk: function (event, data) {
             const index = data.index;
-            if (this.chunk.index === index && this.chunk.projectmeta.project_type_class === "extant") {
+            if (this.chunk.index === index && this.chunk.projectmeta.unique_id === data.id && this.chunk.projectmeta.project_type_class === "extant") {
                 this.set('chunk.completed', true);
                 this.$.toggle.checked = true;
                 this.fire('iron-signal', {name: 'updatecompletion'});
