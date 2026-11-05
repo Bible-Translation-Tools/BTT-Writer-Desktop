@@ -650,7 +650,7 @@
 
         closechecklist: function () {
             const index = this.modestatus.index;
-            this.fire('iron-signal', {name: 'completechunk', data: {index: index}});
+            this.fire('iron-signal', {name: 'completechunk', data: {index: index, id: this.currentproject.projectmeta.unique_id}});
         },
 
         openprojectchecklist: function () {
@@ -997,6 +997,9 @@
 
         writeChunk: function (event, data) {
             const meta = this.currentproject.projectmeta;
+
+            if (data.chunk.projectmeta.unique_id !== meta.unique_id) return;
+
             App.projectsManager.saveTargetChunk(data.chunk, meta)
                 .then(function () {
                     App.projectsManager.saveTargetManifest(meta)
@@ -1776,10 +1779,12 @@
             chunks.forEach(function(chunk, index) {
                 if (chunk.transcontent !== "") {
                     chunk.completed = true;
-                    mythis.fire('iron-signal', {name: 'completechunk', data: {index: index}});
+                    mythis.fire('iron-signal', {name: 'completechunk', data: {index: index, id: mythis.currentproject.projectmeta.unique_id}});
                     marked++;
                 }
             });
+            // persist here: in read mode no review cards may be rendered to fire updatecompletion
+            mythis.updatecompletion();
 
             const title = App.translate("result");
             const message = App.translate("chunks_marked_done_result", marked, chunks.length);
