@@ -367,4 +367,28 @@ describe('DataManager', () => {
             expect(words[0].slug).toBe('grace');
         });
     });
+    describe('Target language editing', () => {
+        it('should return a target language by slug', () => {
+            mockDb.indexSync.getTargetLanguage = jest.fn().mockReturnValue({ slug: 'aa', name: 'Afar' });
+            expect(dataManager.getTargetLanguage('aa').name).toBe('Afar');
+        });
+
+        it('should list distinct sorted regions', () => {
+            mockDb.indexSync.getTargetLanguages.mockReturnValue([
+                { slug: 'aa', region: 'Asia' },
+                { slug: 'bb', region: 'Africa' },
+                { slug: 'cc', region: 'Asia' },
+                { slug: 'dd', region: '' }
+            ]);
+            expect(dataManager.getTargetLanguageRegions()).toEqual(['Africa', 'Asia']);
+        });
+
+        it('should delegate target language update to the db', () => {
+            mockDb.updateTargetLanguage = jest.fn().mockReturnValue(true);
+            const language = { slug: 'aa', name: 'Afar', direction: 'ltr' };
+            expect(dataManager.updateTargetLanguage(language)).toBe(true);
+            expect(mockDb.updateTargetLanguage).toHaveBeenCalledWith(language);
+        });
+    });
+
 });

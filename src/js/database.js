@@ -122,6 +122,26 @@ function DataManager(db, resourceDir, sourceDir, configurator, translate) {
             });
         },
 
+        getTargetLanguage: function (slug) {
+            return db.indexSync.getTargetLanguage(slug);
+        },
+
+        getTargetLanguageRegions: function () {
+            const regions = db.indexSync.getTargetLanguages()
+                .map(function (item) { return item.region; })
+                .filter(function (region) { return region; });
+            return _.uniq(regions).sort();
+        },
+
+        /**
+         * Saves an edited target language to the index
+         * @param language {{slug, name, anglicized_name, direction, region, is_gateway_language}}
+         * @returns {boolean}
+         */
+        updateTargetLanguage: function (language) {
+            return db.updateTargetLanguage(language);
+        },
+
         getProjects: function (lang) {
             return db.indexSync.getProjects(lang || 'en');
         },
