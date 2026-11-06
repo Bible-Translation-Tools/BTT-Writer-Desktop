@@ -485,6 +485,10 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator, tra
                                 manifest.target_language.direction = language.direction;
                                 return write(path.join(meta.projectDir, 'manifest.json'), toJSON(manifest));
                             })
+                            .then(function () {
+                                const user = configurator.getValue('userdata') || {}
+                                return git.commitAll(user, meta.projectDir);
+                            })
                             .catch(function (err) {
                                 // keep going: one broken project must not block the others
                                 reporter.logError(`Failed to update `, err);
