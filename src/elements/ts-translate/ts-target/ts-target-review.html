@@ -305,12 +305,13 @@
             const mythis = this;
 
             if (this.chunk.index === index && this.chunk.projectmeta.unique_id === data.id && this.chunk.projectmeta.project_type_class === "standard") {
+                const chunk = mythis.chunk;
                 mythis.set('chunk.completed', true);
                 mythis.$.toggle.checked = true;
                 setTimeout(function() {
                     mythis.fire('setheight');
                     mythis.fire('iron-signal', {name: 'updatecompletion'});
-                    mythis.writeChunk();
+                    mythis.writeChunk(chunk);
                 }, 200);
             }
         },
@@ -330,11 +331,12 @@
                     myThis.fire('iron-signal', {name: 'openchecklist', data: {index: index}});
                 }
             } else {
+                const chunk = myThis.chunk;
                 myThis.set('chunk.completed', false);
                 setTimeout(function() {
                     myThis.fire('setheight');
                     myThis.fire('iron-signal', {name: 'updatecompletion'});
-                    myThis.writeChunk();
+                    myThis.writeChunk(chunk);
                 }, 200);
             }
         },
@@ -362,9 +364,10 @@
             this.fire('edit');
         },
 
-        writeChunk: function () {
+        writeChunk: function (chunk) {
+            chunk = chunk || this.chunk; // card may be re-used for another chunk before the timer fires
             setTimeout(() => {
-                this.fire('iron-signal', {name: 'writechunk', data: {chunk: this.chunk}});
+                this.fire('iron-signal', {name: 'writechunk', data: {chunk: chunk}});
             }, 500);
         },
 
