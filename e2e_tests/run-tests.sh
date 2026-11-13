@@ -59,6 +59,10 @@ node --test e2e_tests/e2e/project-navigation.spec.mjs
 
 sleep 3s
 
+node --test e2e_tests/e2e/chunk-edit-keys.spec.mjs
+
+sleep 3s
+
 node --test e2e_tests/e2e/project-info-actions.spec.mjs
 
 sleep 3s
