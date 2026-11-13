@@ -55,6 +55,10 @@ node --test e2e_tests/e2e/project-creation.spec.mjs
 
 sleep 3s
 
+node --test e2e_tests/e2e/source-removal.spec.mjs
+
+sleep 3s
+
 node --test e2e_tests/e2e/project-navigation.spec.mjs
 
 sleep 3s

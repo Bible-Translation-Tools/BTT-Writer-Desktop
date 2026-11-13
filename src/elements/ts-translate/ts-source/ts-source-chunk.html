@@ -142,8 +142,10 @@
                 const endspan = "\<\/span\>";
                 let direction = "ltr";
 
-                if (this.chunk.projectmeta.project_type_class !== "extant") {
-                    direction = this.chunk.projectmeta.source_translations[this.chunk.projectmeta.currentsource].direction;
+                // source is undefined after last source removed: stale chunks still re-render
+                const source = this.chunk.projectmeta.source_translations[this.chunk.projectmeta.currentsource];
+                if (source && this.chunk.projectmeta.project_type_class !== "extant") {
+                    direction = source.direction;
                 }
                 if (search.text && search.type === "source") {
                     const regex = new RegExp(App.renderer.replaceEscapes(search.text) + "(?!([^<]*>)|(\\d*<\/sup))", "gi");
