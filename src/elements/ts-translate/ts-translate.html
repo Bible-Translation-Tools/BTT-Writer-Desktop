@@ -1046,6 +1046,9 @@
             const projectMeta = this.currentproject.projectmeta;
             let selected = projectMeta.currentsource;
             if (selected === null || selected === undefined || !projectMeta.source_translations.length) {
+                // chunks come from the source: drop the ones left by the removed source or the previous project
+                this.set('currentproject.chunks', []);
+                this.set('currentproject.chapters', []);
                 this.finishLoading(nav, full);
                 return;
             }

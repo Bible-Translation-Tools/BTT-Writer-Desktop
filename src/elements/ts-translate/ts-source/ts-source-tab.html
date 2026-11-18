@@ -175,9 +175,9 @@
 
             const toremove = e.model.index;
             const selected = this.projectmeta.currentsource;
-            const sources = this.projectmeta.source_translations;
-
-            sources.splice(toremove, 1);
+            const sources = this.projectmeta.source_translations.filter(function (source, index) {
+                return index !== toremove;
+            });
 
             let newselected = selected, full = false;
             if (sources.length === 0) {
