@@ -179,6 +179,8 @@
 
         input: function () {
             this.fire('setheight');
+            // queue the save on every edit: a blur-only save is lost if iron-list re-uses the card before the blur
+            this.change();
         },
 
         change: function () {

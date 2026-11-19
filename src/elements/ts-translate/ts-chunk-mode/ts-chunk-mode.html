@@ -257,7 +257,9 @@
         },
 
 		ready: function() {
-
+			// iron-list binds up/down/enter for item navigation the cards don't support: it swallows the caret move
+			// in editors and re-targets its focused item, so the card being edited loses re-use protection
+			this.$.chunklist.keyEventTarget = null;
 		}
 
 	});

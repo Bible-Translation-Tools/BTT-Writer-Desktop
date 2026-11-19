@@ -505,3 +505,94 @@ export function clickTranslateSidebarHomeExpr() {
     })()
   `;
 }
+
+/** Focuses the visible target editor textbox and puts the caret at its very start. */
+export function focusTextboxAtStartExpr() {
+  return `
+    (function () {
+      const textbox = Array.from(
+        document.querySelectorAll("ts-target-edit #textbox[contenteditable='true']")
+      ).find((node) => {
+        const rect = node.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      });
+      if (!textbox) return "NOT_VISIBLE";
+
+      textbox.focus();
+      const range = document.createRange();
+      range.selectNodeContents(textbox);
+      range.collapse(true);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      return document.activeElement === textbox ? "FOCUSED" : "NOT_FOCUSED";
+    })()
+  `;
+}
+
+/**
+ * Where typing would go right now: whether a target editor textbox has focus, the caret offset
+ * inside it (characters from its start), and the review list's focused item index.
+ */
+export function editorCaretStateExpr() {
+  return `
+    (function () {
+      const list = document.querySelector("iron-list#reviewlist");
+      if (!list) return { state: "NO_REVIEW_LIST" };
+
+      const active = document.activeElement;
+      const textboxFocused = !!active && active.id === "textbox" && !!active.closest("ts-target-edit");
+      let caret = -1;
+      const selection = window.getSelection();
+      if (textboxFocused && selection.rangeCount) {
+        const range = selection.getRangeAt(0);
+        const before = range.cloneRange();
+        before.selectNodeContents(active);
+        before.setEnd(range.startContainer, range.startOffset);
+        caret = before.toString().length;
+      }
+      return { state: "OK", textboxFocused: textboxFocused, caret: caret, listFocusIndex: list._focusedIndex };
+    })()
+  `;
+}
+
+/** Viewport centre of a visible ts-translate-sidebar icon (e.g. "last-page"), for a real mouse click. */
+export function translateSidebarIconCenterExpr(iconName) {
+  const icon = escapeForTemplate(iconName);
+  return `
+    (function () {
+      // The sidebar is laid out before a project is open: only report it once the translate screen is showing.
+      const pages = document.querySelector("neon-animated-pages");
+      if (pages && pages.selected !== "translate") return { state: "WRONG_ROUTE:" + pages.selected };
+      const sidebar = document.querySelector("ts-translate-sidebar");
+      if (!sidebar) return { state: "NO_SIDEBAR" };
+      const el = Array.from(sidebar.querySelectorAll("iron-icon")).find((node) => {
+        const rect = node.getBoundingClientRect();
+        return node.icon === ${icon} && rect.width > 0 && rect.height > 0;
+      });
+      if (!el) return { state: "NOT_FOUND" };
+      const rect = el.getBoundingClientRect();
+      const x = Math.round(rect.x + rect.width / 2);
+      const y = Math.round(rect.y + rect.height / 2);
+      // While a project loads, an overlay backdrop sits on top and would swallow the click.
+      const hit = document.elementFromPoint(x, y);
+      if (!hit || !(hit === el || el.contains(hit))) return { state: "COVERED" };
+      return { state: "FOUND", x: x, y: y };
+    })()
+  `;
+}
+
+/** Chunk ids ("01-04") of every chunk in the review list whose target text contains the given text. */
+export function chunkIdsContainingTextExpr(text) {
+  const target = escapeForTemplate(text);
+  return `
+    (function () {
+      const list = document.querySelector("iron-list#reviewlist");
+      if (!list || !list.items) return { state: "NO_REVIEW_LIST" };
+      const ids = list.items
+        .filter((chunk) => (chunk.transcontent || "").includes(${target}))
+        .map((chunk) => chunk.chunkmeta.chapterid + "-" + chunk.chunkmeta.frameid);
+      return { state: "OK", ids: ids };
+    })()
+  `;
+}

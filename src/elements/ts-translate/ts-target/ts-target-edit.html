@@ -222,6 +222,8 @@
                         textbox.classList.remove("hide");
                         contentbox.classList.add("editmode");
 
+                        // the textbox now holds this chunk's text; saves go to textchunk, not to whatever chunk the card shows later
+                        this.textchunk = this.chunk;
                         textbox.innerHTML = App.sanitize(App.renderer.markersToFootnotes(text, this.chunk.index));
                         textbox.innerHTML = App.sanitize(App.renderer.paragraphsToBreaks(textbox.innerHTML));
                     }
@@ -263,25 +265,43 @@
         },
 
         saveChunk: function (content) {
-            const mythis = this;
-            mythis.fire('setheight');
-            clearTimeout(mythis.timer);
+            // iron-list may re-use this card for another chunk before the timer fires
+            const chunk = this.textchunk || this.chunk;
+            this.fire('setheight');
+            // a pending save for another chunk must be written, not dropped
+            if (this.pending && this.pending.chunk !== chunk) this.flushSave();
+            clearTimeout(this.timer);
 
-            mythis.timer = setTimeout(function () {
-                mythis.set('chunk.transcontent', App.renderer.sanitizeHtmlContent(content));
-                mythis.fire('iron-signal', {name: 'savechunk', data: {chunk: mythis.chunk}});
-            }, 300);
+            this.pending = {chunk: chunk, content: content};
+            this.timer = setTimeout(this.flushSave.bind(this), 300);
+        },
+
+        flushSave: function () {
+            const pending = this.pending;
+            if (!pending) return;
+            this.pending = null;
+            clearTimeout(this.timer);
+
+            const text = App.renderer.sanitizeHtmlContent(pending.content);
+            if (pending.chunk === this.chunk) {
+                this.set('chunk.transcontent', text);
+            } else {
+                // card already shows another chunk: write to the chunk the text belongs to
+                pending.chunk.transcontent = text;
+            }
+            this.fire('iron-signal', {name: 'savechunk', data: {chunk: pending.chunk}});
         },
 
         processContent: function (content) {
-            const verses = this.chunk.chunkmeta.verses;
+            const chunk = this.textchunk || this.chunk;
+            const verses = chunk.chunkmeta.verses;
             let result = App.renderer.validateVerseMarkers(content, verses);
             result = App.renderer.sanitizeHtmlContent(result);
             result = App.renderer.validateFootnotes(result);
 
             this.saveChunk(result);
 
-            let finalHtml = App.renderer.markersToFootnotes(result, this.chunk.index);
+            let finalHtml = App.renderer.markersToFootnotes(result, chunk.index);
             finalHtml = App.renderer.paragraphsToBreaks(finalHtml);
             this.$.textbox.innerHTML = App.sanitize(finalHtml);
         },
@@ -384,8 +404,9 @@
         },
 
         writeChunk: function () {
+            const chunk = this.chunk; // card may be re-used for another chunk before the timer fires
             setTimeout(() => {
-                this.fire('iron-signal', {name: 'writechunk', data: {chunk: this.chunk}});
+                this.fire('iron-signal', {name: 'writechunk', data: {chunk: chunk}});
             }, 500);
         },
 
