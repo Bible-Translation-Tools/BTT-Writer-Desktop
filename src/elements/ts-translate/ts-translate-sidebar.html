@@ -148,7 +148,7 @@
                     <paper-item on-tap="goprint" class$="[[printclass(currentproject.projectmeta.project_type_class, currentproject.projectmeta.source_translations)]]"><iron-icon class="smallicon" icon="print"></iron-icon>{{translate("print")}}</paper-item>
                     <paper-item on-tap="gofeedback"><iron-icon class="smallicon" icon="announcement"></iron-icon>{{translate("feedback")}}</paper-item>
                     <paper-item on-tap="gosearch" class$="[[searchclass(currentproject.projectmeta.project_type_class, selected)]]"><iron-icon class="smallicon" icon="search"></iron-icon>{{translate("search")}}</paper-item>
-                    <paper-item on-tap="projectdone"><iron-icon class="smallicon" icon="check"></iron-icon>{{translate("mark_chunks_done")}}</paper-item>
+                    <paper-item on-tap="projectdone" class$="[[nosourceclass(selected)]]"><iron-icon class="smallicon" icon="check"></iron-icon>{{translate("mark_chunks_done")}}</paper-item>
                     <paper-item on-tap="gosettings"><iron-icon class="smallicon" icon="settings"></iron-icon>{{translate("settings")}}</paper-item>
                 </paper-menu>
             </paper-menu-button>
